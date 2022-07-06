@@ -14,7 +14,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>idlj-idl-parent</artifactId>
+        <artifactId>narayana-idl</artifactId>
         <version>5.12.8.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -135,7 +135,7 @@
                                 <configuration>
                                     <tasks name="Generate idl stubs">
                                         <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
-                                        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+                                        <property name="idl.main.src" location="${project.build.directory}/../../src/main/idl"/>
 					<property name="compile_classpath" value="${maven.compile.classpath}"/>
 
                                         <java fork="true" classname="${idl.compiler.class}" failonerror="true">
@@ -229,8 +229,8 @@
                                 <configuration>
                                     <tasks>
                                         <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
-                                        <property name="idl.test.src" location="${project.build.directory}/../../../src/test/idl"/>
-                                        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+                                        <property name="idl.test.src" location="${project.build.directory}/../../src/test/idl"/>
+                                        <property name="idl.main.src" location="${project.build.directory}/../../src/main/idl"/>
 					<property name="compile_classpath" value="${maven.compile.classpath}"/>
 
                                         <java fork="true" classname="${idl.compiler.class}" failonerror="true">

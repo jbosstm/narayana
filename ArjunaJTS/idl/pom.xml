@@ -57,7 +57,7 @@
         </property>
       </activation>
       <modules>
-        <module>idlj</module>
+        <module>idlj-openjdk</module>
       </modules>
     </profile>
     <profile>
