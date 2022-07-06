@@ -47,8 +47,7 @@ COMMAND_LINE_2=\
   ${path.separator}dbdrivers${file.separator}mysql-connector-java.jar\
   ${path.separator}dbdrivers${file.separator}ojdbc8.jar\
   ${path.separator}dbdrivers${file.separator}postgresql.jar\
-  ${path.separator}ext${file.separator}log4j.jar\
-  ${path.separator}ext${file.separator}netty.jar
+  ${path.separator}ext${file.separator}log4j.jar
 
 #
 # properties used by the tests or test framework:
