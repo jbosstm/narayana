@@ -26,9 +26,6 @@ https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInN
 Requirements
 ------------
 To build this project you will need a JDK (Java Development Kit) with a minimum version of 11.
-Note that it is not sufficient to use a JRE because the build requires access to an IDL compiler so ensure
-that the JAVA_HOME environment variable is set correctly and ensure that the JDK bin directory is included in the
-PATH environment variable.
 
 The commands to do this will vary depending upon which operating system you are building on.
 
