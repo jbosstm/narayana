@@ -270,8 +270,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
 
         <configuration>
-          <excludeGroupIds>
-            org.jboss.spec.javax.transaction,
+          <excludeGroupIds>org.jboss.spec.javax.transaction,
             junit,
             jboss.profiler.jvmti,
             org.apache.ant,
@@ -280,8 +279,7 @@
             com.oracle.database.jdbc,
             org.postgresql,
             mysql,
-            com.ibm.db2
-          </excludeGroupIds>
+            com.ibm.db2</excludeGroupIds>
           <excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
           <outputDirectory>./ext</outputDirectory>
           <overWriteReleases>false</overWriteReleases>
