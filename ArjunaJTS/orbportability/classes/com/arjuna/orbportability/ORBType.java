@@ -63,18 +63,12 @@ public class ORBType
     }
 
 
-    public static final int ORBIX2000 = 0;
-    public static final int HPORB = 2;
-    public static final int VISIBROKER = 3;
     public static final int JAVAIDL = 1;
     public static final int IBMORB = 5;
 
-    public static final String orbix2000 = "ORBIX2000";
-    public static final String hporb = "HPORB";
-    public static final String visibroker = "VISIBROKER";
     public static final String javaidl = "JAVAIDL";
-	public static final String ibmorb = "IBMORB";
+    public static final String ibmorb = "IBMORB";
 
-    private final static String[]           ORB_NAME = { orbix2000, hporb, visibroker, javaidl, ibmorb };
-    private final static int[]              ORB_ENUM = { ORBIX2000, HPORB, VISIBROKER, JAVAIDL, IBMORB };
+    private final static String[]           ORB_NAME = { javaidl, ibmorb };
+    private final static int[]              ORB_ENUM = { JAVAIDL, IBMORB };
 }
