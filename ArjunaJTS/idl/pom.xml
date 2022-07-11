@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <!-- JBoss, Home of Professional Open Source Copyright 2012, Red Hat Middleware 
 		LLC, and individual contributors as indicated by the @author tags. See the 
 		copyright.txt in the distribution for a full listing of individual contributors. 
@@ -18,18 +19,17 @@
     <version>5.12.8.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-idl</artifactId>
+  <packaging>pom</packaging>
   <name>Narayana: ArjunaJTS idl parent</name>
   <description>Narayana: ArjunaJTS idl parent</description>
-  <packaging>pom</packaging>
 
   <build>
     <plugins>
       <plugin>
-        <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -61,21 +61,21 @@
       </modules>
     </profile>
     <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                  <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-install-plugin</artifactId>
-                      <executions>
-                          <execution>
-                              <id>default-install</id>
-                              <phase>install</phase>
-                          </execution>
-                      </executions>
-                  </plugin>
-              </plugins>
-          </build>
-     </profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
