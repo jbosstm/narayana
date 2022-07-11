@@ -12,92 +12,28 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
     <version>5.12.8.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-integration</artifactId>
+  <packaging>jar</packaging>
   <name>Narayana: ArjunaJTS integration</name>
   <description>Narayana: ArjunaJTS integration (atx)</description>
-  <packaging>jar</packaging>
 
   <properties>
     <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath</modular.jdk.args>
   </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Specification-Title>JTA/JTS</Specification-Title>
-              <Specification-Version>1.2/1.0</Specification-Version>
-              <Specification-Vendor>Oracle</Specification-Vendor>
-              <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
-              <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
-              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-              <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals> 
-            <configuration>
-              <useManifestOnlyJar>false</useManifestOnlyJar>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <shortRevisionLength>5</shortRevisionLength>
-          <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-openjdk</artifactId>
-          <version>${project.version}</version>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
-        </dependency>
+    </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
@@ -109,12 +45,12 @@
       <artifactId>jboss-transaction-spi</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging-spi</artifactId>
-          </exclusion>
-        </exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
@@ -186,70 +122,134 @@
         <exclusion>
           <groupId>org.jboss.logging</groupId>
           <artifactId>jboss-logging-spi</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Specification-Title>JTA/JTS</Specification-Title>
+              <Specification-Version>1.2/1.0</Specification-Version>
+              <Specification-Vendor>Oracle</Specification-Vendor>
+              <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
+              <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
+              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+              <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <useManifestOnlyJar>false</useManifestOnlyJar>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <shortRevisionLength>5</shortRevisionLength>
+          <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>create</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
-        <id>release</id>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-install-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-install</id>
-                  <phase>install</phase>
-                </execution>
-              </executions>
-              <inherited>false</inherited>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <configuration>
-                <source>8</source>
-                <detectOfflineLinks>false</detectOfflineLinks>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>create_javadocs</id>
-                  <goals>
-                    <goal>jar</goal>
-                  </goals>
-                  <phase>prepare-package</phase>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <source>8</source>
+              <detectOfflineLinks>false</detectOfflineLinks>
+            </configuration>
+            <executions>
+              <execution>
+                <id>create_javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>prepare-package</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
-	<profile>
-		<id>community</id>
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<executions>
-						<execution>
-							<id>add-source</id>
-							<phase>process-sources</phase>
-							<goals>
-								<goal>add-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>${project.build.directory}/generated-sources/annotations/</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</build>
-	</profile>
+    <profile>
+      <id>community</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>add-source</id>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <phase>process-sources</phase>
+                <configuration>
+                  <sources>
+                    <source>${project.build.directory}/generated-sources/annotations/</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

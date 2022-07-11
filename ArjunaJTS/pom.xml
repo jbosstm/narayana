@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
 		LLC, and individual contributors as indicated by the @author tags. See the 
 		copyright.txt in the distribution for a full listing of individual contributors. 
@@ -18,25 +19,11 @@
     <version>5.12.8.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jts</groupId>
   <artifactId>narayana-jts-all</artifactId>
   <packaging>pom</packaging>
   <name>Narayana: ArjunaJTS</name>
   <description>Narayana: ArjunaJTS</description>
-  <properties>
-    <modular.jdk.args/>
-    <sortpom.skip>true</sortpom.skip>
-  </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
   <modules>
     <module>idl</module>
     <module>orbportability</module>
@@ -45,99 +32,109 @@
     <module>integration</module>
     <module>integration-jakarta</module>
   </modules>
+  <properties>
+    <modular.jdk.args></modular.jdk.args>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
-      <profile>
-        <id>jts-openjdk</id>
-        <activation>
-            <property>
-              <name>!openjdk-disabled</name>
-            </property>
-        </activation>
-        <modules>
-            <module>narayana-jts-idlj</module>
-            <module>narayana-jts-idlj-jakarta</module>
-        </modules>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>surefire-idlj-openjdk</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration>
-                    <systemPropertyVariables
-                      combine.children="append">
-                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
-                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
-                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
-                    </systemPropertyVariables>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
-      <profile>
-        <id>jts-ibmorb</id>
-        <activation>
-            <property>
-              <name>ibmorb-enabled</name>
-            </property>
-        </activation>
-        <modules>
-            <module>narayana-jts-ibmorb</module>
-        </modules>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>surefire-ibmorb</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration>
-                    <systemProperties combine.children="append" />
-                    <systemPropertyVariables
-                      combine.children="append">
-                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.orb.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbImpleClassName>
-                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.oa.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.poaImpleClassName>
-                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbDataClassName>
-                    </systemPropertyVariables>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
+    <profile>
+      <id>jts-openjdk</id>
+      <activation>
+        <property>
+          <name>!openjdk-disabled</name>
+        </property>
+      </activation>
+      <modules>
+        <module>narayana-jts-idlj</module>
+        <module>narayana-jts-idlj-jakarta</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-idlj-openjdk</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+                <configuration>
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jts-ibmorb</id>
+      <activation>
+        <property>
+          <name>ibmorb-enabled</name>
+        </property>
+      </activation>
+      <modules>
+        <module>narayana-jts-ibmorb</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-ibmorb</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+                <configuration>
+                  <systemProperties combine.children="append"></systemProperties>
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.orb.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.oa.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-install-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>default-install</id>
-                      <phase>install</phase>
-                    </execution>
-                  </executions>
-                  <inherited>false</inherited>
-                </plugin>
-              </plugins>
-          </build>
-      </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
