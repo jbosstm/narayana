@@ -1,23 +1,30 @@
-name: LRA
+name: RTS
 
 on:
   push:
   pull_request:
     branches: [ master ]
-    paths:
+    paths-ignore:
+      - "osgi/**"
+      - "qa/**"
       - "rts/lra/**"
-      - "rts/pom.xml"
-      - "ArjunaCore/arjuna/**"
-      - "ArjunaCore/pom.xml"
-      - "pom.xml"
-      - "scripts/hudson/narayana.sh"
+      - "STM/**"
+      - "txbridge/**"
+      - "txbridge-jakarta/**"
+      - "txframework/**"
+      - "txframework-jakarta/**"
+      - "vertx/**"
+      - "XTS/**"
+      - ".github/workflows/astests-test.yml"
+      - ".github/workflows/core-test.yml"
       - ".github/workflows/lra-test.yml"
+      - ".github/workflows/xts-test.yml"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  lra-test:
-    name: LRA test with JDK ${{ matrix.java-version }}
+  rts-test:
+    name: RTS test with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -33,23 +40,21 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - name: LRA test
+      - name: RTS test
         run: |
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
-          WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh
-        env:
-          LRA_TCK_TIMEOUT_FACTOR: 1
+          WORKSPACE=$PWD PROFILE=RTS ./scripts/hudson/narayana.sh
 
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: wildfly-logs
+          name: artifacts
           path: |
-            wildfly-*/standalone/log/
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
+            **/log/
+            **/*.*log*
+            **/data/**
+            **/bin/jboss-cli.xml
             **/target/*surefire-reports*/**
             **/target/*failsafe-reports*/**
           if-no-files-found: error
