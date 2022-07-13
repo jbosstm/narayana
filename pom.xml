@@ -220,7 +220,6 @@
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>5.7.1</version.junit.jupiter>
-    <version.log4j>1.2.17</version.log4j>
     <version.mariadb>1.2.2</version.mariadb>
     <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
