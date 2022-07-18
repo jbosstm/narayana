@@ -31,6 +31,7 @@ import org.jboss.narayana.compensations.api.CompensationManager;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.EnlistException;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
+@Dependent
 public class CompensatableActionImpl implements CompensatableAction {
 
     private static final Logger LOGGER = Logger.getLogger(CompensatableActionImpl.class);

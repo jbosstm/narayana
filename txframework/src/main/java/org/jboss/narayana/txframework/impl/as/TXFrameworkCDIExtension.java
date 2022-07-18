@@ -47,10 +47,14 @@ public class TXFrameworkCDIExtension implements Extension {
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
 
         // Deprecated API
-        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMap.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMapImpl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControlImpl.class));
+        addAnnotatedType(bbd, bm, TXDataMap.class);
+        addAnnotatedType(bbd, bm, TXDataMapImpl.class);
+        addAnnotatedType(bbd, bm, WSBATxControl.class);
+        addAnnotatedType(bbd, bm, WSBATxControlImpl.class);
+    }
+
+    private static void addAnnotatedType(final BeforeBeanDiscovery bbd, final BeanManager bm, final Class<?> type) {
+        bbd.addAnnotatedType(bm.createAnnotatedType(type), type.getName() + "-tx-framework");
     }
 
 }
