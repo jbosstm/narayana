@@ -28,6 +28,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
+import org.jboss.narayana.compensations.api.CompensatableAction;
+
 
 /**
  * @author paul.robinson@redhat.com, 2012-02-13
@@ -43,22 +45,26 @@ public class CompensationsCDIExtension implements Extension {
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
 
         //Current API
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationManagerImpl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorMandatory.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorNever.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorNotSupported.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorRequired.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorRequiresNew.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorSupports.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TxCompensateInterceptor.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TxConfirmInterceptor.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TxLoggedInterceptor.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CancelOnFailureInterceptor.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensatableActionProducer.class));
+        addAnnotatedType(bbd, bm, CompensationManagerImpl.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorMandatory.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorNever.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorNotSupported.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorRequired.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorRequiresNew.class);
+        addAnnotatedType(bbd, bm, CompensationInterceptorSupports.class);
+        addAnnotatedType(bbd, bm, TxCompensateInterceptor.class);
+        addAnnotatedType(bbd, bm, TxConfirmInterceptor.class);
+        addAnnotatedType(bbd, bm, TxLoggedInterceptor.class);
+        addAnnotatedType(bbd, bm, CancelOnFailureInterceptor.class);
+        addAnnotatedType(bbd, bm, CompensatableActionImpl.class);
     }
 
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
 
         event.addContext(new CompensationContext());
+    }
+
+    private static void addAnnotatedType(final BeforeBeanDiscovery bbd, final BeanManager bm, final Class<?> type) {
+        bbd.addAnnotatedType(bm.createAnnotatedType(type), type.getName() + "-tx-compensations");
     }
 }
