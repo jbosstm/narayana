@@ -3,8 +3,8 @@
 #  functions to download the WildFly and to setup the JBOSS_HOME directory
 
 function download_wildfly_nightly_build() {
-  local urlNightlyBuildZip=${1:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
-  wget --user=guest --password=guest -nv "${urlNightlyBuildZip}"
+  local urlNightlyBuildZip=${1:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  wget -nv "${urlNightlyBuildZip}"
   unzip -q artifacts.zip
   # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
   wildflyLatestZipWrapper=$(ls wildfly-latest-*.zip | head -n 1)
