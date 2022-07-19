@@ -1,4 +1,4 @@
-name: RTS
+name: XTS 17
 
 on:
   push:
@@ -7,30 +7,25 @@ on:
     paths-ignore:
       - "osgi/**"
       - "qa/**"
-      - "rts/lra/**"
+      - "rts/**"
       - "STM/**"
-      - "txbridge/**"
-      - "txbridge-jakarta/**"
-      - "txframework/**"
-      - "txframework-jakarta/**"
       - "vertx/**"
-      - "XTS/**"
       - ".github/workflows/astests-test.yml"
       - ".github/workflows/core-test.yml"
       - ".github/workflows/lra-test.yml"
-      - ".github/workflows/xts-test.yml"
+      - ".github/workflows/rts-test.yml"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  rts-test:
-    name: RTS test with JDK ${{ matrix.java-version }}
+  xts-17:
+    name: XTS test with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -40,11 +35,14 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - name: RTS test
+      - name: XTS test
+        # This step archives the processes folder in a tgz because files in processes/ have a colon in their name and that causes an archiving problem
         run: |
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
-          WORKSPACE=$PWD PROFILE=RTS ./scripts/hudson/narayana.sh
+          WORKSPACE=$PWD PROFILE=XTS ./scripts/hudson/narayana.sh
+          tar cfz XTS/localjunit/crash-recovery-tests/target/surefire-reports/processes.tgz XTS/localjunit/crash-recovery-tests/target/surefire-reports/processes/
+          rm -rf XTS/localjunit/crash-recovery-tests/target/surefire-reports/processes/
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -57,5 +55,7 @@ jobs:
             **/bin/jboss-cli.xml
             **/target/*surefire-reports*/**
             **/target/*failsafe-reports*/**
+            XTS/localjunit/crash-recovery-tests/target/log/**
+            XTS/localjunit/crash-recovery-tests/target/log-simplified/**
           if-no-files-found: error
 

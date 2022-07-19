@@ -1,0 +1,56 @@
+name: LRA 17
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - "rts/lra/**"
+      - "rts/pom.xml"
+      - "ArjunaCore/arjuna/**"
+      - "ArjunaCore/pom.xml"
+      - "pom.xml"
+      - "scripts/hudson/narayana.sh"
+      - ".github/workflows/lra-test.yml"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  lra-17:
+    name: LRA test with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        java-version: [ 17 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        name: Set up JDK ${{ matrix.java-version }}
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: LRA test
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh
+        env:
+          LRA_TCK_TIMEOUT_FACTOR: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: wildfly-logs
+          path: |
+            wildfly-*/standalone/log/
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: error
+

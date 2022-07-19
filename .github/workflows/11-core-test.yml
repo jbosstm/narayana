@@ -1,0 +1,53 @@
+name: CORE 11
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - "qa/**"
+      - "rts/lra/**"
+      - ".github/workflows/astests-test.yml"
+      - ".github/workflows/lra-test.yml"
+      - ".github/workflows/rts-test.yml"
+      - ".github/workflows/xts-test.yml"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  core-11:
+    name: CORE test with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        java-version: [ 11 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        name: Set up JDK ${{ matrix.java-version }}
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: CORE test
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: artifacts
+          path: |
+            **/log/
+            **/*.*log*
+            **/data/**
+            **/bin/jboss-cli.xml
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: error
+
