@@ -26,7 +26,7 @@
   <description>Narayana: Ext All</description>
 
   <properties>
-    <sortpom.skip>false</sortpom.skip>
+    <sortpom.skip>true</sortpom.skip>
   </properties>
 
   <profiles>

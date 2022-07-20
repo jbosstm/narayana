@@ -257,11 +257,17 @@
                       <fileset dir="../ArjunaJTA/jms/target/${surefire.reports.directory}" includes="**/*.xml"/>
                       <fileset dir="../tools/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
+                      <!--
                       <fileset dir="../ArjunaJTS/jts/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      -->
                       <fileset dir="../ArjunaJTS/jts/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
+                      <!--
                       <fileset dir="../ArjunaJTS/orbportability/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      -->
                       <fileset dir="../ArjunaJTS/orbportability/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
+                      <!--
                       <fileset dir="../ArjunaJTS/jtax/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      -->
 
                       <fileset dir="../XTS/localjunit/disabled-context-propagation/target/${surefire.reports.directory}" includes="**/*.xml"/>
                       <fileset dir="../XTS/localjunit/unit/target/${surefire.reports.directory}" includes="**/*.xml"/>
