@@ -26,7 +26,7 @@
   <packaging>pom</packaging>
   <name>Narayana: all</name>
   <description>${project.artifactId}</description>
-  <url>http://www.jboss.org/jbosstm/</url>
+  <url>https://narayana.io</url>
   <licenses>
     <license>
       <name>LGPL 2.1</name>
