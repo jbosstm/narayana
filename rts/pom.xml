@@ -28,7 +28,6 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <packaging>pom</packaging>
   <name>Narayana: RESTful transactions</name>
   <description>RESTful transactions</description>
-  <url>http://www.jboss.org/jbosstm</url>
 
   <properties>
     <version.resteasy-client>${version.org.jboss.resteasy}</version.resteasy-client>
