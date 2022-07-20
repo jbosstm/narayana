@@ -61,26 +61,6 @@
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-jacoco</id>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <phase>validate</phase>
-                <configuration>
-                  <file>${basedir}/jacocoant.jar</file>
-                  <groupId>org.jacoco</groupId>
-                  <artifactId>jacoco-ant</artifactId>
-                  <version>${version.org.jacoco}</version>
-                  <packaging>jar</packaging>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
     </profile>
