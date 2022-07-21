@@ -48,6 +48,7 @@ public class XTSServiceTestRunnerBean
         try {
             start();
         } catch (Exception e) {
+            log.warn("TEST IS INVALID DUE TO START PROBLEM", e);
             // ignore
         }
     }
@@ -61,6 +62,7 @@ public class XTSServiceTestRunnerBean
         try {
             stop();
         } catch (Exception e) {
+            log.warn("TEST IS INVALID DUE TO STOP PROBLEM", e);
             // ignore
         }
     }
