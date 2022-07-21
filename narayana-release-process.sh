@@ -52,7 +52,7 @@ if [[ $M2OK == n* ]]
 then
   exit
 fi
-read -p "You will need: docker.io account with permission to push under https://hub.docker.com/u/jbosstm/. Do you have these? y/n: " ENVOK
+read -p "You will need: quay.io account with permission to push to jbosstm. Do you have this? y/n: " ENVOK
 if [[ $ENVOK == n* ]]
 then
   exit
