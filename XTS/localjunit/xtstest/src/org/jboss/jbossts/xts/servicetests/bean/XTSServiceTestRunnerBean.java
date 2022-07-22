@@ -97,13 +97,16 @@ public class XTSServiceTestRunnerBean
             }
 
             try {
-                testInstance = (XTSServiceTest)testClass.newInstance();
+                testInstance = (XTSServiceTest)testClass.newInstance(); // assumes there is a no-arg constructor
             } catch (InstantiationException ie) {
                 log.warn("XTSServiceTestRunner : cannot instantiate test class " + testName, ie);
                 throw new Exception("XTSServiceTestRunner : cannot instantiate test class " + testName, ie);
             } catch (IllegalAccessException iae) {
                 log.warn("XTSServiceTestRunner : cannot access constructor for test class " + testName, iae);
                 throw new Exception("XTSServiceTestRunner : cannot access constructor for test class " + testName, iae);
+            } catch (Throwable e) {
+                log.warn("XTSServiceTestRunner : cannot construct new instance for test class " + testName, e);
+                throw new Exception("XTSServiceTestRunner : cannot construct new instance for test class " + testName, e);
             }
 
             // since we are running in the AS startup thread we need a separate thread for the test
