@@ -28,11 +28,13 @@ import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.net.URI;
 
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
+@Provider
 public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Context
     protected ResourceInfo resourceInfo;

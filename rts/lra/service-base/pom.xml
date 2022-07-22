@@ -8,7 +8,8 @@
   </parent>
 
   <artifactId>lra-service-base</artifactId>
-  <description>Provides a base module for the funcionality shared between LRA coordination and LRA clients</description>
+  <name>LRA service base</name>
+  <description>Provides a base module for the functionality shared between LRA coordination and LRA clients</description>
 
   <dependencies>
     <dependency>

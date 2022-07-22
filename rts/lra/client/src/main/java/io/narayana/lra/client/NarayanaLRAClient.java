@@ -350,7 +350,8 @@ public class NarayanaLRAClient implements Closeable {
                     logMsg, uee);
             return null;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new WebApplicationException("start LRA client request timed out, try again later", e,
+            LRALogger.i18nLogger.warn_startLRAFailed(e.getMessage(), e);
+            throw new WebApplicationException("start LRA client request failed, try again later", e,
                     Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
         } finally {
             if (client != null) {

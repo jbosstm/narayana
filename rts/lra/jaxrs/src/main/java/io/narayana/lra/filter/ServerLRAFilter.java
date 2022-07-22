@@ -517,8 +517,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
             }
 
-            if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
-                    NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
+            if (responseContext.getStatus() == Response.Status.OK.getStatusCode()
+                && resourceInfo.getResourceMethod() != null
+                && NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
                 LRALogger.i18nLogger.warn_lraParticipantqForAsync(
                         resourceInfo.getResourceMethod().getDeclaringClass().getName(),
                         resourceInfo.getResourceMethod().getName(),
