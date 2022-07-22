@@ -164,6 +164,10 @@ public interface LraI18nLogger {
     @Message(id = 25034, value = "LRA Recovery cannot remove LRA id %s from the object store. The uid segment '%s' is probably invalid.")
     void warn_cannotRemoveUidRecord(String lraId, String uid, @Cause Throwable t);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25035, value = "The start LRA call failed with cause: %s")
+    void warn_startLRAFailed(String message, @Cause Throwable t);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
