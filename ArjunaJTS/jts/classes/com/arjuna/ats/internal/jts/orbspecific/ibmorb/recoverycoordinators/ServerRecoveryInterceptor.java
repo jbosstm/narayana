@@ -68,7 +68,7 @@ public class ServerRecoveryInterceptor
             JavaIdlRCDefaultServant.RCObjectId = context.context_data;
         }
         catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(ex);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ServerInitializer_1(ex);
         }
     }
 

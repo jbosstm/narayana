@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators;
 
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import org.omg.CORBA.ORB;
 import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.IOP.ServiceContext;
 import org.omg.PortableInterceptor.ForwardRequest;
@@ -70,7 +69,7 @@ public class ServerRecoveryInterceptor
             JavaIdlRCDefaultServant.RCObjectId = context.context_data;
         }
         catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(ex);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ServerInitializer_1(ex);
         }
     }
 

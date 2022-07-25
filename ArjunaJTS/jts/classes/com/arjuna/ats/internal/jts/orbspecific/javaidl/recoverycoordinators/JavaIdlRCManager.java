@@ -44,7 +44,6 @@ import org.omg.CORBA.NO_IMPLEMENT;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.RecoveryCoordinatorHelper;
-import org.omg.PortableServer.POA;
 
 /**
  * Implementation of RecoveryCreator for JavaIdl orb
@@ -106,7 +105,7 @@ public class JavaIdlRCManager implements RcvCoManager
                 if (JavaIdlRCManager._runWithoutDaemon)
                     throw new NO_IMPLEMENT();
                 else {
-                    jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_3();
+                    jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCManager_3();
 
                     rc = null;
                 }
@@ -114,7 +113,7 @@ public class JavaIdlRCManager implements RcvCoManager
         }
 
         catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_2(ex);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCManager_2(ex);
         }
 
         return rc;
@@ -122,12 +121,10 @@ public class JavaIdlRCManager implements RcvCoManager
 
     public void destroy (RecoveryCoordinator rc) throws SystemException
     {
-        // does nothing for JacORB
     }
 
     public void destroyAll (Object[] params) throws SystemException
     {
-        // does nothing for JacORB
     }
 
     private synchronized void initialise ()
@@ -146,13 +143,13 @@ public class JavaIdlRCManager implements RcvCoManager
                     if (iState != null)
                         ref_ReCoo = iState.unpackString();
                     else
-                        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_4();
+                        jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCManager_4();
                 }
                 catch (java.io.FileNotFoundException ex) {
-                    jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_4();
+                    jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCManager_4();
                 }
                 catch (Exception ex) {
-                    jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_5(ex);
+                    jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCManager_5(ex);
                 }
             }
         }

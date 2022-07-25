@@ -104,7 +104,7 @@ public class ClientForwardInterceptor
 		}
 	}
 	catch(Exception ex) {
-        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_4(ex);
+        jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ClientForwardInterceptor_4(ex);
     }
 
 
@@ -190,7 +190,7 @@ public class ClientForwardInterceptor
 			reco = RecoveryCoordinatorHelper.narrow(obj);
 		    }
 		catch (Exception e) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_2(e);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ClientForwardInterceptor_2(e);
         }
 		
 	    }
