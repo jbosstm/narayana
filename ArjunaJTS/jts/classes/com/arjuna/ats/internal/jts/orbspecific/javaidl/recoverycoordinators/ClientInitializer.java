@@ -78,7 +78,7 @@ public class ClientInitializer
 		(new ClientForwardInterceptor(theORB, piCurrent, outSlotId));
         }
         catch (Exception e) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientInitializer_1(e);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ClientInitializer_1(e);
         }
     }
 

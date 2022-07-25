@@ -262,151 +262,61 @@ public interface jtsI18NLogger {
 	@Message(id = 22054, value = "Invalid Uid:", format = MESSAGE_FORMAT)
 	public String get_orbspecific_invaliduid();
 
-	@Message(id = 22055, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_context_codeccreate();
-
-	@Message(id = 22056, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
-
-	@Message(id = 22057, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
-
-	@Message(id = 22058, value = "Context interceptor caught an unexpected exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_error(@Cause() Throwable arg0);
-
-	@Message(id = 22059, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_context_invalidparam();
-
-	@Message(id = 22060, value = "A server-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_context_sie();
-
-	@Message(id = 22061, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_srie(String arg0, @Cause() Throwable arg1);
-
-	@Message(id = 22062, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_interposition_codeccreate();
-
-	@Message(id = 22063, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
-
-	@Message(id = 22064, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
-
-	@Message(id = 22065, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_interposition_invalidparam();
-
-	@Message(id = 22066, value = "A server-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_interposition_sie();
-
-	@Message(id = 22067, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_srie(String arg0, @Cause() Throwable arg1);
-
-//	@Message(id = 22068, value = "Client Interceptor for RecoveryCoordinators created", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_1();
-
 	@Message(id = 22069, value = "Failed to retreive the Object reference of the default RecoverCoordinator Object.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_2(@Cause() Throwable arg0);
-
-//	@Message(id = 22070, value = "Failed to obtain the ObjectId string of the RecveryCoordinator target.", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_3();
+	public void warn_orbspecific_recoverycoordinators_ClientForwardInterceptor_2(@Cause() Throwable arg0);
 
 	@Message(id = 22071, value = "Failed to build service context with the ObjectId", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_4(@Cause() Throwable arg0);
+	public void warn_orbspecific_recoverycoordinators_ClientForwardInterceptor_4(@Cause() Throwable arg0);
 
 	@Message(id = 22072, value = "Failed in ClientInitializer::post_init -", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientInitializer_1(@Cause() Throwable arg0);
+	public void warn_orbspecific_recoverycoordinators_ClientInitializer_1(@Cause() Throwable arg0);
 
-//	@Message(id = 22073, value = "JacOrbDefaultServant replay_completion for recoverId {0}", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbDefaultServant_1(String arg0);
-
-//	@Message(id = 22074, value = "JacOrbDefaultServant replay_completion for ObjectId {0}", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbDefaultServant_2(String arg0);
-
-	@Message(id = 22075, value = "JacOrbServant.replay_completion got exception", format = MESSAGE_FORMAT)
+	@Message(id = 22075, value = "{0}.replay_completion got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCDefaultServant_3(@Cause() Throwable arg0);
-
-//	@Message(id = 22076, value = "JacOrbRCManager: Created reference for tran {0} = {1}", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_1(String arg0, String arg1);
+	public void warn_orbspecific_recoverycoordinators_RCDefaultServant_3(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22077, value = "RCManager.makeRC did not make rcvco reference", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_2(@Cause() Throwable arg0);
+	public void warn_orbspecific_recoverycoordinators_RCManager_2(@Cause() Throwable arg0);
 
 	@Message(id = 22078, value = "RCManager could not find file in object store.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_3();
+	public void warn_orbspecific_recoverycoordinators_RCManager_3();
 
 	@Message(id = 22079, value = "RCManager could not find file in object store during setup.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_4();
+	public void warn_orbspecific_recoverycoordinators_RCManager_4();
 
 	@Message(id = 22080, value = "Unexpected exception during IOR setup", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_5(@Cause() Throwable arg0);
+	public void warn_orbspecific_recoverycoordinators_RCManager_5(@Cause() Throwable arg0);
 
 	@Message(id = 22081, value = "Failed to create poa for recoverycoordinators", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(@Cause() Throwable arg0);
+	public void warn_orbspecific_recoverycoordinators_RCServiceInit_1(@Cause() Throwable arg0);
 
-//	@Message(id = 22082, value = "JacOrbRCServiceInit - set default servant and activated", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_2();
-
-	@Message(id = 22083, value = "JacOrbRCServiceInit - Failed to start RC service", format = MESSAGE_FORMAT)
+	@Message(id = 22083, value = "{0} - Failed to start RC service", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_3(@Cause() Throwable arg0);
-
-//	@Message(id = 22084, value = "Unable to create file ObjectId", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_4();
+	public void warn_orbspecific_recoverycoordinators_RCServiceInit_3(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22085, value = "Unable to create file ObjectId - security problems", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
-	public void fatal_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_5();
-
-//	@Message(id = 22086, value = "Starting RecoveryServer ORB on port {0} and address {1}", format = MESSAGE_FORMAT)
-//	@LogMessage(level = INFO)
-//	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(String arg0, String arg1);
+	public void fatal_orbspecific_recoverycoordinators_RCServiceInit_5();
 
 	@Message(id = 22087, value = "RecoveryServer using existing ORB", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
-	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a();
-
-//	@Message(id = 22088, value = "Failed to create orb and poa for transactional objects", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(@Cause() Throwable arg0);
+	public void info_orbspecific_recoverycoordinators_RCServiceInit_6a();
 
 	@Message(id = 22089, value = "RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_8();
-
-//	@Message(id = 22090, value = "JacOrb RecoveryCoordinator creator setup", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRecoveryInit_1();
+	public void warn_orbspecific_recoverycoordinators_RCServiceInit_8();
 
 	@Message(id = 22091, value = "Failed in ServerInitializer::post_init -", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(@Cause() Throwable arg0);
-
-//	@Message(id = 22092, value = "Failed to obtain the service context -", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_orbspecific_jacorb_recoverycoordinators_ServerRecoveryInterceptor_1();
+	public void warn_orbspecific_recoverycoordinators_ServerInitializer_1(@Cause() Throwable arg0);
 
 	@Message(id = 22093, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_context_codeccreate();
@@ -1039,12 +949,6 @@ public interface jtsI18NLogger {
     @Message(id = 22252, value = "Failed to remove old ObjectStore entry", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_recoveredServerTransaction_removeOldStoreEntry(@Cause() Throwable arg0);
-    
-	@Message(id = 22253, value = "A client-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
-	public String get_orbspecific_jacorb_interceptors_context_cie();
-
-    @Message(id = 22254, value = "A client-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
-    public String get_orbspecific_jacorb_interceptors_interposition_cie();
 
 	@Message(id = 22255, value = "A client-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_context_cie();

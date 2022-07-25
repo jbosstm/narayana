@@ -67,7 +67,7 @@ public class ServerInitializer
             info.add_server_request_interceptor (new ServerRecoveryInterceptor(theORB));
         }
         catch (Exception e) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(e);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_ServerInitializer_1(e);
         }
     }
 

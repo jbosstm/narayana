@@ -106,7 +106,7 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
         }
         /**/
         catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCDefaultServant_3(ex);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCDefaultServant_3(this.getClass().getName(), ex);
 
             return Status.StatusUnknown;
         }

@@ -89,7 +89,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                 POA rootPOA = _oa.rootPoa();
 
                 if (rootPOA == null) {
-                    jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_8();
+                    jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCServiceInit_8();
 
                     return null;
                 }
@@ -110,7 +110,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                 _poa = rootPOA.create_POA(poaName, rootPOA.the_POAManager(), policies);
             }
             catch (Exception ex) {
-                jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(ex);
+                jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCServiceInit_1(ex);
             }
         }
 
@@ -160,7 +160,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
             _orb = ORBManager.getORB();
             _oa = (RootOA) ORBManager.getPOA();
 
-            jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a();
+            jtsLogger.i18NLogger.info_orbspecific_recoverycoordinators_RCServiceInit_6a();
         }
     }
 
@@ -209,7 +209,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                     }
                 catch ( SecurityException sex )
                 {
-                    jtsLogger.i18NLogger.fatal_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_5();
+                    jtsLogger.i18NLogger.fatal_orbspecific_recoverycoordinators_RCServiceInit_5();
                 }
 
                 if (jtsLogger.logger.isDebugEnabled()) {
@@ -224,7 +224,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
 
                 return true;
             } catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_3(ex);
+            jtsLogger.i18NLogger.warn_orbspecific_recoverycoordinators_RCServiceInit_3(this.getClass().getName(), ex);
             return false;
         }
 
