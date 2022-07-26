@@ -303,14 +303,26 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         initTypeHandlers(System.getProperty(OBJ_STORE_BROWSER_HANDLERS, ""));
     }
 
+
     /**
-     * Constructor for default configuration of the object store browser.
+     * <p>This is the constructor for the default configuration of ObjStoreBrowser.</p>
+     *
+     * <p>This class has been designed with the assumption that only one instance of ObjStoreBrowser should be used.
+     * In other words, this class should be considered as a singleton class. In fact, if two ObjStoreBrowser instances
+     * are created, they may interfere with each other.</p>
      */
     public ObjStoreBrowser() {
         this(null);
     }
 
-    public ObjStoreBrowser(String logDir) {
+     /**
+     * <p>This is the constructor to configure ObjStoreBrowser with a path to load the Object Store.</p>
+     *
+     * <p>This class has been designed with the assumption that only one instance of ObjStoreBrowser should be used.
+     * In other words, this class should be considered as a singleton class. In fact, if two ObjStoreBrowser instances
+     * are created, they may interfere with each other.</p>
+     */
+   public ObjStoreBrowser(String logDir) {
         init(logDir);
         this.objStoreBrowserMBeanName = arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();
     }
