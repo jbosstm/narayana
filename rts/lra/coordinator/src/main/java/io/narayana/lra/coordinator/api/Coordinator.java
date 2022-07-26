@@ -58,10 +58,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
@@ -135,20 +133,6 @@ public class Coordinator extends Application {
 
     private final LRAService lraService;
     private final RecoveryCoordinator recoveryCoordinator;
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        HashSet<Class<?>> classes = new HashSet<>();
-        classes.add(Coordinator.class);
-        return classes;
-    }
-
-    @Override
-    public Set<Object> getSingletons() {
-        Set<Object> containerFilters = new HashSet<>();
-        containerFilters.add(new CoordinatorContainerFilter());
-        return containerFilters;
-    }
 
     public Coordinator() {
         lraService = LRARecoveryModule.getService();
