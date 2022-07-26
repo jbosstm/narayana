@@ -326,6 +326,16 @@ public class LRATest {
         }
     }
 
+    @ApplicationPath("/")
+    public static class LRACoordinator extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            HashSet<Class<?>> classes = new HashSet<>();
+            classes.add(Coordinator.class);
+            return classes;
+        }
+    }
+
     @BeforeClass
     public static void start() {
         System.setProperty("lra.coordinator.url", TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME));
@@ -345,7 +355,7 @@ public class LRATest {
 
         client = ClientBuilder.newClient();
         coordinatorPath = TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME);
-        server.deploy(Coordinator.class);
+        server.deploy(LRACoordinator.class);
         server.deployOldStyle(LRAParticipant.class);
 
         service = LRARecoveryModule.getService();

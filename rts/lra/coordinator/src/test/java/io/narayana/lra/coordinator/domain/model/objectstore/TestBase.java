@@ -50,6 +50,16 @@ public class TestBase {
         }
     }
 
+    @ApplicationPath("/")
+    public static class LRACoordinator extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            HashSet<Class<?>> classes = new HashSet<>();
+            classes.add(Coordinator.class);
+            return classes;
+        }
+    }
+
     @BeforeClass
     static void start() {
         System.setProperty("lra.coordinator.url", TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME));
@@ -64,7 +74,7 @@ public class TestBase {
         client = ClientBuilder.newClient();
 
         server = new UndertowJaxrsServer().start();
-        server.deploy(Coordinator.class);
+        server.deploy(LRACoordinator.class);
         server.deploy(TestBase.LRAInfo.class);
     }
 
