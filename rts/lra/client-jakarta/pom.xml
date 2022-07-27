@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2022 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>lra-parent</artifactId>
+    <version>5.13.1.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>lra-client-jakarta</artifactId>
+  <packaging>jar</packaging>
+  <name>LRA Client (Jakarta version)</name>
+  <description>LRA Client (Jakarta version)</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.transformer</groupId>
+            <artifactId>org.eclipse.transformer.cli</artifactId>
+            <version>${version.org.eclipse.transformer}</version>
+          </dependency>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>${version.ant-contrib}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>transform-jar</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${org.jboss.narayana.rts:lra-client:jar}"></arg>
+                  <arg value="${project.build.directory}/${project.build.finalName}.jar"></arg>
+                  <arg value="-q"></arg>
+                  <arg value="-o"></arg>
+                  <arg value="-tr"></arg>
+                  <arg value="${project.basedir}/../../../jakarta-rules/jakarta-renames.properties"></arg>
+                  <classpath>
+                    <pathelement path="${plugin_classpath}"></pathelement>
+                  </classpath>
+                </java>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>transform-sources-jar</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.rts:lra-client:jar}" property="source" regexp="\.jar$" replace="-sources.jar"></ac:propertyregex>
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${source}"></arg>
+                  <arg value="${project.build.directory}/${project.build.finalName}-sources.jar"></arg>
+                  <arg value="-q"></arg>
+                  <arg value="-o"></arg>
+                  <arg value="-tr"></arg>
+                  <arg value="${project.basedir}/../../../jakarta-rules/jakarta-renames.properties"></arg>
+                  <classpath>
+                    <pathelement path="${plugin_classpath}"></pathelement>
+                  </classpath>
+                </java>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>transform-javadoc</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.rts:lra-client:jar}" property="source" regexp="\.jar$" replace="-javadoc.jar"></ac:propertyregex>
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${source}"></arg>
+                  <arg value="${project.build.directory}/${project.build.finalName}-javadoc.jar"></arg>
+                  <arg value="-q"></arg>
+                  <arg value="-o"></arg>
+                  <arg value="-tr"></arg>
+                  <arg value="${project.basedir}/../../../jakarta-rules/jakarta-renames.properties"></arg>
+                  <classpath>
+                    <pathelement path="${plugin_classpath}"></pathelement>
+                  </classpath>
+                </java>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <inherited>false</inherited>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>javadoc</id>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
+                      <type>jar</type>
+                      <classifier>javadoc</classifier>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+              <execution>
+                <id>sources</id>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+                      <type>jar</type>
+                      <classifier>sources</classifier>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
