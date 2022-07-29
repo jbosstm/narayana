@@ -353,53 +353,37 @@ function build_narayana {
 }
 
 function clone_as {
-  echo "Cloning AS sources from https://github.com/jbosstm/jboss-as.git"
+  repo="https://github.com/wildfly/wildfly.git" # was https://github.com/jbosstm/jboss-as.git
+  AS_BRANCH="26.x"
+  echo "Cloning AS sources from $repo"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of WildFly"
     cd jboss-as
 
-    git remote | grep upstream
-    if [ $? -ne 0 ]; then
-      git remote add upstream https://github.com/wildfly/wildfly.git
-    fi
     #Abort any partially complete rebase
     git rebase --abort
-    git checkout 5_BRANCH
-    [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
+    git checkout $AS_BRANCH
+    [ $? -eq 0 ] || fatal "git checkout $AS_BRANCH failed"
     git fetch
-    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
+    [ $? -eq 0 ] || fatal "git fetch $repo failed"
     git clean -f -d -x
     [ $? -eq 0 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
-    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
-    [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
+    git clone https://github.com/wildfly/wildfly.git jboss-as
+    [ $? -eq 0 ] || fatal "git clone $repo failed"
 
     cd jboss-as
-
-    git remote add upstream https://github.com/wildfly/wildfly.git
+    git checkout $AS_BRANCH
   fi
+  git remote add upstream https://github.com/wildfly/wildfly.git
 
-  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
-  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-  [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
-
-  git fetch upstream
-  echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/main)
-  echo "This is the AS_BRANCH $AS_BRANCH commit"
-  echo $(git rev-parse HEAD)
-
-  echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase upstream main
+  echo "Rebasing wildfly upstream/${AS_BRANCH}"
+  git pull --rebase upstream $AS_BRANCH
   [ $? -eq 0 ] || fatal "git rebase failed"
 
   if [ $REDUCE_SPACE = 1 ]; then
@@ -453,8 +437,8 @@ function download_as {
   # clean up any previously downloaded zip files (this will not clean up old directories)
   rm -f artifacts.zip wildfly-*.zip
 
-  # download the latest wildfly nighly build (which we know supports Java 11)
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  # download the latest wildfly 26 nighly build (which we know supports Java 11)
+  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip}
   wget -nv ${AS_LOCATION}
   ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
   ### which is changing time to time
@@ -467,6 +451,7 @@ function download_as {
   rm wildfly-latest-SNAPSHOT.zip
   zip=$(ls wildfly-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
 
+  unset JBOSS_HOME # if we've build wildfly then JBOSS_HOME will already be set but the download should override that
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
   rm -rf $JBOSS_HOME # clean up any previous unzip
 
@@ -986,8 +971,13 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_CLONE = 1 ] && clone_as "$@"
-[ $AS_BUILD = 1 ] && build_as "$@"
+
+if [ "$_jdk" -ge 17 ]; then
+  [ $AS_BUILD = 1 ] && AS_DOWNLOAD=1 # 26.x branch won't build on JDK 17 so download it instead
+else
+  [ $AS_CLONE = 1 ] && clone_as "$@" # why would we not set AS_BUILD=1 here
+  [ $AS_BUILD = 1 ] && build_as "$@" # should really set AS_DOWNLOAD=0 - not sure why we don't do that
+fi
 [ $AS_DOWNLOAD = 1 ] && download_as "$@"
 [ $AS_TESTS = 1 ] && tests_as "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
