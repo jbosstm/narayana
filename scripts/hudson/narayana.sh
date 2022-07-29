@@ -369,6 +369,9 @@ function clone_as {
   fi
 
   git clone $REPO jboss-as || fatal "git clone $REPO failed"
+  cd jboss-as
+  git checkout 26.x
+  [ $? -eq 0 ] || fatal "Could not checkout AS branch 26.x"
 
   if [ $REDUCE_SPACE = 1 ]; then
     echo "Deleting git dir to reduce disk usage"
@@ -424,10 +427,10 @@ function download_as {
   # clean up any previously downloaded zip files (this will not clean up old directories)
   rm -f artifacts.zip wildfly-*.zip
 
-  # download the latest wildfly nighly build (which we know supports Java 17)
+  # download the latest wildfly nighly build (which we know supports Java 11)
   # re-enable downloading main when narayana migrates to jakarta - see JBTM-3588
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
-  #AS_LOCATION="https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip"
+  #AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip}
   wget -nv ${AS_LOCATION}
   ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
   ### which is changing time to time
