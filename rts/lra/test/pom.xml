@@ -423,8 +423,10 @@
       </activation>
       <properties>
         <!-- At least org.eclipse.microprofile.lra.tck.TckUnknownStatusTests needs java.base/java.lang and java.base/java.lang.reflect -->
+        <!-- Booting a WildFly 26.x server for the TCK tests seems to need the java.base/java.util -->
         <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED
-          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvm.args.modular>
+          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+          --add-opens=java.base/java.util=ALL-UNNAMED</jvm.args.modular>
       </properties>
     </profile>
   </profiles>
