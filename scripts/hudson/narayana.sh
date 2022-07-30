@@ -459,6 +459,29 @@ function download_as {
   # init files under JBOSS_HOME before tests are started
   init_jboss_home
 
+  if [ $NARAYANA_BUILD = 1 ]; then
+    cp $WORKSPACE/rts/at/tx/target/restat-api-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/rts/main/restat-api-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/rts/at/util/target/restat-util-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/rts/main/restat-util-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/rts/at/integration/target/restat-integration-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/rts/main/restat-integration-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/rts/at/bridge/target/restat-bridge-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/rts/main/restat-bridge-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/txframework/target/txframework-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/txframework/main/txframework-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/compensations/target/compensations-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/narayana/compensations/main/compensations-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/txbridge/target/jbosstxbridge-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/xts/main/jbosstxbridge-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/XTS/jbossxts/target/jbossxts-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/xts/main/jbossxts-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/ArjunaJTS/integration/target/narayana-jts-integration-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/jts/integration/main/narayana-jts-integration-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+    cp $WORKSPACE/ArjunaJTS/narayana-jts-idlj/target/narayana-jts-idlj-${NARAYANA_CURRENT_VERSION}.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/jts/main/narayana-jts-idlj-*.jar
+    [ $? -eq 0 ] || fatal "Could not find a required jar to overwrite"
+  fi
+
   cd $WORKSPACE
 }
 
