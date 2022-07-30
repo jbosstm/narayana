@@ -94,7 +94,7 @@ function init_test_options {
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -116,7 +116,7 @@ function init_test_options {
             fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
           fi
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=1 AS_DOWNLOAD=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -128,7 +128,7 @@ function init_test_options {
             fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
           fi
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=1 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -140,7 +140,7 @@ function init_test_options {
             fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
           fi
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=0 AS_CLONE=1 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
           export TOMCAT_TESTS=1 LRA_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
@@ -153,7 +153,7 @@ function init_test_options {
             fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
           fi
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=0 AS_CLONE=1 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -189,7 +189,7 @@ function init_test_options {
     elif [[ $PROFILE == "LRA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=1 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=1
         else
@@ -414,6 +414,12 @@ function tests_as {
   fi
 
   cd "${WORKSPACE}/jboss-as"
+  if [ $AS_BUILD = 0 ]; then
+    rm ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java
+    [ $? -eq 0 ] || fatal "Removing ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java failed"
+    ./build.sh clean install -pl :wildfly-testsuite-shared -am -DskipTests
+    [ $? -eq 0 ] || fatal "Building wildfly-testsuite-shared failed"
+  fi
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./integration-tests.sh -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae "$@" clean verify
   [ $? -eq 0 ] || fatal "AS tests failed"
   cd $WORKSPACE
@@ -508,7 +514,15 @@ function osgi_tests {
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  if [ $AS_BUILD = 0 ]; then
+    rm ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java
+    [ $? -eq 0 ] || fatal "Removing ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java failed"
+    ./build.sh clean install -pl :wildfly-testsuite-shared -am -DskipTests
+    [ $? -eq 0 ] || fatal "Building wildfly-testsuite-shared failed"
+    ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" "$@" test
+  else
+    ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  fi
   [ $? -eq 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -516,7 +530,15 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  if [ $AS_BUILD = 0 ]; then
+    rm ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java
+    [ $? -eq 0 ] || fatal "Removing ./testsuite/shared/src/main/java/org/jboss/as/test/integration/security/common/AddRoleLoginModule.java failed"
+    ./build.sh clean install -pl :wildfly-testsuite-shared -am -DskipTests
+    [ $? -eq 0 ] || fatal "Building wildfly-testsuite-shared failed"
+    ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" "$@" test
+  else
+    ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  fi
   [ $? -eq 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
