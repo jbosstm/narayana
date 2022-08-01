@@ -305,6 +305,21 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+        <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
+        <property>
+          <name>arqProfileActivated</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <!-- org.jboss.narayana.rest.bridge.inbound.test.integration.AnnotationsTestCase needs this -->
+        <jvm.args.modular>--add-opens=java.base/java.util=ALL-UNNAMED</jvm.args.modular>
+      </properties>
+    </profile>
   </profiles>
 
 </project>

@@ -555,11 +555,11 @@ function jta_as_tests {
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f rts/at/integration/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f rts/at/integration/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "REST-AT Integration Test failed"
 
   echo "#0. REST-AT To JTA Bridge Test"
-  ./build.sh -f rts/at/bridge/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f rts/at/bridge/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
