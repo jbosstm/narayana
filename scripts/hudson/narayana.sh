@@ -574,7 +574,7 @@ function lra_tests {
 
 function jta_cdi_tests {
   echo "#0. JTA CDI Tests"
-  ./build.sh -f ArjunaJTA/cdi/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/cdi/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "JTA CDI Test failed"
 }
 
