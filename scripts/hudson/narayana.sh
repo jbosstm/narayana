@@ -583,9 +583,9 @@ function compensations_tests {
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f txframework/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "txframework build failed"
-  ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "compensations build failed"
-  ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "compensations build failed"
   ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "compensations build failed"
