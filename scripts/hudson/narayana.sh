@@ -652,7 +652,7 @@ function tx_bridge_tests {
   [ $? -eq 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
+  ./build.sh -f txbridge/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
   [ $? -eq 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
