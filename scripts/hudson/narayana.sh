@@ -474,27 +474,37 @@ function osgi_tests {
 }
 
 function xts_as_tests {
-  echo "#-1. XTS AS Integration Test"
+  echo "#-1. XTS AS Tests"
   cd ${WORKSPACE}/jboss-as
+  ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "XTS AS Test failed"
   ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
 
 function rts_as_tests {
-  echo "#-1. RTS AS Integration Test"
+  echo "#-1. RTS AS Tests"
   cd ${WORKSPACE}/jboss-as
+  ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "RTS AS Test failed"
   ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
 
 function jta_as_tests {
-  echo "#-1. JTA AS Integration Test"
+  echo "#-1. JTA AS Tests"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
   # If ARQ_PROF is not set an arquillian profile will not run but I guess the jdk17 profile would/could be activated still
   ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -DarqProfileActivated=$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
+  cd ${WORKSPACE}/jboss-as
+  # Execute some directly relevant tests from modules of the application server
+  ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "JTA AS transactions Test failed"
+  ./build.sh -f iiop-openjdk/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "JTA AS iiop-openjdk Test failed"
   cd ${WORKSPACE}
 }
 
