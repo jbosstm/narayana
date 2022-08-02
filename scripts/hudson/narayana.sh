@@ -392,8 +392,15 @@ function build_as {
   # building WildFly
   [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   [ "$_jdk" -ge 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
+
+  export OLD_JAVA_HOME=$JAVA_HOME
+  export OLD_PATH=$PATH
+  export JAVA_HOME=$JDK11_JAVA_HOME
+  export PATH=$JAVA_HOME/bin:$PATH
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS build failed"
+  export JAVA_HOME=$OLD_JAVA_HOME
+  export PATH=$OLD_PATH
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
