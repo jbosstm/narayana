@@ -16,4 +16,23 @@
 	<packaging>jar</packaging>
 	<name>Narayana: XTS WSTX11-interop</name>
 	<description>JBoss Transactions WS-Addressing interop test</description>
+  <profiles>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+          <jdk>[17,)</jdk>
+          <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
+          <property>
+            <name>arqProfileActivated</name>
+            <value>true</value>
+          </property>
+      </activation>
+      <properties>
+          <!-- At least com.jboss.transaction.txinterop.interop.ATTest needs this -->
+          <jvm.args.modular>
+              --add-opens=java.base/java.util=ALL-UNNAMED
+          </jvm.args.modular>
+      </properties>
+    </profile>
+  </profiles>
 </project>

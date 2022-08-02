@@ -610,17 +610,17 @@ function xts_tests {
     ./build.sh -f XTS/localjunit/pom.xml -B --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS/localjunit/pom.xml failed"
   else
-    ./build.sh -f XTS/localjunit/unit/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/unit/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit unit build failed"
-    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit disabled-context-propagation build failed"
-    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit WSTX11 build failed"
-    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
     ./build.sh -f XTS/localjunit/xtstest/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit xtstest build failed (no test run)"
-    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -fae -B -DarqProfileActivated=true -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? -eq 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
 
