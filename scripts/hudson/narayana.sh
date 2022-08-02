@@ -353,37 +353,53 @@ function build_narayana {
 }
 
 function clone_as {
-  repo="https://github.com/wildfly/wildfly.git" # was https://github.com/jbosstm/jboss-as.git
-  AS_BRANCH="26.x"
-  echo "Cloning AS sources from $repo"
+  echo "Cloning AS sources from https://github.com/jbosstm/jboss-as.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of WildFly"
     cd jboss-as
 
+    git remote | grep upstream
+    if [ $? -ne 0 ]; then
+      git remote add upstream https://github.com/wildfly/wildfly.git
+    fi
     #Abort any partially complete rebase
     git rebase --abort
-    git checkout $AS_BRANCH
-    [ $? -eq 0 ] || fatal "git checkout $AS_BRANCH failed"
+    git checkout 5_BRANCH
+    [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
-    [ $? -eq 0 ] || fatal "git fetch $repo failed"
+    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
+    git reset --hard jbosstm/5_BRANCH
+    [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
     [ $? -eq 0 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
-    git clone https://github.com/wildfly/wildfly.git jboss-as
-    [ $? -eq 0 ] || fatal "git clone $repo failed"
+    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
+    [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
-    git checkout $AS_BRANCH
-  fi
-  git remote add upstream https://github.com/wildfly/wildfly.git
 
-  echo "Rebasing wildfly upstream/${AS_BRANCH}"
-  git pull --rebase upstream $AS_BRANCH
+    git remote add upstream https://github.com/wildfly/wildfly.git
+  fi
+
+  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
+  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
+  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+  [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
+
+  git fetch upstream
+  echo "This is the JBoss-AS commit"
+  echo $(git rev-parse upstream/main)
+  echo "This is the AS_BRANCH $AS_BRANCH commit"
+  echo $(git rev-parse HEAD)
+
+  echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
+  git pull --rebase upstream main
   [ $? -eq 0 ] || fatal "git rebase failed"
 
   if [ $REDUCE_SPACE = 1 ]; then
@@ -395,20 +411,27 @@ function clone_as {
 }
 
 function build_as {
-  echo "Building JBoss EAP/WildFly"
+  REPO="https://github.com/wildfly/wildfly.git"
+  AS_BRANCH=27.0.0.Alpha1
+  echo "Building WildFly $AS_BRANCH"
 
-  cd $WORKSPACE/jboss-as
+  cd $WORKSPACE
+  if [ -d jboss-as ]; then
+    rm -rf jboss-as # start afresh
+  fi
+  git clone $REPO jboss-as || fatal "git clone $REPO failed"
+  cd jboss-as
+
+  git checkout $AS_BRANCH || fatal "git checkout $AS_BRANCH failed"
 
   # building WildFly
   [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   [ "$_jdk" -ge 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
-  [ $? -eq 0 ] || fatal "AS build failed"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" || fatal "AS build failed"
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-  JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
-  export JBOSS_HOME=`echo  $JBOSS_HOME`
+  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
 
   # init files under JBOSS_HOME before AS TESTS is started
   init_jboss_home
@@ -437,8 +460,10 @@ function download_as {
   # clean up any previously downloaded zip files (this will not clean up old directories)
   rm -f artifacts.zip wildfly-*.zip
 
-  # download the latest wildfly 26 nighly build (which we know supports Java 11)
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip}
+  # download the latest wildfly nighly build (which we know supports Java 17)
+  # re-enable downloading main when narayana migrates to jakarta - see JBTM-3588
+  #AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  AS_LOCATION="https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip"
   wget -nv ${AS_LOCATION}
   ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
   ### which is changing time to time
@@ -451,16 +476,14 @@ function download_as {
   rm wildfly-latest-SNAPSHOT.zip
   zip=$(ls wildfly-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
 
-  unset JBOSS_HOME # if we've build wildfly then JBOSS_HOME will already be set but the download should override that
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
+  echo "JBOSS_HOME=$JBOSS_HOME"
   rm -rf $JBOSS_HOME # clean up any previous unzip
 
   unzip -qo $zip
   [ $? -ne 0 ] && fatal "Cannot unzip wildfly zip file: $zip"
 
   [ -d "${JBOSS_HOME}" ] || fatal "After unzipping the file '$zip', '${JBOSS_HOME}' does not exist"
-
-  echo JBOSS_HOME=$JBOSS_HOME
 
   # clean up downloaded zip files
   rm -f wildfly-*.zip artifacts.zip
@@ -969,18 +992,11 @@ export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThr
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
-AS_BUILD=1
-LRA_TESTS=0
 
-[ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-
-if [ "$_jdk" -ge 17 ]; then
-  [ $AS_BUILD = 1 ] && AS_DOWNLOAD=1 # 26.x branch won't build on JDK 17 so download it instead
-else
-  [ $AS_CLONE = 1 ] && clone_as "$@" # why would we not set AS_BUILD=1 here
-  [ $AS_BUILD = 1 ] && build_as "$@" # should really set AS_DOWNLOAD=0 - not sure why we don't do that
-fi
-[ $AS_DOWNLOAD = 1 ] && download_as "$@"
+[ $NARAYANA_BUILD = 1 ] && build_narayana "$@" # NB we should do this after building the AS since it takes longer
+[ $AS_CLONE = 1 ] && AS_BUILD=1 # keep it simple and assume that we are cloning the AS because we want to build it
+[ $AS_DOWNLOAD = 1 ] && AS_BUILD=1 # keep it simple and build it from scratch - we can revisit it later if required
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $AS_TESTS = 1 ] && tests_as "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
