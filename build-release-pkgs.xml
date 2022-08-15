@@ -200,7 +200,7 @@
     </tstamp>
     
     <!-- Create new current Narayana release configuration -->
-    <delete dir="${config-dir}current_narayana_release.yml"/>
+    <delete file="${config-dir}current_narayana_release.yml"/>
     <touch file="${config-dir}current_narayana_release.yml"/>
     <echo file="${config-dir}current_narayana_release.yml">version: ${tag}
 date: ${date}
