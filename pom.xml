@@ -212,7 +212,6 @@
         <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
         <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <html.googleAnalyticsId>UA-25576080-1</html.googleAnalyticsId>
         <docbookVersion>1.72.0</docbookVersion>
         <version.maven-jdocbook-plugin>2.3.5</version.maven-jdocbook-plugin>
         <version.org.jboss.pressgang>3.1.2</version.org.jboss.pressgang>
@@ -230,13 +229,6 @@
                         <plugin>
                             <groupId>org.jboss.maven.plugins</groupId>
                             <artifactId>maven-jdocbook-plugin</artifactId>
-                            <configuration>
-                                <options>
-                                    <transformerParameters>
-                                        <html.googleAnalyticsId>${html.googleAnalyticsId}</html.googleAnalyticsId>
-                                    </transformerParameters>
-                                </options>
-                            </configuration>
                         </plugin>
                     </plugins>
                 </pluginManagement>
