@@ -98,8 +98,8 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
                 .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
                         "META-INF/services/javax.ws.rs.client.ClientBuilder");
 
-        // adding TCK required SPI implementations
-        archive.addPackage(NarayanaLRARecovery.class.getPackage());
+        // adding TCK required SPI implementation
+        archive.addClass(NarayanaLRARecovery.class);
         archive.addAsResource(new StringAsset("io.narayana.lra.arquillian.spi.NarayanaLRARecovery"),
                 "META-INF/services/org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService");
 
