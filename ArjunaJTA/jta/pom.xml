@@ -26,6 +26,8 @@
   <packaging>jar</packaging>
 
   <properties>
+    <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
+      -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
     <server.jvm.args>
       ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
     </server.jvm.args>
@@ -274,7 +276,7 @@
         <activeByDefault>false</activeByDefault>
         <property>
           <name>arqProfileActivated</name>
-          <value>true</value>
+          <value>arq</value>
         </property>
       </activation>
       <dependencies>
@@ -391,6 +393,131 @@
       </build>
     </profile>
     <profile>
+      <id>arqIPv6</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>arqProfileActivated</name>
+          <value>arqIPv6</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <version>${version.org.wildfly.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss</groupId>
+          <artifactId>jboss-transaction-spi</artifactId>
+          <version>${version.org.jboss.jboss-transaction-spi}</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.jboss.logging</groupId>
+              <artifactId>jboss-logging-spi</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging</artifactId>
+          <version>${version.org.jboss.logging.jboss-logging}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+          <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.interceptor}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.transaction</groupId>
+          <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.transaction}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${version.junit}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <version>${version.postgresql}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${version.com.h2database}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.protocol</groupId>
+          <artifactId>arquillian-protocol-servlet</artifactId>
+          <version>${version.org.jboss.arquillian.core}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${version.javax.enterprise}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.arquillian.junit</groupId>
+          <artifactId>arquillian-junit-container</artifactId>
+          <version>${version.org.jboss.arquillian.core}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+          <version>${version.javax.annotation}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.ejb</groupId>
+          <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.ejb}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+              <argLine>${ipv6.server.jvm.args}</argLine>
+              <systemPropertyVariables combine.children="append">
+                <!--
+                                    Used in arquillian.xml
+                                -->
+                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
+                <node.address>[::1]</node.address>
+              </systemPropertyVariables>
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+              <excludes>
+                <exclude>**/io/narayana/perf/product/*</exclude>
+              </excludes>
+              <includes>
+                <include>**/integration/*IntegrationTest.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>commitMarkableResourcePerf</id>
       <dependencies>
         <dependency>
@@ -473,7 +600,6 @@
             <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
             <property>
               <name>arqProfileActivated</name>
-              <value>true</value>
             </property>
         </activation>
         <properties>

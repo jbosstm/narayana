@@ -498,7 +498,8 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -DarqProfileActivated=true $CODE_COVERAGE_ARGS "$@" test
+  # If ARQ_PROF is not set an arquillian profile will not run but I guess the jdk17 profile would/could be activated still
+  ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -DarqProfileActivated=$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
