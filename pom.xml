@@ -221,7 +221,8 @@
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>5.7.1</version.junit.jupiter>
     <version.mariadb>1.2.2</version.mariadb>
-    <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
+    <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
+    <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
     <version.maven.jandex-plugin>1.0.6</version.maven.jandex-plugin>
     <version.mysql>8.0.25</version.mysql>
@@ -373,6 +374,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>${version.maven-surefire-plugin}</version>
           <configuration>
             <argLine>${surefireArgLine}</argLine>
             <forkMode>pertest</forkMode>
