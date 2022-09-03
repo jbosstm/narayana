@@ -26,8 +26,8 @@ import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestATRecoveryModule;
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestBARecoveryModule;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 /**
  * A service bean used to run XTS service tests at JBoss startup. A specific test is configurerd by setting an

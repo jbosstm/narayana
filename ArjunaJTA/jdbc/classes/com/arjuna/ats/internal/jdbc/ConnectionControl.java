@@ -32,7 +32,7 @@
 package com.arjuna.ats.internal.jdbc;
 
 import javax.sql.XADataSource;
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 

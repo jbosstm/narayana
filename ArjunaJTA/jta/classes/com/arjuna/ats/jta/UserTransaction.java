@@ -45,13 +45,13 @@ public class UserTransaction
 	 * @return The user transaction bound to the appropriate JNDI context
 	 */
 
-	public static synchronized javax.transaction.UserTransaction userTransaction (InitialContext ctx)
+	public static synchronized jakarta.transaction.UserTransaction userTransaction (InitialContext ctx)
 	{
-		javax.transaction.UserTransaction userTransaction = null;
+		jakarta.transaction.UserTransaction userTransaction = null;
 
 		try
 		{
-			userTransaction = (javax.transaction.UserTransaction) ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionJNDIContext());
+			userTransaction = (jakarta.transaction.UserTransaction) ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionJNDIContext());
 		}
 		catch (Exception e)
 		{
@@ -68,7 +68,7 @@ public class UserTransaction
 	 *         instantiation failed.
 	 */
 	
-	public static synchronized javax.transaction.UserTransaction userTransaction ()
+	public static synchronized jakarta.transaction.UserTransaction userTransaction ()
 	{
 		return jtaPropertyManager.getJTAEnvironmentBean().getUserTransaction();
 	}

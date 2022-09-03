@@ -38,7 +38,7 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * The participant completion coordinator state engine

@@ -38,7 +38,7 @@ import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)

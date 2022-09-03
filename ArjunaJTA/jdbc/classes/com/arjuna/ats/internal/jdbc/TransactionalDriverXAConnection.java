@@ -70,7 +70,7 @@ public interface TransactionalDriverXAConnection
      * @since JTS 2.2.
      */
 
-    public boolean setTransaction (javax.transaction.Transaction tx);
+    public boolean setTransaction (jakarta.transaction.Transaction tx);
 
     /**
      * Is this the same transaction?
@@ -80,7 +80,7 @@ public interface TransactionalDriverXAConnection
      * @since JTS 2.2.
      */
 
-    public boolean validTransaction (javax.transaction.Transaction tx);
+    public boolean validTransaction (jakarta.transaction.Transaction tx);
  
 }
 

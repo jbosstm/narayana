@@ -34,8 +34,8 @@ package com.hp.mwtests.ts.jta.jts.basic;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.Test;
 
@@ -47,7 +47,7 @@ import com.arjuna.orbportability.RootOA;
 
 class TWorker extends Thread
 {
-    public TWorker (javax.transaction.Transaction tx, TWorker driver)
+    public TWorker (jakarta.transaction.Transaction tx, TWorker driver)
     {
         _tx = tx;
         _success = true;
@@ -111,7 +111,7 @@ public class ThreadedCommit
         jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
         if (tm != null)
@@ -120,7 +120,7 @@ public class ThreadedCommit
 
             tm.begin();
 
-            javax.transaction.Transaction theTransaction = tm.suspend();
+            jakarta.transaction.Transaction theTransaction = tm.suspend();
 
             TWorker worker1 = new TWorker(theTransaction, null);
             TWorker worker2 = new TWorker(theTransaction, worker1);

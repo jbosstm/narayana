@@ -22,7 +22,7 @@
 
 package com.jboss.transaction.wstf.interop;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -85,7 +85,7 @@ public class Sc007Test {
                 .addAsResource("com/jboss/transaction/wstf/test/processor.xsl")
                 .addAsWebInfResource("web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
+                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
     }
 
     @BeforeClass()

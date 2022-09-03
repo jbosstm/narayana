@@ -31,8 +31,8 @@ package com.arjuna.ats.jtax.tests.implicit.impl;
  * $Id: RemoteImpl.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jtax.tests.resources.ExampleXAResource;

@@ -33,11 +33,11 @@ package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca;
 
 import java.util.List;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicCommitException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;

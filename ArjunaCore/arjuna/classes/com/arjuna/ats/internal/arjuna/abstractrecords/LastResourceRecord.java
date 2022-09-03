@@ -180,8 +180,8 @@ public class LastResourceRecord extends AbstractRecord
             // FINISH_ERROR is used for 2PC there was an error and expecting recovery will retry (not available here)
             //  no exception thrown to the caller
             // ONE_PHASE_ERROR assuming rollback but we don't know the outcome (was rolled-back or committed in the RM)
-            //  javax.transaction.RollbackException thrown to the caller
-            // HEURISTIC_MIXED used to get javax.transaction.HeuristicMixedException to the caller
+            //  jakarta.transaction.RollbackException thrown to the caller
+            // HEURISTIC_MIXED used to get jakarta.transaction.HeuristicMixedException to the caller
             return TwoPhaseOutcome.HEURISTIC_MIXED;
         }
     }

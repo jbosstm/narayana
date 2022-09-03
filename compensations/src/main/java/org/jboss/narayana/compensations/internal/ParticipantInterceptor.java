@@ -22,8 +22,8 @@
 
 package org.jboss.narayana.compensations.internal;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 
 /**

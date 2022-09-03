@@ -2,8 +2,8 @@ package com.hp.mwtests.ts.jta.basic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.RollbackException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.RollbackException;
 import javax.transaction.xa.XAException;
 
 import org.junit.Test;

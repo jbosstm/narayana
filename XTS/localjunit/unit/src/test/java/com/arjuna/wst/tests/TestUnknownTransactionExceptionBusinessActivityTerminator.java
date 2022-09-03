@@ -31,7 +31,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class TestUnknownTransactionExceptionBusinessActivityTerminator implements BusinessActivityTerminator
 {

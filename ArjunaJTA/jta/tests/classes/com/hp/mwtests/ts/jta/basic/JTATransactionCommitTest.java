@@ -20,8 +20,8 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.Test;
 

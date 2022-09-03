@@ -12,9 +12,9 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationService;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationService;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.Map;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;

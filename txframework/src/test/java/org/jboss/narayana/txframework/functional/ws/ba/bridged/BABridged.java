@@ -24,8 +24,8 @@ package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
-import javax.ejb.Remote;
-import javax.jws.WebMethod;
+import jakarta.ejb.Remote;
+import jakarta.jws.WebMethod;
 
 @Remote
 public interface BABridged {

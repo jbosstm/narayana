@@ -301,7 +301,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
+            <artifactId>jakarta.json</artifactId>
             <version>${version.glassfish.json}</version>
             <scope>test</scope>
         </dependency>
@@ -312,7 +312,7 @@
             <version>${version.org.jboss.jboss-transaction-spi}</version>
             <scope>provided</scope>
         </dependency><dependency>
-        <groupId>javax.xml.bind</groupId>
+        <groupId>jakarta.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
         <version>${version.jaxb}</version>
         <scope>provided</scope>

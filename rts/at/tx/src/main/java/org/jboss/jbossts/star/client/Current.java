@@ -21,7 +21,7 @@
  */
 package org.jboss.jbossts.star.client;
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;

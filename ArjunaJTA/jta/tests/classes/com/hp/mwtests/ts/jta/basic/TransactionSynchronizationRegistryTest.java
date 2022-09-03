@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class TransactionSynchronizationRegistryTest
     @Test
     public void testTSR() throws Exception {
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         TransactionSynchronizationRegistry tsr = new TransactionSynchronizationRegistryImple();
 
@@ -85,7 +85,7 @@ public class TransactionSynchronizationRegistryTest
     @Test
     public void testTSRUseAfterCompletion() throws Exception {
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         final CompletionCountLock ccl = new CompletionCountLock(2);
         tm.begin();

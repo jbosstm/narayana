@@ -31,7 +31,7 @@ import com.arjuna.ats.jta.utils.JTAHelper;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.transaction.xa.Xid;
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 
 /**
  * Provides method call mapping between WS-AT Volatile Participant interface
@@ -151,7 +151,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
     /**
      * Invoke afterCompletion on the subordinate JTA tx.
      *
-     * @param status a javax.transaction.Status value, normally STATUS_COMMITTED or STATUS_ROLLEDBACK
+     * @param status a jakarta.transaction.Status value, normally STATUS_COMMITTED or STATUS_ROLLEDBACK
      */
     private void afterCompletion(int status)
     {

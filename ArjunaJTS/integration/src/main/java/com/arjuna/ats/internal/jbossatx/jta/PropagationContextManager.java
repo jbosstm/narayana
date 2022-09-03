@@ -37,7 +37,7 @@ import org.jboss.tm.TransactionPropagationContextImporter;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.naming.spi.ObjectFactory;
 import javax.naming.Name;
 import javax.naming.Context;
@@ -119,7 +119,7 @@ public class PropagationContextManager
             jbossatxLogger.logger.trace("PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = " + tpc);
         }
 
-        javax.transaction.TransactionManager tm = TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = TransactionManager.transactionManager();
 
         if (tpc instanceof String)
         {

@@ -38,12 +38,12 @@ import javax.sql.DataSource;
 import javax.sql.PooledConnection;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import io.narayana.perf.Measurement;
@@ -78,7 +78,7 @@ public class PerformanceTestCommitMarkableResource extends
         String fullTestName = getClass().getName() + testName;
 
         Worker<Void> worker = new Worker<Void> () {
-            javax.transaction.TransactionManager tm = null;
+            jakarta.transaction.TransactionManager tm = null;
             @Override
             public void init() {
                 tm = com.arjuna.ats.jta.TransactionManager.transactionManager();

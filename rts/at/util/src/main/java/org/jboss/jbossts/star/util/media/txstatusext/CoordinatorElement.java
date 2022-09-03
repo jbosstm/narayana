@@ -17,9 +17,9 @@
  */
 package org.jboss.jbossts.star.util.media.txstatusext;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import java.util.ArrayList;
 import java.util.Date;

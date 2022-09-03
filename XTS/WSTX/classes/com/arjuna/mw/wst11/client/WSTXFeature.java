@@ -21,7 +21,7 @@
 
 package com.arjuna.mw.wst11.client;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.jboss.ws.api.configuration.AbstractClientFeature;
 

@@ -23,8 +23,8 @@
  */
 package org.jboss.jbossts.txbridge.inbound;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 

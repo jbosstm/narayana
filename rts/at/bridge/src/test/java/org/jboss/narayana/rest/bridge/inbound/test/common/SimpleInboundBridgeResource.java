@@ -23,10 +23,10 @@ package org.jboss.narayana.rest.bridge.inbound.test.common;
 
 import org.jboss.logging.Logger;
 
-import javax.transaction.Transactional;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
 
 /**
  * REST resource which required inbound bridge to be enabled.

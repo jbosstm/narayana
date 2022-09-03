@@ -24,11 +24,11 @@ package com.arjuna.ats.jta.cdi;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 
 public final class TransactionHandler {
 

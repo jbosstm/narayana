@@ -111,8 +111,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject</artifactId>
             <version>${version.javax.inject}</version>
             <scope>provided</scope>
         </dependency>

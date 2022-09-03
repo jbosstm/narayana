@@ -22,9 +22,9 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype;
 
-import javax.enterprise.inject.Stereotype;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

@@ -26,8 +26,8 @@ import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
 import org.jboss.jbossts.xts.servicetests.generated.XTSServiceTestService;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;

@@ -68,7 +68,7 @@ public class JTAOrder
 
         try
         {
-            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+            jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
             XAResource theResource = new TestResource();
             FirstXAResource first = new FirstXAResource();
@@ -78,7 +78,7 @@ public class JTAOrder
 
             tm.begin();
 
-            javax.transaction.Transaction theTransaction = tm.getTransaction();
+            jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
             theTransaction.enlistResource(theResource);
             theTransaction.enlistResource(last);

@@ -25,7 +25,7 @@ package com.arjuna.wsc.tests.arq;
 import com.arjuna.webservices.SoapFault;
 import static org.junit.Assert.fail;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

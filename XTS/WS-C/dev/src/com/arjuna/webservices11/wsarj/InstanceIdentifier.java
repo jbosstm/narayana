@@ -22,11 +22,11 @@ package com.arjuna.webservices11.wsarj;
 
 import org.w3c.dom.Element;
 
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import com.arjuna.webservices.wsarj.ArjunaConstants;
 import org.jboss.ws.api.addressing.MAPEndpoint;

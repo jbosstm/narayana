@@ -35,8 +35,8 @@ import com.arjuna.wst.Volatile2PCParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.wst11.stub.CompletionStub;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 /**
  * Utility methods

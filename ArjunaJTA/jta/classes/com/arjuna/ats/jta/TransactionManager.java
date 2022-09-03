@@ -45,13 +45,13 @@ public class TransactionManager
      * if the transaction manager cannot be found.
      * 
 	 */
-    public static javax.transaction.TransactionManager transactionManager (InitialContext ctx)
+    public static jakarta.transaction.TransactionManager transactionManager (InitialContext ctx)
     {
-		javax.transaction.TransactionManager transactionManager = null;
+		jakarta.transaction.TransactionManager transactionManager = null;
 
 		try
 		{
-			transactionManager = (javax.transaction.TransactionManager)ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
+			transactionManager = (jakarta.transaction.TransactionManager)ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
 		}
 		catch (Exception e)
 		{
@@ -66,7 +66,7 @@ public class TransactionManager
      * @return The singleton transaction manager.  Can return null if the instantiation failed.
      */
 	
-    public synchronized static javax.transaction.TransactionManager transactionManager ()
+    public synchronized static jakarta.transaction.TransactionManager transactionManager ()
     {
 		return jtaPropertyManager.getJTAEnvironmentBean().getTransactionManager();
     }

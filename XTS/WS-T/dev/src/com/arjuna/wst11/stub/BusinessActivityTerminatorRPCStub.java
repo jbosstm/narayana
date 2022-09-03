@@ -46,7 +46,7 @@ import com.arjuna.wst11.BusinessActivityTerminator;
 import org.jboss.ws.api.addressing.MAP;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class BusinessActivityTerminatorRPCStub implements BusinessActivityTerminator
 {

@@ -29,7 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;

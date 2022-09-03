@@ -17,8 +17,8 @@
  */
 package org.jboss.jbossts.star.util.media.txstatusext;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlEnum(String.class)

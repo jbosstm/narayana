@@ -26,30 +26,30 @@ import java.io.Serializable;
 
 import java.util.function.Supplier;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.BeforeDestroyed;
-import javax.enterprise.context.Destroyed;
-import javax.enterprise.context.Initialized;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.BeforeDestroyed;
+import jakarta.enterprise.context.Destroyed;
+import jakarta.enterprise.context.Initialized;
 
-import javax.enterprise.event.Event;
+import jakarta.enterprise.event.Event;
 
-import javax.enterprise.inject.CreationException;
-import javax.enterprise.inject.Instance;
+import jakarta.enterprise.inject.CreationException;
+import jakarta.enterprise.inject.Instance;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import javax.naming.NamingException;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionScoped;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionScoped;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 

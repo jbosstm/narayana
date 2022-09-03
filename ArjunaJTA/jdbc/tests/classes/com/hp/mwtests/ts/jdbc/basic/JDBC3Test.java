@@ -80,7 +80,7 @@ public class JDBC3Test extends JDBC2Test
 
 		// it is not permitted to use savepoint methods if we have an XA tx...
 
-		javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+		jakarta.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
 			tx.begin();
 
@@ -170,7 +170,7 @@ public class JDBC3Test extends JDBC2Test
 
             stmt.executeUpdate("CREATE TABLE B (a INTEGER,b INTEGER)");
 
-		javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+		jakarta.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
 		
 

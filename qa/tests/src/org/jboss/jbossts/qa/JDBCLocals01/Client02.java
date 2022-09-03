@@ -40,7 +40,7 @@ public class Client02
 {
 	public static void main(String[] args)
 	{
-		javax.transaction.TransactionManager transactionManager = null;
+		jakarta.transaction.TransactionManager transactionManager = null;
 
 		try
 		{

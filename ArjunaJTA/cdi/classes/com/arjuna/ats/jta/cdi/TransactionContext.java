@@ -25,17 +25,17 @@ package com.arjuna.ats.jta.cdi;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.PassivationCapable;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionScoped;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.context.spi.Context;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.PassivationCapable;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;

@@ -68,7 +68,7 @@ public class NullResource
         {
             for (int i = 0; i < 1000; i++)
             {
-                javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+                jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
                 tm.begin();
 

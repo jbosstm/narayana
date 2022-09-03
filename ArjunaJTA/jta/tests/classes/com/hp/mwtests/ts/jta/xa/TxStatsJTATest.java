@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 import javax.transaction.xa.XAResource;
 
 import static org.junit.Assert.assertEquals;
@@ -64,11 +64,11 @@ public class TxStatsJTATest {
         XAResource readOnlyResource = new TestResource(true);
         LastXAResource lrcoResource = new LastXAResource();
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         theTransaction.enlistResource(readOnlyResource);
         theTransaction.enlistResource(lrcoResource);

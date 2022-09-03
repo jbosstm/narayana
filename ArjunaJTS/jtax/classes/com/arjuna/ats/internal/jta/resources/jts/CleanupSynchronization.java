@@ -44,7 +44,7 @@ import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
  * through the 2PC methods at the JTS interposition hierarchy level.
  */
 
-public class CleanupSynchronization implements javax.transaction.Synchronization
+public class CleanupSynchronization implements jakarta.transaction.Synchronization
 {
     public CleanupSynchronization (TransactionImple tx)
     {

@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
 
 import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransactionOperationsProvider;
@@ -148,7 +148,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the class name of the javax.transaction.TransactionManager implementation.
+     * Returns the class name of the jakarta.transaction.TransactionManager implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"
      * Equivalent deprecated property: com.arjuna.ats.jta.transactionManagerClassName
@@ -161,7 +161,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the class name of the javax.transaction.TransactionManager implementation.
+     * Sets the class name of the jakarta.transaction.TransactionManager implementation.
      *
      * @param transactionManagerClassName the name of a class which implements TransactionManager.
      */
@@ -182,12 +182,12 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns an instance of a class implementing javax.transaction.TransactionManager.
+     * Returns an instance of a class implementing jakarta.transaction.TransactionManager.
      *
      * If there is no pre-instantiated instance set and classloading or instantiation fails,
      * this method will log an appropriate warning and return null, not throw an exception.
      *
-     * @return a javax.transaction.TransactionManager implementation instance, or null.
+     * @return a jakarta.transaction.TransactionManager implementation instance, or null.
      */
     public TransactionManager getTransactionManager()
     {
@@ -205,9 +205,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the instance of javax.transaction.TransactionManager
+     * Sets the instance of jakarta.transaction.TransactionManager
      *
-     * @param instance an Object that implements javax.transaction.TransactionManager, or null.
+     * @param instance an Object that implements jakarta.transaction.TransactionManager, or null.
      */
     public void setTransactionManager(TransactionManager instance)
     {
@@ -229,12 +229,12 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the class name of the javax.transaction.UserTransaction implementation.
+     * Returns the class name of the jakarta.transaction.UserTransaction implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"
      * Equivalent deprecated property: com.arjuna.ats.jta.userTransactionClassName
      *
-     * @return the name of the class implementing javax.transaction.UserTransaction.
+     * @return the name of the class implementing jakarta.transaction.UserTransaction.
      */
     public String getUserTransactionClassName()
     {
@@ -242,9 +242,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the class name of the javax.transaction.UserTransaction implementation.
+     * Sets the class name of the jakarta.transaction.UserTransaction implementation.
      *
-     * @param userTransactionClassName the name of a class which implements javax.transaction.UserTransaction.
+     * @param userTransactionClassName the name of a class which implements jakarta.transaction.UserTransaction.
      */
     public void setUserTransactionClassName(String userTransactionClassName)
     {
@@ -263,12 +263,12 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns an instance of a class implementing javax.transaction.UserTransaction.
+     * Returns an instance of a class implementing jakarta.transaction.UserTransaction.
      *
      * If there is no pre-instantiated instance set and classloading or instantiation fails,
      * this method will log an appropriate warning and return null, not throw an exception.
      *
-     * @return a javax.transaction.UserTransaction implementation instance, or null.
+     * @return a jakarta.transaction.UserTransaction implementation instance, or null.
      */
     public UserTransaction getUserTransaction()
     {
@@ -286,9 +286,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the instance of javax.transaction.UserTransaction
+     * Sets the instance of jakarta.transaction.UserTransaction
      *
-     * @param instance an Object that implements javax.transaction.UserTransaction, or null.
+     * @param instance an Object that implements jakarta.transaction.UserTransaction, or null.
      */
     public void setUserTransaction(UserTransaction instance)
     {
@@ -310,12 +310,12 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the class name of the javax.transaction.TransactionSynchronizationRegistry implementation.
+     * Returns the class name of the jakarta.transaction.TransactionSynchronizationRegistry implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"
      * Equivalent deprecated property: com.arjuna.ats.jta.transactionSynchronizationRegistryClassName
      *
-     * @return the name of the class implementing javax.transaction.TransactionSynchronizationRegistry.
+     * @return the name of the class implementing jakarta.transaction.TransactionSynchronizationRegistry.
      */
     public String getTransactionSynchronizationRegistryClassName()
     {
@@ -323,7 +323,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the class name of the javax.transaction.TransactionSynchronizationRegistry implementation.
+     * Sets the class name of the jakarta.transaction.TransactionSynchronizationRegistry implementation.
      *
      * @param transactionSynchronizationRegistryClassName the name of a class which implements TransactionSynchronizationRegistry.
      */
@@ -349,7 +349,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      * If there is no pre-instantiated instance set and classloading or instantiation fails,
      * this method will log an appropriate warning and return null, not throw an exception.
      *
-     * @return a javax.transaction.TransactionSynchronizationRegistry implementation instance, or null.
+     * @return a jakarta.transaction.TransactionSynchronizationRegistry implementation instance, or null.
      */
     public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
     {
@@ -367,9 +367,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Sets the instance of javax.transaction.TransactionSynchronizationRegistry
+     * Sets the instance of jakarta.transaction.TransactionSynchronizationRegistry
      *
-     * @param instance an Object that implements javax.transaction.TransactionSynchronizationRegistry, or null.
+     * @param instance an Object that implements jakarta.transaction.TransactionSynchronizationRegistry, or null.
      */
     public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry instance)
     {

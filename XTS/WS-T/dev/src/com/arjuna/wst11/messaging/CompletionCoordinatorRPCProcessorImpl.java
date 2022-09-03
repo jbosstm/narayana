@@ -1,10 +1,10 @@
 package com.arjuna.wst11.messaging;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;

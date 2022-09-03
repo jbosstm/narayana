@@ -1,6 +1,6 @@
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
     <!-- One of the way of activating REST Services is adding these lines, the server is responsible for adding the corresponding servlet automatically. If the src folder, org.jboss.as.quickstarts.rshelloworld.HelloWorld class has the Annotations to receive REST invocation-->
     <display-name>Narayana LRA Coordinator</display-name>
 

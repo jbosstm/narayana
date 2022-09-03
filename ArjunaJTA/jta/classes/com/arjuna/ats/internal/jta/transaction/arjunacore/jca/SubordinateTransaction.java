@@ -22,11 +22,11 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import java.util.List;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicCommitException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -84,7 +84,7 @@ public interface SubordinateTransaction extends ImportedTransaction
 	 * prepared and will be the only resource in the global transaction.
 	 *
 	 * @throws IllegalStateException if the transaction has already terminated
-	 * @throws javax.transaction.HeuristicRollbackException thrown if the transaction
+	 * @throws jakarta.transaction.HeuristicRollbackException thrown if the transaction
 	 * rolls back.
 	 */
     public void doOnePhaseCommit () throws IllegalStateException,

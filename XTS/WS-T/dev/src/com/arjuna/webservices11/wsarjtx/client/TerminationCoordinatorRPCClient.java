@@ -27,8 +27,8 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import org.jboss.ws.api.addressing.MAP;
 
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 
 /**

@@ -30,8 +30,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.transaction.*;
+import jakarta.inject.Inject;
+import jakarta.transaction.*;
 
 /**
  * Transaction SPI integration tests
@@ -39,7 +39,7 @@ import javax.transaction.*;
 @RunWith(Arquillian.class)
 public class TestSPI {
     @Inject
-    private javax.transaction.TransactionManager transactionManager;
+    private jakarta.transaction.TransactionManager transactionManager;
 
     @Deployment
     public static WebArchive createTestArchive() {

@@ -43,9 +43,9 @@ import com.arjuna.ats.jta.xa.XAModifier;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 import java.sql.Array;
 import java.sql.Blob;
@@ -284,9 +284,9 @@ public class ConnectionImple implements Connection
 	         * Delist resource if within a transaction.
 	         */
 
-	        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+	        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 	        .transactionManager();
-	        javax.transaction.Transaction tx = tm.getTransaction();
+	        jakarta.transaction.Transaction tx = tm.getTransaction();
 
 	        /*
 	         * Don't delist if transaction not running. Rely on exception for
@@ -912,9 +912,9 @@ public class ConnectionImple implements Connection
 
 			try
 			{
-				javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+				jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 						.transactionManager();
-				javax.transaction.Transaction tx = tm.getTransaction();
+				jakarta.transaction.Transaction tx = tm.getTransaction();
 
 				if (tx == null) {
 					return;
@@ -1032,9 +1032,9 @@ public class ConnectionImple implements Connection
 
 		try
 		{
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 					.transactionManager();
-			javax.transaction.Transaction tx = tm.getTransaction();
+			jakarta.transaction.Transaction tx = tm.getTransaction();
 
 			if (tx == null)
 				return;

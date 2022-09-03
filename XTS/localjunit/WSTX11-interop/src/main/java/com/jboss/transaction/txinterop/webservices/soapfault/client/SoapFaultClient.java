@@ -27,9 +27,9 @@ import org.jboss.jbossts.xts.soapfault.SoapFaultService;
 import org.jboss.ws.api.addressing.MAP;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.util.Map;
 

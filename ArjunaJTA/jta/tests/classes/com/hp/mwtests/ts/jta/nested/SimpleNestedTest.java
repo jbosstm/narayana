@@ -31,7 +31,7 @@
 
 package com.hp.mwtests.ts.jta.nested;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class SimpleNestedTest
     {
         jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(true);
 
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         transactionManager.begin();
 

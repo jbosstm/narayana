@@ -65,8 +65,8 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import javax.xml.namespace.QName;
 
 @ContextProvider(coordinationType = ArjunaContextImple.coordinationType,

@@ -28,15 +28,15 @@ import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
-import javax.jws.*;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Action;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.handler.MessageContext;
-import javax.annotation.Resource;
+import jakarta.jws.*;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.annotation.Resource;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.xmlsoap.schemas.soap.envelope.Fault;

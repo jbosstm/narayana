@@ -52,12 +52,12 @@ class DummyTransactionImple extends TransactionImple
         super(0);
     }
     
-    protected void commitAndDisassociate () throws javax.transaction.RollbackException, javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException, java.lang.SecurityException, javax.transaction.SystemException, java.lang.IllegalStateException
+    protected void commitAndDisassociate () throws jakarta.transaction.RollbackException, jakarta.transaction.HeuristicMixedException, jakarta.transaction.HeuristicRollbackException, java.lang.SecurityException, jakarta.transaction.SystemException, java.lang.IllegalStateException
     {
         super.commitAndDisassociate();
     }
 
-    protected void rollbackAndDisassociate () throws java.lang.IllegalStateException, java.lang.SecurityException, javax.transaction.SystemException
+    protected void rollbackAndDisassociate () throws java.lang.IllegalStateException, java.lang.SecurityException, jakarta.transaction.SystemException
     {
         super.rollbackAndDisassociate();
     }

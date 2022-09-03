@@ -27,7 +27,7 @@ import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxConfirm;
 import org.jboss.narayana.compensations.api.TxLogged;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013

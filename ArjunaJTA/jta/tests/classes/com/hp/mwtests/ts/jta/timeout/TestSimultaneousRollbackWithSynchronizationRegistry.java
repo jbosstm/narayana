@@ -4,10 +4,10 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImpl
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

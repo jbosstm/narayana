@@ -62,8 +62,8 @@ package org.jboss.jbossts.qa.JTA01Tests;
 
 import org.jboss.jbossts.qa.Utils.Setup;
 
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 
 public class Test06
 {
@@ -95,7 +95,7 @@ public class Test06
 			int numberOfWorkers = Integer.parseInt(args[args.length - 2]);
 			int numberOfTransactions = Integer.parseInt(args[args.length - 1]);
 
-			javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			Worker[] workers = new Worker[numberOfWorkers];
 

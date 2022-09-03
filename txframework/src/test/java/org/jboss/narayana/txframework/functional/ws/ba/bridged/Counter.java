@@ -21,8 +21,8 @@
  */
 package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 
 /**

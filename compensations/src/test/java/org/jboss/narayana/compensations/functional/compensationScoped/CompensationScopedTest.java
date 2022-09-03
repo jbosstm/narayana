@@ -30,8 +30,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.enterprise.context.ContextNotActiveException;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.inject.Inject;
 
 
 /**

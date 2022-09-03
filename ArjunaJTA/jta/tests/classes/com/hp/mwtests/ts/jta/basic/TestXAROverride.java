@@ -4,9 +4,9 @@ import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import org.junit.Test;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -70,11 +70,11 @@ public class TestXAROverride {
         jtaPropertyManager.getJTAEnvironmentBean().setXaResourceIsSameRMClassNames(
                 Collections.singletonList(xar2.getClass().getName()));
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         // sanity check that both resources can be enlisted
         assertTrue(theTransaction.enlistResource(xar2));

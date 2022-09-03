@@ -23,9 +23,9 @@ package org.jboss.narayana.jta.jms;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.transaction.Synchronization;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
+import jakarta.transaction.Synchronization;
 
 /**
  * Synchronization to close JMS session at the end of the transaction.

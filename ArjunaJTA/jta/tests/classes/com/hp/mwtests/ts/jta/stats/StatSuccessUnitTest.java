@@ -8,11 +8,11 @@ import org.junit.Test;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 
 import static com.hp.mwtests.ts.jta.stats.DummyXAResource.faultType.RESOURCE_ROLLBACK;
 import static com.hp.mwtests.ts.jta.stats.DummyXAResource.faultType.TIMEOUT_COMMIT;

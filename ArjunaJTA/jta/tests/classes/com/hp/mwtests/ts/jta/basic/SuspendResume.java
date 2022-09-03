@@ -39,11 +39,11 @@ public class SuspendResume
     @Test
     public void test() throws Exception
     {
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         tm.commit();
 

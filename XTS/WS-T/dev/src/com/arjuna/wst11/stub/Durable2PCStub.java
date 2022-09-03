@@ -2,7 +2,7 @@ package com.arjuna.wst11.stub;
 
 import com.arjuna.wst.Durable2PCParticipant;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class Durable2PCStub extends ParticipantStub implements Durable2PCParticipant
 {

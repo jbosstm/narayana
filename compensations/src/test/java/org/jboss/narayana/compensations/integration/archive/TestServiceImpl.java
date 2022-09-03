@@ -25,9 +25,9 @@ package org.jboss.narayana.compensations.integration.archive;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TxConfirm;
 
-import javax.ejb.Stateless;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 @Stateless
 @WebService(serviceName = TestService.SERVICE_NAME, portName = TestService.PORT_NAME, name = TestService.PORT_NAME, targetNamespace = TestService.NAMESPACE)

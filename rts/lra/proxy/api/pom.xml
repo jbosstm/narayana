@@ -31,7 +31,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
+      <groupId>jakarta.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>${version.servlet-api}</version>
       <scope>provided</scope>

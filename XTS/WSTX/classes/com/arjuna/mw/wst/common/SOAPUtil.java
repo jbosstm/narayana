@@ -23,7 +23,7 @@ package com.arjuna.mw.wst.common;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 /**
  * Utility class for SOAP.

@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -64,7 +64,7 @@ public class OSGiJTATest {
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
                 builder.addBundleSymbolicName(archive.getName());
                 builder.addBundleManifestVersion(2);
-                builder.addImportPackages("javax.transaction");
+                builder.addImportPackages("jakarta.transaction");
                 return builder.openStream();
             }
         });

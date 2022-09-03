@@ -21,7 +21,7 @@ import org.jboss.jbossts.xts11.recovery.participant.at.ATParticipantRecoveryReco
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.TimerTask;
 
 /**

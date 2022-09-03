@@ -35,7 +35,7 @@ import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import com.arjuna.wst.Durable2PCParticipant;
 
-import javax.resource.spi.XATerminator;
+import jakarta.resource.spi.XATerminator;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

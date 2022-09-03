@@ -21,10 +21,10 @@
 
 package com.jboss.transaction.wstf.webservices.sc007.generated;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.xml.ws.RequestWrapper;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.RequestWrapper;
 
 
 /**
