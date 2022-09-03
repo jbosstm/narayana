@@ -66,7 +66,7 @@ public class Performance
 
         long stime = System.currentTimeMillis();
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         for (int i = 0; i < 1000; i++)
         {

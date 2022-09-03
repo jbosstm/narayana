@@ -1,6 +1,6 @@
 package org.jboss.jbossts.txbridge.outbound;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.jboss.ws.api.configuration.AbstractClientFeature;
 

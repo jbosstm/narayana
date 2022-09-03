@@ -21,7 +21,7 @@
  */
 package org.jboss.jbossts.star.client;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 public class InvalidSRAId extends WebApplicationException {
     public InvalidSRAId(String sraId, String message, Throwable cause) {

@@ -39,7 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -102,7 +102,7 @@ public class PoolingTest {
     @Test
     public void test() throws InterruptedException {
         TransactionSynchronizationRegistryImple transactionSynchronizationRegistryImple = new TransactionSynchronizationRegistryImple();
-        javax.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         List<Thread> threads = new ArrayList();
         Set<Exception> failures = new HashSet<>();

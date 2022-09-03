@@ -24,18 +24,18 @@ import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.ProtocolException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.Collections;
@@ -68,7 +68,7 @@ public class CoordinationContextHandler implements SOAPHandler<SOAPMessageContex
      * @return Always return true
      * @throws RuntimeException               Causes the JAX-WS runtime to cease
      *                                        handler processing and generate a fault.
-     * @throws javax.xml.ws.ProtocolException Causes the JAX-WS runtime to switch to
+     * @throws jakarta.xml.ws.ProtocolException Causes the JAX-WS runtime to switch to
      *                                        fault message processing.
      */
     public boolean handleMessage(SOAPMessageContext context) throws ProtocolException
@@ -188,7 +188,7 @@ public class CoordinationContextHandler implements SOAPHandler<SOAPMessageContex
      *
      * @param context the message context
      */
-    public void close(javax.xml.ws.handler.MessageContext context)
+    public void close(jakarta.xml.ws.handler.MessageContext context)
     {
     }
 

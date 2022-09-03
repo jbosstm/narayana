@@ -17,7 +17,7 @@ import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.*;
 import com.arjuna.wst.SystemException;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import javax.xml.namespace.QName;
 
 /**

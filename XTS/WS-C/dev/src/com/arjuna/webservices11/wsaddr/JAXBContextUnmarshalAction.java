@@ -21,11 +21,11 @@
  */
 package com.arjuna.webservices11.wsaddr;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.transform.Source;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceException;
 import java.security.PrivilegedAction;
 
 /**

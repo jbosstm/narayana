@@ -31,8 +31,8 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 public class TestUtil11
 {

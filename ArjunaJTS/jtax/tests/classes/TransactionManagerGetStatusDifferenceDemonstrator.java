@@ -23,13 +23,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.Test;
 import org.omg.CORBA.SystemException;
@@ -47,7 +47,7 @@ public class TransactionManagerGetStatusDifferenceDemonstrator {
 
 	@Test
 	public void test() throws InvalidName, SystemException,
-			NotSupportedException, javax.transaction.SystemException,
+			NotSupportedException, jakarta.transaction.SystemException,
 			IllegalStateException, RollbackException, IOException,
 			SecurityException, HeuristicMixedException,
 			HeuristicRollbackException, Unavailable,
@@ -129,7 +129,7 @@ public class TransactionManagerGetStatusDifferenceDemonstrator {
 			try {
 				this.transactionManagerGetStatus = transactionManager
 						.getStatus();
-			} catch (javax.transaction.SystemException e) {
+			} catch (jakarta.transaction.SystemException e) {
 				e.printStackTrace();
 			}
 		}

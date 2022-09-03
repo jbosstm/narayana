@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.client;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 /**
  * Interface for a web service used by txbridge test cases. Client side version.

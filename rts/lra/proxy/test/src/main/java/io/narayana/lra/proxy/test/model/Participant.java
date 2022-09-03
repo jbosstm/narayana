@@ -24,7 +24,7 @@ package io.narayana.lra.proxy.test.model;
 import io.narayana.lra.client.internal.proxy.LRAProxyParticipant;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.concurrent.Future;

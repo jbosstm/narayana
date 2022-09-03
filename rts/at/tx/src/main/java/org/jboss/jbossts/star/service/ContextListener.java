@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.star.service;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 public class ContextListener implements ServletContextListener {
        public void contextInitialized(ServletContextEvent event) {

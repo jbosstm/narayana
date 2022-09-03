@@ -23,9 +23,9 @@ import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.After;
@@ -67,7 +67,7 @@ public class TestCommitMarkableResourceMultiEnlist {
 		JdbcDataSource dataSource = new JdbcDataSource();
 		dataSource.setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE");
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();

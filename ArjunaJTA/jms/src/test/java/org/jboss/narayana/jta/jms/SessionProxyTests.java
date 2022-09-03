@@ -21,9 +21,9 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.Session;
-import javax.jms.XASession;
-import javax.transaction.Synchronization;
+import jakarta.jms.Session;
+import jakarta.jms.XASession;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Before;

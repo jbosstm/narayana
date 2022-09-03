@@ -43,26 +43,26 @@ public class StatusConverter
 		switch (status.value())
 		{
 		case org.omg.CosTransactions.Status._StatusActive:
-			return javax.transaction.Status.STATUS_ACTIVE;
+			return jakarta.transaction.Status.STATUS_ACTIVE;
 		case org.omg.CosTransactions.Status._StatusCommitting:
-			return javax.transaction.Status.STATUS_COMMITTING;
+			return jakarta.transaction.Status.STATUS_COMMITTING;
 		case org.omg.CosTransactions.Status._StatusRollingBack:
-			return javax.transaction.Status.STATUS_ROLLING_BACK;
+			return jakarta.transaction.Status.STATUS_ROLLING_BACK;
 		case org.omg.CosTransactions.Status._StatusPreparing:
-			return javax.transaction.Status.STATUS_PREPARING;
+			return jakarta.transaction.Status.STATUS_PREPARING;
 		case org.omg.CosTransactions.Status._StatusCommitted:
-			return javax.transaction.Status.STATUS_COMMITTED;
+			return jakarta.transaction.Status.STATUS_COMMITTED;
 		case org.omg.CosTransactions.Status._StatusMarkedRollback:
-			return javax.transaction.Status.STATUS_MARKED_ROLLBACK;
+			return jakarta.transaction.Status.STATUS_MARKED_ROLLBACK;
 		case org.omg.CosTransactions.Status._StatusNoTransaction:
-			return javax.transaction.Status.STATUS_NO_TRANSACTION;
+			return jakarta.transaction.Status.STATUS_NO_TRANSACTION;
 		case org.omg.CosTransactions.Status._StatusPrepared:
-			return javax.transaction.Status.STATUS_PREPARED;
+			return jakarta.transaction.Status.STATUS_PREPARED;
 		case org.omg.CosTransactions.Status._StatusRolledBack:
-			return javax.transaction.Status.STATUS_ROLLEDBACK;
+			return jakarta.transaction.Status.STATUS_ROLLEDBACK;
 		case org.omg.CosTransactions.Status._StatusUnknown:
 		default:
-			return javax.transaction.Status.STATUS_UNKNOWN;
+			return jakarta.transaction.Status.STATUS_UNKNOWN;
 		}
 	}
 

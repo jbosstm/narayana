@@ -50,7 +50,7 @@ package org.jboss.jbossts.qa.SupportTests01Impls;
 
 import org.jboss.jbossts.qa.SupportTests01.*;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 public class SupportTestXAResourceEnlistDelist implements ServiceOperations
@@ -60,7 +60,7 @@ public class SupportTestXAResourceEnlistDelist implements ServiceOperations
 		try
 		{
 			// Get a reference to the transaction manager
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			// Begin the transaction
 			tm.begin();

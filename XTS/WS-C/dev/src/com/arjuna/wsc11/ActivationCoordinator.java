@@ -33,9 +33,9 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextRespo
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 
 /**

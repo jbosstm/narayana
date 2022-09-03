@@ -83,7 +83,7 @@ public class JTATest
     		fail("Error - creator "+xaResource+" returned null resource.");
 	    }
 
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+	    jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 	    if (tm != null)
 	    {
@@ -91,7 +91,7 @@ public class JTATest
 		
 		tm.begin();
 	    
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		if (theTransaction != null)
 		{

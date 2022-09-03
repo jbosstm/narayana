@@ -22,12 +22,12 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.Stereotype;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 
 @TransitiveToRequiredTransactionalNever
 public class StereotypeWithTransactionalBean {

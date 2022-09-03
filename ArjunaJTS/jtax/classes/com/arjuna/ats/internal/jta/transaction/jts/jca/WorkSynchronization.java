@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 
 /**
  * Register a single instance of this thing when the first JCA worker is
@@ -43,7 +43,7 @@ import javax.transaction.Transaction;
  * @author mcl 
  */
 
-public class WorkSynchronization implements javax.transaction.Synchronization
+public class WorkSynchronization implements jakarta.transaction.Synchronization
 {
 
 	public WorkSynchronization (Transaction current)

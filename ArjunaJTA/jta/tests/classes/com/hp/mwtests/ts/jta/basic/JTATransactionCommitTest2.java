@@ -23,10 +23,10 @@ package com.hp.mwtests.ts.jta.basic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.Test;
 

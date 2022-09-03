@@ -33,7 +33,7 @@ import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAHandler;
 import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 

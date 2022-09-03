@@ -34,7 +34,7 @@ package com.hp.mwtests.ts.jta.xa;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
@@ -89,7 +89,7 @@ public class SynchronizationUnitTest
         tx.enlistResource(res);
 
         final String exceptionError = "intentional testing exception";
-        tx.registerSynchronization(new javax.transaction.Synchronization() {
+        tx.registerSynchronization(new jakarta.transaction.Synchronization() {
             @Override
             public void beforeCompletion() {
                 throw new RuntimeException(exceptionError);

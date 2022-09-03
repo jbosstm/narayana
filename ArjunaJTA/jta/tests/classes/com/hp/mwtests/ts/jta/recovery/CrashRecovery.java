@@ -67,11 +67,11 @@ public class CrashRecovery
         XAResource firstResource = new CrashXAResource();
         XAResource secondResource = new CrashXAResource();
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         theTransaction.enlistResource(firstResource);
         theTransaction.enlistResource(secondResource);

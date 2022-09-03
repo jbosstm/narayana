@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jta.basic;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
@@ -51,13 +51,13 @@ public class JTAOrder
         FirstXAResource first = new FirstXAResource();
         LastXAResource last = new LastXAResource();
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         System.out.println("Starting top-level transaction.");
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         theTransaction.enlistResource(theResource);
         theTransaction.enlistResource(last);

@@ -33,8 +33,8 @@ package com.arjuna.ats.internal.jdbc;
 
 import com.arjuna.ats.jdbc.TransactionalDriver;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -82,7 +82,7 @@ public class ConnectionManager {
                     tx1 = connControl.transaction();
                     try {
                         tx2 = tm.getTransaction();
-                    } catch (javax.transaction.SystemException se) {
+                    } catch (jakarta.transaction.SystemException se) {
                         /* Ignore: tx2 is null already */
                     }
 

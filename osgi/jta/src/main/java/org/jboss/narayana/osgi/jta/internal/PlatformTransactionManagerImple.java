@@ -16,7 +16,7 @@
  */
 package org.jboss.narayana.osgi.jta.internal;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import java.util.List;
 import java.util.Map;

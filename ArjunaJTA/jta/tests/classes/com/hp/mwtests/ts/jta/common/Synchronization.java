@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jta.common;
 
 import com.arjuna.ats.jta.utils.JTAHelper;
 
-public class Synchronization implements javax.transaction.Synchronization
+public class Synchronization implements jakarta.transaction.Synchronization
 {
 	public final static int ERROR_STATUS = 0;
 	public final static int INITIAL_STATUS = 1;
@@ -51,7 +51,7 @@ public class Synchronization implements javax.transaction.Synchronization
     {
 	try
 	{
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+	    jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 	    if (_currentStatus != INITIAL_STATUS)
 		_currentStatus = ERROR_STATUS;
@@ -70,7 +70,7 @@ public class Synchronization implements javax.transaction.Synchronization
     {
 	try
 	{
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+	    jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 	    if (_currentStatus != BEFORE_COMPLETION_STATUS)
 		_currentStatus = ERROR_STATUS;

@@ -21,9 +21,9 @@
  */
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
-import javax.enterprise.inject.Stereotype;
-import javax.inject.Named;
-import javax.transaction.Transactional;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -34,11 +34,11 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 
 public class TestContextFactory implements ContextFactory
 {

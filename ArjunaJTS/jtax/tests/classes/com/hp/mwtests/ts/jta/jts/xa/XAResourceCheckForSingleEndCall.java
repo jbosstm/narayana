@@ -34,7 +34,7 @@ package com.hp.mwtests.ts.jta.jts.xa;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -63,12 +63,12 @@ public class XAResourceCheckForSingleEndCall {
 				.setTransactionManagerClassName(
 						com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class
 								.getName());
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		XARMFAILXAResource xarmfailxaResource = new XARMFAILXAResource(true);
 		XARMFAILXAResource xarmfailxaResource2 = new XARMFAILXAResource(false);

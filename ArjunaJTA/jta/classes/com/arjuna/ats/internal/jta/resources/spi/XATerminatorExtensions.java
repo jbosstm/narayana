@@ -67,5 +67,5 @@ public interface XATerminatorExtensions
      * @return success (or not).
      */
 
-    public boolean beforeCompletion (Xid xid) throws javax.transaction.SystemException;
+    public boolean beforeCompletion (Xid xid) throws jakarta.transaction.SystemException;
 }

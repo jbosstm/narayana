@@ -17,8 +17,8 @@
  */
 package org.jboss.jbossts.star.util.media.txstatusext;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = {"prepareURI", "commitURI", "rollbackURI"})
 public class TwoPhaseUnawareParticipantElement extends ParticipantElement {

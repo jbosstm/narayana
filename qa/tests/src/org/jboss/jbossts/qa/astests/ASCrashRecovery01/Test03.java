@@ -33,7 +33,7 @@ import java.util.Map;
 import java.io.*;
 
 import javax.rmi.PortableRemoteObject;
-import javax.transaction.*;
+import jakarta.transaction.*;
 import javax.naming.NamingException;
 
 public class Test03 implements ClientAction

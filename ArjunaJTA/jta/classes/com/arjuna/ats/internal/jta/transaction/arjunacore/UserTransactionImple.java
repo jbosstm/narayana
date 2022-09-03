@@ -41,7 +41,7 @@ import javax.naming.Reference;
 import javax.naming.Referenceable;
 
 public class UserTransactionImple extends BaseTransaction
-		implements javax.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable {
+		implements jakarta.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable {
     
     public UserTransactionImple ()
     {

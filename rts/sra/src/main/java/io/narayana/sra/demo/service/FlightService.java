@@ -23,7 +23,7 @@ package io.narayana.sra.demo.service;
 
 import io.narayana.sra.demo.model.Booking;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped

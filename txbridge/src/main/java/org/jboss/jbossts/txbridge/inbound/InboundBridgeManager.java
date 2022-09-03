@@ -72,7 +72,7 @@ public class InboundBridgeManager
      */
     public static InboundBridge getInboundBridge()
             throws XAException, WrongStateException, UnknownTransactionException,
-            com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
+            com.arjuna.wst.SystemException, jakarta.transaction.SystemException, AlreadyRegisteredException
     {
         txbridgeLogger.logger.trace("InboundBridgeManager.getInboundBridge()");
 
@@ -134,7 +134,7 @@ public class InboundBridgeManager
      */
     private static synchronized void createMapping(String externalTxId, int timeout)
             throws XAException, WrongStateException, UnknownTransactionException,
-            com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
+            com.arjuna.wst.SystemException, jakarta.transaction.SystemException, AlreadyRegisteredException
     {
         txbridgeLogger.logger.trace("InboundBridgeManager.createMapping(externalTxId="+externalTxId+")");
 

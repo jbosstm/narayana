@@ -36,7 +36,7 @@ import org.jboss.tm.TransactionPropagationContextImporter;
 
 import org.omg.CosTransactions.*;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.naming.spi.ObjectFactory;
 import javax.naming.Name;
 import javax.naming.Context;
@@ -120,7 +120,7 @@ public class PropagationContextManager implements
 
         Transaction oldTx = null;
         Object tpc = null;
-        javax.transaction.TransactionManager tm = TransactionManager
+        jakarta.transaction.TransactionManager tm = TransactionManager
                 .transactionManager();
 
         try
@@ -173,7 +173,7 @@ public class PropagationContextManager implements
                     + tpc);
         }
 
-        javax.transaction.TransactionManager tm = TransactionManager
+        jakarta.transaction.TransactionManager tm = TransactionManager
                 .transactionManager();
 
         if (tpc instanceof PropagationContextWrapper)

@@ -24,7 +24,7 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 
 import org.jboss.narayana.compensations.api.CompensationScoped;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.Serializable;
 
 /**

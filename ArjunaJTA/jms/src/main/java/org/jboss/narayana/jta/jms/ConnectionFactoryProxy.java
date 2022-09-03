@@ -23,12 +23,12 @@ package org.jboss.narayana.jta.jms;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.XAConnectionFactory;
-import javax.jms.XAJMSContext;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+import jakarta.jms.XAConnectionFactory;
+import jakarta.jms.XAJMSContext;
 
 /**
  * Proxy connection factory to wrap around provided {@link XAConnectionFactory}.

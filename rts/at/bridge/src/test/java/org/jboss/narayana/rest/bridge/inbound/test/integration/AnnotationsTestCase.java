@@ -9,8 +9,8 @@ import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWithTransactio
 import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWithTransactionalAnnotation;
 import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWitoutAnnotation;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Response;
 
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.Link;
+import jakarta.ws.rs.core.Link;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

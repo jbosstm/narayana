@@ -28,7 +28,7 @@ import com.arjuna.ArjunaOTS.JTAInterposedSynchronizationOperations;
  */
 public class JTAInterposedSynchronizationImple extends SynchronizationImple implements JTAInterposedSynchronizationOperations {
 
-    public JTAInterposedSynchronizationImple(javax.transaction.Synchronization ptr) {
+    public JTAInterposedSynchronizationImple(jakarta.transaction.Synchronization ptr) {
         super(ptr);
     }
 

@@ -36,7 +36,7 @@ import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import org.junit.Test;
 
 import javax.management.*;
-import javax.transaction.*;
+import jakarta.transaction.*;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 

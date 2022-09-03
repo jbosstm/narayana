@@ -112,7 +112,7 @@
                 </exclusion>
                 <exclusion>
                     <artifactId>jsr250-api</artifactId>
-                    <groupId>javax.annotation</groupId>
+                    <groupId>jakarta.annotation</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -129,15 +129,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
+            <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
             <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+            <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.xml.ws</groupId>
+            <groupId>org.jboss.spec.jakarta.xml.ws</groupId>
             <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+            <version>${version.org.jboss.spec.jakarta.xml.ws.jboss-jaxws-api_2.3_spec}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

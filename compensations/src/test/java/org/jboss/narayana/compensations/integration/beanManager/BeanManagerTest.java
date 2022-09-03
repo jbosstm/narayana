@@ -25,7 +25,7 @@ import org.jboss.narayana.compensations.internal.BeanManagerUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

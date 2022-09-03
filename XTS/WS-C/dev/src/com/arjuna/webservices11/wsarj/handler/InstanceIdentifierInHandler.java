@@ -2,8 +2,8 @@ package com.arjuna.webservices11.wsarj.handler;
 
 import com.arjuna.webservices.logging.WSCLogger;
 
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import javax.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.ProtocolException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +19,7 @@ public class InstanceIdentifierInHandler extends InstanceIdentifierHandler {
      *
      * @param context
      * @return
-     * @throws javax.xml.ws.ProtocolException
+     * @throws jakarta.xml.ws.ProtocolException
      */
     protected boolean handleMessageOutbound(SOAPMessageContext context) throws ProtocolException {
         if (WSCLogger.logger.isTraceEnabled()) {

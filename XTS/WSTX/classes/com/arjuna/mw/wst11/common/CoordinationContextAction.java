@@ -21,8 +21,8 @@
  */
 package com.arjuna.mw.wst11.common;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import java.security.PrivilegedExceptionAction;
 
 /**

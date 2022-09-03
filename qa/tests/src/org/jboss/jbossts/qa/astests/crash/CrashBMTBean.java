@@ -23,10 +23,10 @@ package org.jboss.jbossts.qa.astests.crash;
 import org.jboss.jbossts.qa.astests.recovery.ASFailureSpec;
 import org.jboss.jbossts.qa.astests.recovery.TestASRecovery;
 
-import javax.ejb.SessionContext;
-import javax.ejb.SessionBean;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionBean;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
 
 public class CrashBMTBean implements SessionBean {
     private SessionContext context;

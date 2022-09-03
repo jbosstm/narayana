@@ -23,8 +23,8 @@ package io.narayana.sra.demo.service;
 
 import io.narayana.sra.demo.model.Booking;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

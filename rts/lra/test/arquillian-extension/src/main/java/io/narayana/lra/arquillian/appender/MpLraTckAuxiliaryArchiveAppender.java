@@ -94,9 +94,9 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
                 io.narayana.lra.filter.ClientLRAResponseFilter.class.getName(),
                 io.narayana.lra.filter.ClientLRARequestFilter.class.getName());
         archive.addPackages(true, io.narayana.lra.filter.ClientLRARequestFilter.class.getPackage())
-                .addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
+                .addAsResource(new StringAsset(filtersAsset), "META-INF/services/jakarta.ws.rs.ext.Providers")
                 .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
-                        "META-INF/services/javax.ws.rs.client.ClientBuilder");
+                        "META-INF/services/jakarta.ws.rs.client.ClientBuilder");
 
         // adding TCK required SPI implementation
         archive.addClass(NarayanaLRARecovery.class);

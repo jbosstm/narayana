@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.qa.astests.crash;
 
-import javax.ejb.EJBLocalHome;
-import javax.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.CreateException;
 
 public interface CrashLocalHome extends EJBLocalHome {
     CrashLocal create() throws CreateException;

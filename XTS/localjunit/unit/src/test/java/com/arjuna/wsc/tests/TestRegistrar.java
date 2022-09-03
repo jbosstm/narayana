@@ -33,7 +33,7 @@ import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
 import com.arjuna.wsc11.Registrar;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class TestRegistrar implements Registrar
 {

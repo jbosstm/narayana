@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jta.basic;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 
 import org.junit.Test;
 
@@ -42,11 +42,11 @@ public class JTAAbort
     @Test
     public void test() throws Exception
     {
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         assertEquals(Status.STATUS_ACTIVE, theTransaction.getStatus());
 

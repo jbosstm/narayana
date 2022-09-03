@@ -2,11 +2,11 @@ package org.jboss.narayana.rest.bridge.inbound.test.common;
 
 import com.arjuna.ats.jta.UserTransaction;
 
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

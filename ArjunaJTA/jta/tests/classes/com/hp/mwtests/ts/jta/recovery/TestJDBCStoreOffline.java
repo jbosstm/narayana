@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -63,7 +63,7 @@ public class TestJDBCStoreOffline {
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(JDBCStore.class.getName());
         arjPropertyManager.getObjectStoreEnvironmentBean().setJdbcAccess(TestJDBCAccess.class.getName());
 
-        javax.transaction.TransactionManager tm = TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = TransactionManager.transactionManager();
         tm.begin();
         tm.getTransaction().enlistResource(new DummyXAResource());
         tm.getTransaction().enlistResource(new DummyXAResource());

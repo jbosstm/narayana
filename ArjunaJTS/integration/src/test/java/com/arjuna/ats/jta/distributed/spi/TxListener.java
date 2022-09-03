@@ -23,7 +23,7 @@ package com.arjuna.ats.jta.distributed.spi;
 
 import org.jboss.tm.listener.*;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 import java.util.EnumSet;
 
 public class TxListener implements Synchronization, TransactionListener {

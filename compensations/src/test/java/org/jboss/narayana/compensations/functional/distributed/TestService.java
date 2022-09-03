@@ -22,8 +22,8 @@
 
 package org.jboss.narayana.compensations.functional.distributed;
 
-import javax.ejb.Remote;
-import javax.jws.WebMethod;
+import jakarta.ejb.Remote;
+import jakarta.jws.WebMethod;
 
 @Remote
 public interface TestService {

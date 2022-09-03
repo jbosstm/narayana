@@ -22,10 +22,10 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
-import javax.annotation.Resource;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 
 public class NoAnnotationBean {
     @Resource(mappedName = "java:jboss/TransactionManager")

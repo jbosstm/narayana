@@ -30,10 +30,10 @@ import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.Transaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.Transaction;
 
 /**
  * Manages Thread association of the interposed coordinator.

@@ -22,9 +22,9 @@
 package com.arjuna.webservices11.util;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceFeature;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 

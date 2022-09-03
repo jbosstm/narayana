@@ -32,14 +32,14 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.Name;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.Transaction;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.Transaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class TransactionManagerImple extends BaseTransaction implements
-		javax.transaction.TransactionManager, javax.naming.spi.ObjectFactory
+		jakarta.transaction.TransactionManager, javax.naming.spi.ObjectFactory
 {
 
 	public TransactionManagerImple()
@@ -47,7 +47,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 	}
 
 	public Transaction getTransaction()
-			throws javax.transaction.SystemException
+			throws jakarta.transaction.SystemException
 	{
 		return TransactionImple.getTransaction();
 	}
@@ -56,7 +56,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 	 * @return the suspended transaction.
 	 */
 
-	public Transaction suspend() throws javax.transaction.SystemException
+	public Transaction suspend() throws jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImpleManager.suspend");
@@ -75,7 +75,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 		}
 		catch (Exception e)
 		{
-            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e.toString());
             systemException.initCause(e);
             throw systemException;
 		}
@@ -87,7 +87,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 	 */
 
 	public void resume(Transaction which) throws InvalidTransactionException,
-			java.lang.IllegalStateException, javax.transaction.SystemException
+			java.lang.IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImpleManager.resume");
@@ -115,7 +115,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 		    }
 		    catch (final Exception e2)
 		    {
-		        javax.transaction.SystemException systemException = new javax.transaction.SystemException();
+		        jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException();
                 systemException.initCause(e2);
                 throw systemException;
 		    }

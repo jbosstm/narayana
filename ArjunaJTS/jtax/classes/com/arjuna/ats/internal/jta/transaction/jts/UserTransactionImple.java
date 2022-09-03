@@ -41,7 +41,7 @@ import javax.naming.Reference;
 import javax.naming.Referenceable;
 
 /**
- * An implementation of javax.transaction.UserTransaction.
+ * An implementation of jakarta.transaction.UserTransaction.
  *
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: UserTransactionImple.java 2342 2006-03-30 13:06:17Z  $
@@ -49,7 +49,7 @@ import javax.naming.Referenceable;
  */
 
 public class UserTransactionImple extends BaseTransaction
-		implements javax.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable
+		implements jakarta.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable
 {
     
     public UserTransactionImple ()

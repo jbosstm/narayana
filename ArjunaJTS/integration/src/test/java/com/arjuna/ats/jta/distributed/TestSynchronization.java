@@ -21,7 +21,7 @@
  */
 package com.arjuna.ats.jta.distributed;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 
 public class TestSynchronization implements Synchronization {
 	private String serverId;
