@@ -35,11 +35,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
@@ -98,12 +98,12 @@ public class CrashRecovery2 {
 		TestXAResource firstResource = new TestXAResource();
 		TestXAResource secondResource = new TestXAResource();
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		theTransaction.enlistResource(firstResource);
 		theTransaction.enlistResource(secondResource);
@@ -141,12 +141,12 @@ public class CrashRecovery2 {
         TestXAResource firstResource = new TestXAResourceRmFail().clearCounters();
         TestXAResource secondResource = new TestXAResource();
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         theTransaction.enlistResource(firstResource);
         theTransaction.enlistResource(secondResource);

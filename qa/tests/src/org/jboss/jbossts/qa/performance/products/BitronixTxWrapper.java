@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.qa.performance.products;
 
-import javax.transaction.Transaction;
-import javax.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.SystemException;
 
 /**
  * To include this class in the Performance Test Suite (ie class PerformanceTestWrapper) simply include
@@ -32,7 +32,7 @@ import javax.transaction.SystemException;
  * - uncomment the lines marked with TODO;
  * - include the product jars on the classpath;
  * - recompile (eg add them to jts.classpath qa/tests/build-jts.xml)
- * - put javax.transaction jar on the classpath
+ * - put jakarta.transaction jar on the classpath
  *       (http://mvnrepository.com/artifact/geronimo-spec/geronimo-spec-jta)
  * - set the location of the product properties file:
  *   -Dbitronix.tm.configuration=<path to bitronix property file>

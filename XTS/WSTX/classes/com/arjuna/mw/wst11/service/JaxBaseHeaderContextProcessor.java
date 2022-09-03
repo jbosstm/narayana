@@ -32,7 +32,7 @@ import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mwlabs.wst11.at.SubordinateImporter;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
-import javax.xml.soap.*;
+import jakarta.xml.soap.*;
 import java.util.Iterator;
 
 /**

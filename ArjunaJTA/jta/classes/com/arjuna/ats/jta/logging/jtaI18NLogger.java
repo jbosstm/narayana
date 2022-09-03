@@ -26,7 +26,7 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
-import javax.transaction.Transaction;
+// jakarta TODO import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -561,7 +561,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16137, value = "Failed to get transaction status of {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	void error_failed_to_get_transaction_status(Transaction txn, @Cause() Exception e);
+	void error_failed_to_get_transaction_status(jakarta.transaction.Transaction txn, @Cause() Exception e);
 
 	@Message(id = 16138, value = "Failed to enlist XA resource {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -575,10 +575,10 @@ public interface jtaI18NLogger {
     String get_no_subordinate_txn_for_commit(Xid xid);
 
     @Message(id = 16141, value = "Error committing transaction ''{0}'' for xid: {1}", format = MESSAGE_FORMAT)
-    String get_error_committing_transaction(Transaction txn, Xid xid);
+    String get_error_committing_transaction(jakarta.transaction.Transaction txn, Xid xid);
 
     @Message(id = 16142, value = "Not actived transaction ''{0}'' for xid: {1}", format = MESSAGE_FORMAT)
-    String get_not_activated_transaction(Transaction txn, Xid xid);
+    String get_not_activated_transaction(jakarta.transaction.Transaction txn, Xid xid);
 
     @Message(id = 16143, value = "Problem during waiting for lock ''{0}'' whilst in state {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
@@ -595,7 +595,7 @@ public interface jtaI18NLogger {
     String get_error_imported_transaction_uid_is_null();
 
     @Message(id = 16147, value = "Cannot recover imported transaction of UID ''{0}'' of transaction ''{1}'' as transaction base Xid is null.", format = MESSAGE_FORMAT)
-    String get_error_imported_transaction_base_id_is_null(Uid uid, javax.transaction.Transaction txn);
+    String get_error_imported_transaction_base_id_is_null(Uid uid, jakarta.transaction.Transaction txn);
 
     @Message(id = 16148, value = "Cannot work further as the argument Xid is null.", format = MESSAGE_FORMAT)
     String get_error_xid_is_null();

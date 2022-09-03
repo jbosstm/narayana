@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -84,14 +84,14 @@ import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
 /**
- * An implementation of javax.transaction.Transaction.
+ * An implementation of jakarta.transaction.Transaction.
  *
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: TransactionImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.2.4.
  */
 
-public class TransactionImple implements javax.transaction.Transaction,
+public class TransactionImple implements jakarta.transaction.Transaction,
 		com.arjuna.ats.jta.transaction.Transaction
 {
 
@@ -210,10 +210,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * a differentiation.
 	 */
 
-	public void commit () throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
+	public void commit () throws jakarta.transaction.RollbackException,
+			jakarta.transaction.HeuristicMixedException,
+			jakarta.transaction.HeuristicRollbackException,
+			java.lang.SecurityException, jakarta.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
@@ -253,13 +253,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.HeuristicMixed e2)
 			{
-                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new jakarta.transaction.HeuristicMixedException();
                 heuristicMixedException.initCause(e2);
                 throw heuristicMixedException;
 			}
 			catch (org.omg.CosTransactions.HeuristicHazard e3)
 			{
-                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new jakarta.transaction.HeuristicMixedException();
                 heuristicMixedException.initCause(e3);
                 throw heuristicMixedException;
 			}
@@ -282,7 +282,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e7.toString());
+                jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e7.toString());
                 systemException.initCause(e7);
         		throw systemException;
             }
@@ -297,7 +297,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	public void rollback () throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
+			java.lang.SecurityException, jakarta.transaction.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.rollback");
@@ -352,7 +352,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e5.toString());
+                jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e5.toString());
                 systemException.initCause(e5);
         		throw systemException;
 			}
@@ -371,7 +371,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	public void setRollbackOnly () throws java.lang.IllegalStateException,
-			javax.transaction.SystemException
+			jakarta.transaction.SystemException
 	{
 	    if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.setRollbackOnly");
@@ -409,7 +409,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	        }
 	        catch (org.omg.CORBA.SystemException e4)
 	        {
-	            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e4.toString());
+	            jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e4.toString());
 	            systemException.initCause(e4);
 	            throw systemException;
 	        }
@@ -419,13 +419,13 @@ public class TransactionImple implements javax.transaction.Transaction,
                     jtaxLogger.i18NLogger.get_jtax_transaction_jts_inactivetx());
 	}
 
-	public int getStatus () throws javax.transaction.SystemException
+	public int getStatus () throws jakarta.transaction.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.getStatus");
         }
 
-		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
+		int status = jakarta.transaction.Status.STATUS_NO_TRANSACTION;
 
 		if (_theTransaction != null)
 		{
@@ -435,7 +435,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e2)
 			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+                jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e2.toString());
                 systemException.initCause(e2);
 		        throw systemException;
 			}
@@ -448,12 +448,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return status;
 	}
 
-	public void registerSynchronization (javax.transaction.Synchronization sync)
-			throws javax.transaction.RollbackException,
-			java.lang.IllegalStateException, javax.transaction.SystemException
+	public void registerSynchronization (jakarta.transaction.Synchronization sync)
+			throws jakarta.transaction.RollbackException,
+			java.lang.IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (sync == null)
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
                     "TransactionImple.registerSynchronization - "
                             + jtaxLogger.i18NLogger.get_jtax_transaction_jts_nullparam());
 
@@ -468,8 +468,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	// TransactionSynchronizationRegistryImple
 
 	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
-			throws javax.transaction.RollbackException,
-			java.lang.IllegalStateException, javax.transaction.SystemException
+			throws jakarta.transaction.RollbackException,
+			java.lang.IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (_theTransaction != null)
 		{
@@ -479,7 +479,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e2)
 			{
-                RollbackException rollbackException = new javax.transaction.RollbackException(e2.toString());
+                RollbackException rollbackException = new jakarta.transaction.RollbackException(e2.toString());
                 rollbackException.initCause(e2);
                 throw rollbackException;
 			}
@@ -500,7 +500,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e6)
 			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e6.toString());
+                jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e6.toString());
                 systemException.initCause(e6);
 		        throw systemException;
 			}
@@ -512,14 +512,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 
     public boolean enlistResource (XAResource xaRes) throws RollbackException,
-			IllegalStateException, javax.transaction.SystemException
+			IllegalStateException, jakarta.transaction.SystemException
 	{
 		return enlistResource(xaRes, null);
 	}
 
 	public boolean enlistResource (XAResource xaRes, Object[] params)
 			throws RollbackException, IllegalStateException,
-			javax.transaction.SystemException
+			jakarta.transaction.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.enlistResource ( "
@@ -527,7 +527,7 @@ public class TransactionImple implements javax.transaction.Transaction,
         }
 
 		if (xaRes == null)
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
                     "TransactionImple.enlistResource - "
                             + jtaxLogger.i18NLogger.get_jtax_transaction_jts_nullparam());
 
@@ -535,10 +535,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		switch (status)
 		{
-		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
+		case jakarta.transaction.Status.STATUS_MARKED_ROLLBACK:
 			throw new RollbackException("TransactionImple.enlistResource - "
                     + jtaxLogger.i18NLogger.get_jtax_transaction_jts_markedrollback());
-		case javax.transaction.Status.STATUS_ACTIVE:
+		case jakarta.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
 			throw new IllegalStateException(
@@ -907,7 +907,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 */
 
 	public boolean delistResource (XAResource xaRes, int flags)
-			throws IllegalStateException, javax.transaction.SystemException
+			throws IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.delistResource ( "
@@ -915,7 +915,7 @@ public class TransactionImple implements javax.transaction.Transaction,
         }
 
 		if (xaRes == null)
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
                     "TransactionImple.delistResource - "
                             + jtaxLogger.i18NLogger.get_jtax_transaction_jts_nullparam());
 
@@ -923,9 +923,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		switch (status)
 		{
-		case javax.transaction.Status.STATUS_ACTIVE:
+		case jakarta.transaction.Status.STATUS_ACTIVE:
 			break;
-		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
+		case jakarta.transaction.Status.STATUS_MARKED_ROLLBACK:
 			break;
 		default:
 			throw new IllegalStateException(
@@ -961,7 +961,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					 * can try to rollback the RM now. Just an optimisation.
 					 */
 
-					if (status == javax.transaction.Status.STATUS_MARKED_ROLLBACK)
+					if (status == jakarta.transaction.Status.STATUS_MARKED_ROLLBACK)
 					{
 						if (XAUtils.canOptimizeDelist(xaRes))
 						{
@@ -1240,7 +1240,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		                try
 		                {
-		                    if (tx.getStatus() == javax.transaction.Status.STATUS_ACTIVE)
+		                    if (tx.getStatus() == jakarta.transaction.Status.STATUS_ACTIVE)
 		                    {
 		                        putTransaction(tx);
 		                    }
@@ -1343,7 +1343,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		try
 		{
-			if (getStatus() == javax.transaction.Status.STATUS_ACTIVE)
+			if (getStatus() == jakarta.transaction.Status.STATUS_ACTIVE)
 			{
 				TwoPhaseCoordinator theTx = null;
 
@@ -1387,10 +1387,10 @@ public class TransactionImple implements javax.transaction.Transaction,
     }
 
 	protected void commitAndDisassociate ()
-			throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
+			throws jakarta.transaction.RollbackException,
+			jakarta.transaction.HeuristicMixedException,
+			jakarta.transaction.HeuristicRollbackException,
+			java.lang.SecurityException, jakarta.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
@@ -1415,13 +1415,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.HeuristicMixed e2)
 			{
-                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new jakarta.transaction.HeuristicMixedException();
                 heuristicMixedException.initCause(e2);
                 throw heuristicMixedException;
 			}
 			catch (org.omg.CosTransactions.HeuristicHazard e3)
 			{
-                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new jakarta.transaction.HeuristicMixedException();
                 heuristicMixedException.initCause(e3);
                 throw heuristicMixedException;
 			}
@@ -1470,7 +1470,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	protected void rollbackAndDisassociate ()
 			throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
+			java.lang.SecurityException, jakarta.transaction.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.rollbackAndDisassociate");
@@ -1503,7 +1503,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e5.toString());
+                jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e5.toString());
                 systemException.initCause(e5);
 		        throw systemException;
 			}
@@ -1818,7 +1818,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (org.omg.CORBA.SystemException e3)
 				{
-                    javax.transaction.SystemException systemException = new javax.transaction.SystemException(e3.toString());
+                    jakarta.transaction.SystemException systemException = new jakarta.transaction.SystemException(e3.toString());
                     systemException.initCause(e3);
 		            throw systemException;
                 }
@@ -1835,7 +1835,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return XA_TRANSACTION_TIMEOUT_ENABLED ;
 	}
 
-    public static Map<Uid, javax.transaction.Transaction> getTransactions()
+    public static Map<Uid, jakarta.transaction.Transaction> getTransactions()
     {
         return Collections.unmodifiableMap(_transactions);
     }

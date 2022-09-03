@@ -41,7 +41,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.naming.InitialContext;
-import javax.transaction.*;
+import jakarta.transaction.*;
 import java.util.*;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;

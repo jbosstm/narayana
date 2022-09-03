@@ -25,10 +25,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.resource.spi.XATerminator;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Transaction;
+import jakarta.resource.spi.XATerminator;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -117,7 +117,7 @@ public class SubordinateTestCase
         tm.doOnePhaseCommit();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class SubordinateTestCase
         xaTerminator.commit(xid, true);
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -149,7 +149,7 @@ public class SubordinateTestCase
         }
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -166,13 +166,13 @@ public class SubordinateTestCase
             ((TransactionImple)t).doOnePhaseCommit();
             fail("did not get expected rollback exception");
         } catch(XAException e) {
-            assertEquals("javax.transaction.RollbackException", e.getCause().getClass().getName());
+            assertEquals("jakarta.transaction.RollbackException", e.getCause().getClass().getName());
             assertEquals(XAException.XA_RBROLLBACK, e.errorCode);
             // expected - we tried to commit a rollbackonly tx.
         }
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     @Test
@@ -184,7 +184,7 @@ public class SubordinateTestCase
         tm.doRollback();
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class SubordinateTestCase
         xaTerminator.rollback(xid);
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     @Test
@@ -211,7 +211,7 @@ public class SubordinateTestCase
         // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -226,7 +226,7 @@ public class SubordinateTestCase
         // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -242,7 +242,7 @@ public class SubordinateTestCase
         tm.doCommit();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -260,7 +260,7 @@ public class SubordinateTestCase
         xaTerminator.commit(xid, false);
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -274,7 +274,7 @@ public class SubordinateTestCase
         tm.doRollback();
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -296,7 +296,7 @@ public class SubordinateTestCase
         // no need to call rollback - the XA_RBROLLBACK code indicates its been done.
         assertFalse(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     /////////////
@@ -311,7 +311,7 @@ public class SubordinateTestCase
         tm.doOnePhaseCommit();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -327,7 +327,7 @@ public class SubordinateTestCase
         xaTerminator.commit(xid, true);
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -346,7 +346,7 @@ public class SubordinateTestCase
         }
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -365,13 +365,13 @@ public class SubordinateTestCase
             ((TransactionImple)t).doOnePhaseCommit();
             fail("did not get expected rollback exception");
         } catch(XAException e) {
-            assertEquals("javax.transaction.RollbackException", e.getCause().getClass().getName());
+            assertEquals("jakarta.transaction.RollbackException", e.getCause().getClass().getName());
             assertEquals(XAException.XA_RBROLLBACK, e.errorCode);
             // expected - we tried to commit a rollbackonly tx.
         }
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     @Test
@@ -384,7 +384,7 @@ public class SubordinateTestCase
         tm.doRollback();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -400,7 +400,7 @@ public class SubordinateTestCase
         xaTerminator.rollback(xid);
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     @Test
@@ -414,7 +414,7 @@ public class SubordinateTestCase
         // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -431,7 +431,7 @@ public class SubordinateTestCase
         // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -448,7 +448,7 @@ public class SubordinateTestCase
         tm.doCommit();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
     @Test
@@ -468,7 +468,7 @@ public class SubordinateTestCase
         xaTerminator.commit(xid, false);
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
     @Test
@@ -483,7 +483,7 @@ public class SubordinateTestCase
         tm.doRollback();
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
     @Test
@@ -507,7 +507,7 @@ public class SubordinateTestCase
         // no need to call rollback - the XA_RBROLLBACK code indicates its been done.
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
-        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
     @Test

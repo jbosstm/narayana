@@ -41,7 +41,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

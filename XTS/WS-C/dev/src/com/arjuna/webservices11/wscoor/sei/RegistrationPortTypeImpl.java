@@ -5,14 +5,14 @@ import org.jboss.ws.api.addressing.MAP;
 
 // import org.jboss.ws.annotation.EndpointConfig;
 
-import javax.jws.*;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Action;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.soap.Addressing;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.jws.*;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.webservices11.wsarj.ArjunaContext;

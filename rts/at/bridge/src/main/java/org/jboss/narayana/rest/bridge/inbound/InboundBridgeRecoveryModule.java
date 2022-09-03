@@ -24,7 +24,7 @@ package org.jboss.narayana.rest.bridge.inbound;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.resource.spi.XATerminator;
+import jakarta.resource.spi.XATerminator;
 import javax.transaction.xa.XAException;
 
 import org.jboss.jbossts.star.logging.RESTATLogger;

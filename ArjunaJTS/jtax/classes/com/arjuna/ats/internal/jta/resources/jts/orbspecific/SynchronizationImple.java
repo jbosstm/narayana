@@ -52,7 +52,7 @@ import java.security.PrivilegedAction;
 public class SynchronizationImple implements org.omg.CosTransactions.SynchronizationOperations
 {
 
-    public SynchronizationImple (javax.transaction.Synchronization ptr)
+    public SynchronizationImple (jakarta.transaction.Synchronization ptr)
     {
 	_theSynch = ptr;
 	_theReference = null;
@@ -173,7 +173,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	}
     }
 
-    private javax.transaction.Synchronization       _theSynch;
+    private jakarta.transaction.Synchronization       _theSynch;
     private org.omg.CosTransactions.Synchronization _theReference;
     private org.omg.PortableServer.Servant _thePOATie;
     private ClassLoader _theClassLoader;

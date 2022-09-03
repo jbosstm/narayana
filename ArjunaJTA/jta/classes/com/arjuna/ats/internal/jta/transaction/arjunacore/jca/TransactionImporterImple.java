@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
@@ -178,7 +178,7 @@ public class TransactionImporterImple implements TransactionImporter
 
 		// https://issues.jboss.org/browse/JBTM-927
 		try {
-			if (tx.getStatus() == javax.transaction.Status.STATUS_ROLLEDBACK) {
+			if (tx.getStatus() == jakarta.transaction.Status.STATUS_ROLLEDBACK) {
 				throw new XAException(XAException.XA_RBROLLBACK);
 			}
 		} catch (SystemException e) {

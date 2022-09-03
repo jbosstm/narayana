@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.jta.exceptions;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 /**
  * Exception may be thrown under certain circumstances when we are

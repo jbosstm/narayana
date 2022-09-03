@@ -23,9 +23,9 @@ package org.jboss.jbossts.star.annotation;
 
 import org.jboss.jbossts.star.client.SRAClient;
 
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.util.Nonbinding;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.ws.rs.core.Response;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

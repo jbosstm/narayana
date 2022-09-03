@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.txbridge.tests.outbound.client;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 @WebService(name = "TestNonATServiceImpl", targetNamespace = "http://client.outbound.tests.txbridge.jbossts.jboss.org/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)

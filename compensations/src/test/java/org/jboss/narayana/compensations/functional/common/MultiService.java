@@ -24,7 +24,7 @@ package org.jboss.narayana.compensations.functional.common;
 
 import org.jboss.narayana.compensations.api.Compensatable;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013

@@ -37,7 +37,7 @@ import org.jboss.logging.Logger;
 import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 public class WSTLogger
 {
@@ -72,7 +72,7 @@ public class WSTLogger
         if (inboundMap != null) {
             StringBuilder referenceParameters = new StringBuilder();
             if (inboundMap.getReferenceParameters() != null) {
-                inboundMap.getReferenceParameters().stream().filter(t -> t instanceof javax.xml.bind.JAXBElement)
+                inboundMap.getReferenceParameters().stream().filter(t -> t instanceof jakarta.xml.bind.JAXBElement)
                         .forEach(t -> {
                             JAXBElement jaxb = (JAXBElement) t;
                             referenceParameters.append("(name:").append(jaxb.getName()).append(",value:").append(jaxb.getValue()).append(");");

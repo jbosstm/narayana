@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.qa.astests.crash;
 
-import javax.ejb.EJBHome;
-import javax.ejb.CreateException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.CreateException;
 import java.rmi.RemoteException;
 
 public interface CrashRemHome extends EJBHome {

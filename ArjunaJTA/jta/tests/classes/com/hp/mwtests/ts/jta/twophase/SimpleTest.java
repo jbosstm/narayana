@@ -31,7 +31,7 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class SimpleTest
     @Test
     public void test() throws Exception
     {
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         transactionManager.begin();
 

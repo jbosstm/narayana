@@ -11,7 +11,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * Local business activity terminator which can be used to close a business activity from the terminator

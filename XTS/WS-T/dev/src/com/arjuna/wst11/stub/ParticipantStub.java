@@ -14,7 +14,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringWriter;
 import java.io.StringReader;

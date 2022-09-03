@@ -22,8 +22,8 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.transaction.Transactional;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.transaction.Transactional;
 
 class TransactionalLiteral extends AnnotationLiteral<Transactional> implements Transactional {
 

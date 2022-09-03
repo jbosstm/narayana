@@ -20,7 +20,7 @@
  */
 package com.hp.mwtests.ts.jta.subordinate;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 
 /**
  * Implementation of Synchronization for use in tx test cases.

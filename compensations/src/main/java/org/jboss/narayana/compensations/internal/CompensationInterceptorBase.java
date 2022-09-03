@@ -24,8 +24,8 @@ package org.jboss.narayana.compensations.internal;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationManager;
 
-import javax.inject.Inject;
-import javax.interceptor.InvocationContext;
+import jakarta.inject.Inject;
+import jakarta.interceptor.InvocationContext;
 import java.lang.annotation.Annotation;
 
 /**
@@ -37,7 +37,7 @@ public class CompensationInterceptorBase {
     CompensationManager compensationManager;
 
     @Inject
-    javax.enterprise.inject.spi.BeanManager beanManager;
+    jakarta.enterprise.inject.spi.BeanManager beanManager;
 
     protected Object invokeInOurTx(InvocationContext ic) throws Exception {
 

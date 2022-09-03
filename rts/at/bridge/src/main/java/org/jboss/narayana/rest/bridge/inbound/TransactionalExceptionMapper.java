@@ -1,11 +1,11 @@
 package org.jboss.narayana.rest.bridge.inbound;
 
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.TransactionRequiredException;
-import javax.transaction.TransactionalException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.TransactionRequiredException;
+import jakarta.transaction.TransactionalException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

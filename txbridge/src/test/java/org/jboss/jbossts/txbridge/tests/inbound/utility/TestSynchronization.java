@@ -22,7 +22,7 @@ package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
 import org.jboss.logging.Logger;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 
 /**
  * Implementation of Synchronization for use in tx test cases.

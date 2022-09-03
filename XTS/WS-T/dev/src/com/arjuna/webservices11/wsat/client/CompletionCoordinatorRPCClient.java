@@ -12,12 +12,12 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.util.Locale;
 

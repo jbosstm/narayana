@@ -20,9 +20,9 @@
  */
 package com.jboss.transaction.txinterop.webservices.bainterop.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;

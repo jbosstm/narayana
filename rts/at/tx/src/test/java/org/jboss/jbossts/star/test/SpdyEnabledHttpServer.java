@@ -35,8 +35,8 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.uri.UriComponent;
 
-import javax.servlet.Servlet;
-import javax.ws.rs.ProcessingException;
+import jakarta.servlet.Servlet;
+import jakarta.ws.rs.ProcessingException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;

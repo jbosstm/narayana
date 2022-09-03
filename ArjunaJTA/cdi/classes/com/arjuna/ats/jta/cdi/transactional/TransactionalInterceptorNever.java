@@ -24,15 +24,15 @@ package com.arjuna.ats.jta.cdi.transactional;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.annotation.Priority;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
-import javax.transaction.TransactionalException;
+import jakarta.annotation.Priority;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.TransactionalException;
 
 /**
  * @author paul.robinson@redhat.com 25/05/2013

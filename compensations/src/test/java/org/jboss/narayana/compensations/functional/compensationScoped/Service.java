@@ -28,7 +28,7 @@ import org.jboss.narayana.compensations.api.TxConfirm;
 import org.jboss.narayana.compensations.api.TxLogged;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 24/04/2013

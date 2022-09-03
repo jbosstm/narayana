@@ -22,7 +22,7 @@
 
 package org.jboss.jbossts.txbridge.outbound;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 /**
  * This handler is used when <code>default-context-propagation</code> is enabled. It handles every message unless

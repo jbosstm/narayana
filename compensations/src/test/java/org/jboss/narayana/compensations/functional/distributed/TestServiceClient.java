@@ -27,7 +27,7 @@ import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.compensations.api.Compensatable;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 
 public class TestServiceClient implements TestService {

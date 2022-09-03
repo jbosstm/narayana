@@ -2,7 +2,7 @@ package com.arjuna.wst11.stub;
 
 import com.arjuna.wst.Volatile2PCParticipant;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class Volatile2PCStub extends ParticipantStub implements Volatile2PCParticipant
 {

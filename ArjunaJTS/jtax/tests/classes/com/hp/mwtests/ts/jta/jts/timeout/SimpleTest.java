@@ -58,7 +58,7 @@ public class SimpleTest
         ORBManager.setPOA(myOA);
 
 
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
         boolean passed = false;
 
         transactionManager.setTransactionTimeout(3);
@@ -70,7 +70,7 @@ public class SimpleTest
         try {
             transactionManager.commit();
         }
-        catch (final javax.transaction.RollbackException ex)
+        catch (final jakarta.transaction.RollbackException ex)
         {
             passed = true;
         }

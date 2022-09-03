@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Tests that bean requiring serialization can be intercepted with {@code Transactional}, e.g. that the interceptor

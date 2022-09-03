@@ -22,7 +22,7 @@ package org.jboss.jbossts.qa.astests.crash;
 
 import org.jboss.jbossts.qa.astests.recovery.ASFailureSpec;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 public interface CrashRem extends EJBObject {

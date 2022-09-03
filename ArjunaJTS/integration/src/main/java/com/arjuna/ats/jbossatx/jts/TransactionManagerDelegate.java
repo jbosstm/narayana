@@ -25,9 +25,9 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.spi.ObjectFactory;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate;

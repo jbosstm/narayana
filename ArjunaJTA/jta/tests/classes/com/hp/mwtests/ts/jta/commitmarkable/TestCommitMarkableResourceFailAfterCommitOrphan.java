@@ -152,7 +152,7 @@ public class TestCommitMarkableResourceFailAfterCommitOrphan extends TestCommitM
 
             public void run() {
                 try (Connection localJDBCConnection = dataSource.getConnection()) {
-                    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                    jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                             .transactionManager();
 
                     tm.begin();

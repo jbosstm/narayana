@@ -22,30 +22,30 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactionScoped;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.BeforeDestroyed;
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.Destroyed;
-import javax.enterprise.context.Initialized;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.BeforeDestroyed;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.context.Destroyed;
+import jakarta.enterprise.context.Initialized;
 
-import javax.enterprise.context.spi.Context;
+import jakarta.enterprise.context.spi.Context;
 
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.event.Observes;
 
-import javax.enterprise.event.TransactionPhase;
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.event.TransactionPhase;
+import jakarta.enterprise.inject.spi.BeanManager;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.Transactional;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionScoped;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 
@@ -201,7 +201,7 @@ public class TransactionScopeLifecycleEventsTest {
         assertEquals("Expected rollback", Status.STATUS_ROLLEDBACK, finalStatus);
     }
 
-    public static class TestSync implements javax.transaction.Synchronization {
+    public static class TestSync implements jakarta.transaction.Synchronization {
         @Override
         public void beforeCompletion() {
             if (log.isDebugEnabled()) {

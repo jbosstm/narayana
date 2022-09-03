@@ -30,9 +30,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.sql.XADataSource;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 import java.sql.SQLException;
 import java.util.Properties;
 

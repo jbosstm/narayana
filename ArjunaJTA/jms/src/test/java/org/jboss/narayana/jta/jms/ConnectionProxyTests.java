@@ -21,12 +21,12 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.XAConnection;
-import javax.jms.XASession;
-import javax.transaction.Synchronization;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
+import jakarta.jms.XAConnection;
+import jakarta.jms.XASession;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Before;

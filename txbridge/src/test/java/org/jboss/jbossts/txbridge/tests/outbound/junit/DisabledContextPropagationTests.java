@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.json.JsonArray;
+import jakarta.json.JsonArray;
 
 /**
  *
@@ -383,7 +383,7 @@ public final class DisabledContextPropagationTests {
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String response = httpClient.execute(post, responseHandler);
 
-        JsonArray jsonArray = javax.json.Json.createReader(new StringReader(response)).readArray();
+        JsonArray jsonArray = jakarta.json.Json.createReader(new StringReader(response)).readArray();
         return jsonArray.getValuesAs((jsonString) -> jsonString.toString().replaceAll("^\"(.*)\"$", "$1"));
     }
 

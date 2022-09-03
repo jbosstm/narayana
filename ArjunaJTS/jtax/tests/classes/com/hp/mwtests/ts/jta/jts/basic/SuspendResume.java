@@ -63,14 +63,14 @@ public class SuspendResume
         
         try
         {
-            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+            jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                     .transactionManager();
 
             System.out.println("Starting top-level transaction.");
 
             tm.begin();
 
-            javax.transaction.Transaction theTransaction = tm
+            jakarta.transaction.Transaction theTransaction = tm
                     .getTransaction();
 
             if (theTransaction != null)

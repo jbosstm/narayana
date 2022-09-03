@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
@@ -66,15 +66,15 @@ public class UtilsUnitTest
     @Test
     public void testJTAHelper () throws Exception
     {
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_ACTIVE), "javax.transaction.Status.STATUS_ACTIVE");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_COMMITTED), "javax.transaction.Status.STATUS_COMMITTED");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_MARKED_ROLLBACK), "javax.transaction.Status.STATUS_MARKED_ROLLBACK");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_NO_TRANSACTION), "javax.transaction.Status.STATUS_NO_TRANSACTION");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_PREPARED), "javax.transaction.Status.STATUS_PREPARED");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_PREPARING), "javax.transaction.Status.STATUS_PREPARING");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_ROLLEDBACK), "javax.transaction.Status.STATUS_ROLLEDBACK");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_ROLLING_BACK), "javax.transaction.Status.STATUS_ROLLING_BACK");
-        assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_UNKNOWN), "javax.transaction.Status.STATUS_UNKNOWN");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_ACTIVE), "jakarta.transaction.Status.STATUS_ACTIVE");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_COMMITTED), "jakarta.transaction.Status.STATUS_COMMITTED");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_MARKED_ROLLBACK), "jakarta.transaction.Status.STATUS_MARKED_ROLLBACK");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_NO_TRANSACTION), "jakarta.transaction.Status.STATUS_NO_TRANSACTION");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_PREPARED), "jakarta.transaction.Status.STATUS_PREPARED");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_PREPARING), "jakarta.transaction.Status.STATUS_PREPARING");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_ROLLEDBACK), "jakarta.transaction.Status.STATUS_ROLLEDBACK");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_ROLLING_BACK), "jakarta.transaction.Status.STATUS_ROLLING_BACK");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_UNKNOWN), "jakarta.transaction.Status.STATUS_UNKNOWN");
     }
     
     @Test

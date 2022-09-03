@@ -68,13 +68,13 @@ class Worker extends Thread
 		    System.exit(0);
 		}
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 		if (tm != null)
 		{
 		    tm.begin();
 	    
-		    javax.transaction.Transaction theTransaction = tm.getTransaction();
+		    jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		    if (theTransaction != null)
 		    {

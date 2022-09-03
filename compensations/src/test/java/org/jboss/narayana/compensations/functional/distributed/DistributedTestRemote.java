@@ -44,7 +44,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class DistributedTestRemote {

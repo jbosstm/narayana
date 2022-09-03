@@ -31,7 +31,7 @@
           <ejb-class>org.jboss.jbossts.qa.astests.crash.TextMdb</ejb-class>
           <transaction-type>Bean</transaction-type>
           <message-driven-destination>
-              <destination-type>javax.jms.Queue</destination-type>
+              <destination-type>jakarta.jms.Queue</destination-type>
           </message-driven-destination>
 
         <security-identity>

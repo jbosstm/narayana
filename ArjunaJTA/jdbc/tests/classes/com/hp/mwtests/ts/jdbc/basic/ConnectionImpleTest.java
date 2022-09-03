@@ -33,9 +33,9 @@ import org.mockito.MockitoAnnotations;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.sql.DatabaseMetaData;

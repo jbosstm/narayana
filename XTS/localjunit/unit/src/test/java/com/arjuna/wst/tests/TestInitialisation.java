@@ -22,10 +22,10 @@
 
 package com.arjuna.wst.tests;
 
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContextEvent;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import javax.xml.namespace.QName;
 
 import com.arjuna.webservices11.ServiceRegistry;

@@ -21,7 +21,7 @@
 package org.jboss.jbossts.qa.astests.recovery;
 
 import javax.transaction.xa.XAException;
-import javax.transaction.*;
+import jakarta.transaction.*;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -26,18 +26,18 @@ import java.io.Serializable;
 
 import java.util.function.Supplier; // for javadoc only
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import javax.enterprise.inject.CreationException;
-import javax.enterprise.inject.Instance;
+import jakarta.enterprise.inject.CreationException;
+import jakarta.enterprise.inject.Instance;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import javax.naming.NamingException;
 
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 

@@ -31,7 +31,7 @@
 
 package com.arjuna.wst11;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * Not in the 1.1 specification. Supposed to use participant interface.

@@ -48,7 +48,7 @@ public class WarDeployment {
 
 		final String ManifestMF = "Manifest-Version: 1.0\n"
 			+ "Dependencies: org.jboss.modules,org.jboss.msc,"
-			+ "org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,"
+			+ "org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,"
 			+ "org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export\n";
 		archive.setManifest(new StringAsset(ManifestMF));
 

@@ -18,5 +18,5 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://fabrikam123.com/wsba")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://fabrikam123.com/wsba")
 package com.jboss.transaction.txinterop.webservices.bainterop.generated;

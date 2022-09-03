@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -154,7 +154,7 @@ public class JTSInterpositionSynchronizationTest {
 		jtsPropertyManager.getJTSEnvironmentBean()
 				.setSupportInterposedSynchronization(true);
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.setTransactionTimeout(1000000);

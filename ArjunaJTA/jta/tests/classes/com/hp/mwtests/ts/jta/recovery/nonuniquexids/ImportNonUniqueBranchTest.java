@@ -35,8 +35,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.resource.spi.XATerminator;
-import javax.transaction.Transaction;
+import jakarta.resource.spi.XATerminator;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.util.ArrayList;

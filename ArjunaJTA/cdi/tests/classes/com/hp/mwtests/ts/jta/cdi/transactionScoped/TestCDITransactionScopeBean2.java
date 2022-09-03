@@ -1,9 +1,9 @@
 package com.hp.mwtests.ts.jta.cdi.transactionScoped;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Named;
-import javax.transaction.TransactionScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Named;
+import jakarta.transaction.TransactionScoped;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 

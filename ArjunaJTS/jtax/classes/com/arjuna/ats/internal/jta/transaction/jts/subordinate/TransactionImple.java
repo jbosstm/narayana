@@ -31,11 +31,11 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicCommitException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -65,10 +65,10 @@ public class TransactionImple extends
          * back directly, should fail.
          */
 
-        public void commit () throws javax.transaction.RollbackException,
-                        javax.transaction.HeuristicMixedException,
-                        javax.transaction.HeuristicRollbackException,
-                        java.lang.SecurityException, javax.transaction.SystemException,
+        public void commit () throws jakarta.transaction.RollbackException,
+                        jakarta.transaction.HeuristicMixedException,
+                        jakarta.transaction.HeuristicRollbackException,
+                        java.lang.SecurityException, jakarta.transaction.SystemException,
                         java.lang.IllegalStateException
         {
                 /*
@@ -85,7 +85,7 @@ public class TransactionImple extends
          */
 
         public void rollback () throws java.lang.IllegalStateException,
-                        java.lang.SecurityException, javax.transaction.SystemException
+                        java.lang.SecurityException, jakarta.transaction.SystemException
         {
                 /*
                  * throw new IllegalStateException(
@@ -266,12 +266,12 @@ public class TransactionImple extends
          * prepared and will be the only resource in the global transaction.
          *
          * @throws IllegalStateException if the transaction has already terminated
-         * @throws javax.transaction.HeuristicRollbackException thrown if the transaction
+         * @throws jakarta.transaction.HeuristicRollbackException thrown if the transaction
          * rolls back.
          */
 
-        public void doOnePhaseCommit () throws IllegalStateException, javax.transaction.RollbackException,
-                        javax.transaction.HeuristicMixedException, javax.transaction.SystemException
+        public void doOnePhaseCommit () throws IllegalStateException, jakarta.transaction.RollbackException,
+                        jakarta.transaction.HeuristicMixedException, jakarta.transaction.SystemException
         {
                 try
                 {
@@ -306,7 +306,7 @@ public class TransactionImple extends
                         case ActionStatus.H_HAZARD:
                         case ActionStatus.H_MIXED:
                         default:
-                                throw new javax.transaction.HeuristicMixedException();
+                                throw new jakarta.transaction.HeuristicMixedException();
                         case ActionStatus.INVALID:
                                 throw new InvalidTerminationStateException();
                         }
@@ -342,7 +342,7 @@ public class TransactionImple extends
                 }
         }
         
-        public boolean doBeforeCompletion () throws javax.transaction.SystemException
+        public boolean doBeforeCompletion () throws jakarta.transaction.SystemException
         {
             try
             {
@@ -373,10 +373,10 @@ public class TransactionImple extends
         }
 
         protected void commitAndDisassociate ()
-                        throws javax.transaction.RollbackException,
-                        javax.transaction.HeuristicMixedException,
-                        javax.transaction.HeuristicRollbackException,
-                        java.lang.SecurityException, javax.transaction.SystemException,
+                        throws jakarta.transaction.RollbackException,
+                        jakarta.transaction.HeuristicMixedException,
+                        jakarta.transaction.HeuristicRollbackException,
+                        java.lang.SecurityException, jakarta.transaction.SystemException,
                         java.lang.IllegalStateException
         {
                 /*
@@ -389,7 +389,7 @@ public class TransactionImple extends
 
         protected void rollbackAndDisassociate ()
                         throws java.lang.IllegalStateException,
-                        java.lang.SecurityException, javax.transaction.SystemException
+                        java.lang.SecurityException, jakarta.transaction.SystemException
         {
                 /*
                  * throw new IllegalStateException(

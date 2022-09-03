@@ -36,9 +36,9 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.common.util.ConfigurationInfo;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * JBoss Transaction Manager Service.

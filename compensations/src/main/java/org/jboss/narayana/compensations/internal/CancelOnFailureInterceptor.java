@@ -25,11 +25,11 @@ package org.jboss.narayana.compensations.internal;
 import org.jboss.narayana.compensations.api.CancelOnFailure;
 import org.jboss.narayana.compensations.api.CompensationManager;
 
-import javax.annotation.Priority;
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @author paul.robinson@redhat.com 25/04/2013

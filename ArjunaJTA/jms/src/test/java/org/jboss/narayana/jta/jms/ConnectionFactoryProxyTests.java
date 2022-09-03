@@ -21,11 +21,11 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.XAConnection;
-import javax.jms.XAConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.XAConnection;
+import jakarta.jms.XAConnectionFactory;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -69,7 +69,7 @@ public class TestCommitMarkableResource extends TestCommitMarkableResourceBase {
 		// Test code
 		Utils.createTables(dataSource.getConnection());
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();

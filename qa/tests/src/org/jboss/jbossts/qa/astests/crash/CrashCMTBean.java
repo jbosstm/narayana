@@ -23,9 +23,9 @@ package org.jboss.jbossts.qa.astests.crash;
 import org.jboss.jbossts.qa.astests.recovery.ASFailureSpec;
 import org.jboss.jbossts.qa.astests.recovery.TestASRecovery;
 
-import javax.ejb.SessionContext;
-import javax.ejb.SessionBean;
-import javax.transaction.Transaction;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionBean;
+import jakarta.transaction.Transaction;
 
 public class CrashCMTBean implements SessionBean {
     private SessionContext context;
@@ -52,7 +52,7 @@ public class CrashCMTBean implements SessionBean {
         {
             tx = com.arjuna.ats.jta.TransactionManager.transactionManager().getTransaction();
         }
-        catch (javax.transaction.SystemException e)
+        catch (jakarta.transaction.SystemException e)
         {
             tx = null;
         }

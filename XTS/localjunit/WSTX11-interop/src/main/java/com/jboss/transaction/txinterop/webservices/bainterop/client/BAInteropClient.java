@@ -20,9 +20,9 @@
  */
 package com.jboss.transaction.txinterop.webservices.bainterop.client;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;

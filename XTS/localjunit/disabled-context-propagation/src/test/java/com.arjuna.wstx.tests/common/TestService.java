@@ -21,9 +21,9 @@
  */
 package com.arjuna.wstx.tests.common;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 /**
  * Web service which does not understand neither WS-AT nor WS-BA
