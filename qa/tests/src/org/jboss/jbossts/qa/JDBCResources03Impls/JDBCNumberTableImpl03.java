@@ -113,8 +113,8 @@ public class JDBCNumberTableImpl03 implements NumberTableOperations
 
 				try
 				{
-					javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-					javax.transaction.Transaction tx = (javax.transaction.Transaction) tm.getTransaction();
+					jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+					jakarta.transaction.Transaction tx = (jakarta.transaction.Transaction) tm.getTransaction();
 
 					_connections.put(tx, conn);
 				}
@@ -192,8 +192,8 @@ public class JDBCNumberTableImpl03 implements NumberTableOperations
 
 				try
 				{
-					javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-					javax.transaction.Transaction tx = (javax.transaction.Transaction) tm.getTransaction();
+					jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+					jakarta.transaction.Transaction tx = (jakarta.transaction.Transaction) tm.getTransaction();
 
 					_connections.put(tx, conn);
 				}
@@ -270,8 +270,8 @@ public class JDBCNumberTableImpl03 implements NumberTableOperations
 
 				try
 				{
-					javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-					javax.transaction.Transaction tx = (javax.transaction.Transaction) tm.getTransaction();
+					jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+					jakarta.transaction.Transaction tx = (jakarta.transaction.Transaction) tm.getTransaction();
 
 					_connections.put(tx, conn);
 				}
@@ -333,8 +333,8 @@ public class JDBCNumberTableImpl03 implements NumberTableOperations
 		}
 		try
 		{
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-			javax.transaction.Transaction tx = (javax.transaction.Transaction) tm.getTransaction();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.Transaction tx = (jakarta.transaction.Transaction) tm.getTransaction();
 
 			Connection conn = (Connection) _connections.get(tx);
 

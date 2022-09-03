@@ -33,7 +33,7 @@ package com.arjuna.ats.internal.jdbc;
 
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 
 /**
  * A synchronization to close the database connection when the transaction

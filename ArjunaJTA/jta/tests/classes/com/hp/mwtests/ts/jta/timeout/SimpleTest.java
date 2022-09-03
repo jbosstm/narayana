@@ -38,7 +38,7 @@ public class SimpleTest
     @Test
     public void test() throws Exception
     {
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         transactionManager.setTransactionTimeout(3);
 
@@ -50,7 +50,7 @@ public class SimpleTest
         {
             transactionManager.commit();
         }
-        catch (final javax.transaction.RollbackException ex)
+        catch (final jakarta.transaction.RollbackException ex)
         {
             // expected
         }

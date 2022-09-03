@@ -39,7 +39,7 @@ import org.jboss.jbossts.qa.Utils.JDBCProfileStore;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.sql.*;
 import java.util.Properties;
 

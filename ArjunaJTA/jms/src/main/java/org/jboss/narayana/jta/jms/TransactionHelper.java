@@ -21,8 +21,8 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.JMSException;
-import javax.transaction.Synchronization;
+import jakarta.jms.JMSException;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 /**

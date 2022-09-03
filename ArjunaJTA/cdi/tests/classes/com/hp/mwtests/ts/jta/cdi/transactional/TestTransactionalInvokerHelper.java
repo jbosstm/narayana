@@ -22,13 +22,13 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
-import javax.ejb.TransactionManagementType;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.Transactional.TxType;
-import javax.transaction.UserTransaction;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transactional.TxType;
+import jakarta.transaction.UserTransaction;
 
 /**
  * @author <a href="mailto:Tomasz%20Krakowiak%20%3ctomasz.krakowiak@efish.pl%3c">Tomasz Krakowiak

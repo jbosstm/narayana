@@ -4,8 +4,8 @@ import com.arjuna.webservices11.util.PrivilegedMapBuilderFactory;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 import javax.xml.namespace.QName;
 import java.util.Map;
 

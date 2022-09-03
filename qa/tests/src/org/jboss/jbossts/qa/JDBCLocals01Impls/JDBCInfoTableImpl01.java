@@ -215,6 +215,6 @@ public class JDBCInfoTableImpl01 implements InfoTable
 	private String _dbUser;
 	private int _databaseTimeout;
 	private boolean _useTimeout = false;
-	private javax.transaction.TransactionManager _transactionManager;
+	private jakarta.transaction.TransactionManager _transactionManager;
 
 }

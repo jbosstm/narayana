@@ -6,7 +6,7 @@ import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import java.sql.SQLException;
 
@@ -51,7 +51,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
         }
     }
 
-    public final boolean setTransaction(javax.transaction.Transaction tx) {
+    public final boolean setTransaction(jakarta.transaction.Transaction tx) {
         if (tx == null) {
             _theTransaction = null;
             return true;
@@ -72,7 +72,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
         return validTransaction(tx);
     }
 
-    public final boolean validTransaction(javax.transaction.Transaction tx) {
+    public final boolean validTransaction(jakarta.transaction.Transaction tx) {
         boolean valid = true;
 
         if (_theTransaction != null) {
@@ -205,7 +205,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
     protected String _passwd;
     protected XAConnection _theConnection;
     protected XAResource _theXAResource;
-    protected volatile javax.transaction.Transaction _theTransaction;
+    protected volatile jakarta.transaction.Transaction _theTransaction;
     protected ConnectionModifier _theModifier;
     protected ConnectionImple _theArjunaConnection;
     protected XADataSource _theDataSource;

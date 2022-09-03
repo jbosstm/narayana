@@ -185,11 +185,11 @@
 						   org.jboss.tm*;version=${version.org.jboss.jboss-transaction-spi},
 						   org.jboss.narayana.osgi.jta;version=${project.version},
 						   org.jboss.narayana.osgi.jta.command;version=${project.version},
-						   javax.transaction*;version="1.2.0"
+						   jakarta.transaction*;version="1.2.0"
 					   </Export-Package>
 					   <Private-Package>
 						   org.jboss.narayana.osgi.jta.internal,
-						   javax.transaction*,
+						   jakarta.transaction*,
 						   org.jboss.tm*
 					   </Private-Package>
 					   <Import-Package>
@@ -201,7 +201,7 @@
 						   org.xml.sax,
 						   org.xml.sax.helpers,
 						   org.w3c.dom,
-						   javax.transaction*,
+						   jakarta.transaction*,
 						   org.osgi.framework,
 						   org.osgi.framework.wiring,
 						   org.osgi.service.cm,
@@ -211,10 +211,10 @@
 						   org.apache.felix.service.command;resolution:=optional,
 						   org.apache.karaf.shell.api.action;resolution:=optional,
 						   org.apache.karaf.shell.api.action.lifecycle;resolution:=optional,
-						   javax.enterprise.util;resolution:=optional,
-						   javax.interceptor;resolution:=optional,
+						   jakarta.enterprise.util;resolution:=optional,
+						   jakarta.interceptor;resolution:=optional,
 						   javax.security.cert;resolution:=optional,
-						   javax.enterprise.context;resolution:=optional
+						   jakarta.enterprise.context;resolution:=optional
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
 					   <Embed-Dependency>
@@ -230,9 +230,9 @@
 						   netty*;inline=false
 					   </Embed-Dependency>
 					   <Provide-Capability>
-						   osgi.service;effective:=active;objectClass=javax.transaction.TransactionManager,
-						   osgi.service;effective:=active;objectClass=javax.transaction.TransactionSynchronizationRegistry,
-						   osgi.service;effective:=active;objectClass=javax.transaction.UserTransaction
+						   osgi.service;effective:=active;objectClass=jakarta.transaction.TransactionManager,
+						   osgi.service;effective:=active;objectClass=jakarta.transaction.TransactionSynchronizationRegistry,
+						   osgi.service;effective:=active;objectClass=jakarta.transaction.UserTransaction
 					   </Provide-Capability>
 					   <Require-Capability>
 						   osgi.service;effective:=active;resolution:=optional;cardinality:=multiple;filter:="(objectClass=org.jboss.tm.XAResourceRecovery)"

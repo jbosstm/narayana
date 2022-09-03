@@ -1,7 +1,7 @@
 package com.hp.mwtests.ts.jta.cdi.serializability;
 
-import javax.enterprise.context.SessionScoped;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.transaction.Transactional;
 import java.io.Serializable;
 
 // any scope requiring serialization will do, e.g. session/conversation from the built-in ones

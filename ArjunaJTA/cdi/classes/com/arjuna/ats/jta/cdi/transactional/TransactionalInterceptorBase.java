@@ -32,15 +32,15 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 
-import javax.enterprise.inject.Intercepted;
-import javax.enterprise.inject.spi.AnnotatedMethod;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.inject.Inject;
-import javax.interceptor.InvocationContext;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
+import jakarta.enterprise.inject.Intercepted;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.inject.Inject;
+import jakarta.interceptor.InvocationContext;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.security.PrivilegedAction;
@@ -63,7 +63,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
     private static final String WELD_INTERCEPTOR_BINDINGS_KEY = "org.jboss.weld.interceptor.bindings";
 
     @Inject
-    transient javax.enterprise.inject.spi.BeanManager beanManager;
+    transient jakarta.enterprise.inject.spi.BeanManager beanManager;
 
     @Inject
     private TransactionExtension extension;

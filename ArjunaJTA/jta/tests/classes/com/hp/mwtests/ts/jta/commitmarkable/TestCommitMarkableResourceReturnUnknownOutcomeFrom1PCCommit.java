@@ -132,7 +132,7 @@ public class TestCommitMarkableResourceReturnUnknownOutcomeFrom1PCCommit {
                 }
             }
         }
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
@@ -225,7 +225,7 @@ public class TestCommitMarkableResourceReturnUnknownOutcomeFrom1PCCommit {
                 }
             }
         }
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 

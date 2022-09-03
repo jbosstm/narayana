@@ -31,8 +31,8 @@ import org.jboss.narayana.compensations.api.CompensationManager;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.EnlistException;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

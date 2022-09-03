@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jta.jts.nested;
 
 import static org.junit.Assert.fail;
 
-import javax.transaction.NotSupportedException;
+import jakarta.transaction.NotSupportedException;
 
 import org.junit.Test;
 
@@ -64,7 +64,7 @@ public class SimpleNestedDisabledTest
         jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(false);
 
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         transactionManager.begin();
 

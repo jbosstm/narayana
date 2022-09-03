@@ -18,5 +18,5 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.wstf.org/sc007")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.wstf.org/sc007")
 package com.jboss.transaction.wstf.webservices.sc007.generated;

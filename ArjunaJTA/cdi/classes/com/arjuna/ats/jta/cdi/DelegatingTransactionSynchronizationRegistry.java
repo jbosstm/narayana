@@ -25,11 +25,11 @@ import java.io.Serializable;
 
 import java.util.Map; // for javadoc only
 
-import javax.transaction.Status; // for javadoc only
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction; // for javadoc only
-import javax.transaction.TransactionManager; // for javadoc only
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.Status; // for javadoc only
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.Transaction; // for javadoc only
+import jakarta.transaction.TransactionManager; // for javadoc only
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * An {@code abstract} {@link TransactionSynchronizationRegistry}

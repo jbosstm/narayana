@@ -57,7 +57,7 @@ public class RollbackTest
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
         boolean passed = false;
 
         transactionManager.setTransactionTimeout(3);

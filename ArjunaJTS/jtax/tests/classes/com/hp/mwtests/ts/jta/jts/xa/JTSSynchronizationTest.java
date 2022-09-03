@@ -39,15 +39,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -101,14 +101,14 @@ public class JTSSynchronizationTest {
 		final TransactionSynchronizationRegistry tsr = new com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple();
 
 		new RecoveryManagerImple(false);
-		final javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		final jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.getStatus();
 
 		tm.begin();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		assertTrue(theTransaction.enlistResource(new XARMERRXAResource(false)));
 		assertTrue(theTransaction.enlistResource(new XARMERRXAResource(false)));
@@ -122,13 +122,13 @@ public class JTSSynchronizationTest {
 				try {
 					Transaction transaction = tm.getTransaction();
 					Transaction suspend = tm.suspend();
-					assertTrue(tm.getStatus() == javax.transaction.Status.STATUS_NO_TRANSACTION);
+					assertTrue(tm.getStatus() == jakarta.transaction.Status.STATUS_NO_TRANSACTION);
 					Transaction suspend2 = tm.suspend();
 					assertTrue(suspend2 == null);
 					tm.begin();
-					assertTrue(tm.getStatus() == javax.transaction.Status.STATUS_ACTIVE);
+					assertTrue(tm.getStatus() == jakarta.transaction.Status.STATUS_ACTIVE);
 					tm.commit();
-					assertTrue(tm.getStatus() == javax.transaction.Status.STATUS_NO_TRANSACTION);
+					assertTrue(tm.getStatus() == jakarta.transaction.Status.STATUS_NO_TRANSACTION);
 					tm.resume(suspend);
 					assertTrue(tm.getStatus() == arg0);
 					Transaction transaction2 = tm.getTransaction();

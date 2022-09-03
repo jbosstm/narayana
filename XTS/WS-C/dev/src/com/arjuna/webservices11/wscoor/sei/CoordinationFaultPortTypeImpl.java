@@ -24,19 +24,19 @@ package com.arjuna.webservices11.wscoor.sei;
 import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.wsc11.AsynchronousRegistrationMapper;
-import javax.annotation.Resource;
-import javax.jws.HandlerChain;
+import jakarta.annotation.Resource;
+import jakarta.jws.HandlerChain;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Action;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.soap.Addressing;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.soap.Addressing;
 import org.jboss.ws.api.addressing.MAP;
 
 /**

@@ -2,9 +2,9 @@ package com.arjuna.webservices11.wsaddr;
 
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.WebServiceException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;

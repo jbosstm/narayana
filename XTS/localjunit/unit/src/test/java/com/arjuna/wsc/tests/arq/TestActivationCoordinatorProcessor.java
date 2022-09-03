@@ -23,11 +23,11 @@ package com.arjuna.wsc.tests.arq;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;

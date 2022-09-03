@@ -26,8 +26,8 @@ package org.jboss.jbossts.txbridge.outbound;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
-import javax.transaction.Synchronization;
-import javax.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.Status;
 
 import com.arjuna.ats.jta.utils.JTAHelper;
 
@@ -67,7 +67,7 @@ public class BridgeSynchronization implements Synchronization
     /**
      * This method is called by the transaction manager after the transaction is committed or rolled back.
      *
-     * @param status the javax.transaction.Status representing the tx outcome.
+     * @param status the jakarta.transaction.Status representing the tx outcome.
      */
     public void afterCompletion(int status)
     {

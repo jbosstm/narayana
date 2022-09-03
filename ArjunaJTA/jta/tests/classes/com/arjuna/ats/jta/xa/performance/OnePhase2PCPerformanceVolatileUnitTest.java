@@ -78,7 +78,7 @@ public class OnePhase2PCPerformanceVolatileUnitTest
     }
 
     Worker<Void> worker = new Worker<Void>() {
-        javax.transaction.TransactionManager tm;
+        jakarta.transaction.TransactionManager tm;
 
         @Override
         public void init() {

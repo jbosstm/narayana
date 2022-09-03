@@ -21,7 +21,7 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 import org.junit.Test;
 

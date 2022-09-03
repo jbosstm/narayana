@@ -74,12 +74,12 @@ public class XAResourceTest {
 
 		RecoveryManager.manager();
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		assertTrue(theTransaction.enlistResource(new XA_READONLYXAResource()));
 		assertTrue(theTransaction.enlistResource(new XA_READONLYXAResource()));

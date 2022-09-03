@@ -17,8 +17,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.transaction.Status;
+import jakarta.inject.Inject;
+import jakarta.transaction.Status;
 
 /**
  * When using Weld then Narayana switches to use Weld API to access the list of the {@code @Transactional} annotations.

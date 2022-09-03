@@ -62,8 +62,8 @@ package org.jboss.jbossts.qa.JTA01Tests;
 
 import org.jboss.jbossts.qa.Utils.Setup;
 
-import javax.transaction.Status;
-import javax.transaction.Transaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.Transaction;
 
 public class Test05
 {
@@ -96,7 +96,7 @@ public class Test05
 
 			boolean correct = true;
 
-			javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			Transaction[] transactions = new Transaction[numberOfTransactions];
 

@@ -30,7 +30,7 @@ import org.jboss.narayana.compensations.functional.common.DummyCompensationHandl
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

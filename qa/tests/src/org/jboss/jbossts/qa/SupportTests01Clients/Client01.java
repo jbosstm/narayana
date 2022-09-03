@@ -68,25 +68,25 @@ public class Client01
 	{
 		switch (status)
 		{
-			case javax.transaction.Status.STATUS_ACTIVE:
+			case jakarta.transaction.Status.STATUS_ACTIVE:
 				return ("STATUS_ACTIVE");
-			case javax.transaction.Status.STATUS_COMMITTED:
+			case jakarta.transaction.Status.STATUS_COMMITTED:
 				return ("STATUS_COMMITTED");
-			case javax.transaction.Status.STATUS_COMMITTING:
+			case jakarta.transaction.Status.STATUS_COMMITTING:
 				return ("STATUS_COMMITTING");
-			case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
+			case jakarta.transaction.Status.STATUS_MARKED_ROLLBACK:
 				return ("STATUS_MARKED_ROLLBACK");
-			case javax.transaction.Status.STATUS_NO_TRANSACTION:
+			case jakarta.transaction.Status.STATUS_NO_TRANSACTION:
 				return ("STATUS_NO_TRANSACTION");
-			case javax.transaction.Status.STATUS_PREPARED:
+			case jakarta.transaction.Status.STATUS_PREPARED:
 				return ("STATUS_PREPARED");
-			case javax.transaction.Status.STATUS_PREPARING:
+			case jakarta.transaction.Status.STATUS_PREPARING:
 				return ("STATUS_PREPARING");
-			case javax.transaction.Status.STATUS_ROLLEDBACK:
+			case jakarta.transaction.Status.STATUS_ROLLEDBACK:
 				return ("STATUS_ROLLEDBACK");
-			case javax.transaction.Status.STATUS_ROLLING_BACK:
+			case jakarta.transaction.Status.STATUS_ROLLING_BACK:
 				return ("STATUS_ROLLING_BACK");
-			case javax.transaction.Status.STATUS_UNKNOWN:
+			case jakarta.transaction.Status.STATUS_UNKNOWN:
 				return ("STATUS_UNKNOWN");
 		}
 		return ("!!ERROR!!");
@@ -99,14 +99,14 @@ public class Client01
 			ORBInterface.initORB(args, null);
 			OAInterface.initOA();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			String counterIOR = ServerIORStore.loadIOR(args[args.length - 1]);
 			Counter counter = CounterHelper.narrow(ORBInterface.orb().string_to_object(counterIOR));
 
 			tm.begin();
 
-			javax.transaction.Transaction transaction = tm.getTransaction();
+			jakarta.transaction.Transaction transaction = tm.getTransaction();
 
 			counter.increase();
 

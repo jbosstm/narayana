@@ -30,12 +30,12 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.spi.ObjectFactory;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.JTAInterposedSynchronizationImple;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
@@ -61,7 +61,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
     private static final long serialVersionUID = 1L;
 
     // cached for performance. Note: must set tm config before instantiating a TSRImple instance.
-    private transient javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+    private transient jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
     private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
         objectInputStream.defaultReadObject();

@@ -43,7 +43,7 @@ import org.jboss.jbossts.xts11.recovery.participant.ba.BAParticipantRecoveryReco
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.TimerTask;
 
 /**

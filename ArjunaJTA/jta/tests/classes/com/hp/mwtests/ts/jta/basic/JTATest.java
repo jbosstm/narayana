@@ -55,11 +55,11 @@ public class JTATest
         XAResource theResource = creator.create(connectionString, true);
         XAResource theResource2 = creator.create(connectionString, true);
 
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();
 
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
         assertTrue( theTransaction.enlistResource(theResource) );
         assertTrue( theTransaction.enlistResource(theResource2) );

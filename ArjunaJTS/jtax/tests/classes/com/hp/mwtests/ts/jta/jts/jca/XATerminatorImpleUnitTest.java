@@ -62,8 +62,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.management.ObjectName;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

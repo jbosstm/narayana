@@ -10,7 +10,7 @@ import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;

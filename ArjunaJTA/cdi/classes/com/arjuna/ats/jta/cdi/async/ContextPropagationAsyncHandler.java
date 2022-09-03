@@ -24,9 +24,9 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.jboss.logging.Logger;
 import org.reactivestreams.Publisher;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletionException;

@@ -62,7 +62,7 @@ package org.jboss.jbossts.qa.JTA01Tests;
 
 import org.jboss.jbossts.qa.Utils.Setup;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 
 public class Test01
 {
@@ -93,7 +93,7 @@ public class Test01
 
 			boolean correct = true;
 
-			javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			try
 			{

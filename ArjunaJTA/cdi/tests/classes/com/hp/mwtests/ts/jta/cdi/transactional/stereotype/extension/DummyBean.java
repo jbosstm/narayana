@@ -22,7 +22,7 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 /**
  * <p>

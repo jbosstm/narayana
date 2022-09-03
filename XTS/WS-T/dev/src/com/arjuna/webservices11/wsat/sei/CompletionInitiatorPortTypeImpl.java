@@ -3,13 +3,13 @@ package com.arjuna.webservices11.wsat.sei;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.jboss.ws.api.addressing.MAP;
 
-import javax.jws.*;
-import javax.jws.soap.SOAPBinding;
-import javax.annotation.Resource;
-import javax.xml.ws.Action;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.jws.*;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.annotation.Resource;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.handler.MessageContext;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;

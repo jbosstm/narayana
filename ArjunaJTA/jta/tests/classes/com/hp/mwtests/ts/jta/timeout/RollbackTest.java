@@ -38,7 +38,7 @@ public class RollbackTest
     @Test
     public void test() throws Exception
     {
-        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         transactionManager.setTransactionTimeout(3);
 

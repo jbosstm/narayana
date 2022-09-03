@@ -22,8 +22,8 @@
 
 package org.jboss.narayana.compensations.integration.archive;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

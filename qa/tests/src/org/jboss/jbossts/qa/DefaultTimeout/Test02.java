@@ -25,8 +25,8 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 
 /**
  * Test default timeout causes rollback by the reaper.

@@ -44,7 +44,7 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst11.BusinessActivityTerminator;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class BusinessActivityTerminatorStub implements BusinessActivityTerminator
 {

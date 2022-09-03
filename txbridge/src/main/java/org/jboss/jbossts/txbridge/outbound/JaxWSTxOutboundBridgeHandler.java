@@ -25,8 +25,8 @@ package org.jboss.jbossts.txbridge.outbound;
 
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.MessageContext;
 
 /**
  * A handler that sits in the client side JAX-WS processing pipeline between the application

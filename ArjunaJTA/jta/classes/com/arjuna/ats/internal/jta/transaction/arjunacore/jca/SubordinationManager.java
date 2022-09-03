@@ -20,8 +20,8 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import javax.resource.spi.XATerminator;
-import javax.transaction.TransactionManager;
+import jakarta.resource.spi.XATerminator;
+import jakarta.transaction.TransactionManager;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 

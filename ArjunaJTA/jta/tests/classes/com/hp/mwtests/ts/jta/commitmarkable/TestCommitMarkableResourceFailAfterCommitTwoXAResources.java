@@ -100,7 +100,7 @@ public class TestCommitMarkableResourceFailAfterCommitTwoXAResources extends
 			public void run() {
 
 				try {
-					javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+					jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 							.transactionManager();
 
 					tm.begin();

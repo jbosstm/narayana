@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.*;
+import jakarta.transaction.*;
 
 import static org.junit.Assert.*;
 

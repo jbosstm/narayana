@@ -23,7 +23,7 @@ package com.arjuna.webservices11.util;
 
 import com.arjuna.webservices.logging.WSCLogger;
 
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.security.PrivilegedAction;
 
 /**

@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.naming.InitialContext;
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 
 import org.junit.After;
 import org.junit.Before;

@@ -24,7 +24,7 @@ import org.jboss.logging.annotations.*;
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.annotations.Message.Format.*;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 
 /**
  * i18n log messages for the atsintegration module.

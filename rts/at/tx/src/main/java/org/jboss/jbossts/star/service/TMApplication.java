@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;

@@ -62,8 +62,8 @@ package org.jboss.jbossts.qa.JTA01Tests;
 
 import org.jboss.jbossts.qa.Utils.Setup;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.Status;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.Status;
 
 public class Test03
 {
@@ -94,7 +94,7 @@ public class Test03
 
 			boolean correct = true;
 
-			javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			correct = correct && (transactionManager.getTransaction() == null);
 			correct = correct && (transactionManager.getStatus() == Status.STATUS_NO_TRANSACTION);

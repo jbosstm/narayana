@@ -21,7 +21,7 @@
   @author JBoss Inc.
 -->
 <handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
     <handler-chain>

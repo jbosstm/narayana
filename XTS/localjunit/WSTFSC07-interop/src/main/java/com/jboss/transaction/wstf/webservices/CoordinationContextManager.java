@@ -22,7 +22,7 @@ package com.jboss.transaction.wstf.webservices;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 /**
  * Helper class for passing a coordination context in a SOAP header when using JaxWS

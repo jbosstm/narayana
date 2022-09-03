@@ -21,7 +21,7 @@
  */
 package org.jboss.jbossts.star.client;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 public class IllegalSRAStateException extends WebApplicationException {
     public IllegalSRAStateException(String sraId, String message, Throwable cause) {

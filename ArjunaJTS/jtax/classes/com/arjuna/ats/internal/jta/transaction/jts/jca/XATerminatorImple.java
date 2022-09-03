@@ -37,13 +37,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.HeuristicCommitException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -76,7 +76,7 @@ import com.arjuna.ats.jts.logging.jtsLogger;
  * @author mcl
  */
 
-public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions, ExtendedJBossXATerminator
+public class XATerminatorImple implements jakarta.resource.spi.XATerminator, XATerminatorExtensions, ExtendedJBossXATerminator
 {
 
     public void commit (Xid xid, boolean onePhase) throws XAException
@@ -363,7 +363,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
     }
 
-    public boolean beforeCompletion (Xid xid) throws javax.transaction.SystemException
+    public boolean beforeCompletion (Xid xid) throws jakarta.transaction.SystemException
     {
         try
         {
@@ -434,7 +434,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                 throw new UnsupportedOperationException(jtaxLogger.i18NLogger.get_not_supported());
             }
         }
-        final javax.resource.spi.XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final jakarta.resource.spi.XATerminator xaTerminator = SubordinationManager.getXATerminator();
         if (xaTerminator instanceof XATerminatorImple) {
             throw new UnsupportedOperationException(jtaxLogger.i18NLogger.get_not_supported());
         } else {

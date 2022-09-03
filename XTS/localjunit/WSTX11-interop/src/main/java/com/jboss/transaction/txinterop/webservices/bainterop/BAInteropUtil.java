@@ -38,8 +38,8 @@ import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.wst11.stub.BusinessActivityTerminatorStub;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 /**
  * Utility methods

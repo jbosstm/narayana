@@ -59,8 +59,8 @@ import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wsc11.RegistrarMapper;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RegistrarImple implements com.arjuna.wsc11.Registrar

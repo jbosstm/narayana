@@ -24,8 +24,8 @@ package org.jboss.tm;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 
 import java.util.ArrayList;

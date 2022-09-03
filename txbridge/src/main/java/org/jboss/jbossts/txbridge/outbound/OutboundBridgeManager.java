@@ -27,9 +27,9 @@ import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.transaction.Transaction;
 import com.arjuna.ats.arjuna.common.Uid;
 
-import javax.transaction.SystemException;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;

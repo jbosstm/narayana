@@ -24,7 +24,7 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 29/07/2013

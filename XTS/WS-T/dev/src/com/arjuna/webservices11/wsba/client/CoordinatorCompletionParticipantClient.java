@@ -39,7 +39,7 @@ import org.jboss.ws.api.addressing.MAPBuilder;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 
 /**

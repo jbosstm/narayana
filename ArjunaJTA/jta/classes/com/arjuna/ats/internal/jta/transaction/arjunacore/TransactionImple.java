@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -84,7 +84,7 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
  * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it to
  * ensure that the thread association continues.
  */
-public class TransactionImple implements javax.transaction.Transaction,
+public class TransactionImple implements jakarta.transaction.Transaction,
 		com.arjuna.ats.jta.transaction.Transaction
 {
 
@@ -173,10 +173,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * rollback the transaction during phase 1.
 	 */
 
-	public void commit() throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
+	public void commit() throws jakarta.transaction.RollbackException,
+			jakarta.transaction.HeuristicMixedException,
+			jakarta.transaction.HeuristicRollbackException,
+			java.lang.SecurityException, jakarta.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
@@ -214,9 +214,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.COMMITTING: // in case of async commit
 				break;
 			case ActionStatus.H_MIXED:
-				throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
+				throw addSuppressedThrowables(new jakarta.transaction.HeuristicMixedException());
 			case ActionStatus.H_HAZARD:
-				throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
+				throw addSuppressedThrowables(new jakarta.transaction.HeuristicMixedException());
 			case ActionStatus.H_ROLLBACK:
 			case ActionStatus.ABORTED:
 				RollbackException rollbackException = new RollbackException(
@@ -250,7 +250,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	public void rollback() throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
+			java.lang.SecurityException, jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImple.rollback");
@@ -304,7 +304,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
-			javax.transaction.SystemException
+			jakarta.transaction.SystemException
 	{
 	    if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImple.setRollbackOnly");
@@ -343,9 +343,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	        throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
 	}
 
-	public int getStatus() throws javax.transaction.SystemException
+	public int getStatus() throws jakarta.transaction.SystemException
 	{
-		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
+		int status = jakarta.transaction.Status.STATUS_NO_TRANSACTION;
 		
 		if (_theTransaction != null)
 		{
@@ -359,13 +359,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return status;
 	}
 
-	public void registerSynchronization(javax.transaction.Synchronization sync)
-			throws javax.transaction.RollbackException,
-			java.lang.IllegalStateException, javax.transaction.SystemException
+	public void registerSynchronization(jakarta.transaction.Synchronization sync)
+			throws jakarta.transaction.RollbackException,
+			java.lang.IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (sync == null)
 		{
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
 					"TransactionImple.registerSynchronization - " + jtaLogger.i18NLogger.get_transaction_arjunacore_nullparam() );
 		}
 
@@ -379,8 +379,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	// package-private method also for use by
 	// TransactionSynchronizationRegistryImple
 	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
-			throws javax.transaction.RollbackException,
-			java.lang.IllegalStateException, javax.transaction.SystemException
+			throws jakarta.transaction.RollbackException,
+			java.lang.IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (_theTransaction != null)
 		{
@@ -392,7 +392,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 				case ActionStatus.ABORT_ONLY:
 				case ActionStatus.ABORTED:
-					throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_syncwhenaborted() );
+					throw new jakarta.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_syncwhenaborted() );
 				case ActionStatus.CREATED:
 					throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
 				default:
@@ -417,31 +417,31 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 */
 
 	public boolean enlistResource(XAResource xaRes) throws RollbackException,
-			IllegalStateException, javax.transaction.SystemException
+			IllegalStateException, jakarta.transaction.SystemException
 	{
 		return enlistResource(xaRes, null);
 	}
 
 	public boolean enlistResource(XAResource xaRes, Object[] params)
 			throws RollbackException, IllegalStateException,
-			javax.transaction.SystemException
+			jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImple.enlistResource ( " + xaRes + " )");
         }
 
 		if (xaRes == null)
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
 					"TransactionImple.enlistResource - " + jtaLogger.i18NLogger.get_transaction_arjunacore_nullres() );
 
 		int status = getStatus();
 
 		switch (status)
 		{
-		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
+		case jakarta.transaction.Status.STATUS_MARKED_ROLLBACK:
 			throw new RollbackException(
 					"TransactionImple.enlistResource - " + jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
-		case javax.transaction.Status.STATUS_ACTIVE:
+		case jakarta.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
 			throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
@@ -709,7 +709,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 							markRollbackOnly();
 
-							throw new javax.transaction.SystemException(
+							throw new jakarta.transaction.SystemException(
 									"TransactionImple.enlistResource - XAResource.start "
 											+ jtaLogger.i18NLogger.get_transaction_arjunacore_couldnotregister()
 											+ ": " + xid);
@@ -817,23 +817,23 @@ public class TransactionImple implements javax.transaction.Transaction,
       */
 
 	public boolean delistResource(XAResource xaRes, int flags)
-			throws IllegalStateException, javax.transaction.SystemException
+			throws IllegalStateException, jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImple.delistResource ( " + xaRes + ", " + flags + " )");
         }
 
 		if (xaRes == null)
-			throw new javax.transaction.SystemException(
+			throw new jakarta.transaction.SystemException(
 					"TransactionImple.delistResource - " + jtaLogger.i18NLogger.get_transaction_arjunacore_nullres() );
 
 		int status = getStatus();
 
 		switch (status)
 		{
-		case javax.transaction.Status.STATUS_ACTIVE:
+		case jakarta.transaction.Status.STATUS_ACTIVE:
 			break;
-		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
+		case jakarta.transaction.Status.STATUS_MARKED_ROLLBACK:
 			break;
 		default:
 			throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
@@ -868,7 +868,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					 * can try to rollback the RM now. Just an optimisation.
 					 */
 
-					if (status == javax.transaction.Status.STATUS_MARKED_ROLLBACK)
+					if (status == jakarta.transaction.Status.STATUS_MARKED_ROLLBACK)
 					{
 						if (XAUtils.canOptimizeDelist(xaRes))
 						{
@@ -1263,10 +1263,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 */
 
 	protected void commitAndDisassociate()
-			throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
+			throws jakarta.transaction.RollbackException,
+			jakarta.transaction.HeuristicMixedException,
+			jakarta.transaction.HeuristicRollbackException,
+			java.lang.SecurityException, jakarta.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
@@ -1282,7 +1282,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw addSuppressedThrowables(new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) ));
+						throw addSuppressedThrowables(new jakarta.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) ));
 
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
@@ -1298,9 +1298,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.COMMITTING: // in case of async commit
 						break;
 					case ActionStatus.H_MIXED:
-						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
+						throw addSuppressedThrowables(new jakarta.transaction.HeuristicMixedException());
 					case ActionStatus.H_HAZARD:
-						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
+						throw addSuppressedThrowables(new jakarta.transaction.HeuristicMixedException());
 					case ActionStatus.H_ROLLBACK:
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
@@ -1357,7 +1357,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	protected void rollbackAndDisassociate()
 			throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
+			java.lang.SecurityException, jakarta.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("TransactionImple.rollbackAndDisassociate");
@@ -1683,7 +1683,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return XA_TRANSACTION_TIMEOUT_ENABLED;
 	}
 
-    public static Map<Uid, javax.transaction.Transaction> getTransactions()
+    public static Map<Uid, jakarta.transaction.Transaction> getTransactions()
     {
         return Collections.unmodifiableMap(_transactions);
     }

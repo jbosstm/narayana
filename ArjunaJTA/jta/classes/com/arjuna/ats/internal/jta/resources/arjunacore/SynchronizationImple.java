@@ -48,13 +48,13 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 public class SynchronizationImple implements SynchronizationRecord, Comparable
 {
 
-    public SynchronizationImple (javax.transaction.Synchronization ptr)
+    public SynchronizationImple (jakarta.transaction.Synchronization ptr)
     {
 	_theSynch = ptr;
 	_theUid = new Uid();
     }
 
-	public SynchronizationImple (javax.transaction.Synchronization ptr, boolean isInterposed) {
+	public SynchronizationImple (jakarta.transaction.Synchronization ptr, boolean isInterposed) {
 		_theSynch = ptr;
 		_theUid = new Uid();
 		_isInterposed = isInterposed;
@@ -150,7 +150,7 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
         return _isInterposed;
     }
 
-    private javax.transaction.Synchronization _theSynch;
+    private jakarta.transaction.Synchronization _theSynch;
     private Uid _theUid;
 	private boolean _isInterposed;
 }
