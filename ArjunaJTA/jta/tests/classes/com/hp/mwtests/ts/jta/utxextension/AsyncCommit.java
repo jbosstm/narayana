@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jta.utxextension;
 
 import java.util.concurrent.Future;
 
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;

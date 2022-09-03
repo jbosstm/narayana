@@ -21,10 +21,10 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
 
 import org.junit.Before;
 import org.junit.Test;

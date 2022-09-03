@@ -24,7 +24,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 
-import javax.transaction.*;
+import jakarta.transaction.*;
 import javax.transaction.xa.XAResource;
 
 /**

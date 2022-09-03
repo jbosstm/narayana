@@ -21,7 +21,7 @@
 
 package org.jboss.jbossts.xts.servicetests.service;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * A convenience class used to dynamically deploy XTS ServiceTest Service instances

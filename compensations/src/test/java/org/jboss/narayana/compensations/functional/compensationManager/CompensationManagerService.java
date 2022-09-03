@@ -33,7 +33,7 @@ import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandl
 import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 24/04/2013

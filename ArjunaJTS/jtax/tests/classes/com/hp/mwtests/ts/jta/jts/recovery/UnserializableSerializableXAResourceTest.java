@@ -190,11 +190,11 @@ public class UnserializableSerializableXAResourceTest {
 
         UnserializableSerializableXAResource res2 = new UnserializableSerializableXAResource(true);
 
-        final javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+        final jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
             .transactionManager();
         tm.getStatus();
         tm.begin();
-        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
         assertTrue(theTransaction.enlistResource(res1));
         assertTrue(theTransaction.enlistResource(res2));
         tm.commit();

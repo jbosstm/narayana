@@ -22,10 +22,10 @@ package org.jboss.jbossts.txbridge.tests.outbound.service;
 
 import java.util.ArrayList;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.servlet.annotation.WebServlet;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  *

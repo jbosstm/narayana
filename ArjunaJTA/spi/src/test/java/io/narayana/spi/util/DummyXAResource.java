@@ -24,7 +24,7 @@ package io.narayana.spi.util;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;

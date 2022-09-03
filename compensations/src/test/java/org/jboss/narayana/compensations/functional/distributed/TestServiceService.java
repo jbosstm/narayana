@@ -31,11 +31,11 @@ import org.jboss.narayana.compensations.functional.common.DataConfirmationHandle
 import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
 import org.jboss.narayana.compensations.functional.common.DummyData;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 
 /**

@@ -22,8 +22,8 @@ package org.jboss.jbossts.qa.performance.products;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 
-import javax.transaction.Transaction;
-import javax.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.SystemException;
 
 /**
  * Minimal interface that TM products should implement for controlling

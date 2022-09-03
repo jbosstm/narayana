@@ -7,7 +7,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.webservices11.wsat.State;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;

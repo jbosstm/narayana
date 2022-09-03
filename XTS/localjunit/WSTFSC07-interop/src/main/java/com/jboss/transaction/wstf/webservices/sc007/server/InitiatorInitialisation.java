@@ -20,9 +20,9 @@
  */
 package com.jboss.transaction.wstf.webservices.sc007.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;

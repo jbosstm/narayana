@@ -37,9 +37,9 @@ import com.hp.mwtests.ts.jta.subordinate.TestXAResource;
 
 import org.junit.Test;
 
-import javax.resource.spi.XATerminator;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.Transaction;
+import jakarta.resource.spi.XATerminator;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
@@ -142,6 +142,6 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
         final XATerminator xaTerminator = SubordinationManager.getXATerminator();
 
         xaTerminator.commit(xid, true);
-        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+        assertEquals(jakarta.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 }

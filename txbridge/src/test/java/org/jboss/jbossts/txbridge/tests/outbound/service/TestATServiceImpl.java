@@ -23,11 +23,11 @@ package org.jboss.jbossts.txbridge.tests.outbound.service;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.servlet.annotation.WebServlet;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;

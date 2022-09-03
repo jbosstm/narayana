@@ -37,13 +37,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Link;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.StringReader;
 

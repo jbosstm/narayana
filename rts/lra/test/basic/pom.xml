@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
-      <artifactId>javax.json</artifactId>
+      <artifactId>jakarta.json</artifactId>
       <version>${version.glassfish.json}</version>
       <scope>test</scope>
     </dependency>

@@ -4,7 +4,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices.SoapFault;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 

@@ -43,12 +43,12 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.XADataSource;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.h2.Driver;
@@ -81,7 +81,7 @@ public class JDBC2Test
             }
         }
 
-        javax.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jakarta.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tx.begin();
 
@@ -162,7 +162,7 @@ public class JDBC2Test
                 stmt.executeUpdate("CREATE TABLE test_table (a INTEGER,b INTEGER)");
                 stmt.executeUpdate("CREATE TABLE test_table2 (a INTEGER,b INTEGER)");
 
-        javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+        jakarta.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
         try
         {
@@ -400,7 +400,7 @@ public class JDBC2Test
     @Test
     public void testCloseUsed() throws Exception {
         conn.close();
-        javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+        jakarta.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
         assertTrue(conn.isClosed());
 

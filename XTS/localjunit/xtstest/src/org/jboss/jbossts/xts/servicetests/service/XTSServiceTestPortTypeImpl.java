@@ -26,13 +26,13 @@ import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.XTSServiceTestPortType;
 
-import javax.jws.*;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.jws.*;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 

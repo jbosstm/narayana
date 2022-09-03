@@ -36,10 +36,10 @@ import org.jboss.narayana.jta.jms.JmsXAResourceRecoveryHelper;
 import org.jboss.narayana.jta.jms.TransactionHelperImpl;
 import org.jboss.narayana.jta.jms.helpers.JmsHelper;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
-import javax.jms.XAConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
+import jakarta.jms.XAConnectionFactory;
 import java.util.ArrayList;
 import java.util.List;
 

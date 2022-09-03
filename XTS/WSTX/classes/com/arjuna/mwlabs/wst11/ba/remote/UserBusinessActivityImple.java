@@ -59,8 +59,8 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 /**
  * This is the interface that allows transactions to be started and terminated.

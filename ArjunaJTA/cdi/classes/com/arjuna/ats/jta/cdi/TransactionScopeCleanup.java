@@ -2,12 +2,12 @@ package com.arjuna.ats.jta.cdi;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 

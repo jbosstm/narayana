@@ -23,11 +23,11 @@
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
 import java.util.concurrent.ExecutorService;
-import javax.annotation.Resource;
-import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import jakarta.annotation.Resource;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

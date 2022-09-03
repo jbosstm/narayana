@@ -24,7 +24,7 @@ package org.jboss.narayana.txframework.api.annotation.service;
 
 import org.jboss.narayana.txframework.api.configuration.service.Default;
 
-import javax.interceptor.InterceptorBinding;
+import jakarta.interceptor.InterceptorBinding;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -24,10 +24,10 @@ package org.jboss.narayana.compensations.internal;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
 
-import javax.annotation.Priority;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Priority;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

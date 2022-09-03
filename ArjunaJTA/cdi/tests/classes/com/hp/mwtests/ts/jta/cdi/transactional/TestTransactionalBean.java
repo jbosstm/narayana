@@ -1,11 +1,11 @@
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.transaction.Transaction;
-import javax.transaction.Transactional;
-import javax.transaction.UserTransaction;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.UserTransaction;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013

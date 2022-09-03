@@ -25,9 +25,9 @@ package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
 import com.arjuna.ats.jta.TransactionManager;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InterceptionFactory;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.InterceptionFactory;
 
 public class TransactionalTestServiceInterceptorFactory {
     public interface TestService {

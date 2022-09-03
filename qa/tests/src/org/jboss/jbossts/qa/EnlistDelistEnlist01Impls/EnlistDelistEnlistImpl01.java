@@ -64,8 +64,8 @@ import org.jboss.jbossts.qa.EnlistDelistEnlist01.*;
 import javax.naming.InitialContext;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.NotSupportedException;
-import javax.transaction.Transaction;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import java.sql.Connection;
 import java.util.Hashtable;
@@ -137,7 +137,7 @@ public class EnlistDelistEnlistImpl01 implements ServiceOperations
 
 			XAResource xaResource = xaConnection.getXAResource();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			tm.begin();
 
@@ -181,7 +181,7 @@ public class EnlistDelistEnlistImpl01 implements ServiceOperations
 
 			XAResource xaResource = xaConnection.getXAResource();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			tm.begin();
 
@@ -230,7 +230,7 @@ public class EnlistDelistEnlistImpl01 implements ServiceOperations
 			XAResource xaResource = xaConnection.getXAResource();
 			Connection conn = xaConnection.getConnection();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			tm.begin();
 
@@ -279,7 +279,7 @@ public class EnlistDelistEnlistImpl01 implements ServiceOperations
 			XAResource xaResource = xaConnection.getXAResource();
 			Connection conn = xaConnection.getConnection();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+			jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
 			tm.begin();
 

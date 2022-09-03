@@ -1,12 +1,12 @@
 
 package org.oasis_open.docs.ws_tx.wscoor._2006._06;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 

@@ -1,6 +1,6 @@
 package com.arjuna.wst11;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  */

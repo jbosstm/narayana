@@ -33,7 +33,7 @@ package com.arjuna.ats.jta.transaction;
 
 import java.util.Map;
 
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -44,13 +44,13 @@ import com.arjuna.ats.internal.jta.xa.TxInfo;
  * Extended methods.
  */
 
-public interface Transaction extends javax.transaction.Transaction
+public interface Transaction extends jakarta.transaction.Transaction
 {
 
     public static final int XACONNECTION = 0;
     public static final int XAMODIFIER = 1;
 
-    public boolean enlistResource (XAResource xaRes, Object[] params) throws RollbackException, IllegalStateException, javax.transaction.SystemException;
+    public boolean enlistResource (XAResource xaRes, Object[] params) throws RollbackException, IllegalStateException, jakarta.transaction.SystemException;
 
     public int getXAResourceState (XAResource xaRes);
 

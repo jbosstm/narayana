@@ -21,10 +21,10 @@
  */
 package org.jboss.narayana.osgi.jta.internal;
 
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.UserTransaction;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 

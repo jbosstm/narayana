@@ -35,10 +35,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkException;
-import javax.transaction.Transaction;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.transaction.Transaction;
 
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 

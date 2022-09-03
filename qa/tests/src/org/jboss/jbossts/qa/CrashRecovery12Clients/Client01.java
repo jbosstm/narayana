@@ -39,7 +39,7 @@ import com.arjuna.orbportability.RootOA;
 import org.jboss.jbossts.qa.CrashRecovery12Resources.Resource01;
 import org.jboss.jbossts.qa.CrashRecovery12Resources.Resource02;
 
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 public class Client01
 {
@@ -101,7 +101,7 @@ public class Client01
 			ut.commit();
 			System.out.println("Passed");
 		}
-		catch (javax.transaction.RollbackException rbx)
+		catch (jakarta.transaction.RollbackException rbx)
 		{
 			System.out.println("Passed");
 		}

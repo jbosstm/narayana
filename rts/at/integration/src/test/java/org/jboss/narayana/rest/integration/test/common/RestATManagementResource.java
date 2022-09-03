@@ -3,12 +3,12 @@ package org.jboss.narayana.rest.integration.test.common;
 import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.util.Map;
 
 /**

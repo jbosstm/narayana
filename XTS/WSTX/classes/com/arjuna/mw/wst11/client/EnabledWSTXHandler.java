@@ -22,7 +22,7 @@
 
 package com.arjuna.mw.wst11.client;
 
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 /**
  * This handler is used when <code>default-context-propagation</code> is enabled. It handles every message unless WSTXFeature is

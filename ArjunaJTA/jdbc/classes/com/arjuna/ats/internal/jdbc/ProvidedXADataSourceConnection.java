@@ -35,7 +35,7 @@ import java.sql.SQLException;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import javax.transaction.Transaction;
+import jakarta.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;

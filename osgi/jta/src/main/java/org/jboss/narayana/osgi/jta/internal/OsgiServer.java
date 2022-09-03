@@ -21,9 +21,9 @@
  */
 package org.jboss.narayana.osgi.jta.internal;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;

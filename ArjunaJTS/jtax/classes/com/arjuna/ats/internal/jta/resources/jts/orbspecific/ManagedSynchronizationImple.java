@@ -24,9 +24,9 @@ import com.arjuna.ArjunaOTS.ManagedSynchronizationOperations;
 
 public class ManagedSynchronizationImple extends SynchronizationImple implements ManagedSynchronizationOperations
 {
-    private javax.transaction.Synchronization ptr;
+    private jakarta.transaction.Synchronization ptr;
 
-    public ManagedSynchronizationImple(javax.transaction.Synchronization ptr) {
+    public ManagedSynchronizationImple(jakarta.transaction.Synchronization ptr) {
         super(ptr);
         this.ptr = ptr;
     }

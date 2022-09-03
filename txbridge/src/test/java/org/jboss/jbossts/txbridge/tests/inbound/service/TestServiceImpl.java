@@ -20,14 +20,14 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.service;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.transaction.TransactionManager;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.transaction.TransactionManager;
 
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;

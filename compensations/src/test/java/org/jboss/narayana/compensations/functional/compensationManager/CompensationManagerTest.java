@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 
 /**

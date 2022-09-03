@@ -17,8 +17,8 @@
  */
 package org.jboss.jbossts.star.client.extended.txstatusext;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.util.Date;
 
 @XmlType(propOrder = { "created", "status", "recoveryURI", "resourceURI"})

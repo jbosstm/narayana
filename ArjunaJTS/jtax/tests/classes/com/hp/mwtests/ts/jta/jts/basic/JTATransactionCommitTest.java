@@ -22,8 +22,8 @@ package com.hp.mwtests.ts.jta.jts.basic;
 
 import static org.junit.Assert.fail;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.Test;
 

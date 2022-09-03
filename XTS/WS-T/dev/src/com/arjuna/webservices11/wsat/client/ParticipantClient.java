@@ -17,7 +17,7 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.ParticipantPortType;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 
 /**

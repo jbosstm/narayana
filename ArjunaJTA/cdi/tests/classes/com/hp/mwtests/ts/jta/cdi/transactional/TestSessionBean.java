@@ -23,9 +23,9 @@
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
 
-import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 /**
  * @author paul.robinson@redhat.com 28/05/2013

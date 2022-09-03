@@ -126,12 +126,12 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		// ok, now drive a TX to completion. the script should ensure that the
 		// recovery
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();
 
 		tm.begin();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
 		theTransaction.enlistResource(firstResource);
 		theTransaction.enlistResource(secondResource);

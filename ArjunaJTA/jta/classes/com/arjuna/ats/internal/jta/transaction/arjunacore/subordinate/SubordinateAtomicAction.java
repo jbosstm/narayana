@@ -28,7 +28,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;

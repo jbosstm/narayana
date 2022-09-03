@@ -47,9 +47,9 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
   <dependencies>
     <dependency>
-      <groupId>org.jboss.spec.javax.xml.bind</groupId>
+      <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
       <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+      <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

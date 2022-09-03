@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.json.JsonArray;
+import jakarta.json.JsonArray;
 
 /**
  *

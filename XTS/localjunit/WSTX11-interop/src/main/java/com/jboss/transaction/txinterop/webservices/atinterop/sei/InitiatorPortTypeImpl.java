@@ -26,21 +26,21 @@ import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
-import javax.xml.ws.Action;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.handler.MessageContext;
-import javax.annotation.Resource;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.annotation.Resource;
 
 /**
  * Implementor class for OASIS WS-Interop 1.1 Initiator Service
  */
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.WebParam;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.soap.SOAPBinding;
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service

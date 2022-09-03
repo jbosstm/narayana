@@ -6,9 +6,9 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.*;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.AddressingFeature;
 import java.util.Map;
 
 /**

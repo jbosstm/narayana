@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 

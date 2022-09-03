@@ -22,12 +22,12 @@ package com.arjuna.mw.wst11.client;
 
 import java.util.Iterator;
 
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 

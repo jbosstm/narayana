@@ -22,7 +22,7 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -42,7 +42,7 @@ public class TransactionalChangedByExtensionTest {
         return ShrinkWrap.create(WebArchive.class, "transactional-test.war")
             .addPackage(TransactionalChangedByExtensionTest.class.getPackage())
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-            .addAsServiceProvider(javax.enterprise.inject.spi.Extension.class, AddTransactionalAnnotationExtension.class);
+            .addAsServiceProvider(jakarta.enterprise.inject.spi.Extension.class, AddTransactionalAnnotationExtension.class);
     }
 
 

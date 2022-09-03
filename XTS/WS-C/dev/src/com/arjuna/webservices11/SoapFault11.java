@@ -8,10 +8,10 @@ import org.xmlsoap.schemas.soap.envelope.Fault;
 import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 /**
  * Created by IntelliJ IDEA.

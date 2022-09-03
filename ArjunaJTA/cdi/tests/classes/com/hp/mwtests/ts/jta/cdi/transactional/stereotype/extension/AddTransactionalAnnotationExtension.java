@@ -22,10 +22,10 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.transaction.Transactional;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.transaction.Transactional;
 
 
 /**
