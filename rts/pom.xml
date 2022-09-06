@@ -90,9 +90,11 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
       <profile>
         <id>community</id>
         <modules>
-        <!-- jakarta TODO use commit ead7de415b65c0073df7075b8549ec249bd3bb49
+          <!-- NB jakarta TODO used commit ead7de415b65c0073df7075b8549ec249bd3bb49 -->
           <module>lra</module>
+          <!-- TODO jakarta disabled until there is a jarakata version of quarkus
           <module>sra</module>
+          -->
         </modules>
       </profile>
     </profiles>
