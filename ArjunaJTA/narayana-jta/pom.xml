@@ -214,9 +214,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.jms</groupId>
-      <artifactId>jboss-jms-api_2.0_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec}</version>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
+      <version>${version.jakarta.jms.jakarta-jms-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
