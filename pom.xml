@@ -124,17 +124,18 @@
     <module>ArjunaCore</module>
     <module>ArjunaJTA</module>
     <module>ArjunaJTS</module>
+    <!-- TODO use manuels or do it later
     <module>XTS</module>
-    <module>rts</module>
     <module>txbridge</module>
-    <module>txbridge-jakarta</module>
-    <module>STM</module>
     <module>txframework</module>
-    <module>txframework-jakarta</module>
     <module>compensations</module>
-    <module>compensations-jakarta</module>
+    -->
+    <module>STM</module>
+    <!-- jakarta TODO I cannot find any osgi support for jakarta
     <module>osgi</module>
+    -->
     <module>vertx</module>
+    <module>rts</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:jbosstm/narayana.git</connection>
@@ -189,7 +190,6 @@
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
 
-    <!-- jakarta TODO -->
     <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.asm>3.3.1</version.asm>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.5.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
@@ -205,13 +205,27 @@
     <version.dom4j>1.6.1</version.dom4j>
     <version.doxia>1.8.1</version.doxia>
     <version.fasterxml.jackson>2.13.1</version.fasterxml.jackson>
-    <version.glassfish.json>1.1.4</version.glassfish.json>
+    <version.glassfish.json>2.0.1</version.glassfish.json>
     <version.hamcrest>2.2</version.hamcrest>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
+    <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
+    <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
+    <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
+    <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
+    <!-- jakarta TODO -->
+    <version.jakarta.interceptor.jakarta-interceptors-api>2.1.0</version.jakarta.interceptor.jakarta-interceptors-api>
+    <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
     <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
+    <version.jakarta.json.jakarta-json-api>2.1.0</version.jakarta.json.jakarta-json-api>
+    <version.jakarta.resource.jakarta-resource-api>2.1.0</version.jakarta.resource.jakarta-resource-api>
+    <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
+    <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
+    <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
+    <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
+
     <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
-    <version.javax.annotation>2.1.1</version.javax.annotation>
+    <version.javax.annotation>1.2</version.javax.annotation>
     <version.javax.enterprise>2.0</version.javax.enterprise>
     <version.javax.inject>1</version.javax.inject>
     <version.javax.javaee-api>8.0.1</version.javax.javaee-api>
@@ -241,23 +255,27 @@
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.18</version.org.jboss.byteman>
     <version.org.jboss.integration>6.0.0.CR1</version.org.jboss.integration>
+    <version.org.jboss.invocation>1.7.0.Final</version.org.jboss.invocation>
     <version.org.jboss.ironjacamar>1.1.1.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
+
+    <!-- TODO jakarta -->
     <version.org.jboss.jboss-transaction-spi>7.6.1.Final</version.org.jboss.jboss-transaction-spi>
     <version.org.jboss.jboss-transaction-spi-jakarta>7.6.1.Final</version.org.jboss.jboss-transaction-spi-jakarta>
     <version.org.jboss.logging.jboss-logging>3.5.0.Final</version.org.jboss.logging.jboss-logging>
     <version.org.jboss.logging.jboss-logging-processor>2.2.1.Final</version.org.jboss.logging.jboss-logging-processor>
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>8.1.9.Final</version.org.jboss.openjdk-orb>
-    <version.org.jboss.resteasy>4.7.4.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>6.0.3.Final</version.org.jboss.resteasy>
     <version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec>2.0.1.Final</version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec>
-    <version.org.jboss.spec.jakarta.xml.ws.jboss-jaxws-api_2.3_spec>2.0.0.Final</version.org.jboss.spec.jakarta.xml.ws.jboss-jaxws-api_2.3_spec>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
     <version.org.jboss.spec.javax.interceptor>2.0.0.Final</version.org.jboss.spec.javax.interceptor>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.spec.javax.servlet>1.0.2.Final</version.org.jboss.spec.javax.servlet>
     <version.org.jboss.spec.javax.transaction>1.1.0.Final</version.org.jboss.spec.javax.transaction>
+    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>2.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+    <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>2.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
     <version.org.jboss.weld>2.4.8.Final</version.org.jboss.weld>
     <version.org.jboss.ws>1.1.2.Final</version.org.jboss.ws>
     <version.org.mockito>3.8.0</version.org.mockito>
@@ -273,8 +291,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
       <version>${version.javax.annotation}</version>
       <scope>provided</scope>
     </dependency>

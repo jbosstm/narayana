@@ -152,7 +152,7 @@
      <dependency>
         <groupId>jakarta.annotation</groupId>
         <artifactId>jakarta.annotation-api</artifactId>
-        <version>${version.javax.annotation}</version>
+        <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
         <scope>provided</scope>
     </dependency>
     <dependency>
@@ -169,7 +169,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
-      <artifactId>jboss-transaction-spi</artifactId>
+      <artifactId>jboss-transaction-spi-jakarta</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
       <exclusions>
