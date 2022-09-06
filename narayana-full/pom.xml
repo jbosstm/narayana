@@ -138,7 +138,7 @@
     <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
-      <version>${version.javax.annotation}</version>
+      <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -228,7 +228,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
-      <artifactId>jboss-transaction-spi</artifactId>
+      <artifactId>jboss-transaction-spi-jakarta</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
       <exclusions>
         <exclusion>
@@ -244,15 +244,23 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <!-- jakarta TODO
       <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
-      <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
       <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+      -->
+      <groupId>org.jboss.spec.javax.xml.bind</groupId>
+      <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <!-- jakarta TODO
       <groupId>org.jboss.spec.jakarta.xml.ws</groupId>
-      <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
       <version>${version.org.jboss.spec.jakarta.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+      -->
+      <groupId>org.jboss.spec.javax.xml.ws</groupId>
+      <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
