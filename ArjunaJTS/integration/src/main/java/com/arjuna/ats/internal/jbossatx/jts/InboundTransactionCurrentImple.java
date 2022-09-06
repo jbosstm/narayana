@@ -47,44 +47,16 @@ import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
  */
 public class InboundTransactionCurrentImple extends LocalObject implements InboundTransactionCurrent
 {
-    public Transaction getCurrentTransaction()
+    /* jakarta TODO
+    Returns:
+    the javax.transaction.Transaction instance associated with the current incoming request, or null if that request was not issued within the scope of some transaction.
+     */
+    public javax.transaction.Transaction getCurrentTransaction()
     {
         if (jbossatxLogger.logger.isTraceEnabled()) {
             jbossatxLogger.logger.trace("InboundTransactionCurrentImple.getCurrentTransaction() called");
         }
 
-        TransactionManager transactionManager = null;
-        Transaction transaction = null;
-
-        try
-        {
-            // We need to get a Transaction representation of the tx context that came in on the CORBA call.
-            // The easiest way to do this is to have the JTS transaction manager impl give us the current
-            // transaction. That will cause it to create a Transaction to wrap the context, which saves us
-            // doing it ourselves. Less code duplication is a good thing.
-            transactionManager = TransactionManagerLocator.getInstance().getTransactionManager();
-            transaction = transactionManager.getTransaction();
-            if(transaction != null)
-            {
-                // only problem is, the transaction manager assumes we want the inbound context bound to the Thread.
-                // normally that is user friendly, but in this case the downstream code seems to expect to do the
-                // Thread association itself through a resume() and will be upset if we don't let it. Therefore,
-                // disassociate the tx from the Thread before returning it. Inefficient and a little kludgy.
-                transactionManager.suspend();
-            }
-        } catch(Exception e)
-        {
-            jbossatxLogger.i18NLogger.error_jts_InboundTransactionCurrentImple_exception(e);
-            // this is a problem, because we may actually have a valid tx context on the thread
-            // which could cause weird behaviour in downstream code. We need to ensure that code is not called
-            // but the API does not allow for checked excpetion to be thrown, so...
-            throw new RuntimeException("InboundTransactionCurrentImple unable to determine inbound transaction context", e);
-        }
-
-        if (jbossatxLogger.logger.isTraceEnabled()) {
-            jbossatxLogger.logger.trace("InboundTransactionCurrentImple.getCurrentTransaction() returning tx=" + transaction);
-        }
-
-        return transaction;
+        throw new RuntimeException("InboundTransactionCurrentImple inbound transaction context is not implemented");
     }
 }

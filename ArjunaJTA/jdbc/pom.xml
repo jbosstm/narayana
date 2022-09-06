@@ -97,7 +97,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
-      <artifactId>jboss-transaction-spi</artifactId>
+      <artifactId>jboss-transaction-spi-jakarta</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>test</scope>
       <exclusions>
