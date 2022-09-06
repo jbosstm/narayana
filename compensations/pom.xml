@@ -108,7 +108,7 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>${version.javax.annotation}</version>
+            <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -170,16 +170,25 @@
             <artifactId>arquillian-protocol-servlet</artifactId>
             <version>${version.org.jboss.arquillian.core}</version>
             <scope>test</scope>
-        </dependency><dependency>
-        <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
-        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-        <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-        <scope>provided</scope>
-    </dependency>
+        </dependency>
         <dependency>
-            <groupId>org.jboss.spec.jakarta.xml.ws</groupId>
+          <!-- jakarta TODO
+          <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
+          <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+          -->
+          <groupId>org.jboss.spec.javax.xml.bind</groupId>
+          <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.xml.ws</groupId>
             <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+            <!-- jakarta TODO 
+            <groupId>org.jboss.spec.jakarta.xml.ws</groupId>
             <version>${version.org.jboss.spec.jakarta.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+            -->
+            <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

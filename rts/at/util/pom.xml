@@ -58,6 +58,17 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>${version.jakarta.ws.rs.jakarta-ws-rs-api}</version>
+    </dependency>
+
     <!-- jboss logging -->
     <dependency>
       <groupId>org.jboss.logging</groupId>
