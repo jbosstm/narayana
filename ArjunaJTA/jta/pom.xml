@@ -104,14 +104,31 @@
     <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and
             JCA (for tx inflow) apis. -->
     <dependency>
-      <groupId>org.jboss.spec.javax.transaction</groupId>
-      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.transaction}</version>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.resource</groupId>
+      <artifactId>jakarta.resource-api</artifactId>
+      <version>${version.jakarta.resource.jakarta-resource-api}</version>
+      <!-- jakarta TODO any exclusions -->
+    </dependency>
+    <dependency>
+      <groupId>jakarta.interceptor</groupId>
+      <artifactId>jakarta.interceptor-api</artifactId>
+      <version>${version.jakarta.interceptor.jakarta-interceptors-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <version>${version.jakarta.inject.jakarta.inject-api}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss</groupId>
-      <artifactId>jboss-transaction-spi</artifactId>
+      <artifactId>jboss-transaction-spi-jakarta</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
       <exclusions>
@@ -121,12 +138,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.interceptor</groupId>
-      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.interceptor}</version>
-      <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <!-- JCA API -->
       <groupId>org.jboss.ironjacamar</groupId>
@@ -238,8 +250,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
       <version>${version.javax.annotation}</version>
       <scope>provided</scope>
     </dependency>
@@ -288,8 +300,13 @@
         </dependency>
         <dependency>
           <groupId>org.jboss</groupId>
+          <artifactId>jboss-transaction-spi-jakarta</artifactId>
+          <!-- jakarta TODO
           <artifactId>jboss-transaction-spi</artifactId>
           <version>${version.org.jboss.jboss-transaction-spi}</version>
+          -->
+          <version>${version.org.jboss.jboss-transaction-spi}</version>
+          <!-- or version.org.jboss.jboss-transaction-spi-jakarta -->
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -356,8 +373,8 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>jakarta.annotation</groupId>
-          <artifactId>jakarta.annotation-api</artifactId>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
           <version>${version.javax.annotation}</version>
           <scope>provided</scope>
         </dependency>
