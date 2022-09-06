@@ -52,28 +52,6 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 
-<<<<<<< HEAD
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.container.Suspended;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Link;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
-import jakarta.ws.rs.core.UriBuilder;
-=======
->>>>>>> ead7de415 (JBTM-3532 Add LRA support for EE 9)
 import java.io.Closeable;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -106,16 +84,7 @@ import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
-<<<<<<< HEAD
-import static jakarta.ws.rs.core.Response.Status.OK;
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
-import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static jakarta.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
-import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
-import static jakarta.ws.rs.core.Response.Status.GONE;
-import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
-import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
-=======
+
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.GONE;
 import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
@@ -124,7 +93,7 @@ import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
->>>>>>> ead7de415 (JBTM-3532 Add LRA support for EE 9)
+
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 /**
