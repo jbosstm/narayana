@@ -127,8 +127,8 @@
     <module>XTS</module>
     <!-- TODO use manuels or do it later
     <module>txbridge</module>
-    <module>txframework</module>
     -->
+    <module>txframework</module>
     <module>compensations</module>
     <module>STM</module>
     <!-- jakarta TODO I cannot find any osgi support for jakarta
@@ -220,6 +220,7 @@
     <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
     <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
     <version.jakarta.json.jakarta-json-api>2.1.0</version.jakarta.json.jakarta-json-api>
+    <version.jakarta.persistence.jakarta.persistence-api>3.1.0</version.jakarta.persistence.jakarta.persistence-api>
     <version.jakarta.resource.jakarta-resource-api>2.1.0</version.jakarta.resource.jakarta-resource-api>
     <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
     <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
