@@ -80,6 +80,13 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-undertow</artifactId>
         </dependency>
+            <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
+        <dependency>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+          <version>5.0.0</version>
+          <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
