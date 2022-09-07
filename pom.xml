@@ -124,8 +124,8 @@
     <module>ArjunaCore</module>
     <module>ArjunaJTA</module>
     <module>ArjunaJTS</module>
-    <!-- TODO use manuels or do it later
     <module>XTS</module>
+    <!-- TODO use manuels or do it later
     <module>txbridge</module>
     <module>txframework</module>
     <module>compensations</module>
@@ -209,6 +209,7 @@
     <version.hamcrest>2.2</version.hamcrest>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
+    <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
     <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
     <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
@@ -223,6 +224,8 @@
     <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
     <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
     <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
+    <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
+    <version.jakarta.xml.soap.jakarta.xml.soap-api>3.0.0</version.jakarta.xml.soap.jakarta.xml.soap-api>
 
     <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
     <version.javax.annotation>1.2</version.javax.annotation>

@@ -38,59 +38,32 @@
   </properties>
     <dependencies>
         <dependency>
-        <!-- jakarta TODO legacy
-            <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
-            <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-            -->
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
-            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-ri</artifactId>
-            <version>${version.jaxws-ri}</version>
-            <type>pom</type>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>${version.jakarta.xml.ws.jakarta.xml.ws-api}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-xjc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.ws</groupId>
-                    <artifactId>policy</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.stream.buffer</groupId>
-                    <artifactId>streambuffer</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jvnet.staxex</groupId>
-                    <artifactId>stax-ex</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
-            <version>1.2.0</version>
+            <version>${version.jakarta.activation.jakarta.activation-api}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>${version.jaxws-ri}</version>
-            <scope>test</scope>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${version.jakarta.xml.soap.jakarta.xml.soap-api}</version>
         </dependency>
     </dependencies>
   <modules>
