@@ -197,6 +197,13 @@
       <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -249,8 +256,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <!-- jakarta TODO NoClassDefFoundError: jakarta/servlet/SingleThreadModel -->
-          <skipTests>true</skipTests>
+          <skipTests>false</skipTests>
           <!--
                   <argLine>${surefireArgLine}</argLine>
                   -->
@@ -273,8 +279,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-          <!-- jakarta TODO NoClassDefFoundError: jakarta/servlet/SingleThreadModel -->
-          <skipTests>true</skipTests>
+              <skipTests>false</skipTests>
               <!--
                 <argLine>${ssl.args} ${surefireArgLine}</argLine>
                 -->
@@ -297,8 +302,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-          <!-- jakarta TODO NoClassDefFoundError: jakarta/servlet/SingleThreadModel -->
-          <skipTests>true</skipTests>
+              <skipTests>false</skipTests>
               <!--
                 <argLine>${spdy.args} ${surefireArgLine}</argLine>
                 -->
