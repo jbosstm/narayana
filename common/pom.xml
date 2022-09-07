@@ -31,15 +31,6 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs>
-            <arg>-Aorg.jboss.logging.tools.addGeneratedAnnotation=false</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-      <plugin>
         <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
