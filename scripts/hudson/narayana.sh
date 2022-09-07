@@ -455,7 +455,6 @@ function download_as {
     [ $? -ne 0 ] && fatal "Cannot unzip WildFly Preview nightly build distribution zip file '${wildflyDistZip}'"
     export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
   fi
->>>>>>> ead7de415 (JBTM-3532 Add LRA support for EE 9)
 
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
   rm -rf $JBOSS_HOME # clean up any previous unzip
