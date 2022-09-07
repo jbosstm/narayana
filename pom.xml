@@ -125,9 +125,7 @@
     <module>ArjunaJTA</module>
     <module>ArjunaJTS</module>
     <module>XTS</module>
-    <!-- TODO use manuels or do it later
     <module>txbridge</module>
-    -->
     <module>txframework</module>
     <module>compensations</module>
     <module>STM</module>
