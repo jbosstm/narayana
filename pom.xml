@@ -128,8 +128,8 @@
     <!-- TODO use manuels or do it later
     <module>txbridge</module>
     <module>txframework</module>
-    <module>compensations</module>
     -->
+    <module>compensations</module>
     <module>STM</module>
     <!-- jakarta TODO I cannot find any osgi support for jakarta
     <module>osgi</module>
@@ -212,7 +212,7 @@
     <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
     <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
-    <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
+    <version.jakarta.enterprise>4.0.1</version.jakarta.enterprise>
     <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
     <!-- jakarta TODO -->
     <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
@@ -225,8 +225,8 @@
     <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
     <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
     <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
-    <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
     <version.jakarta.xml.soap.jakarta.xml.soap-api>3.0.0</version.jakarta.xml.soap.jakarta.xml.soap-api>
+    <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
 
     <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
     <version.javax.annotation>1.2</version.javax.annotation>
@@ -281,6 +281,7 @@
     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>2.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>2.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
     <version.org.jboss.weld>2.4.8.Final</version.org.jboss.weld>
+    <version.org.jboss.weld-core>5.0.1.Final</version.org.jboss.weld-core>
     <version.org.jboss.ws>2.0.0.Final</version.org.jboss.ws>
     <version.org.mockito>3.8.0</version.org.mockito>
     <version.org.slf4j>1.7.30</version.org.slf4j>
