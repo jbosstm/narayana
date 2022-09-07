@@ -47,14 +47,33 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
   <dependencies>
     <dependency>
-    <!-- jakarta TODO
-      <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
-      <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-      -->
-      <groupId>org.jboss.spec.javax.xml.bind</groupId>
-      <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+      <groupId>jakarta.xml.bind</groupId> 
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
       <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>jakarta.enterprise</groupId>
+        <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        <version>${version.jakarta.enterprise}</version>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.inject</groupId>
+        <artifactId>jakarta.inject-api</artifactId>
+        <version>${version.jakarta.inject.jakarta.inject-api}</version>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
     </dependency>
   </dependencies>
 
@@ -92,9 +111,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <modules>
           <!-- NB jakarta TODO used commit ead7de415b65c0073df7075b8549ec249bd3bb49 -->
           <module>lra</module>
-          <!-- TODO jakarta disabled until there is a jarakata version of quarkus
           <module>sra</module>
-          -->
         </modules>
       </profile>
     </profiles>
