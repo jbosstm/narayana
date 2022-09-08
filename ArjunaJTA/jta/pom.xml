@@ -112,7 +112,6 @@
       <groupId>jakarta.resource</groupId>
       <artifactId>jakarta.resource-api</artifactId>
       <version>${version.jakarta.resource.jakarta-resource-api}</version>
-      <!-- jakarta TODO any exclusions -->
     </dependency>
     <dependency>
       <groupId>jakarta.interceptor</groupId>
@@ -301,12 +300,7 @@
         <dependency>
           <groupId>org.jboss</groupId>
           <artifactId>jboss-transaction-spi-jakarta</artifactId>
-          <!-- jakarta TODO
-          <artifactId>jboss-transaction-spi</artifactId>
           <version>${version.org.jboss.jboss-transaction-spi}</version>
-          -->
-          <version>${version.org.jboss.jboss-transaction-spi}</version>
-          <!-- or version.org.jboss.jboss-transaction-spi-jakarta -->
           <scope>provided</scope>
           <exclusions>
             <exclusion>
