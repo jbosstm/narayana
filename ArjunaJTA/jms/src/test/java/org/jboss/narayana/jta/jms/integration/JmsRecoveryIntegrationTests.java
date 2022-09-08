@@ -85,7 +85,6 @@ public class JmsRecoveryIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Ignore // jakarta TODO version problem: NoClassDefFound javax/jms/ConnectionFactory
     @BMRule(name = "Fail before commit", targetClass = "com.arjuna.ats.arjuna.coordinator.BasicAction",
             targetMethod = "phase2Commit", targetLocation = "ENTRY", helper = "org.jboss.narayana.jta.jms.helpers.BytemanHelper",
             action = "incrementCommitsCounter(); failFirstCommit($0.get_uid());")
