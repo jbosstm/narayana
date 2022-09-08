@@ -70,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-server</artifactId>
+            <artifactId>artemis-jakarta-server</artifactId>
             <version>${version.org.apache.activemq}</version>
             <scope>test</scope>
         </dependency>
