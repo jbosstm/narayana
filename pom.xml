@@ -213,7 +213,6 @@
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
     <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
     <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
-    <!-- jakarta TODO -->
     <version.jakarta.interceptor.jakarta-interceptors-api>2.1.0</version.jakarta.interceptor.jakarta-interceptors-api>
     <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
     <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
