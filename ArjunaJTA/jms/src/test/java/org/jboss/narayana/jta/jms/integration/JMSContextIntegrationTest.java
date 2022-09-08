@@ -116,7 +116,6 @@ public class JMSContextIntegrationTest {
     }
 
     @Test
-    @Ignore // jakarta TODO version problem: NoClassDefFound javax/jms/ConnectionFactory
     public void testCommit() throws Exception {
         when(xaResourceMock.prepare(any(Xid.class))).thenReturn(XAResource.XA_OK);
 
