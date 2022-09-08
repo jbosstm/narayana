@@ -109,7 +109,6 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
       <profile>
         <id>community</id>
         <modules>
-          <!-- NB jakarta TODO used commit ead7de415b65c0073df7075b8549ec249bd3bb49 -->
           <module>lra</module>
           <module>sra</module>
         </modules>
