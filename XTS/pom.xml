@@ -103,10 +103,8 @@
     <module>WSTX</module>
     <module>recovery</module>
     <module>bridge</module>
-    <module>bridge-jakarta</module>
     <module>sar</module>
     <module>jbossxts</module>
-    <module>jbossxts-jakarta</module>
     <module>localjunit</module>
   </modules>
     <profiles>
