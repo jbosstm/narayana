@@ -21,11 +21,9 @@
 package com.arjuna.ats.internal.jbossatx.jts;
 
 import org.jboss.iiop.tm.InboundTransactionCurrent;
-import org.jboss.tm.TransactionManagerLocator;
 import org.omg.CORBA.LocalObject;
 
 import jakarta.transaction.Transaction;
-import jakarta.transaction.TransactionManager;
 
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 
@@ -47,11 +45,7 @@ import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
  */
 public class InboundTransactionCurrentImple extends LocalObject implements InboundTransactionCurrent
 {
-    /* jakarta TODO
-    Returns:
-    the javax.transaction.Transaction instance associated with the current incoming request, or null if that request was not issued within the scope of some transaction.
-     */
-    public javax.transaction.Transaction getCurrentTransaction()
+    public Transaction getCurrentTransaction()
     {
         if (jbossatxLogger.logger.isTraceEnabled()) {
             jbossatxLogger.logger.trace("InboundTransactionCurrentImple.getCurrentTransaction() called");
