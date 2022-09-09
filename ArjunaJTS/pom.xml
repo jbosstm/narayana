@@ -30,7 +30,6 @@
     <module>jts</module>
     <module>jtax</module>
     <module>integration</module>
-    <module>integration-jakarta</module>
   </modules>
   <properties>
     <modular.jdk.args></modular.jdk.args>
@@ -54,7 +53,6 @@
       </activation>
       <modules>
         <module>narayana-jts-idlj</module>
-        <module>narayana-jts-idlj-jakarta</module>
       </modules>
       <build>
         <plugins>

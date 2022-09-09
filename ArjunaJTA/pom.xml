@@ -43,9 +43,6 @@
     <module>spi</module>
     <module>jms</module>
     <module>narayana-jta</module>
-    <!-- no longer required
-    <module>narayana-jta-jakarta</module>
-    -->
   </modules>
   <profiles>
       <profile>
