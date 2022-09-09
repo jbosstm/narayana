@@ -301,12 +301,10 @@
     </profiles>
     <modules>
         <module>unit</module>
-        <module>unit-jakarta</module>
         <module>disabled-context-propagation</module>
         <module>WSTX11-interop</module>
         <module>WSTFSC07-interop</module>
         <module>xtstest</module>
         <module>crash-recovery-tests</module>
-        <module>crash-recovery-tests-jakarta</module>
     </modules>
 </project>
