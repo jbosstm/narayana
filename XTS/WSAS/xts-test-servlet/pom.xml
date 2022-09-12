@@ -56,9 +56,9 @@
     </dependency>
     <!-- XTS: -->
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.servlet}</version>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
     </dependency>
     <!-- test time dep only - XTS TestRunnerXMLServlet -->
     <dependency>
