@@ -32,9 +32,9 @@ import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,29 +43,26 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
+
 @RunWith(Arquillian.class)
 public class BABridgedTest {
 
     UserBusinessActivity uba;
     BABridged client;
 
-    @Deployment()
-    public static JavaArchive createTestArchive() {
+    @Deployment
+    public static WebArchive createTestArchive() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+        WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackages(false, BABridgedTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
                 .addClass(URLUtils.class)
-                .addAsManifestResource("persistence.xml")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+                .addAsWebInfResource(new File("persistence.xml"), "classes/META-INF/persistence.xml")
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.xts, org.jboss.narayana.txframework services\n";
-
-
+        String ManifestMF = "Dependencies: org.jboss.xts, org.jboss.narayana.txframework services";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
