@@ -250,7 +250,7 @@
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
     <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
-    <version.org.jboss.arquillian.core>1.7.0.Alpha10</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.core>1.7.0.Alpha12</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
     <version.org.jboss.integration>6.0.0.CR1</version.org.jboss.integration>
@@ -280,7 +280,7 @@
     <version.org.mockito>3.8.0</version.org.mockito>
     <version.org.slf4j>1.7.30</version.org.slf4j>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
-    <version.org.wildfly.arquillian>4.0.0.Alpha4</version.org.wildfly.arquillian>
+    <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
     <version.postgresql>42.3.1</version.postgresql>
     <version.quarkus>2.12.1.Final</version.quarkus>
     <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
