@@ -18,7 +18,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.jboss.transaction.txinterop.test ;
+package com.jboss.transaction.txinterop.test;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropConstants;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;

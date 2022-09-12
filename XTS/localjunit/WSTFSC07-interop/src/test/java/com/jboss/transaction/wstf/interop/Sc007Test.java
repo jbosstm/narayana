@@ -84,7 +84,7 @@ public class Sc007Test {
                 .addAsWebResource("web/results.jsp", "results.jsp")
                 .addAsResource("com/jboss/transaction/wstf/test/processor.xsl")
                 .addAsWebInfResource("web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml")
                 .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
     }
 
