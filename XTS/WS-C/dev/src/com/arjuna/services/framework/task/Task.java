@@ -18,7 +18,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.services.framework.task ;
+package com.arjuna.services.framework.task;
 
 /**
  * The task interface for tasks scheduled by the task manager.

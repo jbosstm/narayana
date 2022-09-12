@@ -18,7 +18,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.services.framework.task ;
+package com.arjuna.services.framework.task;
 
 import java.util.HashSet;
 import java.util.Iterator;
