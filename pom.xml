@@ -216,13 +216,12 @@
     <version.jakarta.interceptor.jakarta-interceptors-api>2.1.0</version.jakarta.interceptor.jakarta-interceptors-api>
     <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
     <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
-    <version.jakarta.json.jakarta-json-api>2.1.0</version.jakarta.json.jakarta-json-api>
+    <version.jakarta.json.jakarta-json-api>2.0.1</version.jakarta.json.jakarta-json-api>
     <version.jakarta.resource.jakarta-resource-api>2.1.0</version.jakarta.resource.jakarta-resource-api>
-    <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
+    <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
     <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
     <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
     <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
-
     <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
     <version.javax.annotation>1.2</version.javax.annotation>
     <version.javax.enterprise>2.0</version.javax.enterprise>
@@ -230,7 +229,7 @@
     <version.javax.javaee-api>8.0.1</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1.Final</version.javax.ws.rs-api>
     <version.jaxb>2.3.0</version.jaxb>
-    <version.jaxws-ri>2.3.5</version.jaxws-ri>
+    <version.jaxws-ri>4.0.0</version.jaxws-ri>
     <version.jfree>1.0.9</version.jfree>
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
