@@ -83,7 +83,7 @@
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
-            <version>1.2.0</version>
+            <version>${version.jakarta.activation.jakarta.activation-api}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

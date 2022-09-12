@@ -69,15 +69,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.servlet}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ejb}</version>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <version>${version.jakarta.ejb.jakarta-ejb-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -112,8 +112,8 @@
         </dependency>
         <dependency>
             <groupId>jakarta.inject</groupId>
-            <artifactId>jakarta.inject</artifactId>
-            <version>${version.javax.inject}</version>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>${version.jakarta.inject.jakarta.inject-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

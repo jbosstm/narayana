@@ -11,7 +11,7 @@ public class WarDeployment {
 		WebArchive archive = ShrinkWrap
 		.create(WebArchive.class, "test.war")
 		.addClasses(args)
-		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
 		archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
