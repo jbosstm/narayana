@@ -41,6 +41,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -60,20 +61,16 @@ public class BAParticipantCompletionTest {
     BAParticipantCompletion client;
 
     @Deployment()
-    public static JavaArchive createTestArchive() {
+    public static WebArchive createTestArchive() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+        WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackages(false, BAParticipantCompletionTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
-                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addClass(URLUtils.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+                .addClass(ParticipantCompletionCoordinatorRules.class)
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.xts, org.jboss.narayana.txframework services\n";
-
+        String ManifestMF = "Dependencies: org.jboss.xts, org.jboss.narayana.txframework services";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;

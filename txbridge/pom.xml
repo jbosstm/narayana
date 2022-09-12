@@ -189,6 +189,11 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.2_spec</artifactId>
             <version>${version.org.jboss.spec.javax.transaction}</version>
@@ -215,7 +220,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
-            <artifactId>narayana-jta</artifactId>
+            <artifactId>narayana-jta-jakarta</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -239,16 +244,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ejb}</version>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <version>${version.jakarta.ejb.jakarta-ejb-api}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.servlet}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
             <scope>test</scope>
         </dependency>
 
@@ -313,8 +318,8 @@
             <scope>provided</scope>
         </dependency><dependency>
         <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${version.jaxb}</version>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
         <scope>provided</scope>
     </dependency>
         <dependency>
