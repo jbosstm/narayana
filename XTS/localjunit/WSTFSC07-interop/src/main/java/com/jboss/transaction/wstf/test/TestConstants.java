@@ -18,7 +18,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.jboss.transaction.wstf.test ;
+package com.jboss.transaction.wstf.test;
 
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 
