@@ -116,10 +116,10 @@
     <junit-tests tests="crashrecovery12"/>
     <fail if="failed-tests" message="some tests failed"/>
   </target>
-  <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-ncl-testsuite">
+  <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
   </target>
-  <target name="ci-tests-nojts" depends="junit-testsuite,junit-jdbc-ncl-testsuite">
+  <target name="ci-tests-nojts" depends="junit-testsuite,junit-jdbc-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <!-- General tests.
