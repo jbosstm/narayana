@@ -25,7 +25,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.compensations.internal.BeanManagerUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
@@ -45,7 +45,7 @@ public class BeanManagerUtilTestWeld extends BeanManagerTest {
     public static WebArchive getDeployment() {
         final WebArchive archive = ShrinkWrap.create(WebArchive.class)
                 .addClasses(BeanManagerUtil.class, BeanManagerTest.class, DummyBean.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         System.out.println("Test archive: " + archive.toString(true));
 

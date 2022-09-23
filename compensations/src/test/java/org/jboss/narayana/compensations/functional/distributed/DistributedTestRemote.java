@@ -31,10 +31,10 @@ import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -55,14 +55,14 @@ public class DistributedTestRemote {
     TestService client;
 
     @Deployment()
-    public static JavaArchive createTestArchive() {
+    public static WebArchive createTestArchive() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+        WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackages(true, DistributedTestRemote.class.getPackage())
                 .addPackage(DummyCompensationHandler1.class.getPackage())
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addClass(URLUtils.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         return archive;
     }

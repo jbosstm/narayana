@@ -29,7 +29,7 @@ import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCom
 import org.jboss.narayana.compensations.internal.BAController;
 import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -49,7 +49,7 @@ public class CompensationScopedTestRemote extends CompensationScopedTest {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsManifestResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         return archive;
     }
