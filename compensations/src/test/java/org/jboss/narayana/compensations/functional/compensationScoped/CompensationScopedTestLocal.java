@@ -28,7 +28,7 @@ import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCom
 import org.jboss.narayana.compensations.internal.BAController;
 import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
@@ -47,7 +47,7 @@ public class CompensationScopedTestLocal extends CompensationScopedTest {
                 .addPackage("org.jboss.narayana.compensations.functional.common")
                 .addPackage("org.jboss.narayana.compensations.functional.compensationScoped")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         return archive;
     }

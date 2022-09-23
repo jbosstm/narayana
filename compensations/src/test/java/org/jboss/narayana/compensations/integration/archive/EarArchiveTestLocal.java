@@ -27,7 +27,7 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -46,7 +46,7 @@ public class EarArchiveTestLocal {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "client.war")
                 .addClasses(EarArchiveTestLocal.class, TestServiceClient.class, TestService.class)
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         System.out.println(archive.toString(true));
 
@@ -57,7 +57,7 @@ public class EarArchiveTestLocal {
     public static EnterpriseArchive getServiceDeployment() {
         JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "compensations-ejb.jar")
                 .addClasses(TestConfirmationHandler.class, TestService.class, TestServiceImpl.class, TestServiceService.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsManifestResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         EnterpriseArchive enterpriseArchive = ShrinkWrap.create(EnterpriseArchive.class, "service.ear")
                 .addAsModule(javaArchive)

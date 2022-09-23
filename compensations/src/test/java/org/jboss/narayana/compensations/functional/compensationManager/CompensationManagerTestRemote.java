@@ -27,7 +27,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -47,7 +47,7 @@ public class CompensationManagerTestRemote extends CompensationManagerTest {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsManifestResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
 
         return archive;
     }
