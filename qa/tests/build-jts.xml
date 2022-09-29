@@ -51,33 +51,21 @@
 	<target name="setIdlProps">
         <property name="orb.idl.path" value="lib"/>
         <if>
-	         <equals arg1="${orbtype}" arg2="ibmorb" />
+			<equals arg1="${orbtype}" arg2="openjdk"/>
         <then>
-            <property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/${orbtype}/target/idlj-idl-${narayana.version}-tests.jar"/>
-            <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
-            <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/ibmorbtools.jar;${org.jboss.jbossts.qa.orb.home}/jre/lib/ibmorb.jar"/>
-            <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-            <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+			<unzip src="../ext/openjdk-orb-sources.jar" dest="../ext/lib">
+				<patternset>
+					<include name="**/*.idl"/>
+				</patternset>
+			</unzip>
+			<property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/idlj-openjdk/target/idlj-idl-openjdk-${narayana.version}-tests.jar"/>
+			<property name="org.jboss.jbossts.qa.orb.home" value="ext"/>
+			<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;../ext/openjdk-orb.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar;ext/openjdk-orb.jar;ext/openjdk-orb-sources.jar"/>
+			<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${jts.build.dir}/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+			<property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
-            <property name="is.ibmorb" value="1"/>
+			<property name="is.sunorb" value="1"/>
         </then>
-        <elseif>
-	       <equals arg1="${orbtype}" arg2="openjdk" />
-        <then>
-		<unzip src="../ext/openjdk-orb-sources.jar" dest="../ext/lib">
-		    <patternset>
-			    <include name="**/*.idl"/>
-		    </patternset>
-	    </unzip>
-            <property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/idlj-openjdk/target/idlj-idl-openjdk-${narayana.version}-tests.jar"/>
-	    <property name="org.jboss.jbossts.qa.orb.home" value="ext"/>
-	    <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;../ext/openjdk-orb.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar;ext/openjdk-orb.jar;ext/openjdk-orb-sources.jar"/>
-	    <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${jts.build.dir}/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-	    <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-
-            <property name="is.sunorb" value="1"/>
-        </then>
-        </elseif>
         <else>
             <fail message="Unsupported orbtype: ${orbtype}"/>
         </else>
@@ -259,7 +247,6 @@
             <src path="${jts.build.dir}/jts/tests/classes"/>
             <src path="../../common/tests"/>
 
-            <exclude name="**/ibmorb/**/*.java" unless="is.ibmorb"/>
             <exclude name="**/javaidl/**/*.java" unless="is.sunorb"/>
 
             <exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />

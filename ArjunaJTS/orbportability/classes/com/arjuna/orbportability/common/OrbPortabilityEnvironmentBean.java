@@ -50,7 +50,6 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private volatile List<String> eventHandlerClassNames = new ArrayList<String>();
     private volatile List<EventHandler> eventHandlers = null;
 
-    // alternative: com.arjuna.orbportability.internal.orbspecific.ibmorb.orb.implementations.ibmorb_7_1
     private volatile String orbImpleClassName = "com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4";
     private volatile Class<? extends ORBImple> orbImpleClass = null;
     private volatile String poaImpleClassName = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
