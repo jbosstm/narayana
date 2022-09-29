@@ -50,17 +50,6 @@
       </modules>
     </profile>
     <profile>
-      <id>jts-ibmorb</id>
-      <activation>
-        <property>
-          <name>ibmorb-enabled</name>
-        </property>
-      </activation>
-      <modules>
-        <module>ibmorb</module>
-      </modules>
-    </profile>
-    <profile>
       <id>release</id>
       <build>
         <plugins>

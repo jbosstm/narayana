@@ -75,8 +75,6 @@ NarayanaJTA: `./build.[sh|bat] -am -pl :narayana-jta`
 
 NarayanaJTS (idlj): `./build.[sh|bat] -am -pl :narayana-jts-idlj`
 
-NarayanaJTS (ibmorb): `./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true` (requires IBM jdk)
-
 XTS: `./build.[sh|bat] -am -pl :jboss-xts`
 
 STM: `./build.[sh|bat] -am -pl :stm`

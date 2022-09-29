@@ -64,11 +64,9 @@ public class ORBType
 
 
     public static final int JAVAIDL = 1;
-    public static final int IBMORB = 5;
 
     public static final String javaidl = "JAVAIDL";
-    public static final String ibmorb = "IBMORB";
 
-    private final static String[]           ORB_NAME = { javaidl, ibmorb };
-    private final static int[]              ORB_ENUM = { JAVAIDL, IBMORB };
+    private final static String[]           ORB_NAME = { javaidl };
+    private final static int[]              ORB_ENUM = { JAVAIDL };
 }
