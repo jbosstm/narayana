@@ -31,7 +31,7 @@ import javax.transaction.SystemException;
  * Before running this wrapper remember to:
  * - uncomment the lines marked with TODO;
  * - include the product jars on the classpath
- * - recompile (eg add them to jts.classpath qa/tests/build-jts.xml)
+ * - recompile (eg add them to jts.classpath qa/tests/build.xml)
  * - put javax.transaction jar on the classpath
  *          (http://mvnrepository.com/artifact/geronimo-spec/geronimo-spec-jta)
  * - set the location of the product properties file:

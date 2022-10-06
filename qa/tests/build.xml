@@ -18,7 +18,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<project name="JBossTS JTS QA Suite" default="build">
+<project name="JBossTS QA Suite" default="build">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="../ant-contrib-1.0b3.jar"/>
@@ -27,26 +27,16 @@
 
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
+	<property name="jts.build.dir" value="${basedir}/../../ArjunaJTS"/>
 	<property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
 	<property name="orbtype" value="openjdk"/>
 
-	<!-- set properties for AS testing -->
-	<property environment="env"/>
-	<property name="jts.build.dir" value="${basedir}/../../ArjunaJTS"/>
-	<property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
-
-    <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
-	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
-			  location="${jts.build.dir}/orbportability/lib/ext"/>
-
-        <property name="java.corba.patch.jar" location="${jts.build.dir}/idl/idlj.java.corba/target/idlj.java.corba.patch-${narayana.version}.jar"/>
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
 	<property name="org.jboss.jbossts.qa.build.idl" value="${org.jboss.jbossts.qa.buildroot}/idl/"/>
 	<property name="org.jboss.jbossts.qa.src" location="src"/>
 	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 	<property name="org.jboss.jbossts.qa.idl" location="idl"/>
-        <property name="upgrademodulepath" value="${jts.build.dir}/jtax/target/upgrademodulepath"/>
 
 	<target name="setIdlProps">
         <property name="orb.idl.path" value="lib"/>
@@ -75,7 +65,7 @@
             <pathelement location="../target/classes"/>
         </path>
 
-        <path id="jts.classpath">
+        <path id="classpath">
             <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
                 <include name="jbossjts.jar"/>
             </fileset>
@@ -85,11 +75,9 @@
                 <include name="openjdk-orb.jar" if="is.sunorb" />
             </fileset>
             <pathelement location="${jts.build.dir}/orbportability/config"/>
-            <!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
             <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
             <pathelement location="../ext/junit.jar"/>
             <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
-            <pathelement location="${jts.build.dir}/jts/build/lib/jts_tests.jar"/>
             <!-- added this for j9 since the orb type name is slightly inconsistent. Also retest on the other orbtypes -->
             <pathelement location="${jts.idl.tests.jar}"/>
         </path>
@@ -102,7 +90,6 @@
 		<mkdir dir="${org.jboss.jbossts.qa.build.idl}"/>
 
 		<copy todir="${org.jboss.jbossts.qa.build.classes}">
-			<fileset dir="${org.jboss.jbossts.qa.src}/${astest.dir}/resources"/>
 			<fileset dir="../../tools/target/classes"/>
 		</copy>
 	</target>
@@ -117,7 +104,7 @@
 	<target name="org.jboss.jbossts.qa.idl.compile.init" depends="org.jboss.jbossts.qa.init">
 
 		<taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList"
-				 classpathref="jts.classpath"/>
+				 classpathref="classpath"/>
 
 		<idl-build-list inproperty="org.jboss.jbossts.qa.jts.idl.buildlist">
 
@@ -208,7 +195,7 @@
 		</idl-build-list>
 
 		<taskdef name="idl-compiler" classname="com.arjuna.orbportability.common.ant.IDLCompiler"
-				 classpathref="jts.classpath"/>
+				 classpathref="classpath"/>
 
 		    <idl-build-list inproperty="idl.buildlist">
             <element src="${org.jboss.jbossts.qa.ts.home}/../../ArjunaJTS/idl/src/test/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
@@ -234,7 +221,7 @@
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on" includeantruntime="false">
 			<classpath>
-				<path refid="jts.classpath"/>
+				<path refid="classpath"/>
 			</classpath>
 		</javac>
 	</target>
@@ -250,66 +237,18 @@
             <exclude name="**/javaidl/**/*.java" unless="is.sunorb"/>
 
             <exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
-            <exclude name="**/${astest.dir}/**/*.java" />
             <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredTransactionUnitTest.java" />
             <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredServerTransactionUnitTest.java" />
 
             <classpath>
-                <path refid="jts.classpath"/>
+                <path refid="classpath"/>
 	        <path refid="target.classpath"/>
                 <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
             </classpath>
         </javac>
     </target>
 
-    <path id="as.classpath">
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-                        <include name="jbossjts.jar"/>
-                </fileset>
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
-                        <include name="jbossts-common.jar"/>
-                        <include name="jta-1_1-classes.zip"/>
-                </fileset>
-                <!-- include classes for AS tests -->
-                <fileset dir="../../ext">
-                    <include name="jboss-server-manager.jar"/>
-                    <include name="jboss-transaction-api_1.2_spec.jar"/>
-                    <include name="jboss-ejb-api_3.1_spec.jar"/>
-                    <include name="jboss-transaction-spi.jar"/>
-                    <include name="jboss-remoting.jar"/>
-                </fileset>
-	</path>
-
-    <target name="as-ejbjar.compile" if="integration.build">
-        <javac srcdir="${org.jboss.jbossts.qa.src}"
-               destdir="${org.jboss.jbossts.qa.build.classes}"
-               debug="on" deprecation="on"
-               includeantruntime="true">
-            <include name="**/${astest.dir}/**/*.java" />
-            <classpath>
-                <path refid="as.classpath"/>
-            </classpath>
-        </javac>
-    </target>
-
-   <target name="as-ejbjar" depends="as-ejbjar.compile" if="integration.build">
-      <jar jarfile="${org.jboss.jbossts.qa.buildroot}/astest.jar">
-         <fileset dir="${org.jboss.jbossts.qa.build.classes}">
-            <include name="${astest.dir}/**/*.class"/>
-         </fileset>
-         <fileset dir="${org.jboss.jbossts.qa.src}/${astest.dir}">
-            <include name="META-INF/*.xml"/>
-         </fileset>
-         <fileset dir="${org.jboss.jbossts.qa.src}/${astest.dir}/resources">
-            <include name="java.policy"/>
-         </fileset>
-      </jar>
-      <copy todir="${org.jboss.jbossts.qa.buildroot}/qa/resources">
-        <fileset dir="${org.jboss.jbossts.qa.src}/${astest.dir}/resources"/>
-      </copy>
-   </target>
-
-	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile, as-ejbjar">
+	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile">
 		<echo message="UNPACKING ${jts.idl.tests.jar} to "/>
 		<unzip src="${jts.idl.tests.jar}" dest="${org.jboss.jbossts.qa.build.classes}"/>
 		<jar jarfile="${org.jboss.jbossts.qa.buildroot}/jbossts-jts-qa.jar"

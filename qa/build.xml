@@ -26,31 +26,12 @@
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
 
-  <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
-  <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
-
-  <target name="buildtype">
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"
-               property="buildtype" value="jts"/>
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar"
-               property="buildtype" value="jta"/>
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-integration.jar"
-               property="integration.build"/>
-    <condition property="dist.as">
-      <and>
-        <isset property="integration.build"/>
-        <isset property="as"/>
-      </and>
-    </condition>
-  </target>
-
   <target name="clean" depends="clean-tests"/>
 
   <target name="clean-tests">
     <delete dir="PutObjectStoreDirHere"/>
     <delete dir="ObjectStore"/>
     <delete dir="testoutput"/>
-    <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
     <delete file="transaction.log"/>
     <delete file="idl-compiler.out"/>
@@ -58,55 +39,24 @@
     <delete>
       <fileset dir="." includes="TEST-*.txt"/>
     </delete>
-    <!--
-      always use jts regardless of build type, as we may not be able to #
-      determine the build type at clean time and jts should have the superset
-    -->
-    <ant dir="tests" antfile="build-jts.xml" target="clean"/>
   </target>
 
   <target name="init" depends="clean">
-    <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
     <unzip src="../narayana-full/target/narayana-full-${narayana.version}-bin.zip"
            dest="${org.jboss.jbossts.qa.ts.home}"/>
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar"
           tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-openjdk.jar"/>
-    <antcall target="init-jta"/>
-    <antcall target="init-jts"/>
-  </target>
-
-  <target name="init-jta" if="init-jta">
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jta/narayana-jta.jar"
-          tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar"/>
-  </target>
-
-  <target name="init-jts" depends="jts.cp"/>
-
-  <target name="jts.cp">
     <echo>copying ${orbtype} jts</echo>
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-${orbtype}.jar"
           tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
   </target>
 
-  <target name="dist" depends="clean, init, buildtype">
+  <target name="dist" depends="clean, init">
     <!-- build the test suite -->
-    <ant dir="tests" antfile="build-${buildtype}.xml">
+    <ant dir="tests" antfile="build.xml">
       <property name="orbtype" value="${orbtype}"/>
-      <property name="org.jboss.jbossts.qa.server_manager_location"
-                value="${org.jboss.jbossts.qa.server_manager_location}"/>
     </ant>
-  </target>
-
-  <target name="help">
-    <echo>
-      Supported targets:
-      jta - build tests for the standalone jta transaction engine
-      jts - build tests for the standalone jts transaction engine
-      narayana-jta - build tests for the integrated jta transaction engine
-      narayana-jts - build tests for the integrated jts transaction engine
-      dist - build tests for the last build of the transaction engine
-    </echo>
   </target>
 
 </project>
