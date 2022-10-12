@@ -203,7 +203,7 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
-          <artifactId>arquillian-protocol-servlet</artifactId>
+          <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
           <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
@@ -265,7 +265,7 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
-          <artifactId>arquillian-protocol-servlet</artifactId>
+          <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
           <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
