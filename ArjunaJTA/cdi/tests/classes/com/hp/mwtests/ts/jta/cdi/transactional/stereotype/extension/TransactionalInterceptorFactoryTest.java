@@ -25,7 +25,7 @@ package com.hp.mwtests.ts.jta.cdi.transactional.stereotype.extension;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class TransactionalInterceptorFactoryTest {
     public static WebArchive createTestArchive() {
         return ShrinkWrap.create(WebArchive.class, "transactional-interceptor-factory-test.war")
                 .addPackage(TransactionalChangedByExtensionTest.class.getPackage())
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
     }
 
     @Test
