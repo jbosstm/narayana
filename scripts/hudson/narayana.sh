@@ -188,7 +188,7 @@ function init_test_options {
     elif [[ $PROFILE == "LRA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=1
         else
@@ -346,23 +346,55 @@ function build_narayana {
   return 0
 }
 
-# clone WildFly main
-# note that this version does not use 5_BRANCH
-# if we require changes to WildFly sources then we should either
-# a) raise a WildFly PR, or
-# b) or re-instate the part of the script that rebases 5_BRANCH
-# If the second option is needed it will be straightforward to reinstate rebasing against 5_BRANCH
 function clone_as {
-  REPO="https://github.com/wildfly/wildfly.git"
-  echo "Cloning AS sources from $REPO"
+  echo "Cloning AS sources from https://github.com/jbosstm/jboss-as.git"
 
-  cd $WORKSPACE
-
+  cd ${WORKSPACE}
   if [ -d jboss-as ]; then
-    rm -rf jboss-as # start afresh
+    echo "Updating existing checkout of WildFly"
+    cd jboss-as
+
+    git remote | grep upstream
+    if [ $? -ne 0 ]; then
+      git remote add upstream https://github.com/wildfly/wildfly.git
+    fi
+    #Abort any partially complete rebase
+    git rebase --abort
+    git checkout 5_BRANCH
+    [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
+    git fetch
+    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
+    git reset --hard jbosstm/5_BRANCH
+    [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
+    git clean -f -d -x
+    [ $? -eq 0 ] || fatal "git clean failed"
+    git rebase --abort
+    rm -rf .git/rebase-apply
+  else
+    echo "First time checkout of WildFly"
+    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
+    [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
+
+    cd jboss-as
+
+    git remote add upstream https://github.com/wildfly/wildfly.git
   fi
 
-  git clone $REPO jboss-as || fatal "git clone $REPO failed"
+  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
+  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
+  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+  [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
+
+  git fetch upstream
+  echo "This is the JBoss-AS commit"
+  echo $(git rev-parse upstream/main)
+  echo "This is the AS_BRANCH $AS_BRANCH commit"
+  echo $(git rev-parse HEAD)
+
+  echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
+  git pull --rebase upstream main
+  [ $? -eq 0 ] || fatal "git rebase failed"
 
   if [ $REDUCE_SPACE = 1 ]; then
     echo "Deleting git dir to reduce disk usage"
@@ -373,12 +405,9 @@ function clone_as {
 }
 
 function build_as {
-  AS_BRANCH=27.0.0.Alpha1
-  echo "Building WildFly $AS_BRANCH"
+  echo "Building JBoss EAP/WildFly"
 
   cd $WORKSPACE/jboss-as
-
-  git checkout $AS_BRANCH || fatal "git checkout $AS_BRANCH failed"
 
   # building WildFly
   [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
@@ -418,10 +447,8 @@ function download_as {
   # clean up any previously downloaded zip files (this will not clean up old directories)
   rm -f artifacts.zip wildfly-*.zip
 
-  # download the latest wildfly nighly build (which we know supports Java 17)
-  # re-enable downloading main when narayana migrates to jakarta - see JBTM-3588
+  # download the latest wildfly nighly build (which we know supports Java 11)
   AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
-  #AS_LOCATION="https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_26xNightlyJobs_Nightly/.lastSuccessful/artifacts.zip"
   wget -nv ${AS_LOCATION}
   ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
   ### which is changing time to time
@@ -458,7 +485,7 @@ function download_as {
 
   [ -d "${JBOSS_HOME}" ] || fatal "After unzipping the file '$zip', '${JBOSS_HOME}' does not exist"
 
-  echo "JBOSS_HOME=$JBOSS_HOME"
+  echo JBOSS_HOME=$JBOSS_HOME
 
   # clean up downloaded zip files
   rm -f wildfly-*.zip artifacts.zip
@@ -537,6 +564,7 @@ function rts_tests {
 
 function lra_tests {
   echo "#0. LRA Test"
+  ./build.sh install -pl ArjunaCore/arjunacore,rts -am -DskipTests -Pcommunity "$@"
   cd ./rts/lra/
   echo "#0. Running LRA tests using $ARQ_PROF profile"
   PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
