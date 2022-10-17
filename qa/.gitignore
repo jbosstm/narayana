@@ -2,6 +2,7 @@
 .project
 dbdrivers
 dist
+ext
 idl-compiler.*
 build
 TEST-*

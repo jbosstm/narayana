@@ -22,17 +22,11 @@
 <project name="JBossTS QA Suite Distribution" default="dist">
   <property environment="env"/>
   <property name="orbtype" value="openjdk"/>
-  <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
-  <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
-
-  <target name="clean" depends="clean-tests"/>
 
   <target name="clean-tests">
     <delete dir="PutObjectStoreDirHere"/>
     <delete dir="ObjectStore"/>
     <delete dir="testoutput"/>
-    <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
     <delete file="transaction.log"/>
     <delete file="idl-compiler.out"/>
     <delete file="idl-compiler.err"/>
@@ -41,18 +35,7 @@
     </delete>
   </target>
 
-  <target name="init" depends="clean">
-    <mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
-    <unzip src="../narayana-full/target/narayana-full-${narayana.version}-bin.zip"
-           dest="${org.jboss.jbossts.qa.ts.home}"/>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar"
-          tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-openjdk.jar"/>
-    <echo>copying ${orbtype} jts</echo>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-${orbtype}.jar"
-          tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
-  </target>
-
-  <target name="dist" depends="clean, init">
+  <target name="dist" depends="clean-tests">
     <!-- build the test suite -->
     <ant dir="tests" antfile="build.xml">
       <property name="orbtype" value="${orbtype}"/>

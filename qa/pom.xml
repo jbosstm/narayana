@@ -24,6 +24,14 @@
   <packaging>jar</packaging>
   <name>Narayana: qa</name>
 
+  <properties>
+    <version.ant-contrib>1.0b3</version.ant-contrib>
+    <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
+    <version.hamcrest>1.3</version.hamcrest>
+    <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
+    <version.log4j-core>2.19.0</version.log4j-core>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.logging</groupId>
@@ -33,7 +41,7 @@
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-      <version>1.0.0.Final</version>
+      <version>${version.org.jboss.spec.javax.transaction}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -41,9 +49,29 @@
       <version>${version.junit}</version>
     </dependency>
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>${version.hamcrest}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.ant</artifactId>
+      <version>${version.org.jacoco}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.report</artifactId>
+      <version>${version.org.jacoco}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.core</artifactId>
+      <version>${version.org.jacoco}</version>
+    </dependency>
+    <dependency>
       <groupId>jboss.profiler.jvmti</groupId>
       <artifactId>jboss-profiler-jvmti</artifactId>
-      <version>1.0.0.CR5</version>
+      <version>${version.jboss.profiler.jvmti}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
@@ -51,9 +79,9 @@
       <version>${version.org.apache.ant}</version>
     </dependency>
     <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javax.javaee-api}</version>
+      <groupId>ant-contrib</groupId>
+      <artifactId>ant-contrib</artifactId>
+      <version>${version.ant-contrib}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -61,10 +89,70 @@
       <version>${version.org.jboss.jboss-transaction-spi}</version>
     </dependency>
     <dependency>
+      <groupId>com.sun.messaging.mq</groupId>
+      <artifactId>fscontext</artifactId>
+      <version>${version.com.sun.messaging.mq.fscontext}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${version.log4j-core}</version>
+    </dependency>
+
+    <!-- Narayana Dependencies -->
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>orbportability</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-idlj</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>narayana-jts-integration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jts</artifactId>
+      <version>${project.version}</version>
+      <classifier>test-sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+      <version>${project.version}</version>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+      <version>${project.version}</version>
+      <classifier>test-sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>test-utils</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>test-sources</classifier>
+    </dependency>
+
+    <!-- JDBC Drivers -->
+
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
       <artifactId>ojdbc8</artifactId>
@@ -152,18 +240,6 @@
         <artifactId>maven-dependency-plugin</artifactId>
 
         <configuration>
-          <excludeGroupIds>org.jboss.spec.javax.transaction,
-            junit,
-            jboss.profiler.jvmti,
-            org.apache.ant,
-            javax,
-            org.jboss.narayana,
-            com.oracle.database.jdbc,
-            org.postgresql,
-            mysql,
-            com.ibm.db2</excludeGroupIds>
-          <excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
-          <outputDirectory>./ext</outputDirectory>
           <overWriteReleases>false</overWriteReleases>
           <overWriteSnapshots>false</overWriteSnapshots>
           <overWriteIfNewer>true</overWriteIfNewer>
@@ -171,22 +247,34 @@
           <stripVersion>true</stripVersion>
         </configuration>
 
-        <!--
-          Drivers of the used databases are downloaded directly from Maven repositories.
-          The consumer of these drivers is the ant script "run-tests.xml", which is also
-          the main script to run all tests in the QA module. The main reason to use DBs in
-          the QA module is to test Narayana with different kinds of Object Stores
-         -->
         <executions>
+          <!--
+            Drivers of the used databases are downloaded directly from Maven repositories.
+            The consumer of these drivers is the ant script "run-tests.xml", which is also
+            the main script to run all tests in the QA module. The main reason to use DBs in
+            the QA module is to test Narayana with different kinds of Object Stores
+         -->
           <execution>
+            <id>JDBCDrivers</id>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
             <phase>install</phase>
             <configuration>
               <excludeGroupIds>*</excludeGroupIds>
-              <outputDirectory>${project.build.directory}/../dbdrivers</outputDirectory>
+              <outputDirectory>${project.basedir}/dbdrivers</outputDirectory>
               <includeArtifactIds>ojdbc8, postgresql, mysql-connector-java, jcc</includeArtifactIds>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Dependencies</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <excludeArtifactIds>ojdbc8, postgresql, mysql-connector-java, jcc</excludeArtifactIds>
+              <outputDirectory>${project.basedir}/ext</outputDirectory>
             </configuration>
           </execution>
         </executions>
