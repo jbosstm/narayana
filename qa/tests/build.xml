@@ -21,21 +21,17 @@
 <project name="JBossTS QA Suite" default="build">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="../ant-contrib-1.0b3.jar"/>
+            <pathelement location="${basedir}/../ext/ant-contrib.jar"/>
         </classpath>
     </taskdef>
 
-	<!-- set this property to the location of a JBossTS JTS build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="jts.build.dir" value="${basedir}/../../ArjunaJTS"/>
-	<property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
+	<property name="external.libraries" value="${basedir}/../ext"/>
 	<property name="orbtype" value="openjdk"/>
 
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
 	<property name="org.jboss.jbossts.qa.build.idl" value="${org.jboss.jbossts.qa.buildroot}/idl/"/>
 	<property name="org.jboss.jbossts.qa.src" location="src"/>
-	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 	<property name="org.jboss.jbossts.qa.idl" location="idl"/>
 
 	<target name="setIdlProps">
@@ -43,16 +39,24 @@
         <if>
 			<equals arg1="${orbtype}" arg2="openjdk"/>
         <then>
-			<unzip src="../ext/openjdk-orb-sources.jar" dest="../ext/lib">
+			<unzip src="${external.libraries}/openjdk-orb-sources.jar" dest="${external.libraries}/lib/openjdk-orb-sources">
 				<patternset>
 					<include name="**/*.idl"/>
 				</patternset>
 			</unzip>
-			<property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/idlj-openjdk/target/idlj-idl-openjdk-${narayana.version}-tests.jar"/>
+			<unzip src="${external.libraries}/idlj-idl-openjdk-sources.jar" dest="${external.libraries}/lib/idlj-idl-openjdk-sources">
+				<patternset>
+					<include name="**/*.idl"/>
+				</patternset>
+			</unzip>
+			<unzip src="${external.libraries}/idlj-idl-openjdk-test-sources.jar" dest="${external.libraries}/lib/idlj-idl-openjdk-test-sources">
+				<patternset>
+					<include name="**/*.idl"/>
+				</patternset>
+			</unzip>
 			<property name="org.jboss.jbossts.qa.orb.home" value="ext"/>
-			<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;../ext/openjdk-orb.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar;ext/openjdk-orb.jar;ext/openjdk-orb-sources.jar"/>
-			<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${jts.build.dir}/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-			<property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+			<property name="org.jboss.jbossts.qa.orb.classpath" value="${external.libraries}/openjdk-orb.jar;${external.libraries}/openjdk-orb-sources.jar"/>
+			<property name="idl.params" value="include='${external.libraries}/lib/openjdk-orb-sources/com/sun/tools/corba/se/idl;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/omg;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/arjuna',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
 			<property name="is.sunorb" value="1"/>
         </then>
@@ -66,20 +70,16 @@
         </path>
 
         <path id="classpath">
-            <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-                <include name="jbossjts.jar"/>
-            </fileset>
-            <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+            <fileset dir="${external.libraries}">
+                <include name="narayana-jts-idlj.jar"/>
                 <include name="jboss-transaction-api_1.2_spec.jar"/>
-	        <include name="jboss-logging.jar"/>
+				<include name="jboss-logging.jar"/>
                 <include name="openjdk-orb.jar" if="is.sunorb" />
             </fileset>
-            <pathelement location="${jts.build.dir}/orbportability/config"/>
             <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
-            <pathelement location="../ext/junit.jar"/>
-            <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
-            <!-- added this for j9 since the orb type name is slightly inconsistent. Also retest on the other orbtypes -->
-            <pathelement location="${jts.idl.tests.jar}"/>
+			<pathelement location="${external.libraries}/orbportability.jar"/>
+            <pathelement location="${external.libraries}/junit.jar"/>
+            <pathelement location="${external.libraries}/jboss-profiler-jvmti.jar"/>
         </path>
 	</target>
 
@@ -89,9 +89,9 @@
 		<mkdir dir="${org.jboss.jbossts.qa.build.classes}"/>
 		<mkdir dir="${org.jboss.jbossts.qa.build.idl}"/>
 
-		<copy todir="${org.jboss.jbossts.qa.build.classes}">
-			<fileset dir="../../tools/target/classes"/>
-		</copy>
+		<unzip src="${external.libraries}/test-utils.jar" dest="${org.jboss.jbossts.qa.build.classes}"/>
+		<unzip src="${external.libraries}/common-test-sources.jar" dest="${external.libraries}/lib/common-test-sources"/>
+		<unzip src="${external.libraries}/jts-test-sources.jar" dest="${external.libraries}/lib/jts-test-sources"/>
 	</target>
 
 	<target name="org.jboss.jbossts.qa.clean">
@@ -198,7 +198,7 @@
 				 classpathref="classpath"/>
 
 		    <idl-build-list inproperty="idl.buildlist">
-            <element src="${org.jboss.jbossts.qa.ts.home}/../../ArjunaJTS/idl/src/test/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
+            <element src="${external.libraries}/lib/idlj-idl-openjdk-test-sources/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
                      mappings="CosTransactions=org.omg;TestModule=com.hp.mwtests.ts.jts;CORBA=org.omg"/>
         </idl-build-list>
 
@@ -207,13 +207,13 @@
 					  buildlist="${idl.buildlist}"
 					  verbose="false" debug="false"
 					  destdir="${org.jboss.jbossts.qa.build.idl}"
-					  parameters="${idl.params1}" />
+					  parameters="${idl.params}" />
             
 		<idl-compiler orb="${orbtype}"
 					  buildlist="${org.jboss.jbossts.qa.jts.idl.buildlist}"
 					  verbose="false" debug="false"
 					  destdir="${org.jboss.jbossts.qa.build.idl}"
-					  parameters="${idl.params2}" />
+					  parameters="${idl.params}" />
 	</target>
 
 	<target name="org.jboss.jbossts.qa.idl.orb.compile" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init">
@@ -231,8 +231,8 @@
                debug="on" deprecation="on" includeantruntime="true">
 
             <src path="${org.jboss.jbossts.qa.src}"/>
-            <src path="${jts.build.dir}/jts/tests/classes"/>
-            <src path="../../common/tests"/>
+            <src path="${external.libraries}/lib/jts-test-sources/"/>
+            <src path="${external.libraries}/lib/common-test-sources/"/>
 
             <exclude name="**/javaidl/**/*.java" unless="is.sunorb"/>
 
@@ -249,11 +249,8 @@
     </target>
 
 	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile">
-		<echo message="UNPACKING ${jts.idl.tests.jar} to "/>
-		<unzip src="${jts.idl.tests.jar}" dest="${org.jboss.jbossts.qa.build.classes}"/>
 		<jar jarfile="${org.jboss.jbossts.qa.buildroot}/jbossts-jts-qa.jar"
 			 basedir="${org.jboss.jbossts.qa.build.classes}">
-			<zipfileset includes="**/*" src="${jts.idl.tests.jar}"/>
 		</jar>
 	</target>
 

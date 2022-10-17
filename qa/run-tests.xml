@@ -51,18 +51,20 @@
          xmlns:jacoco="antlib:org.jacoco.ant">
   <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
-          <pathelement location="ant-contrib-1.0b3.jar"/>
+          <pathelement location="${basedir}/ext/ant-contrib.jar"/>
       </classpath>
   </taskdef>
 
   <!-- code coverage settings -->
   <property name="code.coverage" value="false"/>
+  <property name="external.libraries" value="${basedir}/ext"/>
+  <property name="dbdrivers" value="${basedir}/dbdrivers"/>
   <property name="output.dir" location="testoutput" />
   <property name="output.report.dir" location="${output.dir}/site/jacoco" />
   <property name="output.exec.file" location="${output.dir}/jacoco-qa.exec" />
 
   <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-      <classpath path="../ext/jacocoant.jar" />
+      <classpath path="${external.libraries}/org.jacoco.ant.jar;${external.libraries}/org.jacoco.core.jar;${external.libraries}/org.jacoco.report.jar" />
   </taskdef>
 
   <!-- set this property to the location of a JBossTS core build -->
@@ -81,9 +83,7 @@
   </target>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="test">
-    <property name="driver" value="ojdbc8.jar"/>
     <fail unless="test" message="you need to specify the name of a test"/>
-    <install-dbdriver files="${driver}"/>
     <junit-tests tests="${test}"/>
     <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
     <fail if="failed-tests" message="some tests failed"/>
@@ -236,19 +236,6 @@
     <fail if="failed-tests" message="${test.name} - some tests failed"/>
   </target>
 
-  <!-- copy the selected db driver out of the available set into the classpath.
-        See also TaskImpl.properties for classpath
-     -->
-  <macrodef name="install-dbdriver">
-    <attribute name="files"/>
-    <sequential>
-      <delete dir="dbdrivers/selected_dbdriver"/>
-      <mkdir dir="dbdrivers/selected_dbdriver"/>
-      <copy todir="dbdrivers/selected_dbdriver" flatten="true">
-        <fileset dir="dbdrivers/" includes="**/@{files}"/>
-      </copy>
-    </sequential>
-  </macrodef>
   <!--
         JDBC tests.
         You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones,
@@ -261,16 +248,12 @@
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="junit-jdbc-testsuite">
-    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-    <install-dbdriver files="postgresql.jar"/>
     <junit-tests tests="jdbcresources01_pgsql_jndi"/>
     <junit-tests tests="jdbcresources02_pgsql_jndi"/>
-    <install-dbdriver files="mysql-connector-java.jar"/>
     <junit-tests tests="jdbcresources01_mysql_jndi"/>
     <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <install-dbdriver files="jcc.jar"/>
     <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
     <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
@@ -279,10 +262,8 @@
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="jdbcresources01_mssqlserver_jndi"/>
     <junit-tests tests="jdbcresources02_mssqlserver_jndi"/>
-    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="jdbcresources01_sybase_jndi"/>
     <junit-tests tests="jdbcresources02_sybase_jndi"/>
     -->
@@ -292,25 +273,18 @@
   </target>
   <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
   <target name="junit-jdbc-ncl-testsuite">
-    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-    <install-dbdriver files="mysql-connector-java.jar"/>
     <junit-tests tests="jdbcresources01_mysql_jndi"/>
     <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <install-dbdriver files="postgresql.jar"/>
     <junit-tests tests="jdbcresources01_pgsql_jndi"/>
     <junit-tests tests="jdbcresources02_pgsql_jndi"/>
   </target>
   <target name="junit-jdbc-crachrec">
     <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="crashrecovery11-oracle_jndi"/>
-    <install-dbdriver files="jcc.jar"/>
     <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
-    <install-dbdriver files="postgresql.jar"/>
     <junit-tests tests="crashrecovery11-pgsql_jndi"/>
-    <install-dbdriver files="mysql-connector-java.jar"/>
     <junit-tests tests="crashrecovery11-mysql_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <!--
@@ -318,9 +292,7 @@
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="crashrecovery11-mssqlserver_jndi"/>
-    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="crashrecovery11-sybase_jndi"/>
     -->
     <fail if="failed-tests" message="some tests failed"/>
@@ -341,13 +313,9 @@
     <!-- jtatest01 : 6 tests, minute-->
     <junit-tests tests="jtatests01"/>
     <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbclocals01_oracle_jndi"/>
-    <install-dbdriver files="postgresql.jar"/>
     <junit-tests tests="jdbclocals01_pgsql_jndi"/>
-    <install-dbdriver files="mysql-connector-java.jar"/>
     <junit-tests tests="jdbclocals01_mysql_jndi"/>
-    <install-dbdriver files="jcc.jar"/>
     <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
     <fail if="failed-tests" message="some tests failed"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
@@ -356,9 +324,7 @@
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="jdbclocals01_mssqlserver_jndi"/>
-    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="jdbclocals01_sybase_jndi"/>
     -->
   </target>
@@ -394,19 +360,19 @@
       Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
       On the up side, you get better diagnostic messages and code management/navigation in IDEs.
     -->
-    <pathelement location="ext/junit.jar"/>
+    <pathelement location="${external.libraries}/junit.jar"/>
     <fileset dir="tests/build">
       <include name="jbossts-*-qa.jar"/>
     </fileset>
-    <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
-      <exclude name="narayana-jts-idlj.jar"/>
+    <fileset dir="${external.libraries}">
       <include name="*.jar"/>
     </fileset>
-    <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+    <fileset dir="${external.libraries}">
       <include name="*.jar"/>
-      <include name="*.zip"/>
     </fileset>
-    <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
+    <fileset dir="${dbdrivers}">
+      <include name="*.jar"/>
+    </fileset>
   </path>
 
   <macrodef name="junit-tests">

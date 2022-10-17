@@ -644,8 +644,10 @@ EOT
 }
 
 function set_qa_log_level {
-echo "creating file $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml"
-cat << EOF > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
+echo "creating file $WORKSPACE/qa/ext/etc/log4j.xml"
+mkdir -p $WORKSPACE/qa/ext/etc/
+touch $WORKSPACE/qa/ext/etc/log4j.xml
+cat << EOF > $WORKSPACE/qa/ext/etc/log4j.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
