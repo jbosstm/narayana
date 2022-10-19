@@ -439,8 +439,8 @@ function download_as {
   echo "Download WildFly Build"
 
   cd $WORKSPACE
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
-  wget --user=guest --password=guest -nv ${AS_LOCATION}
+  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  wget -nv ${AS_LOCATION}
   local zipFileName=${AS_LOCATION##*/}
   unzip -qo "$zipFileName"
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zipFileName%.zip}"}
