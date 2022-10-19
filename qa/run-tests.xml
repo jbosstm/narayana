@@ -47,556 +47,568 @@
 
   Server connection params can be found in config/jdbc_profiles/
 -->
-<project name="QA Tests for JBossTS" default="junit" basedir="."
-         xmlns:jacoco="antlib:org.jacoco.ant">
-  <taskdef resource="net/sf/antcontrib/antlib.xml">
-      <classpath>
-          <pathelement location="${basedir}/ext/ant-contrib.jar"/>
-      </classpath>
-  </taskdef>
+<project xmlns:jacoco="antlib:org.jacoco.ant" name="QA Tests for JBossTS" default="junit"
+         basedir=".">
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${basedir}/ext/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
 
-  <!-- code coverage settings -->
-  <property name="code.coverage" value="false"/>
-  <property name="external.libraries" value="${basedir}/ext"/>
-  <property name="dbdrivers" value="${basedir}/dbdrivers"/>
-  <property name="output.dir" location="testoutput" />
-  <property name="output.report.dir" location="${output.dir}/site/jacoco" />
-  <property name="output.exec.file" location="${output.dir}/jacoco-qa.exec" />
+    <!-- code coverage settings -->
+    <property name="code.coverage" value="false"/>
+    <property name="external.libraries" value="${basedir}/ext"/>
+    <property name="dbdrivers" value="${basedir}/dbdrivers"/>
+    <property name="output.dir" location="testoutput"/>
+    <property name="output.report.dir" location="${output.dir}/site/jacoco"/>
+    <property name="output.exec.file" location="${output.dir}/jacoco-qa.exec"/>
 
-  <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-      <classpath path="${external.libraries}/org.jacoco.ant.jar;${external.libraries}/org.jacoco.core.jar;${external.libraries}/org.jacoco.report.jar" />
-  </taskdef>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath
+                path="${external.libraries}/org.jacoco.ant.jar;${external.libraries}/org.jacoco.core.jar;${external.libraries}/org.jacoco.report.jar"/>
+    </taskdef>
 
-  <!-- set this property to the location of a JBossTS core build -->
-  <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
-  <property name="working.dir" location="build"/>
-  <property name="testoutput.zipname" value="testoutput.zip"/>
-  <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
-  <property name="profile" value=""/>
+    <!-- set this property to the location of a JBossTS core build -->
+    <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
+    <property name="narayana.version" value="5.13.1.Final-SNAPSHOT"/>
+    <property name="working.dir" location="build"/>
+    <property name="testoutput.zipname" value="testoutput.zip"/>
+    <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
+    <property name="profile" value=""/>
 
-  <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
-  <target name="scratch">
-    <junit-tests tests="defaulttimeout"/>
-    <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
-  <target name="test">
-    <fail unless="test" message="you need to specify the name of a test"/>
-    <junit-tests tests="${test}"/>
-    <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
-  <target name="express">
-    <!-- currenttests01 : 36 tests, 3 minutes -->
-    <junit-tests tests="currenttests01"/>
-    <!-- jtatests01 : 6 tests, 1 minute -->
-    <junit-tests tests="jtatests01"/>
-    <!-- otsserver : 20 tests, 7 minutes -->
-    <junit-tests tests="otsserver"/>
-    <!-- rawresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources01_1"/>
-    <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources02_1"/>
-    <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_1"/>
-    <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_1"/>
-    <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery01"/>
-    <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
-    <junit-tests tests="crashrecovery02_1"/>
-    <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <junit-tests tests="crashrecovery03"/>
-    <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <junit-tests tests="crashrecovery06"/>
-    <!-- crashrecovery12 : 7 tests, 5 minutes -->
-    <junit-tests tests="crashrecovery12"/>
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="ci-tests-nojts" depends="junit-testsuite,junit-jdbc-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <!-- General tests.
-        These tests should take a combined time of around 2h20m or so.
-    -->
-  <target name="junit" depends="junit-testsuite,junit-jts-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="ci-jts-tests" depends="junit-jts-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="ci-junit-testsuite" depends="junit-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="junit-testsuite">
-    <!-- txcore : 28 tests, 2 minutes -->
-    <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
-    <!-- txcore_lockrecord : 112 tests, 3 minutes -->
-    <junit-tests tests="txcore_lockrecord"/>
-    <!-- txcore_abstractrecord : 32 tests, 1 minute -->
-    <junit-tests tests="txcore_abstractrecord"/>
-    <!-- txcore_statemanager : 64 tests, 2 minutes -->
-    <junit-tests tests="txcore_statemanager"/>
-    <!-- txcore_utility : 40 tests, 1 minute -->
-    <junit-tests tests="txcore_utility"/>
-    <!-- txcore_recovery : 36 tests, 4 minutes -->
-    <junit-tests tests="txcore_recovery"/>
-    <!-- jtatests01 : 6 tests, 1 minute -->
-    <junit-tests tests="jtatests01"/>
-    <!-- otsserver : 20 tests, 4 minutes -->
-    <!-- defaulttimeout : 2 tests, 2 minutes -->
-    <junit-tests tests="defaulttimeout"/>
-  </target>
-  <target name="junit-jts-testsuite">
-    <!-- currenttests01 : 36 tests, 2 minutes -->
-    <junit-tests tests="currenttests01"/>
-    <!-- jtatests01 : 6 tests, 1 minute -->
-    <junit-tests tests="otsserver"/>
-    <!-- jtsremote : 9 tests, 3 minutes -->
-    <junit-tests tests="jtsremote"/>
-    <!-- defaulttimeout : 2 tests, 2 minutes -->
-    <junit-tests tests="rawresources01_1"/>
-    <!-- rawresources01_2 : 147 tests, 7 minutes -->
-    <junit-tests tests="rawresources01_2"/>
-    <!-- rawresources01_2b : 147 tests, 6 minutes -->
-    <junit-tests tests="rawresources01_2b"/>
-    <!-- rawresources01_3 : 150 tests, 8 minutes -->
-    <junit-tests tests="rawresources01_3"/>
-    <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources02_1"/>
-    <!-- rawresources02_2 : 147 tests, 7 minutes -->
-    <junit-tests tests="rawresources02_2"/>
-    <!-- rawresources02_2 : 147 tests, 6 minutes -->
-    <junit-tests tests="rawresources02_2b"/>
-    <!-- rawresources02_3 : 150 tests, 8 minutes -->
-    <junit-tests tests="rawresources02_3"/>
-    <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_1"/>
-    <!-- rawsubtransactionawareresources01_2 : 10 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_2"/>
-    <!-- rawsubtransactionawareresources01_3 : 25 tests, 2 minutes -->
-    <junit-tests tests="rawsubtransactionawareresources01_3"/>
-    <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_1"/>
-    <!-- rawsubtransactionawareresources02_2 : 10 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_2"/>
-    <!-- rawsubtransactionawareresources02_3 : 25 tests, 2 minutes -->
-    <junit-tests tests="rawsubtransactionawareresources02_3"/>
-    <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery01"/>
-    <!-- crashrecovery02_1 : 5 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery02_1"/>
-    <!-- crashrecovery02_2 : 50 tests, 12 minutes -->
-    <junit-tests tests="crashrecovery02_2"/>
-    <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <junit-tests tests="crashrecovery03"/>
-    <!-- crashrecovery04 : 48 tests, 6 minutes -->
-    <junit-tests tests="crashrecovery04"/>
-    <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery05_1"/>
-    <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
-    <junit-tests tests="crashrecovery05_2"/>
-    <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <junit-tests tests="crashrecovery06"/>
-    <!-- crashrecovery07 : 16 tests, 4 minutes -->
-    <junit-tests tests="crashrecovery07"/>
-    <!-- crashrecovery08 : 32 tests, 15 minutes -->
-    <junit-tests tests="crashrecovery08"/>
-    <!-- crashrecovery09 : 6 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery09"/>
-    <!-- crashrecovery10 : 6 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery10"/>
-    <!-- crashrecovery12 : 7 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery12"/>
-  </target>
-
-  <target name="has-testoutput-output">
-    <condition property="has-testoutput-output">
-      <available file="testoutput" type="dir"/>
-    </condition>
-  </target>
-  <target name="testoutput.zip" depends="has-testoutput-output" if="has-testoutput-output">
-    <echo message="archiving testoutput to ${testoutput.zipname}"/>
-    <zip destfile="${testoutput.zipname}" basedir="." includes="${testoutput.zip.includes}"/>
-  </target>
-
-  <property name="test.name" value="otsserver"/>
-  <property name="test.methods" value=""/>
-  <property name="test.timeout" value=""/>
-  <target name="onetest">
-    <echo message="Running a single test group ${test.name}"/>
-    <echo message="jdk version: ${ant.java.version}"/>
-    <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}"/>
-    <fail if="failed-tests" message="${test.name} - some tests failed"/>
-  </target>
-
-  <!--
-        JDBC tests.
-        You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones,
-        although using the 'default' one is also an option.
-        Plus copies of the db drivers of course (try 'mvn install' in the qa folder).
-        And a set of DB containers (MariaDB, PostgreSQL, IBM D2, Oracle) to run against.
-        Did I mention it was complicated :-)
-    -->
-  <target name="junit-jdbc" depends="junit-jdbc-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="junit-jdbc-testsuite">
-    <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
-    <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-    <junit-tests tests="jdbcresources01_pgsql_jndi"/>
-    <junit-tests tests="jdbcresources02_pgsql_jndi"/>
-    <junit-tests tests="jdbcresources01_mysql_jndi"/>
-    <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
-    <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
-    <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
-    <!--
-    <condition property="mssql.driver" value="sqljdbc4.jar">
-      <equals arg1="${java.specification.version}" arg2="1.6"/>
-    </condition>
-    <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests tests="jdbcresources01_mssqlserver_jndi"/>
-    <junit-tests tests="jdbcresources02_mssqlserver_jndi"/>
-    <junit-tests tests="jdbcresources01_sybase_jndi"/>
-    <junit-tests tests="jdbcresources02_sybase_jndi"/>
-    -->
-  </target>
-  <target name="junit-jdbc-ncl" depends="junit-jdbc-ncl-testsuite">
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
-  <target name="junit-jdbc-ncl-testsuite">
-    <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
-    <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-    <junit-tests tests="jdbcresources01_mysql_jndi"/>
-    <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <junit-tests tests="jdbcresources01_pgsql_jndi"/>
-    <junit-tests tests="jdbcresources02_pgsql_jndi"/>
-  </target>
-  <target name="junit-jdbc-crachrec">
-    <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-    <junit-tests tests="crashrecovery11-oracle_jndi"/>
-    <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
-    <junit-tests tests="crashrecovery11-pgsql_jndi"/>
-    <junit-tests tests="crashrecovery11-mysql_jndi"/>
-    <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
-    <!--
-    <condition property="mssql.driver" value="sqljdbc4.jar">
-      <equals arg1="${java.specification.version}" arg2="1.6"/>
-    </condition>
-    <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests tests="crashrecovery11-mssqlserver_jndi"/>
-    <junit-tests tests="crashrecovery11-sybase_jndi"/>
-    -->
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="jta">
-    <!-- override the config file, so that we can run jta mode tests even with jts binaries -->
-    <property name="additional.elements" value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml"/>
-    <!-- txcore : 28 tests, 2 minutes -->
-    <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
-    <!-- txcore_lockrecord : 112 tests, 3 minutes -->
-    <junit-tests tests="txcore_lockrecord"/>
-    <!-- txcore_abstractrecord : 32 tests, 1 minute -->
-    <junit-tests tests="txcore_abstractrecord"/>
-    <!-- txcore_statemanager : 64 tests, 2 minutes -->
-    <junit-tests tests="txcore_statemanager"/>
-    <!-- txcore_utility : 40 tests, 1 minute -->
-    <junit-tests tests="txcore_utility"/>
-    <!-- jtatest01 : 6 tests, minute-->
-    <junit-tests tests="jtatests01"/>
-    <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-    <junit-tests tests="jdbclocals01_oracle_jndi"/>
-    <junit-tests tests="jdbclocals01_pgsql_jndi"/>
-    <junit-tests tests="jdbclocals01_mysql_jndi"/>
-    <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
-    <fail if="failed-tests" message="some tests failed"/>
-    <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
-    <!--
-    <condition property="mssql.driver" value="sqljdbc4.jar">
-      <equals arg1="${java.specification.version}" arg2="1.6"/>
-    </condition>
-    <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests tests="jdbclocals01_mssqlserver_jndi"/>
-    <junit-tests tests="jdbclocals01_sybase_jndi"/>
-    -->
-  </target>
-  <target name="performance">
-    <!-- caution: perf tests are essentially regression tests and are only meaningful
-            if used with the same hardware (profile) and config between runs. -->
-    <!-- perfprofileio : 18 tests, 9 minutes -->
-    <junit-tests tests="perfprofileio"/>
-    <!-- perfprofile01_i (JTS implicit) : 25 tests, 31 minutes -->
-    <junit-tests tests="perfprofile01_i"/>
-    <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
-    <junit-tests tests="perfprofile01_e"/>
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <target name="core-memory">
-    <!-- txcore_memory : 40 tests -->
-    <junit-tests tests="txcore_memory"/>
-    <!-- you need the right .so for the platform the test runs on. Note the the jvm
-            may print 'can't find agent lib' when it can find one but it's the wrong one.
-              ext/libjbossAgent_linux64.so : Fedora 12, x86_64  additional.elements="-agentpath:ext/libjbossAgent_linux64.so"/> -->
-              
-    <fail if="failed-tests" message="some tests failed"/>
-  </target>
-  <!-- ##################################### -->
-  <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
-  <path id="junit.classpath">
-    <!--
-      This is the classpath for the test framework, not the test components e.g. clients/servers.
-      Those are configured via TaskImpl.properties instead.
-
-      The test groups (org.jboss.jbossts.qa.junit.testgroup.TestGroup_XXXX classes) contains the
-      test methods, which link against the test classes, which in turn link against JBossTS.
-      Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
-      On the up side, you get better diagnostic messages and code management/navigation in IDEs.
-    -->
-    <pathelement location="${external.libraries}/junit.jar"/>
-    <fileset dir="tests/build">
-      <include name="jbossts-*-qa.jar"/>
-    </fileset>
-    <fileset dir="${external.libraries}">
-      <include name="*.jar"/>
-    </fileset>
-    <fileset dir="${external.libraries}">
-      <include name="*.jar"/>
-    </fileset>
-    <fileset dir="${dbdrivers}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <macrodef name="junit-tests">
-    <attribute name="tests"/>
-    <attribute name="methods" default=""/>
-    <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
-    <!--<property name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
-    <attribute name="additional.elements" default=""/>
-    <attribute name="test.timeout" default=""/>
-
-    <sequential>
-      <condition property="m">
-        <not><equals arg1="@{methods}" arg2=""/></not>
-      </condition>
-      <condition property="n">
-        <equals arg1="@{methods}" arg2=""/>
-      </condition>
-
-      <var name="objectStoreElements" value=""/>
-      <if>
-        <equals arg1="${profile}" arg2="postgres" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="org.postgresql.ds.PGSimpleDataSource" />
-          <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com" />
-          <property name="jdbc.db.name" value="jbossts" />
-          <property name="jdbc.db.user" value="dtf11" />
-          <property name="jdbc.db.password" value="dtf11" />
-          <property name="jdbc.db.port" value="5432" />
-          <property name="jdbc.db.properties" value="" />
-        </then>
-      <elseif>
-        <equals arg1="${profile}" arg2="mysql" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="com.mysql.cj.jdbc.MysqlDataSource" />
-          <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com" />
-          <property name="jdbc.db.name" value="jbossts" />
-          <property name="jdbc.db.user" value="dtf11" />
-          <property name="jdbc.db.password" value="dtf11" />
-          <property name="jdbc.db.port" value="3306" />
-          <property name="jdbc.db.properties" value="" />
-        </then>
-      </elseif>
-      <elseif>
-        <equals arg1="${profile}" arg2="oracle" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource" />
-          <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com" />
-          <property name="jdbc.db.name" value="XEPDB1" />
-          <property name="jdbc.db.user" value="dtf11" />
-          <property name="jdbc.db.password" value="dtf11" />
-          <property name="jdbc.db.port" value="1521" />
-          <property name="jdbc.db.properties" value=";NetworkProtocol=tcp;DriverType=thin" />
-        </then>
-      </elseif>
-      <elseif>
-        <equals arg1="${profile}" arg2="db2" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="com.ibm.db2.jcc.DB2DataSource" />
-          <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com" />
-          <property name="jdbc.db.name" value="BTDB1" />
-          <property name="jdbc.db.user" value="db2" />
-          <property name="jdbc.db.password" value="db2" />
-          <property name="jdbc.db.port" value="50000" />
-          <property name="jdbc.db.properties" value=";DriverType=4" />
-        </then>
-      </elseif>
-      <elseif>
-        <equals arg1="${profile}" arg2="sybase" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="com.sybase.jdbc3.jdbc.SybDataSource" />
-          <property name="jdbc.db.url" value="vmg07.mw.lab.eng.bos.redhat.com" />
-          <property name="jdbc.db.name" value="jbossts" />
-          <property name="jdbc.db.user" value="jbossts0" />
-          <property name="jdbc.db.password" value="jbossts0" />
-          <property name="jdbc.db.port" value="5000" />
-          <property name="jdbc.db.properties" value=" -DObjectStoreEnvironmentBean.dropTable=false" />        	
-        </then>
-      </elseif>
-      <!--
-      <elseif>
-        <equals arg1="${profile}" arg2="mssql" />
-        <then>
-          <property name="jdbcstore-profile" value="true" />
-          <property name="jdbc.datasource.class" value="com.microsoft.sqlserver.jdbc.SQLServerDataSource" />
-          <property name="jdbc.db.url" value="dev30.mw.lab.eng.bos.redhat.com" />
-          <property name="jdbc.db.name" value="jbossts" />
-          <property name="jdbc.db.user" value="dtf11" />
-          <property name="jdbc.db.password" value="dtf11" />
-          <property name="jdbc.db.port" value="3918" />
-          <property name="jdbc.db.properties" value="" />
-        </then>
-      </elseif>
+    <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
+    <target name="scratch">
+        <junit-tests tests="defaulttimeout"/>
+        <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
+    <target name="test">
+        <fail unless="test" message="you need to specify the name of a test"/>
+        <junit-tests tests="${test}"/>
+        <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
+    <target name="express">
+        <!-- currenttests01 : 36 tests, 3 minutes -->
+        <junit-tests tests="currenttests01"/>
+        <!-- jtatests01 : 6 tests, 1 minute -->
+        <junit-tests tests="jtatests01"/>
+        <!-- otsserver : 20 tests, 7 minutes -->
+        <junit-tests tests="otsserver"/>
+        <!-- rawresources01_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawresources01_1"/>
+        <!-- rawresources02_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawresources02_1"/>
+        <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources01_1"/>
+        <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources02_1"/>
+        <!-- crashrecovery01 : 24 tests, 3 minutes -->
+        <junit-tests tests="crashrecovery01"/>
+        <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
+        <junit-tests tests="crashrecovery02_1"/>
+        <!-- crashrecovery03 : 1 tests, 1 minute -->
+        <junit-tests tests="crashrecovery03"/>
+        <!-- crashrecovery06 : 2 tests, 1 minute -->
+        <junit-tests tests="crashrecovery06"/>
+        <!-- crashrecovery12 : 7 tests, 5 minutes -->
+        <junit-tests tests="crashrecovery12"/>
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="ci-tests-nojts" depends="junit-testsuite,junit-jdbc-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <!-- General tests.
+          These tests should take a combined time of around 2h20m or so.
       -->
-      <elseif>
-        <equals arg1="${profile}" arg2="hornetq" />
-        <then>
-          <var name="objectStoreElements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>
-        </then>
-      </elseif>
-      </if>
-    	
-      <if>
-        <equals arg1="${jdbcstore-profile}" arg2="true" />
-        <then>
-          <if>
-            <equals arg1="${profile}" arg2="oracle" />
-            <then>
-              <var name="jdbcstore.database.properties" value="ClassName=${jdbc.datasource.class};ServiceName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}" />
-            </then>
-            <else>
-              <var name="jdbcstore.database.properties" value="ClassName=${jdbc.datasource.class};DatabaseName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}" />
-            </else>
-          </if>
-          <var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.createTable=false -DObjectStoreEnvironmentBean.communicationStore.createTable=false -DObjectStoreEnvironmentBean.stateStore.createTable=false" />
-          <echo message="Running with JDBC object store settings - DB: ${jdbcstore.database.properties}"/>
-          <echo message="MBean settings: ${objectStoreElements}"/>
-        </then>
-      </if>
-    	
-      <!-- TODO support JTA mode testing of JTS .jar files? -
-            would need classpath munging for props file in TaskImpl.properties -->
-      <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
-      <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
-            the working dir is the same as the location of this script. -->
-      <if>
-        <equals arg1="${code.coverage}" arg2="true" />
-		  <then>
-            <jacoco:coverage destfile="${output.exec.file}" append="true" >
-              <!-- NB cannot call junit as a macrodef because the jacoco:coverage does not support it - so duplicate it -->
-              <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
-                <classpath refid="junit.classpath"/>
-                <formatter type="plain"/>
-                <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
-                <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
-                <sysproperty key="names" value=".*"/>
-                <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
-                <sysproperty key="test.timeout" value="@{test.timeout}"/>
-              </junit>
-            </jacoco:coverage>
-		  </then>
-		  <else>
-            <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
-              <classpath refid="junit.classpath"/>
-              <formatter type="plain"/>
-              <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
-              <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
-              <sysproperty key="names" value=".*"/>
-              <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
-              <sysproperty key="test.timeout" value="@{test.timeout}"/>
-              <!--<jvmarg value="-Xdebug"/>-->
-              <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
-            </junit>
-		  </else>
-      </if>
-    </sequential>
-  </macrodef>
+    <target name="junit" depends="junit-testsuite,junit-jts-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="ci-jts-tests" depends="junit-jts-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="ci-junit-testsuite" depends="junit-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="junit-testsuite">
+        <!-- txcore : 28 tests, 2 minutes -->
+        <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+        <!-- txcore_lockrecord : 112 tests, 3 minutes -->
+        <junit-tests tests="txcore_lockrecord"/>
+        <!-- txcore_abstractrecord : 32 tests, 1 minute -->
+        <junit-tests tests="txcore_abstractrecord"/>
+        <!-- txcore_statemanager : 64 tests, 2 minutes -->
+        <junit-tests tests="txcore_statemanager"/>
+        <!-- txcore_utility : 40 tests, 1 minute -->
+        <junit-tests tests="txcore_utility"/>
+        <!-- txcore_recovery : 36 tests, 4 minutes -->
+        <junit-tests tests="txcore_recovery"/>
+        <!-- jtatests01 : 6 tests, 1 minute -->
+        <junit-tests tests="jtatests01"/>
+        <!-- otsserver : 20 tests, 4 minutes -->
+        <!-- defaulttimeout : 2 tests, 2 minutes -->
+        <junit-tests tests="defaulttimeout"/>
+    </target>
+    <target name="junit-jts-testsuite">
+        <!-- currenttests01 : 36 tests, 2 minutes -->
+        <junit-tests tests="currenttests01"/>
+        <!-- jtatests01 : 6 tests, 1 minute -->
+        <junit-tests tests="otsserver"/>
+        <!-- jtsremote : 9 tests, 3 minutes -->
+        <junit-tests tests="jtsremote"/>
+        <!-- defaulttimeout : 2 tests, 2 minutes -->
+        <junit-tests tests="rawresources01_1"/>
+        <!-- rawresources01_2 : 147 tests, 7 minutes -->
+        <junit-tests tests="rawresources01_2"/>
+        <!-- rawresources01_2b : 147 tests, 6 minutes -->
+        <junit-tests tests="rawresources01_2b"/>
+        <!-- rawresources01_3 : 150 tests, 8 minutes -->
+        <junit-tests tests="rawresources01_3"/>
+        <!-- rawresources02_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawresources02_1"/>
+        <!-- rawresources02_2 : 147 tests, 7 minutes -->
+        <junit-tests tests="rawresources02_2"/>
+        <!-- rawresources02_2 : 147 tests, 6 minutes -->
+        <junit-tests tests="rawresources02_2b"/>
+        <!-- rawresources02_3 : 150 tests, 8 minutes -->
+        <junit-tests tests="rawresources02_3"/>
+        <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources01_1"/>
+        <!-- rawsubtransactionawareresources01_2 : 10 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources01_2"/>
+        <!-- rawsubtransactionawareresources01_3 : 25 tests, 2 minutes -->
+        <junit-tests tests="rawsubtransactionawareresources01_3"/>
+        <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources02_1"/>
+        <!-- rawsubtransactionawareresources02_2 : 10 tests, 1 minute -->
+        <junit-tests tests="rawsubtransactionawareresources02_2"/>
+        <!-- rawsubtransactionawareresources02_3 : 25 tests, 2 minutes -->
+        <junit-tests tests="rawsubtransactionawareresources02_3"/>
+        <!-- crashrecovery01 : 24 tests, 3 minutes -->
+        <junit-tests tests="crashrecovery01"/>
+        <!-- crashrecovery02_1 : 5 tests, 2 minutes -->
+        <junit-tests tests="crashrecovery02_1"/>
+        <!-- crashrecovery02_2 : 50 tests, 12 minutes -->
+        <junit-tests tests="crashrecovery02_2"/>
+        <!-- crashrecovery03 : 1 tests, 1 minute -->
+        <junit-tests tests="crashrecovery03"/>
+        <!-- crashrecovery04 : 48 tests, 6 minutes -->
+        <junit-tests tests="crashrecovery04"/>
+        <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
+        <junit-tests tests="crashrecovery05_1"/>
+        <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
+        <junit-tests tests="crashrecovery05_2"/>
+        <!-- crashrecovery06 : 2 tests, 1 minute -->
+        <junit-tests tests="crashrecovery06"/>
+        <!-- crashrecovery07 : 16 tests, 4 minutes -->
+        <junit-tests tests="crashrecovery07"/>
+        <!-- crashrecovery08 : 32 tests, 15 minutes -->
+        <junit-tests tests="crashrecovery08"/>
+        <!-- crashrecovery09 : 6 tests, 2 minutes -->
+        <junit-tests tests="crashrecovery09"/>
+        <!-- crashrecovery10 : 6 tests, 2 minutes -->
+        <junit-tests tests="crashrecovery10"/>
+        <!-- crashrecovery12 : 7 tests, 2 minutes -->
+        <junit-tests tests="crashrecovery12"/>
+    </target>
 
-  <target name="check-jacoco-data">
-    <available file="${output.exec.file}" property="has.jacoco.data"/>
-  </target>
+    <target name="has-testoutput-output">
+        <condition property="has-testoutput-output">
+            <available file="testoutput" type="dir"/>
+        </condition>
+    </target>
+    <target name="testoutput.zip" depends="has-testoutput-output" if="has-testoutput-output">
+        <echo message="archiving testoutput to ${testoutput.zipname}"/>
+        <zip destfile="${testoutput.zipname}" basedir="." includes="${testoutput.zip.includes}"/>
+    </target>
 
-  <target name="jacoco-report" depends="check-jacoco-data" if="has.jacoco.data">
-    <jacoco:report>
+    <property name="test.name" value="otsserver"/>
+    <property name="test.methods" value=""/>
+    <property name="test.timeout" value=""/>
+    <target name="onetest">
+        <echo message="Running a single test group ${test.name}"/>
+        <echo message="jdk version: ${ant.java.version}"/>
+        <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}"/>
+        <fail if="failed-tests" message="${test.name} - some tests failed"/>
+    </target>
 
-      <!-- Specify the collected execution data from the QA test run -->
-      <executiondata>
-        <file file="${output.exec.file}" />
-      </executiondata>
+    <!--
+          JDBC tests.
+          You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones,
+          although using the 'default' one is also an option.
+          Plus copies of the db drivers of course (try 'mvn install' in the qa folder).
+          And a set of DB containers (MariaDB, PostgreSQL, IBM D2, Oracle) to run against.
+          Did I mention it was complicated :-)
+      -->
+    <target name="junit-jdbc" depends="junit-jdbc-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="junit-jdbc-testsuite">
+        <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+        <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+        <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+        <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+        <junit-tests tests="jdbcresources01_mysql_jndi"/>
+        <junit-tests tests="jdbcresources02_mysql_jndi"/>
+        <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
+        <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
+        <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
+        <!--
+        <condition property="mssql.driver" value="sqljdbc4.jar">
+          <equals arg1="${java.specification.version}" arg2="1.6"/>
+        </condition>
+        <property name="mssql.driver" value="sqljdbc.jar"/>
+        <junit-tests tests="jdbcresources01_mssqlserver_jndi"/>
+        <junit-tests tests="jdbcresources02_mssqlserver_jndi"/>
+        <junit-tests tests="jdbcresources01_sybase_jndi"/>
+        <junit-tests tests="jdbcresources02_sybase_jndi"/>
+        -->
+    </target>
+    <target name="junit-jdbc-ncl" depends="junit-jdbc-ncl-testsuite">
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
+    <target name="junit-jdbc-ncl-testsuite">
+        <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+        <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+        <junit-tests tests="jdbcresources01_mysql_jndi"/>
+        <junit-tests tests="jdbcresources02_mysql_jndi"/>
+        <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+        <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+    </target>
+    <target name="junit-jdbc-crachrec">
+        <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
+        <junit-tests tests="crashrecovery11-oracle_jndi"/>
+        <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
+        <junit-tests tests="crashrecovery11-pgsql_jndi"/>
+        <junit-tests tests="crashrecovery11-mysql_jndi"/>
+        <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
+        <!--
+        <condition property="mssql.driver" value="sqljdbc4.jar">
+          <equals arg1="${java.specification.version}" arg2="1.6"/>
+        </condition>
+        <property name="mssql.driver" value="sqljdbc.jar"/>
+        <junit-tests tests="crashrecovery11-mssqlserver_jndi"/>
+        <junit-tests tests="crashrecovery11-sybase_jndi"/>
+        -->
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="jta">
+        <!-- override the config file, so that we can run jta mode tests even with jts binaries -->
+        <property name="additional.elements"
+                  value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml"/>
+        <!-- txcore : 28 tests, 2 minutes -->
+        <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+        <!-- txcore_lockrecord : 112 tests, 3 minutes -->
+        <junit-tests tests="txcore_lockrecord"/>
+        <!-- txcore_abstractrecord : 32 tests, 1 minute -->
+        <junit-tests tests="txcore_abstractrecord"/>
+        <!-- txcore_statemanager : 64 tests, 2 minutes -->
+        <junit-tests tests="txcore_statemanager"/>
+        <!-- txcore_utility : 40 tests, 1 minute -->
+        <junit-tests tests="txcore_utility"/>
+        <!-- jtatest01 : 6 tests, minute-->
+        <junit-tests tests="jtatests01"/>
+        <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
+        <junit-tests tests="jdbclocals01_oracle_jndi"/>
+        <junit-tests tests="jdbclocals01_pgsql_jndi"/>
+        <junit-tests tests="jdbclocals01_mysql_jndi"/>
+        <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
+        <fail if="failed-tests" message="some tests failed"/>
+        <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
+        <!--
+        <condition property="mssql.driver" value="sqljdbc4.jar">
+          <equals arg1="${java.specification.version}" arg2="1.6"/>
+        </condition>
+        <property name="mssql.driver" value="sqljdbc.jar"/>
+        <junit-tests tests="jdbclocals01_mssqlserver_jndi"/>
+        <junit-tests tests="jdbclocals01_sybase_jndi"/>
+        -->
+    </target>
+    <target name="performance">
+        <!-- caution: perf tests are essentially regression tests and are only meaningful
+                if used with the same hardware (profile) and config between runs. -->
+        <!-- perfprofileio : 18 tests, 9 minutes -->
+        <junit-tests tests="perfprofileio"/>
+        <!-- perfprofile01_i (JTS implicit) : 25 tests, 31 minutes -->
+        <junit-tests tests="perfprofile01_i"/>
+        <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
+        <junit-tests tests="perfprofile01_e"/>
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <target name="core-memory">
+        <!-- txcore_memory : 40 tests -->
+        <junit-tests tests="txcore_memory"/>
+        <!-- you need the right .so for the platform the test runs on. Note the the jvm
+                may print 'can't find agent lib' when it can find one but it's the wrong one.
+                  ext/libjbossAgent_linux64.so : Fedora 12, x86_64  additional.elements="-agentpath:ext/libjbossAgent_linux64.so"/> -->
 
-      <structure name="Narayana QA Report">
-        <classfiles>
-          <fileset dir=".." >
-            <exclude name="**/idlj/**"/>
-            <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
-            <exclude name="**/XTS/localjunit/unit/**"/>
-            <exclude name="**/blacktie/blacktie-admin-services/**"/>
-            <exclude name="**/blacktie/blacktie/**"/>
-            <exclude name="**/blacktie/integration-tests/**"/>
-            <exclude name="**/blacktie/wildfly*/**"/>
-            <exclude name="**/blacktie/btadmin/**"/>
-            <exclude name="**/jboss-as/**"/>
-            <exclude name="**/narayana-full/**"/>
-            <exclude name="**/qa/**"/>
-            <exclude name="**/tools/**"/>
-            <exclude name="**/apache-karaf*/**"/>
-            <exclude name="**/hornetq*/**"/>
-            <exclude name="**/lra*/**"/>
-            <exclude name="**/vertx/**"/>
-            <exclude name="**/openjdk-orb-**.jar"/>
-            <exclude name="**/ext/jacocoant.jar"/>
-            <exclude name="**/dependenc*/**.jar"/>
-          </fileset>
-        </classfiles>
-        <sourcefiles encoding="UTF-8">
-          <fileset dir="..">
-            <include name="**/*.java"/>
-          </fileset>
-        </sourcefiles>
-      </structure>
+        <fail if="failed-tests" message="some tests failed"/>
+    </target>
+    <!-- ##################################### -->
+    <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
+    <path id="junit.classpath">
+        <!--
+          This is the classpath for the test framework, not the test components e.g. clients/servers.
+          Those are configured via TaskImpl.properties instead.
 
-      <!-- produce multiple report formats. -->
-      <html destdir="${output.report.dir}" />
-      <csv destfile="${output.report.dir}/report.csv" />
-      <xml destfile="${output.report.dir}/report.xml" />
-    </jacoco:report>
-  </target>
+          The test groups (org.jboss.jbossts.qa.junit.testgroup.TestGroup_XXXX classes) contains the
+          test methods, which link against the test classes, which in turn link against JBossTS.
+          Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
+          On the up side, you get better diagnostic messages and code management/navigation in IDEs.
+        -->
+        <pathelement location="${external.libraries}/junit.jar"/>
+        <fileset dir="tests/build">
+            <include name="jbossts-*-qa.jar"/>
+        </fileset>
+        <fileset dir="${external.libraries}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${external.libraries}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${dbdrivers}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
 
-  <!--
+    <macrodef name="junit-tests">
+        <attribute name="tests"/>
+        <attribute name="methods" default=""/>
+        <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
+        <!--<property name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+        <attribute name="additional.elements" default=""/>
+        <attribute name="test.timeout" default=""/>
 
-    unused groups, pending cleanup and wiring:
+        <sequential>
+            <condition property="m">
+                <not>
+                    <equals arg1="@{methods}" arg2=""/>
+                </not>
+            </condition>
+            <condition property="n">
+                <equals arg1="@{methods}" arg2=""/>
+            </condition>
 
-    ait01_ots_transactionmanager.java
-    aitresources01.java
-    crashrecovery13.java
+            <var name="objectStoreElements" value=""/>
+            <if>
+                <equals arg1="${profile}" arg2="postgres"/>
+                <then>
+                    <property name="jdbcstore-profile" value="true"/>
+                    <property name="jdbc.datasource.class" value="org.postgresql.ds.PGSimpleDataSource"/>
+                    <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
+                    <property name="jdbc.db.name" value="jbossts"/>
+                    <property name="jdbc.db.user" value="dtf11"/>
+                    <property name="jdbc.db.password" value="dtf11"/>
+                    <property name="jdbc.db.port" value="5432"/>
+                    <property name="jdbc.db.properties" value=""/>
+                </then>
+                <elseif>
+                    <equals arg1="${profile}" arg2="mysql"/>
+                    <then>
+                        <property name="jdbcstore-profile" value="true"/>
+                        <property name="jdbc.datasource.class" value="com.mysql.cj.jdbc.MysqlDataSource"/>
+                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
+                        <property name="jdbc.db.name" value="jbossts"/>
+                        <property name="jdbc.db.user" value="dtf11"/>
+                        <property name="jdbc.db.password" value="dtf11"/>
+                        <property name="jdbc.db.port" value="3306"/>
+                        <property name="jdbc.db.properties" value=""/>
+                    </then>
+                </elseif>
+                <elseif>
+                    <equals arg1="${profile}" arg2="oracle"/>
+                    <then>
+                        <property name="jdbcstore-profile" value="true"/>
+                        <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource"/>
+                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
+                        <property name="jdbc.db.name" value="XEPDB1"/>
+                        <property name="jdbc.db.user" value="dtf11"/>
+                        <property name="jdbc.db.password" value="dtf11"/>
+                        <property name="jdbc.db.port" value="1521"/>
+                        <property name="jdbc.db.properties" value=";NetworkProtocol=tcp;DriverType=thin"/>
+                    </then>
+                </elseif>
+                <elseif>
+                    <equals arg1="${profile}" arg2="db2"/>
+                    <then>
+                        <property name="jdbcstore-profile" value="true"/>
+                        <property name="jdbc.datasource.class" value="com.ibm.db2.jcc.DB2DataSource"/>
+                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
+                        <property name="jdbc.db.name" value="BTDB1"/>
+                        <property name="jdbc.db.user" value="db2"/>
+                        <property name="jdbc.db.password" value="db2"/>
+                        <property name="jdbc.db.port" value="50000"/>
+                        <property name="jdbc.db.properties" value=";DriverType=4"/>
+                    </then>
+                </elseif>
+                <elseif>
+                    <equals arg1="${profile}" arg2="sybase"/>
+                    <then>
+                        <property name="jdbcstore-profile" value="true"/>
+                        <property name="jdbc.datasource.class" value="com.sybase.jdbc3.jdbc.SybDataSource"/>
+                        <property name="jdbc.db.url" value="vmg07.mw.lab.eng.bos.redhat.com"/>
+                        <property name="jdbc.db.name" value="jbossts"/>
+                        <property name="jdbc.db.user" value="jbossts0"/>
+                        <property name="jdbc.db.password" value="jbossts0"/>
+                        <property name="jdbc.db.port" value="5000"/>
+                        <property name="jdbc.db.properties" value=" -DObjectStoreEnvironmentBean.dropTable=false"/>
+                    </then>
+                </elseif>
+                <!--
+                <elseif>
+                  <equals arg1="${profile}" arg2="mssql" />
+                  <then>
+                    <property name="jdbcstore-profile" value="true" />
+                    <property name="jdbc.datasource.class" value="com.microsoft.sqlserver.jdbc.SQLServerDataSource" />
+                    <property name="jdbc.db.url" value="dev30.mw.lab.eng.bos.redhat.com" />
+                    <property name="jdbc.db.name" value="jbossts" />
+                    <property name="jdbc.db.user" value="dtf11" />
+                    <property name="jdbc.db.password" value="dtf11" />
+                    <property name="jdbc.db.port" value="3918" />
+                    <property name="jdbc.db.properties" value="" />
+                  </then>
+                </elseif>
+                -->
+                <elseif>
+                    <equals arg1="${profile}" arg2="hornetq"/>
+                    <then>
+                        <var name="objectStoreElements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>
+                    </then>
+                </elseif>
+            </if>
 
-    jdbcresources03_oracle_thin_jndi.java
-    jdbcresources04_oracle_thin_jndi.java
+            <if>
+                <equals arg1="${jdbcstore-profile}" arg2="true"/>
+                <then>
+                    <if>
+                        <equals arg1="${profile}" arg2="oracle"/>
+                        <then>
+                            <var name="jdbcstore.database.properties"
+                                 value="ClassName=${jdbc.datasource.class};ServiceName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}"/>
+                        </then>
+                        <else>
+                            <var name="jdbcstore.database.properties"
+                                 value="ClassName=${jdbc.datasource.class};DatabaseName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}"/>
+                        </else>
+                    </if>
+                    <var name="objectStoreElements"
+                         value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.createTable=false -DObjectStoreEnvironmentBean.communicationStore.createTable=false -DObjectStoreEnvironmentBean.stateStore.createTable=false"/>
+                    <echo message="Running with JDBC object store settings - DB: ${jdbcstore.database.properties}"/>
+                    <echo message="MBean settings: ${objectStoreElements}"/>
+                </then>
+            </if>
 
-    txoj.java - thse should be unit tests.
+            <!-- TODO support JTA mode testing of JTS .jar files? -
+                  would need classpath munging for props file in TaskImpl.properties -->
+            <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
+            <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
+                  the working dir is the same as the location of this script. -->
+            <if>
+                <equals arg1="${code.coverage}" arg2="true"/>
+                <then>
+                    <jacoco:coverage destfile="${output.exec.file}" append="true">
+                        <!-- NB cannot call junit as a macrodef because the jacoco:coverage does not support it - so duplicate it -->
+                        <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false"
+                               failureproperty="failed-tests">
+                            <classpath refid="junit.classpath"/>
+                            <formatter type="plain"/>
+                            <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}"
+                                  if="m"/>
+                            <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
+                            <sysproperty key="names" value=".*"/>
+                            <sysproperty key="additional.elements"
+                                         value="@{additional.elements} ${objectStoreElements}"/>
+                            <sysproperty key="test.timeout" value="@{test.timeout}"/>
+                        </junit>
+                    </jacoco:coverage>
+                </then>
+                <else>
+                    <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false"
+                           failureproperty="failed-tests">
+                        <classpath refid="junit.classpath"/>
+                        <formatter type="plain"/>
+                        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}"
+                              if="m"/>
+                        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
+                        <sysproperty key="names" value=".*"/>
+                        <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+                        <sysproperty key="test.timeout" value="@{test.timeout}"/>
+                        <!--<jvmarg value="-Xdebug"/>-->
+                        <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
+                    </junit>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
 
-    -->
+    <target name="check-jacoco-data">
+        <available file="${output.exec.file}" property="has.jacoco.data"/>
+    </target>
+
+    <target name="jacoco-report" depends="check-jacoco-data" if="has.jacoco.data">
+        <jacoco:report>
+
+            <!-- Specify the collected execution data from the QA test run -->
+            <executiondata>
+                <file file="${output.exec.file}"/>
+            </executiondata>
+
+            <structure name="Narayana QA Report">
+                <classfiles>
+                    <fileset dir="..">
+                        <exclude name="**/idlj/**"/>
+                        <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
+                        <exclude name="**/XTS/localjunit/unit/**"/>
+                        <exclude name="**/blacktie/blacktie-admin-services/**"/>
+                        <exclude name="**/blacktie/blacktie/**"/>
+                        <exclude name="**/blacktie/integration-tests/**"/>
+                        <exclude name="**/blacktie/wildfly*/**"/>
+                        <exclude name="**/blacktie/btadmin/**"/>
+                        <exclude name="**/jboss-as/**"/>
+                        <exclude name="**/narayana-full/**"/>
+                        <exclude name="**/qa/**"/>
+                        <exclude name="**/tools/**"/>
+                        <exclude name="**/apache-karaf*/**"/>
+                        <exclude name="**/hornetq*/**"/>
+                        <exclude name="**/lra*/**"/>
+                        <exclude name="**/vertx/**"/>
+                        <exclude name="**/openjdk-orb-**.jar"/>
+                        <exclude name="**/ext/jacocoant.jar"/>
+                        <exclude name="**/dependenc*/**.jar"/>
+                    </fileset>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="..">
+                        <include name="**/*.java"/>
+                    </fileset>
+                </sourcefiles>
+            </structure>
+
+            <!-- produce multiple report formats. -->
+            <html destdir="${output.report.dir}"/>
+            <csv destfile="${output.report.dir}/report.csv"/>
+            <xml destfile="${output.report.dir}/report.xml"/>
+        </jacoco:report>
+    </target>
+
+    <!--
+
+      unused groups, pending cleanup and wiring:
+
+      ait01_ots_transactionmanager.java
+      aitresources01.java
+      crashrecovery13.java
+
+      jdbcresources03_oracle_thin_jndi.java
+      jdbcresources04_oracle_thin_jndi.java
+
+      txoj.java - thse should be unit tests.
+
+      -->
 </project>

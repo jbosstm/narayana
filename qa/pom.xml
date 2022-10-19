@@ -44,6 +44,27 @@
       <version>${version.org.jboss.spec.javax.transaction}</version>
     </dependency>
     <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${version.org.jboss.jboss-transaction-spi}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.openjdk-orb</groupId>
+      <artifactId>openjdk-orb</artifactId>
+      <version>${version.org.jboss.openjdk-orb}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.openjdk-orb</groupId>
+      <artifactId>openjdk-orb</artifactId>
+      <version>${version.org.jboss.openjdk-orb}</version>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>jboss.profiler.jvmti</groupId>
+      <artifactId>jboss-profiler-jvmti</artifactId>
+      <version>${version.jboss.profiler.jvmti}</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${version.junit}</version>
@@ -69,11 +90,6 @@
       <version>${version.org.jacoco}</version>
     </dependency>
     <dependency>
-      <groupId>jboss.profiler.jvmti</groupId>
-      <artifactId>jboss-profiler-jvmti</artifactId>
-      <version>${version.jboss.profiler.jvmti}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>${version.org.apache.ant}</version>
@@ -82,11 +98,6 @@
       <groupId>ant-contrib</groupId>
       <artifactId>ant-contrib</artifactId>
       <version>${version.ant-contrib}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-transaction-spi</artifactId>
-      <version>${version.org.jboss.jboss-transaction-spi}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.messaging.mq</groupId>
@@ -172,17 +183,6 @@
       <groupId>com.ibm.db2</groupId>
       <artifactId>jcc</artifactId>
       <version>${version.com.ibm}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.openjdk-orb</groupId>
-      <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.openjdk-orb</groupId>
-      <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
-      <classifier>sources</classifier>
     </dependency>
   </dependencies>
 

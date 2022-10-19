@@ -20,26 +20,26 @@
   @author JBoss Inc.
 -->
 <project name="JBossTS QA Suite Distribution" default="dist">
-  <property environment="env"/>
-  <property name="orbtype" value="openjdk"/>
+    <property environment="env"/>
+    <property name="orbtype" value="openjdk"/>
 
-  <target name="clean-tests">
-    <delete dir="PutObjectStoreDirHere"/>
-    <delete dir="ObjectStore"/>
-    <delete dir="testoutput"/>
-    <delete file="transaction.log"/>
-    <delete file="idl-compiler.out"/>
-    <delete file="idl-compiler.err"/>
-    <delete>
-      <fileset dir="." includes="TEST-*.txt"/>
-    </delete>
-  </target>
+    <target name="clean-tests">
+        <delete dir="PutObjectStoreDirHere"/>
+        <delete dir="ObjectStore"/>
+        <delete dir="testoutput"/>
+        <delete file="transaction.log"/>
+        <delete file="idl-compiler.out"/>
+        <delete file="idl-compiler.err"/>
+        <delete>
+            <fileset dir="." includes="TEST-*.txt"/>
+        </delete>
+    </target>
 
-  <target name="dist" depends="clean-tests">
-    <!-- build the test suite -->
-    <ant dir="tests" antfile="build.xml">
-      <property name="orbtype" value="${orbtype}"/>
-    </ant>
-  </target>
+    <target name="dist" depends="clean-tests">
+        <!-- build the test suite -->
+        <ant dir="tests" antfile="build.xml">
+            <property name="orbtype" value="${orbtype}"/>
+        </ant>
+    </target>
 
 </project>
