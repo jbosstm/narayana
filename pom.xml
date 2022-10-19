@@ -233,7 +233,7 @@
     <version.javax.ws.rs-api>2.0.1.Final</version.javax.ws.rs-api>
     <version.jaxb>2.3.0</version.jaxb>
     <version.jaxws-ri>2.3.5</version.jaxws-ri>
-    <version.jfree>1.0.9</version.jfree>
+    <version.jfree>1.5.3</version.jfree>
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>5.7.1</version.junit.jupiter>
@@ -813,11 +813,9 @@
     </profile>
     <profile>
       <id>community</id>
-      <!-- jakarta TODO package javax.swing is declared in module java.desktop, but module jakarta.annotation does not read it etc
-      <modules>
+      <modules> 
         <module>narayana-full</module>
       </modules>
-      -->
       <properties>
         <version.orson>0.5.0</version.orson>
         <version.tanukisoft>3.2.3</version.tanukisoft>
