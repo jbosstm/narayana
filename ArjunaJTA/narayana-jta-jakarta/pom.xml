@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <version.jakarta.transaction.jakarta.transaction-api>2.0.0</version.jakarta.transaction.jakarta.transaction-api>
+    <version.jakarta.transaction.jakarta.transaction-api>2.0.1</version.jakarta.transaction.jakarta.transaction-api>
     <version.jakarta.resource.jakarta.resource-api>2.0.0</version.jakarta.resource.jakarta.resource-api>
   </properties>
   
