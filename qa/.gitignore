@@ -5,7 +5,10 @@ dist
 ext
 idl-compiler.*
 build
+*.properties
+PutObjectStoreDirHere/
+ServerIORs
 TEST-*
-ext/netty-all.jar
 testoutput/
+testoutput-openjdk.zip
 transaction.log
