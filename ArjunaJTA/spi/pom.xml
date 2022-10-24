@@ -99,18 +99,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.interceptor</groupId>
-            <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.interceptor}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.transaction}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${version.junit}</version>
@@ -136,12 +124,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.javax.enterprise}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <version>${version.org.jboss.arquillian.core}</version>
@@ -158,12 +140,6 @@
             <artifactId>jakarta.inject-api</artifactId>
             <version>${version.jakarta.inject.jakarta.inject-api}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ejb}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>jakarta.resource</groupId>

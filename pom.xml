@@ -220,7 +220,7 @@
     <version.jakarta.persistence.jakarta.persistence-api>3.1.0</version.jakarta.persistence.jakarta.persistence-api>
     <version.jakarta.resource.jakarta-resource-api>2.0.0</version.jakarta.resource.jakarta-resource-api>
     <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
-    <version.jakarta.transaction.jakarta-transaction-api>2.0.0</version.jakarta.transaction.jakarta-transaction-api>
+    <version.jakarta.transaction.jakarta-transaction-api>2.0.1</version.jakarta.transaction.jakarta-transaction-api>
     <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
     <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
     <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
