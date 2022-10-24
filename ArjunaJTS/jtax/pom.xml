@@ -67,13 +67,6 @@
     </dependency>
 
     <dependency>
-      <!-- JCA API -->
-      <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-spec-api</artifactId>
-      <version>${version.org.jboss.ironjacamar}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
@@ -186,7 +179,7 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.openjdk-orb</groupId>
-          <artifactId>openjdk-orb</artifactId>
+          <artifactId>openjdk-orb-jakarta</artifactId>
           <version>${version.org.jboss.openjdk-orb}</version>
         </dependency>
       </dependencies>
