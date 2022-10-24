@@ -11,95 +11,24 @@
 	should have received a copy of the GNU Lesser General Public License, v.2.1 
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.jta</groupId>
     <artifactId>narayana-jta-all</artifactId>
     <version>6.0.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>jta</artifactId>
+  <packaging>jar</packaging>
   <name>Narayana: ArjunaJTA jta</name>
   <description>Narayana: ArjunaJTA jta</description>
-  <packaging>jar</packaging>
 
   <properties>
     <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
       -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
-    <server.jvm.args>
-      ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
-    </server.jvm.args>
+    <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
   </properties>
-
-  <build>
-    <sourceDirectory>classes</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>etc</directory>
-      </resource>
-    </resources>
-    <testSourceDirectory>tests/classes</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>tests/byteman-scripts</directory>
-      </testResource>
-    </testResources>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-testCompile</id>
-            <phase>test-compile</phase>
-            <configuration>
-              <testExcludes>
-                <exclude>io/narayana/perf/product/*.java</exclude>
-              </testExcludes>
-            </configuration>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useManifestOnlyJar>false</useManifestOnlyJar>
-          <excludes>
-            <exclude>**/io/narayana/perf/product/*</exclude>
-            <exclude>**/integration/*IntegrationTest.java</exclude>
-            <!-- exclude tests which were run above using byteman scripts -->
-            <exclude>**/recovery/CrashRecovery.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>create-test-jar</id>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) needs:
      * Jakarta Transaction API (jakarta.transaction-api)
@@ -243,6 +172,74 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>etc</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>tests/byteman-scripts</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-testCompile</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <phase>test-compile</phase>
+            <configuration>
+              <testExcludes>
+                <exclude>io/narayana/perf/product/*.java</exclude>
+              </testExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useManifestOnlyJar>false</useManifestOnlyJar>
+          <excludes>
+            <exclude>**/io/narayana/perf/product/*</exclude>
+            <exclude>**/integration/*IntegrationTest.java</exclude>
+            <!-- exclude tests which were run above using byteman scripts -->
+            <exclude>**/recovery/CrashRecovery.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-test-jar</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <sourceDirectory>classes</sourceDirectory>
+    <testSourceDirectory>tests/classes</testSourceDirectory>
+  </build>
+
   <profiles>
     <profile>
       <id>release</id>
@@ -251,13 +248,13 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
             <executions>
               <execution>
                 <id>default-install</id>
                 <phase>install</phase>
               </execution>
             </executions>
-            <inherited>false</inherited>
           </plugin>
         </plugins>
       </build>
@@ -486,26 +483,22 @@
     <profile>
       <id>codeCoverage</id>
       <properties>
-        <server.jvm.args>
-          ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}
-        </server.jvm.args>
+        <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}</server.jvm.args>
       </properties>
     </profile>
     <profile>
-        <id>jdk17</id>
-        <activation>
-            <jdk>[17,)</jdk>
-            <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
-            <property>
-              <name>arqProfileActivated</name>
-            </property>
-        </activation>
-        <properties>
-            <!-- CMRIntegrationTest needs this -->
-            <jvm.args.modular>
-                --add-opens=java.base/java.util=ALL-UNNAMED
-            </jvm.args.modular>
-        </properties>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+        <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
+        <property>
+          <name>arqProfileActivated</name>
+        </property>
+      </activation>
+      <properties>
+        <!-- CMRIntegrationTest needs this -->
+        <jvm.args.modular>--add-opens=java.base/java.util=ALL-UNNAMED</jvm.args.modular>
+      </properties>
     </profile>
   </profiles>
 </project>
