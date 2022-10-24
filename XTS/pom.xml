@@ -38,16 +38,6 @@
   </properties>
     <dependencies>
         <dependency>
-        <!-- jakarta TODO legacy
-            <groupId>org.jboss.spec.jakarta.xml.bind</groupId>
-            <version>${version.org.jboss.spec.jakarta.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-            -->
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
-            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
             <version>${version.jaxws-ri}</version>
