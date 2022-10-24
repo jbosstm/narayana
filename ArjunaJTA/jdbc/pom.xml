@@ -12,62 +12,17 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.jta</groupId>
     <artifactId>narayana-jta-all</artifactId>
     <version>5.13.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>jdbc</artifactId>
+  <packaging>jar</packaging>
   <name>Narayana: ArjunaJTA jdbc</name>
   <description>transactional driver</description>
-  <packaging>jar</packaging>
-  <build>
-    <sourceDirectory>classes</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>etc</directory>
-      </resource>
-    </resources>
-    <testSourceDirectory>tests/classes</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration >
-            <argLine>${surefireArgLine}</argLine>
-            <forkMode>pertest</forkMode>
-            <workingDirectory>target/test-classes</workingDirectory>
-            <runOrder>alphabetical</runOrder>
-            <redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
-            <inherited>true</inherited>
-            <excludes >
-              <exclude>**/RecoveryTest.java</exclude>
-              <exclude>**/utils/plugins/**</exclude>
-              <exclude>**/DBPlugin.java</exclude>
-              <exclude>**/*JNDISetup.java</exclude>
-              <exclude>**/*SimpleJdbcTest.java</exclude>
-              <exclude>**/*StableConnections.java</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencies>
     <!-- Standalone JNDI server -->
@@ -124,35 +79,35 @@
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-jdbc</artifactId>
-		<version>3.2.2.RELEASE</version>
-		<scope>test</scope>
-	</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>3.2.2.RELEASE</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
-      <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-submit</artifactId>
-      <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-install</artifactId>
-      <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
-      <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -168,34 +123,79 @@
       </exclusions>
     </dependency>
   </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>etc</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <argLine>${surefireArgLine}</argLine>
+            <forkMode>pertest</forkMode>
+            <workingDirectory>target/test-classes</workingDirectory>
+            <runOrder>alphabetical</runOrder>
+            <redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
+            <inherited>true</inherited>
+            <excludes>
+              <exclude>**/RecoveryTest.java</exclude>
+              <exclude>**/utils/plugins/**</exclude>
+              <exclude>**/DBPlugin.java</exclude>
+              <exclude>**/*JNDISetup.java</exclude>
+              <exclude>**/*SimpleJdbcTest.java</exclude>
+              <exclude>**/*StableConnections.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+    </plugins>
+    <sourceDirectory>classes</sourceDirectory>
+    <testSourceDirectory>tests/classes</testSourceDirectory>
+  </build>
   <profiles>
-	<profile>
-		<id>postgresql</id>
-		<dependencies>
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>${version.postgresql}</version>
-			</dependency>
-		</dependencies>
-	</profile>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                  <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-install-plugin</artifactId>
-                      <executions>
-                          <execution>
-                              <id>default-install</id>
-                              <phase>install</phase>
-                          </execution>
-                      </executions>
-                      <inherited>false</inherited>
-                  </plugin>
-              </plugins>
-          </build>
-      </profile>
+    <profile>
+      <id>postgresql</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <version>${version.postgresql}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
