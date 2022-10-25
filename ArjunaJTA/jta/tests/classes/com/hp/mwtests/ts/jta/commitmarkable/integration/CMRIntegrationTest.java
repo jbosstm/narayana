@@ -73,8 +73,8 @@ public class CMRIntegrationTest {
 				.addPackage("io.narayana.connectableresource")
 				.addAsManifestResource(new StringAsset(DEPENDENCIES),
 						"MANIFEST.MF")
-				.addAsManifestResource(EmptyAsset.INSTANCE,
-						ArchivePaths.create("beans.xml"));
+				.addAsManifestResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"),
+						"beans.xml");
 	}
 
 	@Resource(mappedName = "java:jboss/datasources/ExampleDS")
