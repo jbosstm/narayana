@@ -211,7 +211,7 @@ function init_test_options {
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
     [ $AS_DOWNLOAD ] && [ -z "$JBOSS_HOME" ] || AS_DOWNLOAD=0 # download AS when JBOSS_HOME is not provided
     [ $AS_CLONE ]  && [ -z "$JBOSS_HOME" ] || AS_CLONE=0 # git clone the AS when JBOSS_HOME is not provided
-    [ $AS_BUILD ] || AS_BUILD=0 # build the AS
+    [ $AS_BUILD ]  && [ -z "$JBOSS_HOME" ] || AS_BUILD=0 # build the AS
     [ $AS_TESTS ] || AS_TESTS=0 # Run WildFly/JBoss EAP testsuite
     [ $OSGI_TESTS ] || OSGI_TESTS=0 # OSGI tests
     [ $TXF_TESTS ] || TXF_TESTS=0 # compensations tests
