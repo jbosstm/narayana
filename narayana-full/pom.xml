@@ -35,11 +35,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>narayana-jta-jakarta</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-integration</artifactId>
       <version>${project.version}</version>
@@ -65,11 +60,6 @@
       <artifactId>jbossxts</artifactId>
       <version>${project.version}</version>
       <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>jbossxts-jakarta</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -108,11 +98,6 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>jbosstxbridge</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>jbosstxbridge-jakarta</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -205,11 +190,6 @@
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-spec-api</artifactId>
-      <version>${version.org.jboss.ironjacamar}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>

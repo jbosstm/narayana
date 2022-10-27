@@ -40,16 +40,6 @@
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
-			<includes>
-                        <include>org.jboss.narayana.xts:jbossxts-jakarta:jar</include>
-			</includes>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-			<outputDirectory>lib/xts</outputDirectory>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.narayana.rts:restat-api:jar</include>
@@ -127,29 +117,9 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jta:narayana-jta-jakarta:jar</include>
-			</includes>
-			<outputDirectory>lib/jta</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
 				<include>org.jboss.narayana:jbosstxbridge</include>
 			</includes>
 			<outputDirectory>lib/txbridge</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.narayana:jbosstxbridge-jakarta</include>
-			</includes>
-			<outputDirectory>lib/txbridge-jakarta</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
