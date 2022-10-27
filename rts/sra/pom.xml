@@ -13,6 +13,8 @@
 
     <properties>
         <narayana.version>${project.version}</narayana.version>
+        <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
+        <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <narayana.nodename.property>CoreEnvironmentBean.nodeIdentifier</narayana.nodename.property>
@@ -80,11 +82,10 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-undertow</artifactId>
         </dependency>
-            <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
         <dependency>
           <groupId>jakarta.servlet</groupId>
           <artifactId>jakarta.servlet-api</artifactId>
-          <version>5.0.0</version>
+          <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
           <scope>provided</scope>
         </dependency>
     </dependencies>

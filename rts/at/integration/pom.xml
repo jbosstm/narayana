@@ -57,12 +57,6 @@
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-      <version>${version.javax.ws.rs-api}</version>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.jboss.byteman</groupId>
@@ -89,12 +83,6 @@
       <groupId>jakarta.json</groupId>
       <artifactId>jakarta.json-api</artifactId>
       <version>${version.jakarta.json-api}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <version>${version.fasterxml.jackson}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

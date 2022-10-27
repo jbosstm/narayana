@@ -28,11 +28,6 @@
   <name>Narayana: restat webservice</name>
   <description>Bundles tx as a deployable war archive</description>
 
-  <properties>
-    <artifactId.name>restat-web</artifactId.name>
-    <version.artifactId>6.0.0.Final-SNAPSHOT</version.artifactId>
-    <version.override.org.jboss.spec.javax.servlet>1.0.0.Final</version.override.org.jboss.spec.javax.servlet>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
@@ -65,22 +60,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey.jersey-test-framework</groupId>
-      <artifactId>jersey-test-framework-grizzly</artifactId>
-      <version>${version.com.sun.jersey}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${version.junit}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-      <version>${version.override.org.jboss.spec.javax.servlet}</version>
       <scope>test</scope>
     </dependency>
 
@@ -168,7 +150,7 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
-                  <fileName>${basedir}/target/${artifactId.name}-web-${version.artifactId}.war</fileName>
+                  <fileName>${basedir}/target/${project.artifactId}-web-${project.version}.war</fileName>
                   <serverName>default</serverName>
                   <skip>false</skip>
                 </configuration>
@@ -180,7 +162,7 @@
                 </goals>
                 <phase>post-integration-test</phase>
                 <configuration>
-                  <fileName>${basedir}/target/${artifactId.name}-web-${version.artifactId}.war</fileName>
+                  <fileName>${basedir}/target/${project.artifactId}-web-${project.version}.war</fileName>
                   <serverName>default</serverName>
                   <skip>false</skip>
                 </configuration>
