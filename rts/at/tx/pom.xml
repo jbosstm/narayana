@@ -36,6 +36,8 @@
      -->
     <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
     <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
+    <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
+    <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
 
   </properties>
 
@@ -51,14 +53,6 @@
       <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Jersey -->
-    <dependency>
-      <groupId>com.sun.grizzly</groupId>
-      <artifactId>grizzly-servlet-webserver</artifactId>
-      <version>${version.com.sun.grizzly}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- end Jersey -->
 
     <dependency>
       <groupId>org.jboss.narayana</groupId>
@@ -119,29 +113,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- grizzly with SPDY -->
-    <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-grizzly2-servlet</artifactId>
-      <version>2.7</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.grizzly</groupId>
-      <artifactId>grizzly-spdy</artifactId>
-      <version>2.3.11</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.grizzly</groupId>
-      <artifactId>grizzly-npn-bootstrap</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- end grizzly with spdy -->
-
     <dependency>
       <groupId>com.squareup.okhttp</groupId>
       <artifactId>okhttp</artifactId>
@@ -179,10 +150,6 @@
           <groupId>org.jboss.interceptor</groupId>
           <artifactId>jakarta-interceptor-api</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>jakarta.annotation</groupId>
-          <artifactId>jsr250-api</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -197,11 +164,10 @@
       <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>5.0.0</version>
+      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -256,7 +222,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <skipTests>false</skipTests>
           <!--
                   <argLine>${surefireArgLine}</argLine>
                   -->
@@ -272,14 +237,11 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-
-      <dependencies></dependencies>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>false</skipTests>
               <!--
                 <argLine>${ssl.args} ${surefireArgLine}</argLine>
                 -->
@@ -295,14 +257,11 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-
-      <dependencies></dependencies>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>false</skipTests>
               <!--
                 <argLine>${spdy.args} ${surefireArgLine}</argLine>
                 -->

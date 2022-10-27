@@ -70,12 +70,6 @@
     </dependency>
     <!-- testing -->
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${version.fasterxml.jackson}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
       <version>${version.resteasy-client}</version>
