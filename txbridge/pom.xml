@@ -191,20 +191,7 @@
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.transaction}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <!-- JCA API -->
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-spec-api</artifactId>
-            <version>${version.org.jboss.ironjacamar}</version>
-            <scope>provided</scope>
+            <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
@@ -220,7 +207,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
-            <artifactId>narayana-jta-jakarta</artifactId>
+            <artifactId>narayana-jta</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -299,12 +286,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${version.fasterxml.jackson}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.json</artifactId>
             <version>${version.glassfish.json}</version>
@@ -322,18 +303,6 @@
         <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
         <scope>provided</scope>
     </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${version.jaxb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${version.jaxb}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
