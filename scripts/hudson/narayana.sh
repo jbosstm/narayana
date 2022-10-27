@@ -401,13 +401,14 @@ function clone_as {
     rm -rf .git
   fi
 
+  WILDFLY_CLONED_REPO=$(pwd)
   cd $WORKSPACE
 }
 
 function build_as {
   echo "Building JBoss EAP/WildFly"
 
-  cd $WORKSPACE/jboss-as
+  cd $WILDFLY_CLONED_REPO
 
   # building WildFly
   [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
@@ -415,9 +416,9 @@ function build_as {
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS build failed"
 
-  WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WILDFLY_CLONED_REPO}/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-  JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
+  JBOSS_HOME=${WILDFLY_CLONED_REPO}/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
   export JBOSS_HOME=`echo  $JBOSS_HOME`
 
   # init files under JBOSS_HOME before AS TESTS is started
@@ -433,7 +434,7 @@ function tests_as {
     enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone-full.xml"
   fi
 
-  cd "${WORKSPACE}/jboss-as"
+  cd $WILDFLY_CLONED_REPO
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./integration-tests.sh -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae "$@" clean verify
   [ $? -eq 0 ] || fatal "AS tests failed"
   cd $WORKSPACE
@@ -518,7 +519,7 @@ function osgi_tests {
 
 function xts_as_tests {
   echo "#-1. XTS AS Tests"
-  cd ${WORKSPACE}/jboss-as
+  cd $WILDFLY_CLONED_REPO
   ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Test failed"
   ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
@@ -528,7 +529,7 @@ function xts_as_tests {
 
 function rts_as_tests {
   echo "#-1. RTS AS Tests"
-  cd ${WORKSPACE}/jboss-as
+  cd $WILDFLY_CLONED_REPO
   ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Test failed"
   ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
@@ -542,7 +543,7 @@ function jta_as_tests {
   # If ARQ_PROF is not set an arquillian profile will not run but I guess the jdk17 profile would/could be activated still
   ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -DarqProfileActivated=$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
-  cd ${WORKSPACE}/jboss-as
+  cd $WILDFLY_CLONED_REPO
   # Execute some directly relevant tests from modules of the application server
   ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "JTA AS transactions Test failed"
