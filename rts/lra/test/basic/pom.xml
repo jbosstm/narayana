@@ -54,11 +54,6 @@
       <version>${version.org.jboss.resteasy}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jackson2-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-    </dependency>
 
   </dependencies>
 

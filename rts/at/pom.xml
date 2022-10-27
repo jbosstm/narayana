@@ -38,6 +38,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <properties>
     <checkstyle.skip>false</checkstyle.skip>
     <sortpom.skip>false</sortpom.skip>
+    <version.asm>3.3.1</version.asm>
   </properties>
   <build>
     <plugins>
