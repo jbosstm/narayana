@@ -3,6 +3,16 @@
 
     <feature name='${project.artifactId}' version='${project.version}'>
     	<bundle>mvn:org.jboss.narayana.osgi/narayana-osgi-jta/${project.version}</bundle>
+        <bundle start-level='8' start='true'>mvn:org.ops4j.pax.logging/pax-logging-api</bundle>    
+        <bundle start-level='8' start='true'>mvn:org.ops4j.pax.logging/pax-logging-service</bundle>
+        <bundle start-level='10' start='true'>mvn:org.apache.felix/org.apache.felix.configadmin</bundle>
+    
+        <bundle start-level='11' start='true'>mvn:org.apache.felix/org.apache.felix.fileinstall</bundle>
+    	<bundle start-level='20' start='true'>mvn:org.apache.sshd/sshd-core</bundle>
+    	<bundle start-level='5' start='true'>mvn:org.ops4j.pax.url/pax-url-aether</bundle>
+    	<bundle start-level='15' start='true'>mvn:org.apache.karaf.features/org.apache.karaf.features.core</bundle>
+    	<bundle start-level='20' start='true'>mvn:org.jboss.narayana.osgi/narayana-osgi-jta</bundle>
+      
     </feature>
 
 </features>

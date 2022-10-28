@@ -30,18 +30,36 @@
 
    <properties>
 	   <maven-bundle-plugin.version>5.1.8</maven-bundle-plugin.version>
-           <version.org.jboss.spec.javax.transaction>1.0.0.Final</version.org.jboss.spec.javax.transaction>
 	   <karaf.home>${project.build.directory}/apache-karaf-minimal-${version.apache.karaf}</karaf.home>
    </properties>
 
+  <repositories>
+    <repository>
+      <id>spring</id>
+      <name>spring.io</name>
+      <url>https://repo.spring.io/milestone/</url>
+    </repository>
+  </repositories>
+  <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.karaf</groupId>
+                <artifactId>karaf-bom</artifactId>
+                <version>4.4.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+  
    <dependencies>
 	   <dependency>
 		   <groupId>org.osgi</groupId>
-		   <artifactId>org.osgi.core</artifactId>
+		   <artifactId>osgi.core</artifactId>
 	   </dependency>
 	   <dependency>
 		   <groupId>org.osgi</groupId>
-		   <artifactId>org.osgi.compendium</artifactId>
+		   <artifactId>osgi.cmpn</artifactId>
 	   </dependency>
 	   <dependency>
 		   <groupId>org.jboss.osgi.metadata</groupId>
@@ -51,18 +69,53 @@
 		   <groupId>org.osgi</groupId>
 		   <artifactId>org.osgi.enterprise</artifactId>
 	   </dependency>
-	   <dependency>
-		   <groupId>org.jboss.spec.javax.transaction</groupId>
-		   <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-		   <version>${version.org.jboss.spec.javax.transaction}</version>
-		   <scope>provided</scope>
-	   </dependency>
+<!-- 	   <dependency> -->
+<!-- 		   <groupId>org.jboss.spec.javax.transaction</groupId> -->
+<!-- 		   <artifactId>jboss-transaction-api_1.2_spec</artifactId> -->
+<!-- 		   <version>${version.org.jboss.spec.javax.transaction}</version> -->
+<!-- 		   <scope>provided</scope> -->
+<!-- 	   </dependency> -->
 	   <dependency>
 		   <groupId>org.jboss.narayana.jta</groupId>
 		   <artifactId>jta</artifactId>
 		   <version>${project.version}</version>
 		   <scope>provided</scope>
 	   </dependency>
+     
+           <dependency>
+          <groupId>jakarta.transaction</groupId>
+          <artifactId>jakarta.transaction-api</artifactId>
+          <version>2.0.1</version>
+      </dependency>
+      
+       <dependency>
+    <groupId>jakarta.enterprise</groupId>
+    <artifactId>jakarta.enterprise.cdi-api</artifactId>
+    <version>4.0.1</version>
+</dependency>
+      <dependency>
+    <groupId>jakarta.el</groupId>
+    <artifactId>jakarta.el-api</artifactId>
+    <version>5.0.1</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.enterprise</groupId>
+    <artifactId>jakarta.enterprise.lang-model</artifactId>
+    <version>4.0.1</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.inject</groupId>
+    <artifactId>jakarta.inject-api</artifactId>
+    <version>2.0.1</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.interceptor</groupId>
+    <artifactId>jakarta.interceptor-api</artifactId>
+    <version>2.1.0</version>
+</dependency>
 	   <dependency>
 		   <groupId>org.jboss.narayana</groupId>
 		   <artifactId>common</artifactId>
@@ -111,11 +164,41 @@
 		   <version>${version.apache.karaf}</version>
 		   <scope>provided</scope>
 	   </dependency>
+     
+     
+     <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>standard</artifactId>
+            <version>${version.apache.karaf}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>org.apache.karaf.features.core</artifactId>
+            <version>${version.apache.karaf}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.karaf.system</groupId>
+            <artifactId>org.apache.karaf.system.core</artifactId>
+            <version>${version.apache.karaf}</version>
+            <scope>test</scope>
+        </dependency>
 	   <dependency>
 		   <groupId>org.springframework</groupId>
 		   <artifactId>spring-tx</artifactId>
 		   <optional>true</optional>
-		   <version>3.0.5.RELEASE</version>
+		   <version>6.0.0-M5</version>
 	   </dependency>
 	   <dependency>
 		   <groupId>junit</groupId>
@@ -126,8 +209,81 @@
 	   <dependency>
 		   <groupId>org.jboss.arquillian.junit</groupId>
 		   <artifactId>arquillian-junit-container</artifactId>
+           <version>1.7.0.Alpha13</version>
 		   <scope>test</scope>
 	   </dependency>
+     
+       <dependency>
+           <groupId>org.jboss.arquillian.container</groupId>
+           <artifactId>arquillian-container-karaf-managed</artifactId>
+           <version>${version.org.jboss.arquillian.osgi.karaf}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.jboss.arquillian.osgi</groupId>
+           <artifactId>arquillian-osgi-bundle</artifactId>
+           <version>${version.org.jboss.arquillian.osgi.karaf}</version>
+           <scope>test</scope>
+       </dependency>
+       
+       
+       
+            
+     <!-- Provide the KarafTestSupport -->
+        <dependency>
+            <groupId>org.apache.karaf.itests</groupId>
+            <artifactId>common</artifactId>
+            <version>4.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Define the Apache Karaf version to download and use for the test -->
+        <!-- We use a released version here to avoid SNAPSHOT resolution -->
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>apache-karaf</artifactId>
+            <scope>test</scope>
+            <type>tar.gz</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>org.apache.karaf.client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Required to use shell commands in the tests -->
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Provide the PaxExam Karaf support -->
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-karaf</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Provide the PaxExam JUnit extension -->
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-junit4</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.hamcrest</artifactId>
+            <version>1.3_1</version>
+            <scope>runtime</scope>
+        </dependency>
+       
    </dependencies>
    <build>
 	   <resources>
@@ -160,7 +316,7 @@
 			   <plugin>
 				   <artifactId>maven-surefire-plugin</artifactId>
 				   <configuration>
-					   <skip>true</skip>
+					   <skip>false</skip>
 				   </configuration>
 			   </plugin>
 		   </plugins>
@@ -185,7 +341,7 @@
 						   org.jboss.tm*;version=${version.org.jboss.jboss-transaction-spi},
 						   org.jboss.narayana.osgi.jta;version=${project.version},
 						   org.jboss.narayana.osgi.jta.command;version=${project.version},
-						   jakarta.transaction*;version="1.2.0"
+						   jakarta.transaction*;version="2.0.1"
 					   </Export-Package>
 					   <Private-Package>
 						   org.jboss.narayana.osgi.jta.internal,
@@ -243,6 +399,7 @@
 			   </instructions>
 		   </configuration>
 	   </plugin>
+     
 	   <plugin>
 		   <groupId>org.codehaus.mojo</groupId>
 		   <artifactId>build-helper-maven-plugin</artifactId>
@@ -271,11 +428,26 @@
 		   <configuration combine.self="override">
 			   <forkMode>always</forkMode>
 			   <!-- j9 JBTM-2777 disable the osgi test until KARAF-3518 resolved -->
-			   <excludes>
-				   <exclude>**/OSGiJTATest.java</exclude>
-			   </excludes>
+<!-- 			   <excludes> -->
+<!-- 				   <exclude>**/OSGiJTATest.java</exclude> -->
+<!-- 			   </excludes> -->
 		   </configuration>
 	   </plugin>
+     
+            <!-- Allows for the use of versionAsInProject() in Pax Exam tests -->
+<plugin>
+  <groupId>org.apache.servicemix.tooling</groupId>
+  <artifactId>depends-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <id>generate-depends-file</id>
+      <goals>
+        <goal>generate-depends-file</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+     
 	   </plugins>
    </build>
    <profiles>

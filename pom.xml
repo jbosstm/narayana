@@ -813,7 +813,7 @@
     </profile>
     <profile>
       <id>community</id>
-      <modules> 
+      <modules>
         <module>narayana-full</module>
       </modules>
       <properties>
