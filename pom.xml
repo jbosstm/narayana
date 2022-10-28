@@ -128,9 +128,6 @@
     <module>txbridge</module>
     <module>compensations</module>
     <module>STM</module>
-    <!-- jakarta TODO I cannot find any osgi support for jakarta
-    <module>osgi</module>
-    -->
     <module>vertx</module>
     <module>rts</module>
   </modules>
@@ -251,9 +248,6 @@
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>8.1.9.Final</version.org.jboss.openjdk-orb>
     <version.org.jboss.resteasy>6.0.3.Final</version.org.jboss.resteasy>
-    <!-- TODO START Remove after migration of OSGi -->
-    <version.org.jboss.spec.javax.transaction>1.1.0.Final</version.org.jboss.spec.javax.transaction>
-    <!-- TODO END Remove after migration of OSGi -->
     <version.org.jboss.weld>5.0.1.Final</version.org.jboss.weld>
     <version.org.jboss.ws>2.0.0.Final</version.org.jboss.ws>
     <version.org.mockito>3.8.0</version.org.mockito>
