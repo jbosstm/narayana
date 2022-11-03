@@ -126,7 +126,6 @@
     <module>ArjunaJTS</module>
     <module>XTS</module>
     <module>txbridge</module>
-    <module>txframework</module>
     <module>compensations</module>
     <module>STM</module>
     <!-- jakarta TODO I cannot find any osgi support for jakarta
