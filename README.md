@@ -14,9 +14,7 @@ Getting help
 ------------
 If you need help with using Narayana, please visit our forums at:
 https://groups.google.com/g/narayana-users
-
-If you think you have found an error in our code, please raise an issue over on:
-https://issues.jboss.org/browse/JBTM
+or ask a question on our zulip channel (https://narayana.zulipchat.com/#).
 
 If you would like to contribute a pull request to help the project out the file [CONTRIBUTING.md](https://github.com/jbosstm/narayana/blob/master/CONTRIBUTING.md) contains some guidance on how to do so.
 

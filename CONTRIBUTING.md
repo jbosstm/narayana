@@ -1,8 +1,10 @@
 # Contributing guide
 
-**Want to contribute? Great!** 
+Want to contribute? Great!
+
 We try to make it easy, and all contributions, even the smaller ones, are more than welcome.
-This includes bug reports, fixes, documentation, examples... 
+This includes bug reports, fixes, documentation, examples...
+If you are looking for an issue to work on and haven't had much previous experience with Narayana then you could work on one that has the label "good first issue" or look for issues whose "Estimated Difficulty" field is `Low`.
 But first, read this page.
 
 ## Legal
@@ -13,13 +15,13 @@ All original contributions to Narayana are licensed under the
 All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/).
 The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the root directory of the repository.
 
-New files may contain a license header in the following format:
+New files MUST include the project [copyright statement](#legal):
 
 ```
 /*
  *
  * Copyright The Narayana Authors
- * 
+ *
  * SPDX-License-Identifier: LGPL-2.1-only
  *
  */
@@ -27,11 +29,14 @@ New files may contain a license header in the following format:
 
 ## Reporting an issue
 
-This project uses the [JBTM issue tracker](https://issues.redhat.com/projects/JBTM)
-to manage the issues. Open an issue directly in this issue tracker.
+If you believe you found a bug (and all software has bugs) we'll need to know how to reproduce it, what you are seeing and what you would expect to see.
+To report the issue use the [JBTM issue tracker](https://issues.redhat.com/projects/JBTM). Fill in as many fields as are relevant including the following:
 
-If you believe you found a bug, and it's likely possible, please indicate a way to reproduce it, what you are seeing and what you would expect to see.
-Don't forget to indicate your Narayana, Java and Maven version. 
+`Affects Version/s`: The version where you found the issue.
+`Fix Version/s`: Leave this field blank, the engineer who fixes the issue will set the correct version when the PR is merged.
+`Component/s`: The components relevant to the problem. Leave the field blank if you're not sure which components are affected.
+
+Don't forget to indicate which version of Narayana, Java and Maven you are using.
 
 ## Making open source more inclusive
 
@@ -51,7 +56,7 @@ But the following guidelines provide a more detailed set of requirements that we
 1. The Pull Request title is properly formatted: `JBTM-XYZ Subject`
 2. The Pull Request *should* contain a link to the JIRA issue(s) at the start of the PR description (only minor changes to script/text files are exempt from this rule). If the engineer wishes to address multiple issues and they are closely related then they can be addressed in a single PR. The JIRA must contain sufficient information to enable the reader to understand what the issue is, so at a minimum the description field of the JIRA must be present and legible/clear.
 3. Engineers are not allowed to submit PRs which only contain formatting changes. The guidance on formatting code are covered in the [Coding Guidelines](#coding-guidelines) section below.
-4. New PRs are tested against multiple Jenkins CI axes. If you know that a change only affects particular axes then you can disable the ones that aren't required. When you first create a PR, the description field will contain a basic instructions about how to disable a CI test axis.
+4. New PRs are tested against multiple Jenkins CI axes. If you know that a change only affects particular axes then you can disable the ones that aren't required, ask a team member for clarification if you're not sure (or look at how the `PROFILE` variable is used in the CI script `scripts/hudson/narayana.sh`. When you first create a PR, the PR description field contains basic instructions about how to disable a CI test axis.
 
 Also, make sure you have set up your Git authorship correctly:
 
@@ -90,19 +95,29 @@ In other words a file (in a module with checkstyle disabled) may only be re-form
 contains a functional change and is made in a separate commit.
 
 Most IDEs allow you to configure a rule file from your IDE settings (for Intelij that would be Settings -> Other Settings -> Checkstyle). The rule file is located the [narayana-checkstyle repo](https://github.com/jbosstm/narayana-checkstyle-config/tree/main/src/main/resources/narayana-checkstyle)
-
 We do not use `@author` tags in the Javadoc in new code: they are hard to maintain, especially in a very active project, and we use the Git history to track authorship, however GitHub provides [this nice page with your contributions](https://github.com/jbosstm/narayana/graphs/contributors).
 
 Commits should be atomic and semantic. Commits should be squashed before submitting the PR unless the commits are necessary to track different parts of a fix or to separate out formatting only changes from functional changes. Fixup commits can be used temporarily during the review process, to help the reviewer navigate your changeset, but these should be squashed before merging the PR (in order to provide the software with a more meaningful commit history).
-
-New files should include the project [copyright statement](#legal)
 
 ### Continuous Integration
 
 To ensure Narayana is stable for everyone, all changes should go through Narayana continuous integration: when you raise a pull request one of the members of the team will schedule a CI run to test your PR.
 Note that when a CI test axis passes there is *no need* to disable further testing of the axis (the danger of doing this is that if further commits are added to the PR then the axis will not be retested).
 
+## Update the issue with the correct release information:
+
+When the github Pull Request has passed all relevant CI checks and has been Approved by a reviewer the code can be merged. If you don't have permission to do this then ping one of the team who will then merge it. Once merged the issue must be updated in the issue tracker (if you don't have permission then a team member will do this):
+
+1. Press the `Pull Request Closed` button (the status will automatically be set to `Done`)
+2. Set the `Fix Version/s` field to `6.next` (if the fix is targeted for a different major version, such as 7.next use that instead).
+   Note that this step is vital since the release process only includes issues in the `Done` state and with the correct `<version>.next` field, otherwise your fix will not be included in the next release.
+   Note that if you merge to a branch other than master please ensure that it is a maintenance release (or, in some cases, a topic branch).
+   The release coordinator will update this `Fix Version` field to correspond with the actual version being released.
+   The release coordinator will also move the status of the issue to `Closed` once it's included in a release.
+4. Sanity check that the other fields have been filled in correctly (although these are normally set when the issue is created):
+5. Please provide meaningful release notes so that potential users can see, at a glance, what new things can be expected from the release that contains the fix.
+
 ### Tests and documentation are not optional
 
-Don't forget to include tests in your pull requests. 
+Don't forget to include tests in your pull requests.
 Also don't forget the documentation (reference documentation for features, javadoc...).
