@@ -128,11 +128,11 @@
         <version>1.7</version>
         <executions>
           <execution>
-            <id>generate-sources</id>
+            <id>compile-idl-sources</id>
             <goals>
               <goal>run</goal>
             </goals>
-            <phase>generate-sources</phase>
+            <phase>process-sources</phase>
             <configuration>
               <tasks name="Generate idl stubs">
                 <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"></property>
