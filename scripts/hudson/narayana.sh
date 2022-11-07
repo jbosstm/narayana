@@ -344,7 +344,7 @@ function build_narayana {
 }
 
 function clone_as {
-  echo "Cloning AS sources from git://github.com/jbosstm/jboss-as.git"
+  echo "Cloning AS sources from https://github.com/jbosstm/jboss-as.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
@@ -353,14 +353,14 @@ function clone_as {
 
     git remote | grep upstream
     if [ $? -ne 0 ]; then
-      git remote add upstream git://github.com/wildfly/wildfly.git
+      git remote add upstream https://github.com/wildfly/wildfly.git
     fi
     #Abort any partially complete rebase
     git rebase --abort
     git checkout 5_11_BRANCH
     [ $? -eq 0 ] || fatal "git checkout 5_11_BRANCH failed"
     git fetch
-    [ $? -eq 0 ] || fatal "git fetch git://github.com/jbosstm/jboss-as.git failed"
+    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
     git reset --hard jbosstm/5_11_BRANCH
     [ $? -eq 0 ] || fatal "git reset 5_11_BRANCH failed"
     git clean -f -d -x
@@ -370,11 +370,11 @@ function clone_as {
   else
     echo "First time checkout of WildFly"
     git clone https://github.com/jbosstm/jboss-as.git -b 5_11_BRANCH -o jbosstm
-    [ $? -eq 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
+    [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
 
-    git remote add upstream git://github.com/wildfly/wildfly.git
+    git remote add upstream https://github.com/wildfly/wildfly.git
   fi
 
   [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
