@@ -1,0 +1,4 @@
+# We use the Red Hat issue tracker `Component lead` field to track component owners:
+# https://issues.redhat.com/projects/JBTM?selectedItem=com.atlassian.jira.jira-projects-plugin:components-page
+
+* @jmfinelli @marcosgopen @mmusgrov
