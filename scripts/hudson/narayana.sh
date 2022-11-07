@@ -369,7 +369,7 @@ function clone_as {
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
-    git clone git://github.com/jbosstm/jboss-as.git -b 5_11_BRANCH -o jbosstm
+    git clone https://github.com/jbosstm/jboss-as.git -b 5_11_BRANCH -o jbosstm
     [ $? -eq 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
