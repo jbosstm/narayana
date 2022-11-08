@@ -20,10 +20,10 @@
   (C) 2009,
   @author JBoss Inc.
 -->
-<handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
+<handler-chains xmlns="https://jakarta.ee/xml/ns/jakartaee"
+                xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee">
     <handler-chain>
 	<handler>
 		<handler-name>WS TX Subordinate Context Handler</handler-name>
