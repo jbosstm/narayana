@@ -212,8 +212,8 @@
         <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
         <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <docbookVersion>1.72.0</docbookVersion>
-        <version.maven-jdocbook-plugin>2.3.5</version.maven-jdocbook-plugin>
+        <docbookVersion>1.79.1</docbookVersion>
+        <version.maven-jdocbook-plugin>2.3.10</version.maven-jdocbook-plugin>
         <version.org.jboss.pressgang>3.1.2</version.org.jboss.pressgang>
     </properties>
     <modules>
