@@ -1,29 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jboss.narayana.documentation</groupId>
-        <artifactId>narayana-documentation</artifactId>
-        <version>5.13.1.Final-SNAPSHOT-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.documentation</groupId>
+    <artifactId>narayana-documentation</artifactId>
+    <version>5.13.1.Final-SNAPSHOT-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>project</artifactId>
-    <name>Narayana Documentation</name>
-    <description>Documentation of all Narayana modules</description>
-    <packaging>jdocbook</packaging>
+  <artifactId>project</artifactId>
+  <packaging>jdocbook</packaging>
+  <name>Narayana Documentation</name>
+  <description>Documentation of all Narayana modules</description>
 
-    <properties>
-        <docname>project_documentation</docname>
-    </properties>
+  <properties>
+    <docname>project_documentation</docname>
+  </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jboss.maven.plugins</groupId>
-                <artifactId>maven-jdocbook-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jboss.maven.plugins</groupId>
+        <artifactId>maven-jdocbook-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

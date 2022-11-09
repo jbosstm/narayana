@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware
           LLC, and individual contributors as indicated by the @author tags. See the
           copyright.txt in the distribution for a full listing of individual contributors.
           This copyrighted material is made available to anyone wishing to use, modify,
@@ -13,226 +12,243 @@
           of the GNU Lesser General Public License, v.2.1 along with this distribution;
           if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
           Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.narayana.documentation</groupId>
-    <artifactId>narayana-documentation</artifactId>
-    <version>5.13.1.Final-SNAPSHOT-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <url>http://www.jboss.org/jbosstm/</url>
-    <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://jira.jboss.org/jira/browse/JBTM/</url>
-    </issueManagement>
-    <developers>
-        <developer>
-            <id>nmcl</id>
-            <name>Mark Little</name>
-            <email>mlittle@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>JBoss CTO</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>tomjenkinson</id>
-            <name>Tom Jenkinson</name>
-            <email>tom.jenkinson@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>project lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>paulrobinson</id>
-            <name>Paul Robinson</name>
-            <email>paul.robinson@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>xts lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>mmusgrov</id>
-            <name>Michael Musgrove</name>
-            <email>mmusgrov@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Core Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>zhfeng</id>
-            <name>Amos Feng</name>
-            <email>zfeng@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Core Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>istudens</id>
-            <name>Ivo Studensky</name>
-            <email>istudens@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>QA lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>jhalliday</id>
-            <name>Jonathan Halliday</name>
-            <email>jonathan.halliday@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>adinn</id>
-            <name>Andrew Dinn</name>
-            <email>adinn@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <timezone>0</timezone>
-        </developer>
-    </developers>
-    <licenses>
-        <license>
-            <name>LGPL 2.1</name>
-            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-        </license>
-    </licenses>
-    <scm>
-        <connection>scm:git:git@github.com:jbosstm/narayana.git</connection>
-        <developerConnection>scm:git:git@github.com:jbosstm/narayana.git</developerConnection>
-        <url>https://github.com/jbosstm/narayana</url>
-    </scm>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Repository Group</name>
-            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    <repositories>
-        <repository>
-            <id>jboss-thirdparty-releases-repository</id>
-            <name>JBoss Thirdparty Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
-        </repository>
-        <repository>
-            <id>jboss-releases-repository</id>
-            <name>JBoss Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>jboss-snapshots-repository</id>
-            <name>JBoss Snapshot Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-    <build>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.narayana.documentation</groupId>
+  <artifactId>narayana-documentation</artifactId>
+  <version>5.13.1.Final-SNAPSHOT-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>${project.artifactId}</description>
+  <url>http://www.jboss.org/jbosstm/</url>
+  <licenses>
+    <license>
+      <name>LGPL 2.1</name>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>nmcl</id>
+      <name>Mark Little</name>
+      <email>mlittle@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>JBoss CTO</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>tomjenkinson</id>
+      <name>Tom Jenkinson</name>
+      <email>tom.jenkinson@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>project lead</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>paulrobinson</id>
+      <name>Paul Robinson</name>
+      <email>paul.robinson@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>xts lead</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>mmusgrov</id>
+      <name>Michael Musgrove</name>
+      <email>mmusgrov@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>Core Developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>zhfeng</id>
+      <name>Amos Feng</name>
+      <email>zfeng@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>Core Developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>istudens</id>
+      <name>Ivo Studensky</name>
+      <email>istudens@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>QA lead</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>jhalliday</id>
+      <name>Jonathan Halliday</name>
+      <email>jonathan.halliday@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>adinn</id>
+      <name>Andrew Dinn</name>
+      <email>adinn@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+  <modules>
+    <module>product</module>
+    <module>project</module>
+  </modules>
+  <scm>
+    <connection>scm:git:git@github.com:jbosstm/narayana.git</connection>
+    <developerConnection>scm:git:git@github.com:jbosstm/narayana.git</developerConnection>
+    <url>https://github.com/jbosstm/narayana</url>
+  </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://jira.jboss.org/jira/browse/JBTM/</url>
+  </issueManagement>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>jboss-snapshots-repository</id>
+      <name>JBoss Snapshot Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <properties>
+    <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
+    <docbookVersion>1.79.1</docbookVersion>
+    <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.maven-jdocbook-plugin>2.3.10</version.maven-jdocbook-plugin>
+    <version.org.jboss.pressgang>3.1.2</version.org.jboss.pressgang>
+    <version.sortpom>3.2.0</version.sortpom>
+  </properties>
+  <repositories>
+    <repository>
+      <id>jboss-thirdparty-releases-repository</id>
+      <name>JBoss Thirdparty Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+    </repository>
+    <repository>
+      <id>jboss-releases-repository</id>
+      <name>JBoss Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-jdocbook-plugin</artifactId>
+          <version>${version.maven-jdocbook-plugin}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <sourceDirectory>${project.basedir}</sourceDirectory>
+            <sourceDocumentName>${docname}.xml</sourceDocumentName>
+            <masterTranslation>en-US</masterTranslation>
+            <imageResource>
+              <directory>${project.basedir}/en-US</directory>
+              <includes>
+                <include>images/*.png</include>
+              </includes>
+            </imageResource>
+            <formats>
+              <format>
+                <formatName>html_single</formatName>
+                <stylesheetResource>classpath:/xslt/org/jboss/pressgang/xhtml-single.xsl</stylesheetResource>
+                <finalName>index.html</finalName>
+              </format>
+            </formats>
+            <options>
+              <xmlTransformerType>saxon</xmlTransformerType>
+              <xincludeSupported>true</xincludeSupported>
+              <docbookVersion>${docbookVersion}</docbookVersion>
+              <useRelativeImageUris>true</useRelativeImageUris>
+            </options>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.jboss.pressgang</groupId>
+              <artifactId>pressgang-xslt-ns</artifactId>
+              <version>${version.org.jboss.pressgang}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.jboss.pressgang</groupId>
+              <artifactId>pressgang-jdocbook-style</artifactId>
+              <version>${version.org.jboss.pressgang}</version>
+              <type>jdocbook-style</type>
+            </dependency>
+            <dependency>
+              <groupId>net.sf.docbook</groupId>
+              <artifactId>docbook-xsl</artifactId>
+              <version>1.79.1</version>
+              <type>pom</type>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>com.github.ekryd.sortpom</groupId>
+          <artifactId>sortpom-maven-plugin</artifactId>
+          <version>${version.sortpom}</version>
+          <configuration>
+            <createBackupFile>false</createBackupFile>
+            <sortProperties>true</sortProperties>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>sort</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
         <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.jboss.maven.plugins</groupId>
-                    <artifactId>maven-jdocbook-plugin</artifactId>
-                    <version>${version.maven-jdocbook-plugin}</version>
-                    <extensions>true</extensions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.jboss.pressgang</groupId>
-                            <artifactId>pressgang-xslt-ns</artifactId>
-                            <version>${version.org.jboss.pressgang}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.jboss.pressgang</groupId>
-                            <artifactId>pressgang-jdocbook-style</artifactId>
-                            <type>jdocbook-style</type>
-                            <version>${version.org.jboss.pressgang}</version>
-                        </dependency>
-			<dependency>
-			    <groupId>net.sf.docbook</groupId>
-			    <artifactId>docbook-xsl</artifactId>
-			    <version>1.79.1</version>
-			    <type>pom</type>
-			</dependency>
-                    </dependencies>
-                    <configuration>
-                        <sourceDirectory>${project.basedir}</sourceDirectory>
-                        <sourceDocumentName>${docname}.xml</sourceDocumentName>
-                        <masterTranslation>en-US</masterTranslation>
-                        <imageResource>
-                            <directory>${project.basedir}/en-US</directory>
-                            <includes>
-                                <include>images/*.png</include>
-                            </includes>
-                        </imageResource>
-                        <formats>
-                            <format>
-                                <formatName>html_single</formatName>
-                                <stylesheetResource>classpath:/xslt/org/jboss/pressgang/xhtml-single.xsl
-                                </stylesheetResource>
-                                <finalName>index.html</finalName>
-                            </format>
-                        </formats>
-                        <options>
-                            <xmlTransformerType>saxon</xmlTransformerType>
-                            <xincludeSupported>true</xincludeSupported>
-                            <docbookVersion>${docbookVersion}</docbookVersion>
-                            <useRelativeImageUris>true</useRelativeImageUris>
-                        </options>
-                    </configuration>
-                </plugin>
-            </plugins>
+          <plugins>
+            <plugin>
+              <groupId>org.jboss.maven.plugins</groupId>
+              <artifactId>maven-jdocbook-plugin</artifactId>
+            </plugin>
+          </plugins>
         </pluginManagement>
-    </build>
-    <properties>
-        <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
-        <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <docbookVersion>1.79.1</docbookVersion>
-        <version.maven-jdocbook-plugin>2.3.10</version.maven-jdocbook-plugin>
-        <version.org.jboss.pressgang>3.1.2</version.org.jboss.pressgang>
-    </properties>
-    <modules>
-        <module>product</module>
-        <module>project</module>
-    </modules>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jboss.maven.plugins</groupId>
-                            <artifactId>maven-jdocbook-plugin</artifactId>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 </project>
