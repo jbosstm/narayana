@@ -52,8 +52,16 @@ import java.util.Set;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Amos Feng</a>
+ *
+ * @deprecated The OSGi module will be removed. Other OSGi Transaction Manager implementations can be used.
+ * Release 6.x (Jakarta) will not include OSGi module because:
+ * <p/>
+ * i) The OSGi compendium fully Jakarta release has not been released yet;
+ * ii) Product(s) using Narayana and supporting OSGi has not yet moved to Jakarta;
+ * <p/>
  */
 
+@Deprecated
 public class ObjStoreBrowserImpl implements ObjStoreBrowserService{
     private ObjStoreBrowser osb;
     private PrintStream printStream;

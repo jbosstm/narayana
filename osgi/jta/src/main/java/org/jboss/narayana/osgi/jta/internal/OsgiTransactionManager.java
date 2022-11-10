@@ -28,6 +28,15 @@ import javax.transaction.UserTransaction;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 
+/**
+ * @deprecated The OSGi module will be removed. Other OSGi Transaction Manager implementations can be used.
+ * Release 6.x (Jakarta) will not include OSGi module because:
+ * <p/>
+ * i) The OSGi compendium fully Jakarta release has not been released yet;
+ * ii) Product(s) using Narayana and supporting OSGi has not yet moved to Jakarta;
+ * <p/>
+ */
+@Deprecated
 public class OsgiTransactionManager extends TransactionManagerImple implements UserTransaction {
 
     public interface Listener {

@@ -44,6 +44,15 @@ import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.log.LogService;
 
+/**
+ * @deprecated The OSGi module will be removed. Other OSGi Transaction Manager implementations can be used.
+ * Release 6.x (Jakarta) will not include OSGi module because:
+ * <p/>
+ * i) The OSGi compendium fully Jakarta release has not been released yet;
+ * ii) Product(s) using Narayana and supporting OSGi has not yet moved to Jakarta.
+ * <p/>
+ */
+@Deprecated
 public class Activator implements BundleActivator, ManagedService, Runnable {
 
     public static final String PID = "org.jboss.narayana";
