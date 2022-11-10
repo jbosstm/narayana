@@ -47,9 +47,17 @@ import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Amos Feng</a>
+ *
+ * @deprecated The OSGi module will be removed. Other OSGi Transaction Manager implementations can be used.
+ * Release 6.x (Jakarta) will not include OSGi module because:
+ * <p/>
+ * i) The OSGi compendium fully Jakarta release has not been released yet;
+ * ii) Product(s) using Narayana and supporting OSGi has not yet moved to Jakarta;
+ * <p/>
  */
 
 @RunWith(Arquillian.class)
+@Deprecated
 public class OSGiJTATest {
     @ArquillianResource
     BundleContext context;

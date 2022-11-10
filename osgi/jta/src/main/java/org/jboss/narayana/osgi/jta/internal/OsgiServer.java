@@ -50,6 +50,16 @@ import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+/**
+ * @deprecated The OSGi module will be removed. Other OSGi Transaction Manager implementations can be used.
+ * Release 6.x (Jakarta) will not include OSGi module because:
+ * <p/>
+ * i) The OSGi compendium fully Jakarta release has not been released yet;
+ * ii) Product(s) using Narayana and supporting OSGi has not yet moved to Jakarta;
+ * <p/>
+ */
+
+@Deprecated
 public class OsgiServer implements ServiceTrackerCustomizer<XAResourceRecovery, XAResourceRecovery> {
 
     private final BundleContext bundleContext;
