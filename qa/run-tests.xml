@@ -64,8 +64,17 @@
     <property name="output.exec.file" location="${output.dir}/jacoco-qa.exec"/>
 
     <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-        <classpath
-                path="${external.libraries}/org.jacoco.ant.jar;${external.libraries}/org.jacoco.core.jar;${external.libraries}/org.jacoco.report.jar"/>
+        <classpath>
+            <fileset dir="tests/build">
+                <include name="jbossts-*-qa.jar"/>
+            </fileset>
+            <fileset dir="${external.libraries}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${dbdrivers}">
+                <include name="*.jar"/>
+            </fileset>
+        </classpath>
     </taskdef>
 
     <!-- set this property to the location of a JBossTS core build -->
@@ -365,9 +374,6 @@
         <pathelement location="${external.libraries}/junit.jar"/>
         <fileset dir="tests/build">
             <include name="jbossts-*-qa.jar"/>
-        </fileset>
-        <fileset dir="${external.libraries}">
-            <include name="*.jar"/>
         </fileset>
         <fileset dir="${external.libraries}">
             <include name="*.jar"/>
