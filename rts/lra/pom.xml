@@ -25,7 +25,6 @@
     <module>client-jakarta</module>
     <module>coordinator</module>
     <module>coordinator-jakarta</module>
-    <module>coordinator-quarkus</module>
     <module>coordinator-war</module>
     <module>proxy</module>
     <module>proxy-jakarta</module>
