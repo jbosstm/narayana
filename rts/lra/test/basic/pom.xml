@@ -14,7 +14,6 @@
   <properties>
     <!-- This configuration allows WildFly to be ran with various extra subsystems, including an OpenAPI subsystem -->
     <config.to.replace>standalone-microprofile.xml</config.to.replace>
-    <lra.coordinator.jar.path>${project.basedir}/../../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
     <skip.wildfly.plugin>false</skip.wildfly.plugin>
   </properties>
 

@@ -1,0 +1,9 @@
+embed-server --server-config=lra-participant.xml
+
+/subsystem=logging/root-logger=ROOT:write-attribute(name=level,value=TRACE)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=TRACE)
+/subsystem=logging/logger=com.arjuna:write-attribute(name=level,value=TRACE)
+/subsystem=logging/file-handler=LRA_LOGGER:add(level=TRACE,file={path=${lra.log.file.path:lra.log}})
+/subsystem=logging/root-logger=ROOT:add-handler(name=LRA_LOGGER)
+
+stop-embedded-server
