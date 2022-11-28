@@ -66,7 +66,7 @@ public class TransactionManager
      * @return The singleton transaction manager.  Can return null if the instantiation failed.
      */
 	
-    public synchronized static javax.transaction.TransactionManager transactionManager ()
+    public static javax.transaction.TransactionManager transactionManager ()
     {
 		return jtaPropertyManager.getJTAEnvironmentBean().getTransactionManager();
     }
