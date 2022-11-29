@@ -12,127 +12,17 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
     <version>6.0.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-idlj</artifactId>
-  <name>Narayana: ArjunaJTS narayana-jts-idlj</name>
   <packaging>jar</packaging>
+  <name>Narayana: ArjunaJTS narayana-jts-idlj</name>
   <description>JTS uber jar with idlj stubs</description>
-  <build>
-    <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>shade</goal>
-              </goals>
-              <configuration>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-                <artifactSet>
-                  <includes>
-                    <include>org.jboss.narayana:common</include>
-                    <include>org.jboss.narayana.arjunacore:arjuna</include>
-                    <include>org.jboss.narayana.arjunacore:txoj</include>
-                    <include>org.jboss.narayana.jta:jta</include>
-                    <include>org.jboss.narayana.jta:jdbc</include>
-                    <include>org.jboss.narayana.jta:jms</include>
-                    <include>org.jboss.narayana.jta:cdi</include>
-                    <include>org.jboss.narayana.jts:orbportability</include>
-                    <include>org.jboss.narayana.jts:jts</include>
-                    <include>org.jboss.narayana.jts:idlj-idl-openjdk</include>
-                    <include>org.jboss.narayana.jts:jtax</include>
-                  </includes>
-                </artifactSet>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Specification-Title>Jakarta Transactions</Specification-Title>
-              <Specification-Version>2.0</Specification-Version>
-              <Specification-Vendor>Eclipse Foundation</Specification-Vendor>
-              <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
-              <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
-              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-              <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>../../common/classes</source>
-                <source>../../ArjunaCore/arjuna/classes</source>
-                <source>../../ArjunaCore/txoj/classes</source>
-                <source>../../ArjunaJTA/jta/classes</source>
-                <source>../../ArjunaJTA/jdbc/classes</source>
-                <source>../../ArjunaJTA/jms/src/main/java</source>
-                <source>../../ArjunaJTA/cdi/classes</source>
-                <source>../orbportability/classes</source>
-                <source>../jts/classes</source>
-                <source>../jtax/classes</source>
-                <!-- when adding any record here consider adding it for community profile as well -->
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/*.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <shortRevisionLength>5</shortRevisionLength>
-          <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.ant</groupId>
@@ -141,10 +31,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-        <groupId>jakarta.annotation</groupId>
-        <artifactId>jakarta.annotation-api</artifactId>
-        <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
-        <scope>provided</scope>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -220,7 +110,7 @@
       <artifactId>jtax</artifactId>
       <version>${project.version}</version>
     </dependency>
-<!--
+    <!--
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
@@ -245,78 +135,70 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <profiles>
-    <profile>
-        <id>release</id>
-        <build>
-          <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <excludePackageNames>*.internal.*</excludePackageNames>
-              <failOnError>false</failOnError>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>codeCoverage</id>
-      <build>
-        <plugins>
-        <plugin>
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+              <artifactSet>
+                <includes>
+                  <include>org.jboss.narayana:common</include>
+                  <include>org.jboss.narayana.arjunacore:arjuna</include>
+                  <include>org.jboss.narayana.arjunacore:txoj</include>
+                  <include>org.jboss.narayana.jta:jta</include>
+                  <include>org.jboss.narayana.jta:jdbc</include>
+                  <include>org.jboss.narayana.jta:jms</include>
+                  <include>org.jboss.narayana.jta:cdi</include>
+                  <include>org.jboss.narayana.jts:orbportability</include>
+                  <include>org.jboss.narayana.jts:jts</include>
+                  <include>org.jboss.narayana.jts:idlj-idl-openjdk</include>
+                  <include>org.jboss.narayana.jts:jtax</include>
+                </includes>
+              </artifactSet>
             </configuration>
           </execution>
         </executions>
-        </plugin>
-        </plugins>
-      </build>
-    </profile>
-      <profile>
-          <id>community</id>
-          <build>
-            <plugins>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Specification-Title>Jakarta Transactions</Specification-Title>
+              <Specification-Version>2.0</Specification-Version>
+              <Specification-Vendor>Eclipse Foundation</Specification-Vendor>
+              <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
+              <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
+              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+              <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>add-source</id>
-            <phase>generate-sources</phase>
             <goals>
               <goal>add-source</goal>
             </goals>
+            <phase>generate-sources</phase>
             <configuration>
               <sources>
                 <source>../../common/classes</source>
@@ -329,7 +211,7 @@
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
                 <source>../jtax/classes</source>
-                <source>../jts/services/classes</source>
+                <!-- when adding any record here consider adding it for community profile as well -->
               </sources>
             </configuration>
           </execution>
@@ -337,47 +219,165 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration combine.self="override">
-          <includes>
-            <include>com/arjuna/ats/jts/services/**/*.java</include>
-          </includes>
+        <configuration>
+          <excludes>
+            <exclude>**/*.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <shortRevisionLength>5</shortRevisionLength>
+          <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
         </configuration>
         <executions>
           <execution>
-            <id>comp</id>
-            <phase>compile</phase>
-            <goals/>
-            <configuration>
-              <excludes>
-                <exclude>**/*.*</exclude>
-              </excludes>
-            </configuration>
+            <goals>
+              <goal>create</goal>
+            </goals>
+            <phase>validate</phase>
           </execution>
         </executions>
       </plugin>
-            </plugins>
-          </build>
-  <dependencies>
-      <dependency>
-        <groupId>orson</groupId>
-        <artifactId>orson</artifactId>
-        <version>${version.orson}</version>
-        <scope>system</scope>
-        <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
-      </dependency>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              <excludePackageNames>*.internal.*</excludePackageNames>
+              <failOnError>false</failOnError>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>codeCoverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>community</id>
+      <dependencies>
         <dependency>
-        <groupId>org.jfree</groupId>
-        <artifactId>jfreechart</artifactId>
-        <version>${version.jfree}</version>
-      <scope>provided</scope>
-      </dependency>
-    <dependency>
-      <groupId>tanukisoft</groupId>
-      <artifactId>wrapper</artifactId>
-      <version>${version.tanukisoft}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-      </profile>
+          <groupId>orson</groupId>
+          <artifactId>orson</artifactId>
+          <version>${version.orson}</version>
+          <scope>system</scope>
+          <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+        </dependency>
+        <dependency>
+          <groupId>org.jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+          <version>${version.jfree}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>tanukisoft</groupId>
+          <artifactId>wrapper</artifactId>
+          <version>${version.tanukisoft}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>add-source</id>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <sources>
+                    <source>../../common/classes</source>
+                    <source>../../ArjunaCore/arjuna/classes</source>
+                    <source>../../ArjunaCore/txoj/classes</source>
+                    <source>../../ArjunaJTA/jta/classes</source>
+                    <source>../../ArjunaJTA/jdbc/classes</source>
+                    <source>../../ArjunaJTA/jms/src/main/java</source>
+                    <source>../../ArjunaJTA/cdi/classes</source>
+                    <source>../orbportability/classes</source>
+                    <source>../jts/classes</source>
+                    <source>../jtax/classes</source>
+                    <source>../jts/services/classes</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration combine.self="override">
+              <includes>
+                <include>com/arjuna/ats/jts/services/**/*.java</include>
+              </includes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>comp</id>
+                <goals></goals>
+                <phase>compile</phase>
+                <configuration>
+                  <excludes>
+                    <exclude>**/*.*</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
