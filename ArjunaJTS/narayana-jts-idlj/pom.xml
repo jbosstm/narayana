@@ -66,9 +66,9 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Specification-Title>JTA/JTS</Specification-Title>
-              <Specification-Version>1.2/1.0</Specification-Version>
-              <Specification-Vendor>Oracle</Specification-Vendor>
+              <Specification-Title>Jakarta Transactions</Specification-Title>
+              <Specification-Version>2.0</Specification-Version>
+              <Specification-Vendor>Eclipse Foundation</Specification-Vendor>
               <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
               <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
               <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
