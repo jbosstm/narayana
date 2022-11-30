@@ -25,14 +25,16 @@ public abstract class XTSATRecoveryManager {
     public static XTSATRecoveryManager getRecoveryManager()
     {
         // use a lock to get the recovery manager to avoid a race with the code that sets it
-        synchronized (lock) {
-            // theRecoveryManager must eventually be set to a non-null value
-            while (theRecoveryManager == null) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    // reset the interrupted status
-                    Thread.currentThread().interrupt();
+        if (theRecoveryManager == null) {
+            synchronized (lock) {
+                // theRecoveryManager must eventually be set to a non-null value
+                while (theRecoveryManager == null) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        // reset the interrupted status
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         }
@@ -179,6 +181,6 @@ public abstract class XTSATRecoveryManager {
      * the singleton instance of the recovery manager
      */
 
-    protected static XTSATRecoveryManager theRecoveryManager = null;
+    protected static volatile XTSATRecoveryManager theRecoveryManager = null;
     protected final static Object lock = new Object();
 }
