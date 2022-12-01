@@ -486,19 +486,5 @@
         <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}</server.jvm.args>
       </properties>
     </profile>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-        <!-- The add-opens is only needed for something in test(s?) that are in ran with "arq" profile so limit to that -->
-        <property>
-          <name>arqProfileActivated</name>
-        </property>
-      </activation>
-      <properties>
-        <!-- CMRIntegrationTest needs this -->
-        <jvm.args.modular>--add-opens=java.base/java.util=ALL-UNNAMED</jvm.args.modular>
-      </properties>
-    </profile>
   </profiles>
 </project>
