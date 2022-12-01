@@ -58,4 +58,18 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <!-- TODO [JBTM-3743] This profile can be removed once MP LRA TCK will use Arquillian version >= 1.7.0.Alpha12 -->
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <properties>
+        <!-- At least org.eclipse.microprofile.lra.tck.TckUnknownStatusTests needs java.base/java.lang and java.base/java.lang.reflect -->
+        <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvm.args.modular>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>

@@ -127,7 +127,7 @@
         <skip.wildfly.plugin>true</skip.wildfly.plugin>
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
-        <version.wildfly-maven-plugin>2.1.0.Beta1</version.wildfly-maven-plugin>
+        <version.wildfly-maven-plugin>4.0.0.Final</version.wildfly-maven-plugin>
         <!-- this property is only used in direct submodules, if used outside this scope it needs to be redefined -->
         <wildfly.trace.logging.cli.script>${project.basedir}/../wildfly-trace-logging.cli</wildfly.trace.logging.cli.script>
       </properties>
@@ -364,17 +364,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <properties>
-        <!-- At least org.eclipse.microprofile.lra.tck.TckUnknownStatusTests needs java.base/java.lang and java.base/java.lang.reflect -->
-        <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED
-          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvm.args.modular>
-      </properties>
     </profile>
   </profiles>
 </project>
