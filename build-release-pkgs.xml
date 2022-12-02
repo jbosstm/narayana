@@ -240,7 +240,7 @@ download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}
   
   <target name="api.check" description="Check if javadocs were built">
     <condition property="api.exist">
-      <available file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar"/>
+      <available file="${workdir}/downloads/api/narayana-full-${tag}-javadoc.jar"/>
     </condition>
   </target>
 
