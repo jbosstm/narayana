@@ -124,6 +124,10 @@
       </fileset>
     </copy>
     <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
+    <antcall target="rsync.downloads"/>
+  </target>
+
+  <target name="rsync.downloads" if="${rsync.enabled}">
     <exec executable="bash" dir="${workdir}" failonerror="true">
       <arg value="-c"/>
       <arg value="rsync --chmod=ugo=rwX --partial --progress --rsh=ssh -r downloads/* jbosstm@{rsync.host}:${downloads.dir}/${tag}" />
@@ -175,6 +179,10 @@
       <arg value="-c"/>
       <arg value="${awestruct.executable} -P production"/>
     </exec>
+    <antcall target="rsync.web"/>
+  </target>
+
+  <target name="rsync.web" if="${rsync.enabled}">
     <exec executable="bash" dir="${workdir}/narayana.io/" failonerror="true">
       <arg value="-c"/>
       <arg value="rsync --partial --progress --rsh=ssh --delete-after -r _site/* jbosstm@{rsync.host}:www_htdocs/jbosstm/" />
