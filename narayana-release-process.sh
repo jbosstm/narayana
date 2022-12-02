@@ -47,6 +47,18 @@ if [[ $ENVOK == n* ]]
 then
   exit
 fi
+read -p "By default you will need the ability to upload to a server for hosting the website and downloads. Do you have this (if you have access but don't want to upload, answer n* and then the next question)?" RSYNCOK
+[[ $RSYNCOK != n* ]]
+then
+  RSYNC_ENABLED="true"
+else
+  read -p "Do you have want to continue without uploading the website?" NORSYNC
+  [[ $NORSYNC == n* ]]
+  then
+    exit
+  fi
+  RSYNC_ENABLED="false"
+fi
 read -p "Have you configured ~/.m2/settings.xml with repository 'jboss-releases-repository' and correct username/password?" M2OK
 if [[ $M2OK == n* ]]
 then
@@ -191,7 +203,7 @@ then
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-ant -f build-release-pkgs.xml -Drsync.host=${RSYNC_HOST} -Dawestruct.executable="awestruct" all
+ant -f build-release-pkgs.xml -Drsync.host=${RSYNC_HOST} -Drsync.enabled=${RSYNC_ENABLED} -Dawestruct.executable="awestruct" all
 if [[ $? != 0 ]]
 then
   echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
