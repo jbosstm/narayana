@@ -10,4 +10,4 @@ http://jbossts.blogspot.co.uk/2012/02/optimistic-stm.html
 
 http://jbossts.blogspot.co.uk/2012/03/update-to-stm-api.html
 
-Note, STM is also the basis of the Vert.x transaction work, which is currently residing https://github.com/nmcl/TransactionalVert.x as well as some of the extended transaction work within WildFly Swarm (https://github.com/wildfly-swarm/wildfly-swarm-examples/tree/master/transactions/transactions-shrinkwrap)
+Note, STM is also the basis of the Vert.x transaction work, which is currently residing https://github.com/nmcl/TransactionalVert.x

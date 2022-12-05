@@ -3,7 +3,7 @@ name: LRA
 on:
   push:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - "rts/lra/**"
       - "rts/pom.xml"

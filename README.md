@@ -16,7 +16,7 @@ If you need help with using Narayana, please visit our forums at:
 https://groups.google.com/g/narayana-users
 or ask a question on our zulip channel (https://narayana.zulipchat.com/#).
 
-If you would like to contribute a pull request to help the project out the file [CONTRIBUTING.md](https://github.com/jbosstm/narayana/blob/master/CONTRIBUTING.md) contains some guidance on how to do so.
+If you would like to contribute a pull request to help the project out the file [CONTRIBUTING.md](https://github.com/jbosstm/narayana/blob/main/CONTRIBUTING.md) contains some guidance on how to do so.
 
 If you have a performance optimization that you would like to suggest to us, please read our document over here:
 https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana
@@ -130,7 +130,7 @@ To get your developer life easier use the checkstyle plugins for your IDE
 * configure plugin to consume the *checkstyle.xml* and being applied to the particular module
 
 The WildFly provides a formatter complying with the checkstyle rules. If interested check the IDE configs
-at project [wildfly-core](https://github.com/wildfly/wildfly-core/tree/master/ide-configs).
+at project [wildfly-core](https://github.com/wildfly/wildfly-core/tree/main/ide-configs).
 
 Now The Gory Details.
 ---------------------

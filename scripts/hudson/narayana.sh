@@ -842,7 +842,7 @@ function perf_tests {
       [ $? -eq 0 ] || fatal "git fetch of pulls failed"
       git checkout remotes/origin/pull/$PERF_PR_NUMBER/head
       [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-      git pull --rebase --ff-only origin master
+      git pull --rebase --ff-only origin main
       [ $? -eq 0 ] || fatal "git rebase failed"
     fi
   fi
@@ -862,7 +862,7 @@ function perf_tests {
     PERF_OUTPUT="$PERF_OUTPUT\n\n*If the purpose of this PR is to improve performance then there has been insufficient improvement to warrant a pass. See the previous text for the threshold (range) for passing optimization related PRs*"
   fi
 
-  PERF_OUTPUT="Benchmark output (please refer to the article https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana for information on our testing procedures.\n\nIf you just want to run a single benchmark then please refer to the README.md file in our benchmark repository at https://github.com/jbosstm/performance/tree/master/narayana\n\n$PERF_OUTPUT"
+  PERF_OUTPUT="Benchmark output (please refer to the article https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana for information on our testing procedures.\n\nIf you just want to run a single benchmark then please refer to the README.md file in our benchmark repository at https://github.com/jbosstm/performance/tree/main/narayana\n\n$PERF_OUTPUT"
 
   comment_on_pull "$PERF_OUTPUT" "$BUILD_URL"
 
