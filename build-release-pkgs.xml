@@ -31,7 +31,7 @@
     usage:
 
       Tag the Narayana release on GitHub.
-        or you can do a snapshot release direct from master, see properties below.
+        or you can do a snapshot release direct from main, see properties below.
 
       Check the version of WildFly referenced in pom.xml is sane.
         In general, use the oldest WildFly release the Narayana release is intended to support.

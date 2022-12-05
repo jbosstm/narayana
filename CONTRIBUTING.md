@@ -10,7 +10,7 @@ But first, read this page.
 ## Legal
 
 All original contributions to Narayana are licensed under the
-[GNU LESSER GENERAL PUBLIC LICENSE Version 2.1](https://github.com/jbosstm/narayana/blob/master/LICENSE).
+[GNU LESSER GENERAL PUBLIC LICENSE Version 2.1](https://github.com/jbosstm/narayana/blob/main/LICENSE).
 
 All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/).
 The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the root directory of the repository.
@@ -42,7 +42,7 @@ Don't forget to indicate which version of Narayana, Java and Maven you are using
 
 Red Hat is committed to eradicating problematic language in all of our interactions, including code, documentation, web properties, etc (https://www.redhat.com/en/blog/making-open-source-more-inclusive-eradicating-problematic-language). Although the Narayana project has no plans to retrospectively update its materials we do ask that all contributors be cognizant of the language they use in all communications related to Narayana.
 
-### Building master
+### Building main
 
 See the [README](README.md) file in the root directory of the repository.
 

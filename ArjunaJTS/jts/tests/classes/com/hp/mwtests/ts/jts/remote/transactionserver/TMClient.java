@@ -149,7 +149,7 @@ public class TMClient
 
             if (!slave)
             {
-                System.out.println("master sleeping again.");
+                System.out.println("controller sleeping again.");
 
                 Thread.sleep(20000);
             }

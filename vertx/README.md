@@ -33,7 +33,7 @@ Take a look at each the README.md files in each sub-directory to see how to use 
   NOTE: This example runs without any issues (ie it does not show any lock contention issues) so I need
         to investigate why that is.
 
-TODO: We have started to look at some async API changes within Narayana (https://github.com/jbosstm/narayana/blob/master/STM/src/main/java/org/jboss/stm/async/Transaction.java) to better conform to the asynchronous model demanded by Vert.x
+TODO: We have started to look at some async API changes within Narayana (https://github.com/jbosstm/narayana/blob/main/STM/src/main/java/org/jboss/stm/async/Transaction.java) to better conform to the asynchronous model demanded by Vert.x
 
 
 
