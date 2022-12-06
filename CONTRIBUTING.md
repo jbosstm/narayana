@@ -15,7 +15,8 @@ All original contributions to Narayana are licensed under the
 All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/).
 The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the root directory of the repository.
 
-New files MUST include the project [copyright statement](#legal):
+New files MUST include a project [copyright statement](#legal). Please use comment characters appropriate to the file you are creating, for example if the new file is a Java source file then use the following statement:
+
 
 ```
 /*
@@ -26,6 +27,8 @@ New files MUST include the project [copyright statement](#legal):
  *
  */
 ```
+
+and similarly for other file formats.
 
 ## Reporting an issue
 
