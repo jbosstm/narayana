@@ -4,7 +4,7 @@ Want to contribute? Great!
 
 We try to make it easy, and all contributions, even the smaller ones, are more than welcome.
 This includes bug reports, fixes, documentation, examples...
-If you are looking for an issue to work on and haven't had much previous experience with Narayana then you could work on one that has the label "good first issue" or look for issues whose "Estimated Difficulty" field is `Low`.
+If you are looking for an issue to work on and haven't had much previous experience with Narayana then you could work on one that has the label "good-first-issue" or look for issues whose "Estimated Difficulty" field is `Low`.
 But first, read this page.
 
 ## Legal
