@@ -58,10 +58,12 @@ the archive corresponding to this release.
 Previous releases contained a separate guide for the trailmap which has now
 been moved to the "Narayana JTS Development Guide"
 
-Examples to get you up and running quickly are now tagged at github:
-https://github.com/jbosstm/quickstart/releases
-Select the archive corresponding to this release and unzip it. The
-run_all_quickstarts shell and batch scripts will run all the quickstarts.
+Examples to get you up and running quickly are now tagged at github. For releases
+where the quickstarts have also been tagged, it is expected that the following format
+of URL would allow for downloading a zip of the quickstarts. Replacing <VERSION>
+with the tag name you require, please download and unzip the file:
+https://github.com/jbosstm/quickstart/archive/refs/tags/<VERSION>.zip
+The run_all_quickstarts shell and batch scripts will run all the quickstarts.
 Make sure you update the scripts to point to the directory where you unzipped
 the quickstart archive.
 
