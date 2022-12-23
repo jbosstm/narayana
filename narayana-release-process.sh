@@ -48,12 +48,12 @@ then
   exit
 fi
 read -p "By default you will need the ability to upload to a server for hosting the website and downloads. Do you have this (if you have access but don't want to upload, answer n* and then the next question)?" RSYNCOK
-[[ $RSYNCOK != n* ]]
+if [[ $RSYNCOK != n* ]]
 then
   RSYNC_ENABLED="true"
 else
   read -p "Do you have want to continue without uploading the website?" NORSYNC
-  [[ $NORSYNC == n* ]]
+  if [[ $NORSYNC == n* ]]
   then
     exit
   fi
