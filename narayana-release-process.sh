@@ -52,7 +52,7 @@ if [[ $RSYNCOK != n* ]]
 then
   RSYNC_ENABLED="true"
 else
-  read -p "Do you have want to continue without uploading the website?" NORSYNC
+  read -p "Do you want to continue without uploading the website?" NORSYNC
   if [[ $NORSYNC == n* ]]
   then
     exit
