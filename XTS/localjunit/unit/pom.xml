@@ -11,54 +11,53 @@
     should have received a copy of the GNU Lesser General Public License, v.2.1 
     along with this distribution; if not, write to the Free Software Foundation, 
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>localjunit</artifactId>
-        <version>6.0.0.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>localjunit-unit-tests</artifactId>
-    <packaging>jar</packaging>
-    <name>Narayana: XTS localjunit unit</name>
-    <description>Narayana: XTS localjunit unit</description>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- create a test jar for running tests on a jakarta server
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.xts</groupId>
+    <artifactId>localjunit</artifactId>
+    <version>6.0.0.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>localjunit-unit-tests</artifactId>
+  <packaging>jar</packaging>
+  <name>Narayana: XTS localjunit unit</name>
+  <description>Narayana: XTS localjunit unit</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- create a test jar for running tests on a jakarta server
                          (see artifact localjunit-unit-tests-jakarta) -->
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-    <profiles>
-        <profile>
-        <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>default-install</id>
-                                <phase>install</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-              </plugins>
-          </build>
-      </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 </project>

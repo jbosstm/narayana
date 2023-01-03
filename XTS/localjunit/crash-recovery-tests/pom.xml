@@ -4,94 +4,93 @@
 	General Public License, v. 2.1. This program is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>localjunit</artifactId>
-        <version>6.0.0.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>localjunit-crash-recovery-tests</artifactId>
-    <packaging>jar</packaging>
-    <name>Narayana: XTS localjunit crash-recovery-tests</name>
-    <description>xts crash recovery tests</description>
-    <build>
-        <plugins>
-            <plugin>
-                <inherited>false</inherited>
-                <groupId>org.jboss.byteman</groupId>
-                <artifactId>byteman-rulecheck-maven-plugin</artifactId>
-                <configuration>
-                    <additionalClassPath>../xtstest/target/classes</additionalClassPath>
-                </configuration>
-	        </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <stripVersion>true</stripVersion>
-                            <includeGroupIds>org.jboss.byteman</includeGroupIds>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <!-- create a test jar for running tests on a jakarta server
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.xts</groupId>
+    <artifactId>localjunit</artifactId>
+    <version>6.0.0.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>localjunit-crash-recovery-tests</artifactId>
+  <packaging>jar</packaging>
+  <name>Narayana: XTS localjunit crash-recovery-tests</name>
+  <description>xts crash recovery tests</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <additionalClassPath>../xtstest/target/classes</additionalClassPath>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>test-compile</phase>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <includeGroupIds>org.jboss.byteman</includeGroupIds>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <!-- create a test jar for running tests on a jakarta server
                          (see artifact localjunit-unit-tests) -->
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-    <profiles>
-        <profile>
-            <activation>
-                <property>
-                    <name>java.vendor</name>
-                    <value>IBM Corporation</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>codeCoverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <activation>
+        <property>
+          <name>java.vendor</name>
+          <value>IBM Corporation</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>codeCoverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
 		LLC, and individual contributors as indicated by the @author tags. See the 
 		copyright.txt in the distribution for a full listing of individual contributors. 
@@ -18,71 +19,11 @@
     <version>6.0.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.xts</groupId>
   <artifactId>xts-all</artifactId>
   <packaging>pom</packaging>
   <name>Narayana: XTS</name>
   <description>Narayana: XTS</description>
-  <build>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
-  <properties>
-    <sortpom.skip>true</sortpom.skip>
-  </properties>
-    <dependencies>
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-ri</artifactId>
-            <version>${version.jaxws-ri}</version>
-            <type>pom</type>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-xjc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.ws</groupId>
-                    <artifactId>policy</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.stream.buffer</groupId>
-                    <artifactId>streambuffer</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jvnet.staxex</groupId>
-                    <artifactId>stax-ex</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.activation</groupId>
-            <artifactId>jakarta.activation-api</artifactId>
-            <version>${version.jakarta.activation.jakarta.activation-api}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>${version.jaxws-ri}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
   <modules>
     <module>byteman_support</module>
     <module>WSAS</module>
@@ -97,24 +38,80 @@
     <module>jbossxts</module>
     <module>localjunit</module>
   </modules>
-    <profiles>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-install-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>default-install</id>
-                      <phase>install</phase>
-                    </execution>
-                  </executions>
-                  <inherited>false</inherited>
-                </plugin>
-              </plugins>
-          </build>
-      </profile>
-    </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-ri</artifactId>
+      <version>${version.jaxws-ri}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.ws</groupId>
+          <artifactId>policy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.stream.buffer</groupId>
+          <artifactId>streambuffer</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jvnet.staxex</groupId>
+          <artifactId>stax-ex</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+      <version>${version.jakarta.activation.jakarta.activation-api}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-rt</artifactId>
+      <version>${version.jaxws-ri}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

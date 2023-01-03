@@ -12,49 +12,95 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.xts</groupId>
     <artifactId>xts-all</artifactId>
     <version>6.0.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-t11</artifactId>
   <packaging>jar</packaging>
   <name>Narayana: XTS WS-T</name>
   <description>Narayana: XTS WS-T (wst11)</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-c11</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>wscf11</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>wsas</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-api</artifactId>
+      <version>${version.org.jboss.ws}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
   <build>
-    <sourceDirectory>dev/src</sourceDirectory>
     <resources>
       <resource>
         <directory>dev/dd</directory>
       </resource>
       <resource>
-        <directory>dev/dd/wscoor1.1/wsdl</directory>
         <targetPath>org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl</targetPath>
-        <includes>
-            <include>**/wsat*</include>
-            <include>**/envelope.xsd</include>
-            <include>**/ws-addr.xsd</include>
-        </includes>
-      </resource>
-      <resource>
         <directory>dev/dd/wscoor1.1/wsdl</directory>
-        <targetPath>org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl</targetPath>
         <includes>
-            <include>**/wsba*</include>
-            <include>**/envelope.xsd</include>
-            <include>**/ws-addr.xsd</include>
+          <include>**/wsat*</include>
+          <include>**/envelope.xsd</include>
+          <include>**/ws-addr.xsd</include>
         </includes>
       </resource>
       <resource>
-	    <directory>dev/dd/wsarjtx/wsdl</directory>
-		<targetPath>com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl</targetPath>
+        <targetPath>org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl</targetPath>
+        <directory>dev/dd/wscoor1.1/wsdl</directory>
         <includes>
-            <include>**/*.wsdl</include>
-            <include>**/*.xsd</include>
+          <include>**/wsba*</include>
+          <include>**/envelope.xsd</include>
+          <include>**/ws-addr.xsd</include>
         </includes>
-	  </resource>
+      </resource>
+      <resource>
+        <targetPath>com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl</targetPath>
+        <directory>dev/dd/wsarjtx/wsdl</directory>
+        <includes>
+          <include>**/*.wsdl</include>
+          <include>**/*.xsd</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -70,10 +116,10 @@
         <executions>
           <execution>
             <id>api</id>
-            <phase>package</phase>
             <goals>
               <goal>jar</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <classifier>api</classifier>
               <includes>
@@ -138,10 +184,10 @@
         <executions>
           <execution>
             <id>participant</id>
-            <phase>package</phase>
             <goals>
               <goal>war</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <webXml>dev/dd/ws-t11-participant_web-app.xml</webXml>
               <classifier>participant</classifier>
@@ -150,10 +196,10 @@
           </execution>
           <execution>
             <id>coordinator</id>
-            <phase>package</phase>
             <goals>
               <goal>war</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <webXml>dev/dd/ws-t11-coordinator_web-app.xml</webXml>
               <classifier>coordinator</classifier>
@@ -162,10 +208,10 @@
           </execution>
           <execution>
             <id>client</id>
-            <phase>package</phase>
             <goals>
               <goal>war</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <webXml>dev/dd/ws-t11-client_web-app.xml</webXml>
               <classifier>client</classifier>
@@ -175,52 +221,6 @@
         </executions>
       </plugin>
     </plugins>
+    <sourceDirectory>dev/src</sourceDirectory>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c11</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf11</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wsas</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.ws</groupId>
-      <artifactId>jbossws-api</artifactId>
-      <version>${version.org.jboss.ws}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-processor</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>arjunacore</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 </project>

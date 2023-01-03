@@ -4,46 +4,41 @@
 	General Public License, v. 2.1. This program is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>localjunit</artifactId>
-        <version>6.0.0.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>xtstest</artifactId>
-    <packaging>war</packaging>
-    <name>Narayana: XTS localjunit xtstest</name>
-    <description>Test service for use by recovery tests</description>
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <sourceDirectory>src</sourceDirectory>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <archive>
-                        <manifestEntries>
-                            <Dependencies>
-                                org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.jboss.ws.jaxws-client
-                                services export,org.jboss.ws.cxf.jbossws-cxf-client services export
-                            </Dependencies>
-                        </manifestEntries>
-                    </archive>
-                    <webXml>
-                        dd/WEB-INF/web.xml
-                    </webXml>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.xts</groupId>
+    <artifactId>localjunit</artifactId>
+    <version>6.0.0.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>xtstest</artifactId>
+  <packaging>war</packaging>
+  <name>Narayana: XTS localjunit xtstest</name>
+  <description>Test service for use by recovery tests</description>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestEntries>
+              <Dependencies>org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.jboss.ws.jaxws-client
+                                services export,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
+            </manifestEntries>
+          </archive>
+          <webXml>dd/WEB-INF/web.xml</webXml>
+        </configuration>
+      </plugin>
+    </plugins>
+    <sourceDirectory>src</sourceDirectory>
+  </build>
 </project>
