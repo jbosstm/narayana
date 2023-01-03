@@ -16,4 +16,43 @@
 	<packaging>jar</packaging>
 	<name>Narayana: XTS WSTX11-interop</name>
 	<description>JBoss Transactions WS-Addressing interop test</description>
+
+	<dependencies>
+		<!-- Arquillian Maven Resolver -->
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-api</artifactId>
+			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<version>${version.org.jboss.arquillian.core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<argLine>${server.jvm.args}</argLine>
+					<systemProperties>
+
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

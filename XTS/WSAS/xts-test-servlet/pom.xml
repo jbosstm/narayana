@@ -62,9 +62,9 @@
     </dependency>
     <!-- test time dep only - XTS TestRunnerXMLServlet -->
     <dependency>
-      <groupId>dom4j</groupId>
+      <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>${version.dom4j}</version>
+      <version>${version.org.dom4j}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
