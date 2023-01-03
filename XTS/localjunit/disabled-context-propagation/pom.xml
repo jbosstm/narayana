@@ -20,148 +20,141 @@
 ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>localjunit</artifactId>
-        <version>6.0.0.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>localjunit-disabled-context-propagation-tests</artifactId>
-    <packaging>jar</packaging>
-    <name>Narayana: XTS Disabled Context Propagation tests</name>
-    <description>Narayana: XTS Disabled Context Propagation tests</description>
+  <parent>
+    <groupId>org.jboss.narayana.xts</groupId>
+    <artifactId>localjunit</artifactId>
+    <version>6.0.0.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>localjunit-disabled-context-propagation-tests</artifactId>
+  <packaging>jar</packaging>
+  <name>Narayana: XTS Disabled Context Propagation tests</name>
+  <description>Narayana: XTS Disabled Context Propagation tests</description>
 
-    <build>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-disabled-context-propagation-configuration</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>process-test-sources</phase>
+            <configuration>
+              <skip>true</skip>
+              <target unless="skipTests">
+                <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone-xts.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml"></copy>
+                <replaceregexp file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" match="&lt;default-context-propagation enabled=&quot;true&quot;/&gt;" replace="&lt;default-context-propagation enabled=&quot;false&quot;/&gt;"></replaceregexp>
+              </target>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>delete-disabled-context-propagation-configuration</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skip>true</skip>
+              <target unless="skipTests">
+                <delete file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml"></delete>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${env.JBOSS_HOME}/standalone/configuration</directory>
+              <includes>
+                <include>test-disabled-context-propagation-standalone-xts.xml</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>arq</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-disabled-context-propagation-configuration</id>
-                        <phase>process-test-sources</phase>
-                        <configuration>
-                            <skip>true</skip>
-                            <target unless="skipTests">
-                                <copy
-                                    file="${env.JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
-                                    tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
-                                <replaceregexp
-                                    match="&lt;default-context-propagation enabled=&quot;true&quot;/&gt;"
-                                    replace="&lt;default-context-propagation enabled=&quot;false&quot;/&gt;"
-                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-
-                    <execution>
-                        <id>delete-disabled-context-propagation-configuration</id>
-                        <phase>test</phase>
-                        <configuration>
-                            <skip>true</skip>
-                            <target unless="skipTests">
-                                <delete
-                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-disabled-context-propagation-configuration</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
                 <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${env.JBOSS_HOME}/standalone/configuration</directory>
-                            <includes>
-                                <include>test-disabled-context-propagation-standalone-xts.xml</include>
-                            </includes>
-                        </fileset>
-                    </filesets>
+                  <skip>false</skip>
                 </configuration>
-            </plugin>
+              </execution>
+
+              <execution>
+                <id>delete-disabled-context-propagation-configuration</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
+    <profile>
+      <id>arqIPv6</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-disabled-context-propagation-configuration</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                </configuration>
+              </execution>
 
-    <profiles>
-        <profile>
-            <id>arq</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>create-disabled-context-propagation-configuration</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-
-                            <execution>
-                                <id>delete-disabled-context-propagation-configuration</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arqIPv6</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>create-disabled-context-propagation-configuration</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-
-                            <execution>
-                                <id>delete-disabled-context-propagation-configuration</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+              <execution>
+                <id>delete-disabled-context-propagation-configuration</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

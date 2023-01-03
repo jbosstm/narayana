@@ -12,79 +12,17 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.xts</groupId>
     <artifactId>xts-all</artifactId>
     <version>6.0.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
- </parent>
-  <modelVersion>4.0.0</modelVersion>
+  </parent>
   <artifactId>ws-c11</artifactId>
   <packaging>jar</packaging>
   <name>Narayana: XTS WS-C</name>
   <description>Narayana: XTS WS-C (wsc11)</description>
-  <build>
-    <sourceDirectory>dev/src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>dev/dd</directory>
-      </resource>
-      <resource>
-        <directory>dev/dd/wscoor1.1/wsdl</directory>
-        <targetPath>org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl</targetPath>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>ws-c11</id>
-            <phase>package</phase>
-            <goals>
-              <goal>war</goal>
-            </goals>
-            <configuration>
-              <webXml>dev/dd/ws-c11_web-app.xml</webXml>
-              <classifier>war</classifier>
-              <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>api</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>api</classifier>
-              <includes>
-                <include>com/arjuna/wsc/AlreadyRegisteredException.class</include>
-              </includes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>impl</id>
-            <phase>package</phase>
-            <configuration>
-              <classifier>impl</classifier>
-              <forceCreation>true</forceCreation>
-              <excludes>
-                <exclude>com/arjuna/wsc/AlreadyRegisteredException.class</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
@@ -116,4 +54,66 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>dev/dd</directory>
+      </resource>
+      <resource>
+        <targetPath>org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl</targetPath>
+        <directory>dev/dd/wscoor1.1/wsdl</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>ws-c11</id>
+            <goals>
+              <goal>war</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <webXml>dev/dd/ws-c11_web-app.xml</webXml>
+              <classifier>war</classifier>
+              <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>api</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <classifier>api</classifier>
+              <includes>
+                <include>com/arjuna/wsc/AlreadyRegisteredException.class</include>
+              </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>impl</id>
+            <phase>package</phase>
+            <configuration>
+              <classifier>impl</classifier>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>com/arjuna/wsc/AlreadyRegisteredException.class</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <sourceDirectory>dev/src</sourceDirectory>
+  </build>
 </project>

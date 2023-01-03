@@ -5,54 +5,54 @@
 	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jboss.narayana.xts</groupId>
-		<artifactId>localjunit</artifactId>
-		<version>6.0.0.Final-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>wstx11-interop</artifactId>
-	<packaging>jar</packaging>
-	<name>Narayana: XTS WSTX11-interop</name>
-	<description>JBoss Transactions WS-Addressing interop test</description>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.xts</groupId>
+    <artifactId>localjunit</artifactId>
+    <version>6.0.0.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>wstx11-interop</artifactId>
+  <packaging>jar</packaging>
+  <name>Narayana: XTS WSTX11-interop</name>
+  <description>JBoss Transactions WS-Addressing interop test</description>
 
-	<dependencies>
-		<!-- Arquillian Maven Resolver -->
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.resolver</groupId>
-			<artifactId>shrinkwrap-resolver-api</artifactId>
-			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.resolver</groupId>
-			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<version>${version.org.jboss.arquillian.core}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.resolver</groupId>
-			<artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
-			<version>${version.org.jboss.shrinkwrap.resolvers}</version>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <!-- Arquillian Maven Resolver -->
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-api</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
+    </dependency>
+  </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<argLine>${server.jvm.args}</argLine>
-					<systemProperties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <argLine>${server.jvm.args}</argLine>
+          <systemProperties>
 
-					</systemProperties>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
