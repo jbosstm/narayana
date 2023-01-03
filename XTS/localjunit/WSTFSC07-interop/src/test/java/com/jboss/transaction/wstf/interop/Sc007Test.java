@@ -32,6 +32,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,6 +58,9 @@ public class Sc007Test {
     
     @Deployment
     public static WebArchive createDeployment() {
+
+        String versionDom4j = System.getProperty("version.org.dom4j");
+
         return ShrinkWrap.create(WebArchive.class, "sc007.war")
                 .addPackage("com.jboss.transaction.wstf.interop")
                 .addPackage("com.jboss.transaction.wstf.interop.states")
@@ -74,6 +78,7 @@ public class Sc007Test {
                 .addPackage("com.jboss.transaction.wstf.webservices.soapfault.client")
                 .addPackage("org.jboss.jbossts.xts.soapfault")
                 .addPackage("org.jboss.jbossts.xts.bytemanSupport.participantReadOnly")
+                .addAsLibraries(Maven.resolver().resolve("org.dom4j:dom4j:" + versionDom4j).withoutTransitivity().asFile())
                 .addAsResource("sc007/participanthandlers.xml", "com/jboss/transaction/wstf/webservices/sc007/sei/participanthandlers.xml")
                 .addAsWebInfResource("sc007/wsdl/sc007.wsdl", "classes/com/jboss/transaction/wstf/webservices/sc007/generated/wsdl/sc007.wsdl")                          
                 .addAsResource("soapfault/wsdl/soapfault.wsdl", "org/jboss/jbossts/xts/soapfault/soapfault.wsdl")
@@ -85,7 +90,7 @@ public class Sc007Test {
                 .addAsResource("com/jboss/transaction/wstf/test/processor.xsl")
                 .addAsWebInfResource("web.xml")
                 .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml")
-                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
+                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
     }
 
     @BeforeClass()

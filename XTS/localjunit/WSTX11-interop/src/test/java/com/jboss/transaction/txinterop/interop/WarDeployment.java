@@ -49,6 +49,7 @@ import com.jboss.transaction.txinterop.webservices.bainterop.sei.ParticipantPort
 import com.jboss.transaction.txinterop.webservices.bainterop.server.BAInitiatorInitialisation;
 import com.jboss.transaction.txinterop.webservices.handlers.CoordinationContextHandler;
 import com.jboss.transaction.txinterop.webservices.soapfault.client.SoapFaultClient;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 import java.net.UnknownHostException;
 import java.net.Inet6Address;
@@ -60,6 +61,9 @@ import java.net.InetAddress;
  */
 public class WarDeployment {
     public static WebArchive getDeployment(){
+
+        String versionDom4j = System.getProperty("version.org.dom4j");
+
         return ShrinkWrap.create(WebArchive.class, "interop11.war")
                 .addPackage(InteropTestCase.class.getPackage())
                 .addPackage(InteropWaitState.class.getPackage())
@@ -84,6 +88,7 @@ public class WarDeployment {
                 .addPackage(SoapFaultClient.class.getPackage())
                 .addPackage(SoapFaultPortType.class.getPackage())
                 .addPackage(ParticipantCompletionReadOnlyRules.class.getPackage())
+                .addAsLibraries(Maven.resolver().resolve("org.dom4j:dom4j:" + versionDom4j).withoutTransitivity().asFile())
                 .addAsResource("interop11/participanthandlers.xml", "com/jboss/transaction/txinterop/webservices/atinterop/sei/participanthandlers.xml")
                 .addAsResource("interop11/participanthandlers.xml", "com/jboss/transaction/txinterop/webservices/bainterop/sei/participanthandlers.xml")
                 .addAsWebInfResource("interop11/wsdl/interopat.wsdl", "classes/com/jboss/transaction/txinterop/webservices/atinterop/generated/wsdl/interopat.wsdl")
@@ -104,7 +109,7 @@ public class WarDeployment {
                 .addAsWebResource("web/results.jsp", "results.jsp")
                 .addAsWebInfResource("web.xml")
                 .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml")
-                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
+                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,jakarta.xml.ws.api,org.jboss.xts,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
     }
 
     static String getLocalHost() {
