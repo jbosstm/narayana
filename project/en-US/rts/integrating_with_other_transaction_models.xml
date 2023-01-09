@@ -23,7 +23,7 @@
                 This functionality is provided by Wildfly RTS subsytem. Therefore, modular dependency on
                 org.jboss.narayana.rts has to be defined in deployment&#8217;s manifest file.
                 In order to enable bridging, service writer has to annotate either JAX-RS resource class or specific JAX-RS resource
-                method with one of two annotations: javax.ejb.TransactionAttribute, javax.transaction.Transactional.
+                method with one of two annotations: jakarta.ejb.TransactionAttribute, jakarta.transaction.Transactional.
             </para>
             <programlisting language="java" linenumbering="unnumbered">
 @Path("/")

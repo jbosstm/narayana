@@ -10,14 +10,14 @@
         <para>&PARENT_PRODUCT;
             assures complete, accurate business
             transactions for any Java based applications, including those written for the
-            Java EE and EJB frameworks.
+            Jakarta EE and EJB frameworks.
         </para>
         <para>&PARENT_PRODUCT;
             is a 100% Java implementation of a distributed transaction management system
-            based on the Sun Microsystems Java EE Java Transaction Service (JTS) standard.
+            based on the Jakarta EE Java Transaction Service (JTS) standard.
             Our implementation of the JTS utilizes the Object Management Group's (OMG) Object
             Transaction Service (OTS) model for transaction interoperability as recommended
-            in the Java EE and EJB standards. Although any JTS-compliant product will allow
+            in the Jakarta EE and EJB standards. Although any JTS-compliant product will allow
             Java objects to participate in transactions, one of the key features of &PARENT_PRODUCT;
             is it's 100% Java implementation. This allows &PARENT_PRODUCT;
             to support fully distributed
@@ -57,7 +57,7 @@
             <para>Key features</para>
             <itemizedlist>
                 <listitem>
-                    full compliant with the JTA 1.1 specification:
+                    full compliance with the Jakarta Transactions specification:
                     <itemizedlist>
                         <listitem>
                             Purely local (ORB-less) JTA offers the fastest JTA performance
@@ -769,8 +769,7 @@
                     Transaction Service and finally
                 </listitem>
                 <listitem>
-                    The Java Community Process leaded by Sun with its
-                    JTA/JTS specification
+                    The Jakarta Transactions specification process
                 </listitem>
             </itemizedlist>
             Basically these standards have proposed logical models, which divide
@@ -1197,11 +1196,11 @@ t.commit(false);
 
     </section>
     <section>
-        <title>Managing Transactions in Java EE</title>
+        <title>Managing Transactions in Jakarta EE</title>
         <section>
             <title> JTA/JTS Architecture</title>
-            The Java transaction initiative consists of two specifications: Java Transaction Service (JTS) and Java
-            Transaction API (JTA).
+            The Java transaction initiative consists of two specifications: Java Transaction Service (JTS) and Jakarta
+            Transactions API (also known as JTA).
             <para>JTS specifies the implementation of a Java transaction manager. This
                 transaction manager supports the JTA, using which application servers can
                 be built to support transactional Java applications. Internally the JTS
@@ -1267,7 +1266,7 @@ t.commit(false);
                     resources and implement business transactions. These are deployed on the
                     application server. Depending on the architecture of the application server,
                     these components can directly or indirectly create transactions and operate
-                    on the transactional resources. For example, an Enterprise JavaBean (EJB)
+                    on the transactional resources. For example, an Jakarta Enterprise Beans (EJB)
                     server allows declarative transaction demarcation, in which case, the EJB
                     components need not directly implement the transactions. However, a Java
                     implementation of a CORBA OTS, requires the CORBA object to demarcate transactions
@@ -1292,8 +1291,8 @@ t.commit(false);
             </itemizedlist>
         </section>
         <section>
-            <title>Java Transaction API</title>
-            The JTA specification may be classified into three categories of interface
+            <title>Jakarta Transactions API (formally JTA)</title>
+            The Jakarta Transactions specification may be classified into three categories of interface
             as shown in Figure 3. The Java Transaction API consists of three elements:
             a high-level application transaction demarcation interface, a high-level
             transaction manager interface intended for application server, and a standard
@@ -1309,7 +1308,7 @@ t.commit(false);
                 <title> Transaction Manager Interfaces</title>
                 <itemizedlist>
                     <listitem>
-                        javax.transaction.Status: Defines the following flags for the status of
+                        jakarta.transaction.Status: Defines the following flags for the status of
                         a transaction:
                     </listitem>
                 </itemizedlist>
@@ -1372,13 +1371,13 @@ t.commit(false);
                 <blockquote>
                     <para>Table 1: Transaction Status Flags</para>
                 </blockquote>
-                <para>The javax.transaction.Transaction, javax.transaction.TransactionManager, and
-                    javax.transaction.UserTransaction
+                <para>The jakarta.transaction.Transaction, jakarta.transaction.TransactionManager, and
+                    jakarta.transaction.UserTransaction
                     interfaces provide a getStatus method that returns one of the above status flags.
                 </para>
                 <itemizedlist>
                     <listitem>
-                        javax.transaction.Transaction:
+                        jakarta.transaction.Transaction:
                         An object of this type is created for each global transaction. This interface
                         provides methods for transaction completion(commit and rollback), resource
                         enlistment (enlistResource) and delistment (delistResource), registration
@@ -1386,7 +1385,7 @@ t.commit(false);
                         of the transaction (getStatus).
                     </listitem>
                     <listitem>
-                        javax.transaction.TransactionManager:
+                        jakarta.transaction.TransactionManager:
                         This interface is implemented by the JTS and allows an application server
                         to communicate with the transaction manager to demarcate transactions (begin,
                         commit, rollback), suspending and resuming transactions (suspend and resume),
@@ -1395,7 +1394,7 @@ t.commit(false);
                         (setTransactionTimeout) and query the status of the transaction (getStatus).
                     </listitem>
                     <listitem>
-                        javax.transaction.UserTransaction:
+                        jakarta.transaction.UserTransaction:
                         . This interface provides methods to begin and end transactions (begin,
                         commit, and rollback), set the transaction for rollback (setRollbackOnly),
                         set the transaction timeout interval (setTransactionTimeout), and get the
@@ -1434,7 +1433,7 @@ t.commit(false);
                 interfaces are mandated by a given application server.
                 <itemizedlist>
                     <listitem>
-                        javax.transaction.Synchronization:
+                        jakarta.transaction.Synchronization:
                         An object intended to participate in a synchronization protocol with the
                         transaction manager should implement this interface. This mechanism is
                         based on the Observer pattern. This interface has two methods - beforeCompletion
@@ -1445,20 +1444,20 @@ t.commit(false);
             </section>
         </section>
         <section>
-            <title>Java Transaction API - Usage</title>
+            <title>Jakarta Transactions API - Usage</title>
             This section describes the usage of the JTA for implementing various transaction
             semantics. The purpose of this section is to provide conceptual guidelines
             only.
             <section>
                 <title>Transaction Demarcation</title>
-                The JTA specifies two approaches with which new global transactions can
+                The Jakarta Transactions specifies two approaches with which new global transactions can
                 be initiated and demarcated.
                 <itemizedlist>
                     <listitem>
-                        Application Program Demarcation: The javax.transaction.UserTransaction
+                        Application Program Demarcation: The jakarta.transaction.UserTransaction
                         interface provides methods for application components to begin and end
                         transactions programmatically. The underlying application server should
-                        provide a mechanism to obtain a reference to this object. The JTA specification
+                        provide a mechanism to obtain a reference to this object. The Jakarta Transactions specification
                         requires that the application servers use the JNDI for storing references
                         to UserTransaction objects and for lookup.
                     </listitem>
@@ -1478,7 +1477,7 @@ userTransaction.commit();
 </programlisting>
                     <listitem>
                         Application Server Controlled Demarcation In this approach, the
-                        javax.transaction.TransactionManager
+                        jakarta.transaction.TransactionManager
                         interface controls transaction demarcation on behalf of the application being
                         managed. The transaction manager also maintains the transaction context and
                         its association with the calling threads implicitly.
@@ -1504,7 +1503,7 @@ TransactionManager.commit();
                 when the transaction terminates, e.g., are driven through the two-phase commit
                 protocol.
                 <para>
-                    The JTA is much more closely integrated with the XA concept of resources
+                    Jakarta Transactions is much more closely integrated with the XA concept of resources
                     than the arbitrary objects. For each resource in-use by the application,
                     the application server invokes the enlistResource method with an XAResource
                     object which identifies the resource in use.
@@ -1531,7 +1530,7 @@ TransactionManager.commit();
                 </para>
                 <para>
                     The application server can enlist and delist resource managers with the transaction
-                    manager using the javax.transaction.Transaction
+                    manager using the jakarta.transaction.Transaction
                     interface
                 </para>
                 Usage
@@ -1566,11 +1565,11 @@ transaction.enlistResource(xaResource);...
                 completion of the two-phase commit process. This enables such application
                 objects to synchronize transient state and data stored in persistent storage.
                 <para>
-                    The javax.transaction.Transaction
+                    The jakarta.transaction.Transaction
                     interface provides the
                     <emphasis>registerSynchronization</emphasis>
                     method to register
-                    javax.transaction.Synchronization
+                    jakarta.transaction.Synchronization
                     objects with the transaction manager. The transaction manager then uses
                     the synchronization protocol and calls the beforeCompletion and afterCompletion
                     methods before and after the two phase commit process.
@@ -1601,7 +1600,7 @@ transaction.enlistResource(xaResource);...
                         JDBC and Transactions
                     </listitem>
                     <listitem>
-                        Enterprise Java Beans and Transactions
+                        Jakarta Enterprise Beans and Transactions
                     </listitem>
                 </itemizedlist>
             </section>
@@ -1610,11 +1609,11 @@ transaction.enlistResource(xaResource);...
     <section>
         <title>Managing Transactions in EJB</title>
         <section>
-            <title>An Application Server Model - The Enterprise Java Beans</title>
+            <title>An Application Server Model - The Jakarta Enterprise Beans</title>
             <section>
                 <title>EJB Overview</title>
-                Enterprise Java Beans (EJB) is a technology specification from Sun Microsystems
-                Inc. that specifies a framework for building component-based distributed
+                Jakarta Enterprise Beans (EJB) is a technology specification
+                that specifies a framework for building component-based distributed
                 applications. As an application server framework, the EJB servers address
                 transaction processing, resource pooling, security, threading, persistence,
                 remote access, life cycle etc.
@@ -1662,7 +1661,7 @@ transaction.enlistResource(xaResource);...
                 <title>EJB Transaction Model</title>
                 The EJB framework does not specify any specific transaction service (such
                 as the JTS) or protocol for transaction management. However, the specification
-                requires that the javax.transaction.UserTransaction interface of the JTS
+                requires that the jakarta.transaction.UserTransaction interface of the JTS
                 be exposed to enterprise beans. This interface is required for programmatic
                 transaction demarcation as discussed in the next section.
                 <para>
@@ -1721,7 +1720,7 @@ transaction.enlistResource(xaResource);...
                         . The container demarcates transactions on behalf of the
                         bean. The Required or RequiresNew attribute is specified in a deployment
                         descriptor at the time of deploying the bean on an EJB server. The bean
-                        can use the javax.ejb.EJBContext.setRollbackOnly() method to mark the transaction
+                        can use the jakarta.ejb.EJBContext.setRollbackOnly() method to mark the transaction
                         for rollback.
                     </listitem>
                     <listitem>
@@ -1731,7 +1730,7 @@ transaction.enlistResource(xaResource);...
                     </listitem>
                     <listitem>
                         <emphasis>Client Managed Demarcation</emphasis>
-                        : Java clients can use the javax.transaction.UserTransaction
+                        : Java clients can use the jakarta.transaction.UserTransaction
                         interface to demarcate transactions programmatically.
                     </listitem>
                 </itemizedlist>
@@ -1745,7 +1744,7 @@ transaction.enlistResource(xaResource);...
             </section>
             <section>
                 <title>Application Synchronization</title>
-                The EJB specification provides the javax.ejb.SessionSynchronization interface
+                The EJB specification provides the jakarta.ejb.SessionSynchronization interface
                 for application synchronization. When implemented by a bean, the container
                 calls the afterBegin, beforeCompletion and afterCompletion methods for
                 application synchronization during the two-phase commit process.
@@ -1816,7 +1815,7 @@ public void withdraw (double amount) {
             since it supports the XAResource interface that allows to participate to the
             2PC protocol. An application that need to include more than one database can
             create a JTA transaction. To demarcate a JTA transaction, the application program
-            invokes the begin, commit, and rollback methods of the javax.transaction.UserTransaction
+            invokes the begin, commit, and rollback methods of the jakarta.transaction.UserTransaction
             interface. The following code, that can be applied to a bean-managed transaction,
             demonstrates the UserTransaction methods. The begin and commit invocations delimit
             the updates to the database. If the updates fail, the code invokes the rollback
@@ -3534,17 +3533,17 @@ com.arjuna.ats.arjuna.recovery.periodicRecovery (default 120 secs)
             assures
             complete, accurate business transactions for any
             Java based applications, including those written for
-            the Java EE and EJB frameworks.
+            the Jakarta EE and EJB frameworks.
         </para>
         <para>
 					&PARENT_PRODUCT;
             is a 100% Java implementation of a
             distributed transaction management system based on
-            the Sun Microsystems Java EE Java Transaction Service
+            the Jakarta EE Java Transaction Service
             (JTS) standard. Our implementation of the JTS
             utilizes the Object Management Group's (OMG) Object
             Transaction Service (OTS) model for transaction
-            interoperability as recommended in the Java EE and EJB
+            interoperability as recommended in the Jakarta EE and EJB
             standards. Although any JTS-compliant product will
             allow Java objects to participate in transactions,
             one of the key features of &PARENT_PRODUCT;
@@ -3601,7 +3600,7 @@ com.arjuna.ats.arjuna.recovery.periodicRecovery (default 120 secs)
             <title>Key features</title>
             <itemizedlist>
                 <listitem>
-                    full compliant with the JTA 1.1
+                    full compliant with the Jakarta Transactions 2.0
                     specification:
                     <itemizedlist>
                         <listitem>
@@ -4071,7 +4070,7 @@ Amount to withdraw : 200
 Beginning a User transaction to
 withdraw from an account
 The requested account does not exist!
-ERROR - javax.transaction.RollbackException
+ERROR - jakarta.transaction.RollbackException
 </programlisting>
                         </blockquote>
 
@@ -4081,7 +4080,7 @@ ERROR - javax.transaction.RollbackException
                         <title>Building The Banking Application with JTA</title>
                         <para>From
                             an architectural point of view of JTA, the bank client is considered as
-                            an application program able to manage transactions via the javax.transaction.UserTransaction interface. The
+                            an application program able to manage transactions via the jakarta.transaction.UserTransaction interface. The
                             following portion of code illustrates how a JTA transaction is
                             started and terminated when the client asks to transfer money from one account to another. This also describes what are &PARENT_PRODUCT;
                             packages that need to be used
@@ -4124,7 +4123,7 @@ public class BankClient
       {
        //the following instruction asks a specific &PARENT_PRODUCT;
        //class to obtain a UserTransaction instance
-       <emphasis>javax.transaction.UserTransaction userTran =
+       <emphasis>jakarta.transaction.UserTransaction userTran =
                      com.arjuna.ats.jta.UserTransaction.userTransaction()</emphasis>;
        System.out.println("Beginning a User transaction to get balance");
        <emphasis>userTran.begin()</emphasis>;
@@ -4183,11 +4182,11 @@ public class Bank {
                             outcome, to set the account value either to its initial state or its final state.
                         </para>
                         <para>The AccountResource object is in fact an object that implements the
-                            javax.transactions.XAResource,
+                            javax.transaction.xa.XAResource,
                             then able to participate to the transaction commitment. For this aim, the Account
                             object has to register or enlist the AccountResource object as a participant
-                            after having obtaining the reference of the javax.transaction.Transaction object
-                            via the javax.transaction.TransactionManager object
+                            after having obtaining the reference of the jakarta.transaction.Transaction object
+                            via the jakarta.transaction.TransactionManager object
                         </para>
                         <programlisting role="JAVA" language="Java">
 package com.arjuna.demo.jta.localbank;
@@ -4223,9 +4222,9 @@ public class Account
 
      try
      {
-       <emphasis>javax.transaction.TransactionManager transactionManager =
+       <emphasis>jakarta.transaction.TransactionManager transactionManager =
          com.arjuna.ats.jta.TransactionManager.transactionManager();
-       javax.transaction.Transaction currentTrans =
+       jakarta.transaction.Transaction currentTrans =
           transactionManager.getTransaction();</emphasis>
 
        if (accRes == null) {
@@ -4245,9 +4244,9 @@ public class Account
    ...
 }
 </programlisting>
-                        <para>The AccountResource class that implements the javax.transaxtion.XAResource
+                        <para>The AccountResource class that implements the javax.transaction.xa.XAResource
                             interface provides similar methods as the Account class (credit, withdraw and
-                            balance) but also all methods specified by the javax.transaxtion.XAResource.
+                            balance) but also all methods specified by the javax.transaction.xa.XAResource.
                             The following portion of code describes how the methods prepare,
                             commit and rollback
                             are implemented.

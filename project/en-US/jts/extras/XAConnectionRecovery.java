@@ -22,7 +22,7 @@ import com.arjuna.common.util.logging.*;
 
 import java.sql.*;
 import javax.sql.*;
-import javax.transaction.*;
+import jakarta.transaction.*;
 import javax.transaction.xa.*;
 import java.util.*;
 

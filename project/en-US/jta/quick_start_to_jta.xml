@@ -72,7 +72,7 @@
             a high-level transaction
             manager interface intended for application server, and a standard Java mapping of the X/Open XA protocol intended for
             transactional resource
-            manager. All of the JTA classes and interfaces occur within the javax.transaction package, and the corresponding &PRODUCT;
+            manager. All of the JTA classes and interfaces occur within the jakarta.transaction package, and the corresponding &PRODUCT;
             implementations within
             the com.arjuna.ats.jta package.
         </para>

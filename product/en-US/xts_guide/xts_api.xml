@@ -158,8 +158,8 @@
             <section>
                 <title>Deploying Participants</title>
                 <para>
-                    Transactional web services and transactional clients are regular Java EE applications and can be deployed into
-                    the application server in the same way as any other Java EE application. The XTS Subsystem exports all the client and
+                    Transactional web services and transactional clients are regular Jakarta EE applications and can be deployed into
+                    the application server in the same way as any other Jakarta EE application. The XTS Subsystem exports all the client and
                     web service API
                     classes needed to manage transactions and enroll and manage participant web services. It provides
                     implementations of all the WS-C and WS-T coordination services, not just the coordinator services. In

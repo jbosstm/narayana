@@ -4,7 +4,7 @@
 %BOOK_ENTITIES;
 ]>
 <section>
-    <title>OTS and Java EE Transaction Service Management</title>
+    <title>OTS and Jakarta EE Transaction Service Management</title>
 
     <section>
         <title>Starting the run-time system</title>

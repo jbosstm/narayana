@@ -60,7 +60,7 @@
         Application developer annotates methods with the CDI annotations to define actions and undo operations
         which are managed by Transaction Manager. Narayana handles the state of the compensating transaction and drives
         undo operation if necessary. The manner how the annotations are used is pretty similar to standard CDI transaction
-        annotations (e.g. in Java EE).
+        annotations (e.g. in Jakarta EE).
       </para>
       <para>
         For the better understanding we recommend to check the
@@ -69,8 +69,8 @@
       <para>
         The “entry point” is marking a method with <code>@Compensatable</code> annotation. This defines demarcation for the compensating transaction
         to start a new one, to join to an existing one or to throw exception if a compensating transaction context does not yet exist
-        - the behaviour is the same as you can know from with the Java EE
-        <code><ulink url="http://docs.oracle.com/javaee/7/api/javax/ejb/TransactionAttribute.html">@TransactionAttribute</ulink></code>.
+        - the behaviour is the same as you can know from with the Jakarta EE
+        <code><ulink url="https://javadoc.io/static/jakarta.platform/jakarta.jakartaee-api/10.0.0/jakarta/ejb/TransactionAttribute.html">@TransactionAttribute</ulink></code>.
         On top of that the <code>@Compensatable</code> annotation permits you to define which exception type made the transaction to be cancelled
         or not cancelled.
       </para>
@@ -84,7 +84,7 @@
       </para>
       <para>
         The CDI bean marking a method with <code>@TxCompensate</code>/<code>@TxConfirm</code> and the handlers can inject
-        (<ulink url="http://docs.oracle.com/javaee/7/api/javax/inject/Inject.html">@Inject</ulink>)
+        (<ulink url="https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0.html#built_in_annotation_literals">@Inject</ulink>)
         a POJO object (a DTO) marked as <code>@CompensationScoped</code>. This annotation defines the data being set to this object
         in the bean in the scope of the specific compensating transaction will be available in the handlers
         (<code>@TxCompensate</code>/<code>@TxConfirm</code>) intercepting the compensating transaction.
@@ -101,9 +101,9 @@
           <listitem>
             <para>
               <code>@Compensatable</code> - declaratively control compensation transaction boundaries on CDI managed beans.
-              This is similar to what is known from Java EE world, how <ulink url="http://docs.oracle.com/javaee/7/api/javax/ejb/TransactionAttribute.html">@TransactionAttribute</ulink> drives
+              This is similar to what is known from Jakarta EE world, how <ulink url="https://javadoc.io/static/jakarta.platform/jakarta.jakartaee-api/10.0.0/jakarta/ejb/TransactionAttribute.html">@TransactionAttribute</ulink> drives
               the global transaction behaviour. Compensatable framework uses CDI (you can define how interacts
-              with other compensating transaction in the scope - you can use the type as known from Java EE,
+              with other compensating transaction in the scope - you can use the type as known from Jakarta EE,
               which means <code>MANDATORY</code>, <code>SUPPORTS</code>, <code>REQUIRED</code> etc.)
             </para>
           </listitem>
@@ -135,7 +135,7 @@
           <listitem>
             <para>
               <code>org.jboss.narayana.compensations.api.CompensationManager</code> - compensation manager could be
-              <ulink url="http://docs.oracle.com/javaee/7/api/javax/inject/Inject.html">@Injected</ulink> for being able to mark the context
+              <ulink url="https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0.html#built_in_annotation_literals">@Injected</ulink> for being able to mark the context
               as <code>setCompensateOnly</code>.
             </para>
           </listitem>

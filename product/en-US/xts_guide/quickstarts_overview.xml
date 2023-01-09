@@ -32,7 +32,7 @@
     </para>
     <para>
       Each service uses JPA to persist its data (the value of a counter). Therefore, the service class is annotated with
-      javax.ejb.TransactionAttribute which tells XTS to automatically bridge WS-AT transaction to JTA.
+      jakarta.ejb.TransactionAttribute which tells XTS to automatically bridge WS-AT transaction to JTA.
     </para>
   </section>
 
@@ -53,7 +53,7 @@
     </para>
     <para>
       FirstServiceAT uses JPA to persist its data. Therefore, the service class is annotated with
-      javax.ejb.TransactionAttribute which tells XTS to automatically bridge WS-AT transaction to JTA. The
+      jakarta.ejb.TransactionAttribute which tells XTS to automatically bridge WS-AT transaction to JTA. The
       FirstServiceAT Web Service updates some local data and then invokes the SecondServiceAT Web services.
     </para>
     <para>

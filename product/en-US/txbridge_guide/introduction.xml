@@ -12,7 +12,7 @@
             ACID transactions provide for properties of Atomicity, Consistency, Isolation and Durability.
         </para>
         <para>In JavaEE applications, transaction support is provided via the Java Transaction API
-            (JTA). The classes and interfaces in the javax.transaction and javax.transaction.xa packages
+            (JTA). The classes and interfaces in the jakarta.transaction and javax.transaction.xa packages
             provide a means by which the programmer may manage transaction demarcation (begin, commit,
             rollback) and, where necessary, interact with the transaction management system (e.g.
             enlistResource). In many JavaEE applications, further abstractions are provided on top of the

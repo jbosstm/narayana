@@ -14,14 +14,16 @@
         Transactions ensure data integrity when an application interacts with multiple datasources.
     </para>
     <section>
-        <title>The Java Transaction API (JTA)</title>
+        <title>The Java Transaction API (Jakarta Transactions)</title>
         <para>
             The interfaces specified by the many transaction standards tend to be too low-level for most
             application
             programmers. Therefore, Sun Microsystems created the Java Transaction API (JTA),
             which specifies higher-level
             interfaces to assist in the development of distributed transactional
-            applications.
+            applications. JTA was later renamed Jakarta Transactions and the
+            specification is maintained at <a class="ulink" href="https://jakarta.ee/specifications/transactions">
+            https://jakarta.ee/specifications/transactions</a>.
         </para>
         <para>
             Note, these interfaces are still low-level. You still need to implement state management and
@@ -32,8 +34,8 @@
             other transactional APIs allow.
         </para>
         <para>
-            With reference to JTA 1.1 (
-            <ulink url="http://www.oracle.com/technetwork/java/javaee/tech/jta-138684.html" />
+            With reference to Jakarta Transactions (
+            <ulink url="https://jakarta.ee/specifications/transactions/" />
             ),
             distributed transaction services typically involve a number of participants:
         </para>
@@ -102,7 +104,7 @@
             need to be exposed. You only need to define high-level interfaces
             to allow transaction demarcation, resource
             enlistment, synchronization and recovery process to be
-            driven from the users of the transaction services. The JTA is
+            driven from the users of the transaction services. Jakarta Transactions is
             a high-level application interface
             that allows a transactional application to demarcate transaction boundaries, and
             also contains a
@@ -111,7 +113,7 @@
         <important>
             <title>Compatibility</title>
             <para>
-                the JTA support provided by &PRODUCT;
+                the Jakarta Transactions support provided by &PRODUCT;
                 is compliant with the 1.1 specification.
             </para>
         </important>
@@ -140,13 +142,13 @@
             </listitem>
         </itemizedlist>
         <para>
-            All of the JTA classes and interfaces exist within the
-            <package>javax.transaction</package>
+            All of the Jakarta Transactions classes and interfaces exist within the
+            <package>jakarta.transaction</package>
             package, and the
             corresponding &PRODUCT;
             implementations within the
             <package>com.arjuna.ats.jta</package>
-            package.
+            package. Note that XA resource API classes are still part of the Java SE (<ulink url="https://jakarta.ee/specifications/transactions/2.0/jakarta-transactions-spec-2.0.html#relationship-to-other-java-apis" />)
         </para>
         <para>
             Each Xid created by &PRODUCT;
@@ -201,7 +203,7 @@
             .
         </para>
         <procedure>
-            <title>Selecting the local JTA Implementation</title>
+            <title>Selecting the local Jakarta Transactions Implementation</title>
             <step>
                 <para>
                     Set property
@@ -363,7 +365,7 @@
     <section>
         <title>Suspend and resuming a transaction</title>
         <para>
-            The JTA supports the concept of a thread temporarily suspending and resuming transactions in
+            Jakarta Transactions supports the concept of a thread temporarily suspending and resuming transactions in
             order to perform
             non-transactional work. Call the
             <methodname>suspend</methodname>
@@ -412,7 +414,7 @@
         &PRODUCT;
                 allows a suspended transaction to be resumed by a different thread. This
                 feature is not required by
-                JTA, but is an important feature.
+                Jakarta Transactions, but is an important feature.
             </para>
         </note>
         <para>
@@ -485,7 +487,7 @@
             does not impose restrictions on threads terminating transactions.
         </para>
         <para>
-            The JTA standard does not provide a means to obtain the transaction identifier. However,
+            Jakarta Transactions does not provide a means to obtain the transaction identifier. However,
       &PRODUCT;
             provides several
             ways to view the transaction identifier. Call method
@@ -493,7 +495,7 @@
             to print full information
             about the transaction, including the identifier. Alternatively you
             can cast the
-            <type>javax.transaction.Transaction</type>
+            <type>jakarta.transaction.Transaction</type>
             instance to a
             <type>com.arjuna.ats.jta.transaction.Transaction</type>
             ,
@@ -529,7 +531,7 @@
             through the two-phase commit protocol.
         </para>
         <para>
-            As stated previously, the JTA is much more closely integrated with the XA concept of resources
+            As stated previously, Jakarta Transactions is much more closely integrated with the XA concept of resources
             than the arbitrary
             objects. For each resource the application is using, the application server
             invokes the
@@ -629,7 +631,7 @@
                                 method is executed without a transaction context.
                             </para>
                             <para>
-                                NOTE: If a JTA XAResource throws a RuntimeException, this method will not be called as the transaction has not and
+                                NOTE: If an XAResource throws a RuntimeException, this method will not be called as the transaction has not and
                                 cannot complete. Please see JBTM-2148 for more details.
                             </para>
                         </entry>
@@ -673,12 +675,12 @@
         <title>TransactionSynchronizationRegistry</title>
         <para>
             The
-            <interfacename>javax.transaction.TransactionSynchronizationRegistry</interfacename>
+            <interfacename>jakarta.transaction.TransactionSynchronizationRegistry</interfacename>
             interface, added to the
-            JTA API in version 1.1, provides for registering Synchronizations with
+            Jakarta Transactions API in version 1.1, provides for registering Synchronizations with
             special ordering behavior, and for storing
             key-value pairs in a per-transaction Map. Full
-            details are available from the JTA 1.1 API specification and
+            details are available in the Jakarta Transactions API specification and
             javadoc. Here we focus on
             implementation specific behavior.
         </para>

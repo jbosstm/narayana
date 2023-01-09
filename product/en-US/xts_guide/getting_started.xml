@@ -105,8 +105,8 @@
             <para>
                 Similarly to the client-side, the service-side is also integrated with JTA. To make your web service
                 WS-AT compliant,
-                annotate your web service class or method with the EJB 3 javax.ejb.TransactionAttribute annotation or the JTA
-                1.2 javax.transaction.Transactional annotation. XTS will automatically translate WS-AT context, received with
+                annotate your web service class or method with the EJB 3 jakarta.ejb.TransactionAttribute annotation or the JTA
+                jakarta.transaction.Transactional annotation. XTS will automatically translate WS-AT context, received with
                 the request, to JTA. See our quickstarts for an example:
                 <xref linkend="ref-WSATMultiService" />
                 and
