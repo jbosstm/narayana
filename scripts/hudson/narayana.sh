@@ -78,7 +78,7 @@ function init_test_options {
       fatal "Narayana does not support JDKs less than 11"
     fi
 
-    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="6.0.0.CR1"
+    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="6.0.0.Final-SNAPSHOT"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
