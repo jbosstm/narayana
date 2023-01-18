@@ -239,7 +239,6 @@
     <version.org.jboss.arquillian.core>1.7.0.Alpha12</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
-    <version.org.jboss.integration>6.0.0.Final-SNAPSHOT</version.org.jboss.integration>
     <version.org.jboss.invocation>1.7.0.Final</version.org.jboss.invocation>
     <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
     <version.org.jboss.jboss-transaction-spi>7.6.1.Final</version.org.jboss.jboss-transaction-spi>
