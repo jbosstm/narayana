@@ -133,12 +133,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.integration</groupId>
-      <artifactId>jboss-corba-ots-spi</artifactId>
-      <version>${version.org.jboss.integration}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-core</artifactId>
       <version>${version.org.jboss.resteasy}</version>
