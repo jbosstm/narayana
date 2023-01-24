@@ -209,7 +209,7 @@ function init_test_options {
     fi
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
-    [ $AS_CLONE ] && [ -z "$WILDFLY_CLONED_REPO" ] || AS_CLONE=0 # git clone the AS when JBOSS_HOME is not provided
+    [ $AS_CLONE ] && [ -z "$WILDFLY_CLONED_REPO" ] || AS_CLONE=0 # git clone WFLY when WILDFLY_CLONED_REPO is not provided
     [ $AS_BUILD ] && [ -z "$JBOSS_HOME" ] || AS_BUILD=0 # build the AS
     [ $AS_TESTS ] || AS_TESTS=0 # Run WildFly/JBoss EAP testsuite
     [ $COMPENSATIONS_TESTS ] || COMPENSATIONS_TESTS=0 # compensations tests
