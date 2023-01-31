@@ -21,7 +21,6 @@
  */
 package io.narayana.lra;
 
-import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriBuilder;
@@ -35,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.QUERY_FIELD_SEPARATOR;
@@ -45,6 +45,33 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT
 // for use by NarayanaLRAClient and ServerLRAFilter
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();
+
+    /**
+     * Use this cache to prevent from {@link ThreadLocal} spilling. This cache is incremented when the request filter
+     * method is invoked and decremented when the response filter method is invoked. In this sense, if the response
+     * filter method runs on different thread (meaning it doesn't clear the right {@link ThreadLocal}) we still remove
+     * it from the cache.
+     */
+    private static final Map<URI, Integer> activeLRACache = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("ConstantConditions")
+    public static void addActiveLRACache(URI lraId) {
+        if (lraId != null && activeLRACache.containsKey(lraId)) {
+            activeLRACache.compute(lraId, (k, v) -> v + 1);
+        } else {
+            activeLRACache.put(lraId, 1);
+        }
+    }
+
+    public static void removeActiveLRACache(URI lraId) {
+        if (lraId != null && activeLRACache.containsKey(lraId)) {
+            activeLRACache.compute(lraId, (k, v) -> v - 1);
+
+            if (activeLRACache.get(lraId) == 0) {
+                activeLRACache.remove(lraId);
+            }
+        }
+    }
 
     private final Stack<URI> stack;
     private Map<String, Object> state;
@@ -151,8 +178,16 @@ public class Current {
 
     public static URI peek() {
         Current current = lraContexts.get();
+        URI peek = current != null ? current.stack.peek() : null;
 
-        return current != null ? current.stack.peek() : null;
+        if (peek != null && !activeLRACache.containsKey(peek)) {
+            // we cleaned the Current on different thread, so we need to clear the context
+            // that was set by previous request filter and wasn't cleaned by the response filter
+            Current.popAll();
+            return null;
+        }
+
+        return peek;
     }
 
     public static URI pop() {
@@ -272,35 +307,6 @@ public class Current {
     public static void updateLRAContext(URI lraId, MultivaluedMap<String, String> headers) {
         headers.putSingle(LRA_HTTP_CONTEXT_HEADER, lraId.toString());
         push(lraId);
-    }
-
-    /**
-     * If there is an LRA context on the calling thread then make it available as
-     * a header on outgoing JAX-RS invocations
-     *
-     * @param context the context for the JAX-RS request
-     */
-    public static void updateLRAContext(ClientRequestContext context) {
-        MultivaluedMap<String, Object> headers = context.getHeaders();
-
-        if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
-            // LRA context is explicitly set
-            return;
-        }
-
-        URI lraId = Current.peek();
-
-        if (lraId != null) {
-            headers.putSingle(LRA_HTTP_CONTEXT_HEADER, lraId);
-        } else {
-            Object lraContext = context.getProperty(LRA_HTTP_CONTEXT_HEADER);
-
-            if (lraContext != null) {
-                headers.putSingle(LRA_HTTP_CONTEXT_HEADER, lraContext);
-            } else {
-                headers.remove(LRA_HTTP_CONTEXT_HEADER);
-            }
-        }
     }
 
     public static void popAll() {

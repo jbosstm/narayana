@@ -22,20 +22,40 @@
 package io.narayana.lra.filter;
 
 import io.narayana.lra.Current;
-
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.ext.Provider;
+
+import java.net.URI;
 
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 @Provider
 public class ClientLRARequestFilter implements ClientRequestFilter {
+
     @Override
     public void filter(ClientRequestContext context) {
-        if (Current.peek() != null) {
-            context.setProperty(LRA_HTTP_CONTEXT_HEADER, Current.peek());
+        MultivaluedMap<String, Object> headers = context.getHeaders();
+
+        if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
+            // LRA context is explicitly set
+            return;
         }
-        Current.updateLRAContext(context);
+
+        URI lraId = Current.peek();
+
+        if (lraId != null) {
+            headers.putSingle(LRA_HTTP_CONTEXT_HEADER, lraId);
+            context.setProperty(LRA_HTTP_CONTEXT_HEADER, lraId);
+        } else {
+            Object lraContext = context.getProperty(LRA_HTTP_CONTEXT_HEADER);
+
+            if (lraContext != null) {
+                headers.putSingle(LRA_HTTP_CONTEXT_HEADER, lraContext);
+            } else {
+                headers.remove(LRA_HTTP_CONTEXT_HEADER);
+            }
+        }
     }
 }
