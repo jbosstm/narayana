@@ -342,6 +342,7 @@ public class NarayanaLRAClient implements Closeable {
             lraTrace(lra, "startLRA returned");
 
             Current.push(lra);
+            Current.addActiveLRACache(lra);
 
             return lra;
         } catch (UnsupportedEncodingException uee) {
@@ -820,6 +821,7 @@ public class NarayanaLRAClient implements Closeable {
 
         } finally {
             Current.pop(lra);
+            Current.removeActiveLRACache(lra);
 
             if (client != null) {
                 client.close();

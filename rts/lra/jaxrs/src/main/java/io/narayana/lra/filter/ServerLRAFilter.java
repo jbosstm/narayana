@@ -28,6 +28,7 @@ import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.logging.LRALogger;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
@@ -79,11 +80,13 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.Type.MANDATORY;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.Type.NESTED;
 
 @Provider
+@ApplicationScoped
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
     private static final String CANCEL_ON_FAMILY_PROP = "CancelOnFamily";
     private static final String CANCEL_ON_PROP = "CancelOn";
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
     private static final String SUSPENDED_LRA_PROP = "suspendLRA";
+    private static final String CURRENT_LRA_PROP = "currentLRA";
     private static final String NEW_LRA_PROP = "newLRA";
     private static final String ABORT_WITH_PROP = "abortWith";
 
@@ -217,6 +220,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             if (incommingLRA != null) {
                 Current.push(incommingLRA);
                 containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incommingLRA);
+                containerRequestContext.setProperty(CURRENT_LRA_PROP, incommingLRA);
+                Current.addActiveLRACache(incommingLRA);
             }
 
             return; // not transactional
@@ -442,6 +447,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
             }
         }
+
+        containerRequestContext.setProperty(CURRENT_LRA_PROP, lraId);
+        Current.addActiveLRACache(lraId);
     }
 
     @Override
@@ -449,9 +457,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // a request is leaving the container so clear any context on the thread and fix up the LRA response header
         ArrayList<Progress> progress = cast(requestContext.getProperty(ABORT_WITH_PROP));
         Object suspendedLRA = requestContext.getProperty(SUSPENDED_LRA_PROP);
-        URI current = Current.peek();
+        URI current = (URI) requestContext.getProperty(CURRENT_LRA_PROP);
         URI toClose = (URI) requestContext.getProperty(TERMINAL_LRA_PROP);
         boolean isCancel = isJaxRsCancel(requestContext, responseContext);
+
 
         try {
             if (current != null && isCancel) {
@@ -551,6 +560,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             Current.updateLRAContext(responseContext);
 
             Current.popAll();
+            Current.removeActiveLRACache(current);
         }
     }
 
