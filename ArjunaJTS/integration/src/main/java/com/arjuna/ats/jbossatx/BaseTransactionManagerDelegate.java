@@ -56,6 +56,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Delegate for JBoss TransactionManager/TransactionLocalDelegate.
  * @author kevin
  */
+@Deprecated // org.jboss.tm.TransactionLocalDelegate, is Deprecated
 public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration, TransactionListenerRegistry
 {
     private static final String LISTENER_MAP_KEY = "__TX_LISTENERS";

@@ -30,7 +30,6 @@ import com.arjuna.ats.jta.distributed.JndiProvider;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
-import org.jboss.tm.TransactionManagerLocator;
 import org.jboss.tm.listener.EventType;
 import org.jboss.tm.listener.TransactionListenerRegistry;
 import org.jboss.tm.listener.TransactionListenerRegistryLocator;
@@ -114,7 +113,7 @@ public class SPIUnitTest {
 
     @After
     public void cleanThread() {
-        TransactionManager tm = TransactionManagerLocator.locateTransactionManager();
+        TransactionManager tm = getTransactionManager();
 
         try {
             Transaction txn = tm.getTransaction();
@@ -128,7 +127,7 @@ public class SPIUnitTest {
 
     @Test
     public void testListener() {
-        TransactionManager tm = TransactionManagerLocator.locateTransactionManager();
+        TransactionManager tm = getTransactionManager();
         Transaction prevTxn = null;
 
         // transaction-to-thread listeners were deactivated by default in JBTM-3166
