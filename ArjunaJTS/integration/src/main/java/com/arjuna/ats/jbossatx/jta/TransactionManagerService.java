@@ -141,6 +141,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
      * This method has been put in here so that it is compatible with the JBoss standard Transaction Manager.
      * As we do not support exception formatters just display a warning for the moment.
      */
+    @Deprecated // the JBoss standard Transaction Manager no longer uses exception formatters
     public void registerXAExceptionFormatter(Class c, XAExceptionFormatter f)
     {
         jbossatxLogger.i18NLogger.warn_jta_TransactionManagerService_noformatter();

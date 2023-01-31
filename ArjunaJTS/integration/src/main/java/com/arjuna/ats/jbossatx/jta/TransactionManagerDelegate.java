@@ -33,6 +33,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImpl
 import com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 
+@Deprecated // org.jboss.tm.TransactionLocalDelegate, is Deprecated
 public class TransactionManagerDelegate extends BaseTransactionManagerDelegate implements ObjectFactory
 {
     /**
