@@ -116,6 +116,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
+      <artifactId>microprofile-reactive-streams-operators-api</artifactId>
+      <version>${version.org.eclipse.microprofile.reactive-streams-operators}</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${version.junit}</version>
