@@ -1,3 +1,5 @@
+IMPORTANT! At the moment, our CI is not able to trigger test axis automatically. As a result, your PR might take some time to be tested. We apologize for the inconvenience and appreciate your understanding. Thanks.
+
 Thanks for submitting your Pull Request!
 
 Please refer to our [guidelines for making contributions](https://github.com/jbosstm/narayana/blob/main/CONTRIBUTING.md) when creating your pull request. In particular, it helps the reviewer if you ensure that the:
