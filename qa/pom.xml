@@ -26,7 +26,6 @@
 
   <properties>
     <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
-    <version.hamcrest>1.3</version.hamcrest>
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
     <version.log4j-core>2.19.0</version.log4j-core>
   </properties>
