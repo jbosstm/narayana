@@ -53,7 +53,6 @@
       <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>test-utils</artifactId>
@@ -162,12 +161,6 @@
       <groupId>jakarta.transaction</groupId>
       <artifactId>jakarta.transaction-api</artifactId>
       <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
