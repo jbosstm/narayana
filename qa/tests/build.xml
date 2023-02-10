@@ -39,8 +39,8 @@
         <if>
             <equals arg1="${orbtype}" arg2="openjdk"/>
             <then>
-                <unzip src="${external.libraries}/openjdk-orb-jakarta-sources.jar"
-                       dest="${external.libraries}/lib/openjdk-orb-jakarta-sources">
+                <unzip src="${external.libraries}/openjdk-orb-sources.jar"
+                       dest="${external.libraries}/lib/openjdk-orb-sources">
                     <patternset>
                         <include name="**/*.idl"/>
                     </patternset>
@@ -59,9 +59,9 @@
                 </unzip>
                 <property name="org.jboss.jbossts.qa.orb.home" value="ext"/>
                 <property name="org.jboss.jbossts.qa.orb.classpath"
-                          value="${external.libraries}/openjdk-orb-jakarta.jar;${external.libraries}/openjdk-orb-jakarta-sources.jar"/>
+                          value="${external.libraries}/openjdk-orb.jar;${external.libraries}/openjdk-orb-sources.jar"/>
                 <property name="idl.params"
-                          value="include='${external.libraries}/lib/openjdk-orb-jakarta-sources/com/sun/tools/corba/se/idl;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/omg;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/arjuna',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+                          value="include='${external.libraries}/lib/openjdk-orb-sources/com/sun/tools/corba/se/idl;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/omg;${external.libraries}/lib/idlj-idl-openjdk-sources/idl/arjuna',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
                 <property name="is.sunorb" value="1"/>
             </then>
@@ -79,7 +79,7 @@
                 <include name="narayana-jts-idlj.jar"/>
                 <include name="jakarta.transaction-api.jar"/>
                 <include name="jboss-logging.jar"/>
-                <include name="openjdk-orb-jakarta.jar" if="is.sunorb"/>
+                <include name="openjdk-orb.jar" if="is.sunorb"/>
             </fileset>
             <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
             <pathelement location="${external.libraries}/orbportability.jar"/>
