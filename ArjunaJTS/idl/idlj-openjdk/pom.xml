@@ -27,13 +27,13 @@
   <dependencies>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
-      <artifactId>openjdk-orb-jakarta</artifactId>
+      <artifactId>openjdk-orb</artifactId>
       <version>${version.org.jboss.openjdk-orb}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
-      <artifactId>openjdk-orb-jakarta</artifactId>
+      <artifactId>openjdk-orb</artifactId>
       <version>${version.org.jboss.openjdk-orb}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
@@ -133,7 +133,7 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.jboss.openjdk-orb</groupId>
-                  <artifactId>openjdk-orb-jakarta</artifactId>
+                  <artifactId>openjdk-orb</artifactId>
                   <classifier>sources</classifier>
                   <outputDirectory>${project.build.directory}/lib</outputDirectory>
                   <includes>**/*.idl</includes>
