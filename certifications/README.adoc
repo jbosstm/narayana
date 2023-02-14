@@ -1,0 +1,5 @@
+= Narayana Certifications
+
+== MicroProfile LRA
+
+- xref:lra/microprofile-lra-2.0/README.adoc[MP LRA 2.0]

@@ -1,0 +1,213 @@
+= MicroProfile LRA 2.0 Compatible Certification Request
+
+== Specification details
+
+Repository - https://github.com/eclipse/microprofile-lra
+
+=== MicroProfile LRA 2.0
+
+Tag - https://github.com/eclipse/microprofile-lra/releases/tag/2.0
+
+
+ Commit - https://github.com/eclipse/microprofile-lra/commit/f48f1a64db92940e64737b8ba703bff7d36034f2
+
+Download - https://download.eclipse.org/microprofile/staging/microprofile-lra-2.0
+
+=== MicroProfile LRA 2.0-RC1 (used for the CCR)
+
+Tag - https://github.com/eclipse/microprofile-lra/releases/tag/2.0-RC1
+
+Commit - https://github.com/eclipse/microprofile-lra/commit/bc66393c44dada2ac63f2144038d4ecca449b21e
+
+Download - https://download.eclipse.org/microprofile/microprofile-lra-2.0-RC1
+
+
+There are no differences between LRA 2.0 and LRA 2.0-RC1. The API and TCK binaries are the same.
+
+== Implementation details
+
+Implementation Name - [Narayna](https://narayana.io/)
+
+ Version - 6.0.0.CR1
+
+Download Source Code - https://github.com/jbosstm/narayana/tree/6.0.0.CR1
+
+VCS revision tag - https://github.com/jbosstm/narayana/releases/tag/6.0.0.CR1
+
+VCS revision commit - https://github.com/jbosstm/narayana/commit/595d685767dfdd1dbf4c4f526c5adf2976cfb174
+
+== Compatibility Certification Request JDK 11
+
+=== Environment details
+
+Output of `uname -a`:
+
+[source,bash]
+----
+Linux XYZ 5.19.11-200.fc36.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Sep 23 15:07:44 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+----
+
+Output of `java -version`
+
+[source,bash]
+----
+openjdk version "11.0.15" 2022-04-19
+OpenJDK Runtime Environment Temurin-11.0.15+10 (build 11.0.15+10)
+OpenJDK 64-Bit Server VM Temurin-11.0.15+10 (build 11.0.15+10, mixed mode)
+----
+
+Output of `mvn -version`
+
+[source,bash]
+----
+Apache Maven 3.6.1 (d66c9c0b3152b2e69ee9bac180bb8fcc8e6af555; 2019-04-04T21:00:29+02:00)
+Maven home: /home/mstefank/.m2/wrapper/dists/apache-maven-3.6.1-bin/38pn40mp89t5c94bjdbeod370m/apache-maven-3.6.1
+Java version: 11.0.15, vendor: Eclipse Adoptium, runtime: /home/mstefank/.sdkman/candidates/java/11.0.15-tem
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "5.19.11-200.fc36.x86_64", arch: "amd64", family: "unix"
+----
+
+=== CCR execution JDK 11
+
+Command - `WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh`
+
+Results failsafe-reports zip - xref:lra-1.0-jdk-11-ccr-results.zip[lra-1.0-jdk-11-ccr-results.zip]
+
+Results:
+
+[source,bash]
+----
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckCancelOnTests
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.578 s - in org.eclipse.microprofile.lra.tck.TckCancelOnTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckContextTests
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 63.543 s - in org.eclipse.microprofile.lra.tck.TckContextTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckInvalidSignaturesTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.18 s - in org.eclipse.microprofile.lra.tck.TckInvalidSignaturesTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckLRATypeTests
+-------------------------------------------------------------------------------
+Tests run: 75, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 20.703 s - in org.eclipse.microprofile.lra.tck.TckLRATypeTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckParticipantTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 62.61 s - in org.eclipse.microprofile.lra.tck.TckParticipantTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckRecoveryTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.959 s - in org.eclipse.microprofile.lra.tck.TckRecoveryTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckTests
+-------------------------------------------------------------------------------
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 30.754 s - in org.eclipse.microprofile.lra.tck.TckTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckUnknownStatusTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.35 s - in org.eclipse.microprofile.lra.tck.TckUnknownStatusTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckUnknownTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 42.251 s - in org.eclipse.microprofile.lra.tck.TckUnknownTests
+
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 133, Failures: 0, Errors: 0, Skipped: 0
+----
+
+== Compatibility Certification Request JDK 17
+
+=== Environment details
+
+Output of `uname -a`:
+
+[source,bash]
+----
+Linux XYZ 5.19.11-200.fc36.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Sep 23 15:07:44 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+----
+
+Output of `java -version`
+
+[source,bash]
+----
+openjdk version "17.0.6" 2023-01-17
+OpenJDK Runtime Environment Temurin-17.0.6+10 (build 17.0.6+10)
+OpenJDK 64-Bit Server VM Temurin-17.0.6+10 (build 17.0.6+10, mixed mode, sharing)
+----
+
+Output of `mvn -version`
+
+[source,bash]
+----
+Apache Maven 3.6.1 (d66c9c0b3152b2e69ee9bac180bb8fcc8e6af555; 2019-04-04T21:00:29+02:00)
+Maven home: /home/mstefank/.m2/wrapper/dists/apache-maven-3.6.1-bin/38pn40mp89t5c94bjdbeod370m/apache-maven-3.6.1
+Java version: 17.0.6, vendor: Eclipse Adoptium, runtime: /home/mstefank/.sdkman/candidates/java/17.0.6-tem
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "5.19.11-200.fc36.x86_64", arch: "amd64", family: "unix"
+----
+
+=== CCR execution JDK 17
+
+Command - `WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh`
+
+Results failsafe-reports zip - xref:lra-1.0-jdk-17-ccr-results.zip[lra-1.0-jdk-17-ccr-results.zip]
+
+Results:
+
+[source,bash]
+----
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckCancelOnTests
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.782 s - in org.eclipse.microprofile.lra.tck.TckCancelOnTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckContextTests
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 62.704 s - in org.eclipse.microprofile.lra.tck.TckContextTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckInvalidSignaturesTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.222 s - in org.eclipse.microprofile.lra.tck.TckInvalidSignaturesTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckLRATypeTests
+-------------------------------------------------------------------------------
+Tests run: 75, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.07 s - in org.eclipse.microprofile.lra.tck.TckLRATypeTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckParticipantTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 62.567 s - in org.eclipse.microprofile.lra.tck.TckParticipantTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckRecoveryTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.805 s - in org.eclipse.microprofile.lra.tck.TckRecoveryTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckTests
+-------------------------------------------------------------------------------
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 30.766 s - in org.eclipse.microprofile.lra.tck.TckTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckUnknownStatusTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.166 s - in org.eclipse.microprofile.lra.tck.TckUnknownStatusTests
+-------------------------------------------------------------------------------
+Test set: org.eclipse.microprofile.lra.tck.TckUnknownTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 42.176 s - in org.eclipse.microprofile.lra.tck.TckUnknownTests
+
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 133, Failures: 0, Errors: 0, Skipped: 0
+----
+
+== Replicating the TCK execution
+
+[source,bash]
+----
+git clone https://github.com/jbosstm/narayana.git -b 6.0.0.CR1 && cd narayana
+
+WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh
+----
+
