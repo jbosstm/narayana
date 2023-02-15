@@ -88,4 +88,35 @@ public Response compensateWork(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId)
 }
     </programlisting>
 </section>
+<section>
+    <title>Making JAX-RS Invocations from JAX-RS Resource Methods</title>
+    <para>
+        According to the specification the LRA context (<ulink url="https://download.eclipse.org/microprofile/microprofile-lra-2.0-RC1/microprofile-lra-spec-2.0-RC1.html#_setting_the_context_on_outgoing_jax_rs_requests"></ulink>) is implicitly propagated to outgoing requests. The Narayana implementation enforces this requirement by storing the LRA context with the thread used to service the incoming request and then reading it if the service methods makes outgoing requests and adds the context to the outgoing headers. Although exhaustive testing of the implementation indicates that this requirement is met there is still a concern because the JAX-RS specification does not mandate that the same thread is used for the incoming and outgoing requests. We therefore recommend that the service writer explicitly set the context on outgoing requests as shown in the following code snippet:
+    </para>
+
+    <programlisting language="java" linenumbering="unnumbered">
+    @LRA(value = LRA.Type.REQUIRED)
+    @PUT
+    public Response addContextHeader(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+        // some business logic
+
+        // create an invocation builder for a remote service
+        Invocation.Builder builder = ClientBuilder.newClient()
+            .target(context.getBaseUri())
+            .path(resource)
+            .path(path)
+            .request();
+
+        // explicitly set the context
+        builder.header(LRA_HTTP_CONTEXT_HEADER, lraId); // lraId must be valid
+
+        Response response = builder.put(Entity.text("bodyText"));
+            
+        // more business logic
+
+        return Response.ok().entity(lraId.toASCIIString()).build();
+    }
+    ...
+    </programlisting>
+</section>
 </section>
