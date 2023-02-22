@@ -221,7 +221,7 @@
     <version.jfree>1.5.3</version.jfree>
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
-    <version.junit.jupiter>5.7.1</version.junit.jupiter>
+    <version.junit.jupiter>5.9.2</version.junit.jupiter>
     <version.mariadb>1.2.2</version.mariadb>
     <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
