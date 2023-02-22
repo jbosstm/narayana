@@ -31,6 +31,8 @@ import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
+import javax.sql.DataSource;
+
 /**
  * A JavaBean containing configuration properties for the objectstore and various implementations thereof.
  *
@@ -77,6 +79,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile boolean androidDirCheck = false;
     
 	private volatile String jdbcAccess;
+
+	private DataSource jdbcStoreDataSource;
 
 	private volatile String tablePrefix;
 
@@ -703,6 +707,28 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 	 */
 	public void setJdbcAccess(String connectionDetails) {
 		jdbcAccess = connectionDetails;
+	}
+
+	/**
+	 * Set a DataSource to be used for the JDBCStore.
+	 *
+	 * This property takes precedence over the property {@link ObjectStoreEnvironmentBean#jdbcAccess}
+	 *
+	 * To avoid automatic schema modifications set the following config properties to
+	 * false, false and null respectively:
+	 *
+	 * {@link ObjectStoreEnvironmentBean#setCreateTable(boolean)},
+	 * {@link ObjectStoreEnvironmentBean#setDropTable(boolean)},
+	 * {@link ObjectStoreEnvironmentBean#setTablePrefix(String)}.
+	 *
+	 * @param jdbcStoreDataSource A configured instance of javax.sql.DataSource
+	 */
+	public void setJdbcDataSource(DataSource jdbcStoreDataSource) {
+		this.jdbcStoreDataSource = jdbcStoreDataSource;
+	}
+
+	public DataSource getJdbcDataSource() {
+		return jdbcStoreDataSource;
 	}
 
 	/**
