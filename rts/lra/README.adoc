@@ -1,0 +1,18 @@
+= MicroProfile LRA
+
+link:https://github.com/eclipse/microprofile-lra[MicroProfile LRA] is a specification of an annotation based API that enables loosely coupled services to coordinate long running activities in such a way as to guarantee a globally consistent outcome without the need to take long duration locks on data.
+
+== MicroProfile Fault Tolerance
+LRA Coordinator implements Bulkhead Fault Tolerance strategies for dealing with failure:
+
+* Bulkhead: Limit concurrent execution so that failures in that area can't overload the whole system
+
+You can link:https://www.eclipse.org/community/eclipse_newsletter/2017/september/article4.php[configure the Fault Tolerance] variables (Bulkhead value and waitingTaskQueue) by defining the config property as "classname/annotation/parameter" in the link:./coordinator/src/main/resources/META-INF/microprofile-config.properties[microprofile-config.properties] file. 
+
+For more documentation on Narayana LRA:
+
+* link:https://www.narayana.io//docs/project/index.html#d5e7502[Narayana LRA doc]
+
+Documentation on MicroProfile LRA specification:
+
+* link:https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.asciidoc[microprofile-lra-spec]
