@@ -209,8 +209,8 @@ function init_test_options {
     fi
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
-    [ $AS_CLONE ] && [ -z "$WILDFLY_CLONED_REPO" ] || AS_CLONE=0 # git clone the AS when JBOSS_HOME is not provided
-    [ $AS_BUILD ] && [ -z "$JBOSS_HOME" ] || AS_BUILD=0 # build the AS
+    [ $AS_CLONE ] && [ -z "$WILDFLY_CLONED_REPO" ] || AS_CLONE=0 # git clone the AS repo when WILDFLY_CLONED_REPO is not provided
+    [ $AS_BUILD ] || AS_BUILD=0 # build the AS
     [ $AS_TESTS ] || AS_TESTS=0 # Run WildFly/JBoss EAP testsuite
     [ $COMPENSATIONS_TESTS ] || COMPENSATIONS_TESTS=0 # compensations tests
     [ $XTS_TESTS ] || XTS_TESTS=0 # XTS tests
@@ -349,25 +349,8 @@ function clone_as {
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
-    echo "Updating existing checkout of WildFly"
+    echo "Using existing checkout of WildFly. If a fresh build should be used, delete the folder ${WORKSPACE}/jboss-as"
     cd jboss-as
-
-    git remote | grep upstream
-    if [ $? -ne 0 ]; then
-      git remote add upstream https://github.com/wildfly/wildfly.git
-    fi
-    #Abort any partially complete rebase
-    git rebase --abort
-    git checkout 5_BRANCH
-    [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
-    git fetch
-    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
-    git clean -f -d -x
-    [ $? -eq 0 ] || fatal "git clean failed"
-    git rebase --abort
-    rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
     git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
@@ -376,27 +359,27 @@ function clone_as {
     cd jboss-as
 
     git remote add upstream https://github.com/wildfly/wildfly.git
-  fi
 
-  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
-  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-  [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
+    [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+    [ $? -eq 0 ] || fatal "git fetch of pulls failed"
+    [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
+    [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+    [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
 
-  git fetch upstream
-  echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/main)
-  echo "This is the AS_BRANCH $AS_BRANCH commit"
-  echo $(git rev-parse HEAD)
+    git fetch upstream
+    echo "This is the JBoss-AS commit"
+    echo $(git rev-parse upstream/main)
+    echo "This is the AS_BRANCH $AS_BRANCH commit"
+    echo $(git rev-parse HEAD)
 
-  echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase upstream main
-  [ $? -eq 0 ] || fatal "git rebase failed"
+    echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
+    git pull --rebase upstream main
+    [ $? -eq 0 ] || fatal "git rebase failed"
 
-  if [ $REDUCE_SPACE = 1 ]; then
-    echo "Deleting git dir to reduce disk usage"
-    rm -rf .git
+    if [ $REDUCE_SPACE = 1 ]; then
+      echo "Deleting git dir to reduce disk usage"
+      rm -rf .git
+    fi
   fi
 
   WILDFLY_CLONED_REPO=$(pwd)
@@ -408,15 +391,20 @@ function build_as {
 
   cd $WILDFLY_CLONED_REPO
 
-  # building WildFly
-  [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  [ "$_jdk" -ge 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
-  [ $? -eq 0 ] || fatal "AS build failed"
-
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WILDFLY_CLONED_REPO}/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+
+  if [ ! -d  ${WILDFLY_CLONED_REPO}/dist/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} ]; then
+
+    # building WildFly
+    [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
+    [ "$_jdk" -ge 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+    [ $? -eq 0 ] || fatal "AS build failed"
+
+  fi
+
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-  JBOSS_HOME=${WILDFLY_CLONED_REPO}/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
+  JBOSS_HOME=${WILDFLY_CLONED_REPO}/dist/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
   export JBOSS_HOME=`echo  $JBOSS_HOME`
 
   # init files under JBOSS_HOME before AS TESTS is started
