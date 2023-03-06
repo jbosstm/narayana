@@ -786,7 +786,7 @@ function qa_tests {
   qa_tests_once "orb=openjdk" "$@"    # run qa against the openjdk orb
   openjdk_orb_tests_ok=$?
 
-  [ $openjdk_orb_tests_ok = 0 ] || echo some openjdk ORB QA tests failed
+  [ $openjdk_orb_tests_ok = 0 ] || fatal "some openjdk ORB QA tests failed"
 }
 
 function hw_spec {
