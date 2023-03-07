@@ -44,7 +44,7 @@ jobs:
         with:
           name: wildfly-logs
           path: |
-            wildfly-*/standalone/log/
+            jboss-as/dist/target/wildfly-*/standalone/log/
             **/ObjectStore*/**
             **/tx-object-store/**
             **/*tx-object-store.zip
