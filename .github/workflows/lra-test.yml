@@ -42,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: wildfly-logs
+          name: lra-logs-jdk${{ matrix.java-version }}
           path: |
             jboss-as/dist/target/wildfly-*/standalone/log/
             **/ObjectStore*/**
