@@ -21,19 +21,16 @@
     <dependency>
       <groupId>org.eclipse.microprofile.lra</groupId>
       <artifactId>microprofile-lra-tck</artifactId>
-      <version>${version.microprofile.lra}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-proxy-api</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-test-arquillian-extension</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

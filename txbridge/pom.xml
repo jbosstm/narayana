@@ -11,7 +11,8 @@
 	should have received a copy of the GNU Lesser General Public License, v.2.1 
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-all</artifactId>
@@ -25,9 +26,12 @@
     <packaging>jar</packaging>
     <properties>
         <byteman.home>${project.build.directory}/byteman</byteman.home>
-        <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
+        <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
+            -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
+        </ipv6.server.jvm.args>
         <byteman.server.jvm.args>
-            -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true -Dorg.jboss.byteman.contrib.dtest.rmiregistry.port=1199
+            -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true
+            -Dorg.jboss.byteman.contrib.dtest.rmiregistry.port=1199
             -Djboss.modules.system.pkgs=org.jboss.byteman
             -javaagent:${byteman.home}/byteman.jar=port:9091,listener:true,sys:${byteman.home}/byteman-dtest.jar
         </byteman.server.jvm.args>
@@ -39,9 +43,9 @@
     <build>
         <plugins>
             <plugin>
-              <inherited>false</inherited>
-              <groupId>org.sonatype.plugins</groupId>
-              <artifactId>nexus-staging-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,12 +91,12 @@
                             <skip>true</skip>
                             <target unless="skipTests">
                                 <copy
-                                    file="${env.JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
-                                    tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                                        file="${env.JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+                                        tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml"/>
                                 <replaceregexp
-                                    match="&lt;default-context-propagation enabled=&quot;true&quot;/&gt;"
-                                    replace="&lt;default-context-propagation enabled=&quot;false&quot;/&gt;"
-                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                                        match="&lt;default-context-propagation enabled=&quot;true&quot;/&gt;"
+                                        replace="&lt;default-context-propagation enabled=&quot;false&quot;/&gt;"
+                                        file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml"/>
                             </target>
                         </configuration>
                         <goals>
@@ -106,7 +110,7 @@
                             <skip>true</skip>
                             <target unless="skipTests">
                                 <delete
-                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                                        file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml"/>
                             </target>
                         </configuration>
                         <goals>
@@ -140,38 +144,38 @@
             </plugin>
         </plugins>
         <pluginManagement>
-        	<plugins>
-        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        		<plugin>
-        			<groupId>org.eclipse.m2e</groupId>
-        			<artifactId>lifecycle-mapping</artifactId>
-        			<version>1.0.0</version>
-        			<configuration>
-        				<lifecycleMappingMetadata>
-        					<pluginExecutions>
-        						<pluginExecution>
-        							<pluginExecutionFilter>
-        								<groupId>
-        									org.apache.maven.plugins
-        								</groupId>
-        								<artifactId>
-        									maven-dependency-plugin
-        								</artifactId>
-        								<versionRange>
-        									[2.1,)
-        								</versionRange>
-        								<goals>
-        									<goal>copy</goal>
-        								</goals>
-        							</pluginExecutionFilter>
-        							<action>
-        								<ignore></ignore>
-        							</action>
-        						</pluginExecution>
-        					</pluginExecutions>
-        				</lifecycleMappingMetadata>
-        			</configuration>
-        		</plugin>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-dependency-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>copy</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
@@ -187,159 +191,152 @@
             </plugins>
         </pluginManagement>
     </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.narayana</groupId>
+                <artifactId>narayana-bom</artifactId>
+                <version>6.0.1.Final-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
-            <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>jbossxts</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-api</artifactId>
-            <version>${version.org.jboss.ws}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>narayana-jta</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>${version.commons-httpclient}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>${version.org.jboss.logging.jboss-logging}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-processor</artifactId>
-            <version>${version.org.jboss.logging.jboss-logging-processor}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>jakarta.ejb</groupId>
             <artifactId>jakarta.ejb-api</artifactId>
-            <version>${version.jakarta.ejb.jakarta-ejb-api}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-            <version>${version.org.jboss.arquillian.core}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman</artifactId>
-            <version>${version.org.jboss.byteman}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman-dtest</artifactId>
-            <version>${version.org.jboss.byteman}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${version.org.apache.httpcomponents}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
-            <version>${version.jakarta.json-api}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.json</artifactId>
-            <version>${version.glassfish.json}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-transaction-spi</artifactId>
-            <version>${version.org.jboss.jboss-transaction-spi}</version>
             <scope>provided</scope>
-        </dependency><dependency>
-        <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
-        <scope>provided</scope>
-    </dependency>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
-            <version>${version.jaxws-ri}</version>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
 
     </dependencies>
-	<profiles>
-		<profile>
-			<id>arq</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<!-- Prevent test and server output appearing in console. -->
-							<redirectTestOutputToFile>true</redirectTestOutputToFile>
-							<enableAssertions>true</enableAssertions>
-							<!-- Tests to execute. -->
-							<includes>
-								<include>**/*Tests.java</include>
-							</includes>
-							<!-- System properties passed to test cases -->
-							<systemPropertyVariables>
-								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${server.jvm.args}</server.jvm.args>
-								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
-								<node.address>localhost</node.address>
-							</systemPropertyVariables>
+    <profiles>
+        <profile>
+            <id>arq</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Prevent test and server output appearing in console. -->
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <enableAssertions>true</enableAssertions>
+                            <!-- Tests to execute. -->
+                            <includes>
+                                <include>**/*Tests.java</include>
+                            </includes>
+                            <!-- System properties passed to test cases -->
+                            <systemPropertyVariables>
+                                <!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
+                                <java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
+                                <node.address>localhost</node.address>
+                            </systemPropertyVariables>
                             <skip>false</skip>
-						</configuration>
-					</plugin>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
@@ -358,58 +355,59 @@
                             </execution>
                         </executions>
                     </plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.wildfly.arquillian</groupId>
-					<artifactId>wildfly-arquillian-container-managed</artifactId>
-					<version>${version.org.wildfly.arquillian}</version>
-					<scope>test</scope>
-                        <!-- exclude logmanager because an incompatible version is pulled in -->
-                        <exclusions>
-                            <exclusion>
-                                <artifactId>org.jboss.logmanager</artifactId>
-                                <groupId>jboss-logmanager</groupId>
-                            </exclusion>
-                        </exclusions>
-               	    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.logmanager</groupId>
-                        <artifactId>jboss-logmanager</artifactId>
-                        <version>${version.org.jboss.logmanager}</version>
-                        <scope>provided</scope>
-                    </dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>arqIPv6</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<CLI_IPV6_OPTS>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</CLI_IPV6_OPTS> 
-							<!-- Prevent test and server output appearing in console. -->
-							<redirectTestOutputToFile>true</redirectTestOutputToFile>
-							<enableAssertions>true</enableAssertions>
-							<!-- Tests to execute. -->
-							<includes>
-								<include>**/*Tests.java</include>
-							</includes>
-							<!-- System properties passed to test cases -->
-							<systemPropertyVariables>
-								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
-								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
-								<node.address>[::1]</node.address>
-							</systemPropertyVariables>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>${version.org.wildfly.arquillian}</version>
+                    <scope>test</scope>
+                    <!-- exclude logmanager because an incompatible version is pulled in -->
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>org.jboss.logmanager</artifactId>
+                            <groupId>jboss-logmanager</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.logmanager</groupId>
+                    <artifactId>jboss-logmanager</artifactId>
+                    <version>${version.org.jboss.logmanager}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>arqIPv6</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <CLI_IPV6_OPTS>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
+                            </CLI_IPV6_OPTS>
+                            <!-- Prevent test and server output appearing in console. -->
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <enableAssertions>true</enableAssertions>
+                            <!-- Tests to execute. -->
+                            <includes>
+                                <include>**/*Tests.java</include>
+                            </includes>
+                            <!-- System properties passed to test cases -->
+                            <systemPropertyVariables>
+                                <!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
+                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
+                                <java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
+                                <node.address>[::1]</node.address>
+                            </systemPropertyVariables>
                             <skip>false</skip>
-						</configuration>
-					</plugin>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
@@ -428,37 +426,38 @@
                             </execution>
                         </executions>
                     </plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.wildfly.arquillian</groupId>
-					<artifactId>wildfly-arquillian-container-managed</artifactId>
-					<version>${version.org.wildfly.arquillian}</version>
-					<scope>test</scope>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>${version.org.wildfly.arquillian}</version>
+                    <scope>test</scope>
 
-					<!-- exclude logmanager because an incompatible version is pulled in
-					  -->
-					<exclusions>
-						<exclusion>
-							<artifactId>org.jboss.logmanager</artifactId>
-							<groupId>jboss-logmanager</groupId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>org.jboss.logmanager</groupId>
-					<artifactId>jboss-logmanager</artifactId>
-					<version>${version.org.jboss.logmanager}</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-		</profile>
+                    <!-- exclude logmanager because an incompatible version is pulled in
+                      -->
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>org.jboss.logmanager</artifactId>
+                            <groupId>jboss-logmanager</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.logmanager</groupId>
+                    <artifactId>jboss-logmanager</artifactId>
+                    <version>${version.org.jboss.logmanager}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <id>codeCoverage</id>
             <properties>
                 <server.jvm.args>
-                    ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}
+                    ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.jacoco}
+                    ${jvm.args.modular}
                 </server.jvm.args>
             </properties>
         </profile>
@@ -514,5 +513,5 @@
                 </plugins>
             </build>
         </profile>
-	</profiles>
+    </profiles>
 </project>

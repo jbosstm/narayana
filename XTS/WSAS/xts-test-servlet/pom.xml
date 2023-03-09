@@ -27,29 +27,24 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <!-- XTS: -->
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
     </dependency>
     <!-- test time dep only - XTS TestRunnerXMLServlet -->
     <dependency>
       <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>${version.org.dom4j}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

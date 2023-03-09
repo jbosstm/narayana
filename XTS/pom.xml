@@ -38,11 +38,21 @@
     <module>jbossxts</module>
     <module>localjunit</module>
   </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom</artifactId>
+        <version>6.0.1.Final-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.sun.xml.ws</groupId>
       <artifactId>jaxws-ri</artifactId>
-      <version>${version.jaxws-ri}</version>
       <type>pom</type>
       <scope>provided</scope>
       <exclusions>
@@ -75,13 +85,11 @@
     <dependency>
       <groupId>jakarta.activation</groupId>
       <artifactId>jakarta.activation-api</artifactId>
-      <version>${version.jakarta.activation.jakarta.activation-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.ws</groupId>
       <artifactId>jaxws-rt</artifactId>
-      <version>${version.jaxws-ri}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

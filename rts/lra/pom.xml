@@ -40,55 +40,18 @@
     <sortpom.skip>false</sortpom.skip>
 
     <test.logs.to.file>false</test.logs.to.file>
-
-    <version.cdi-api>3.0.0</version.cdi-api>
-    <version.glassfish.json>2.0.0</version.glassfish.json>
-    <version.jakarta.json-api>2.0.0</version.jakarta.json-api>
-    <version.jakarta.servlet.api>5.0.0</version.jakarta.servlet.api>
-    <version.javax.ws.rs-api>1.0.1.Final</version.javax.ws.rs-api>
-
-    <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
-    <version.jboss-modules>1.10.2.Final</version.jboss-modules>
-    <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
-
-    <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
-    <version.org.jboss.resteasy>6.0.0.Beta1</version.org.jboss.resteasy>
-    <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
-    <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
-
-    <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
-    <version.servlet-api>2.5</version.servlet-api>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-bom</artifactId>
-        <version>${version.org.jboss.arquillian.core}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <!-- for testing -->
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest</artifactId>
-      <version>${version.hamcrest}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-impl-base</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -120,7 +83,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${version.maven-failsafe-plugin}</version>
         <configuration>
           <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
           <skipITs>${skipITs}</skipITs>
