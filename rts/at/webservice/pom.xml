@@ -32,12 +32,10 @@
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-core-spi</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -50,7 +48,6 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -62,21 +59,18 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>test</scope>
     </dependency>
 

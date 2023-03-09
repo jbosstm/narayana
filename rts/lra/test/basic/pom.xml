@@ -21,42 +21,35 @@
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>narayana-lra</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <version>${version.cdi-api}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-test-arquillian-extension</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.json</groupId>
       <artifactId>jakarta.json-api</artifactId>
-      <version>${version.jakarta.json-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.json</artifactId>
-      <version>${version.glassfish.json}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jackson2-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
     </dependency>
 
   </dependencies>

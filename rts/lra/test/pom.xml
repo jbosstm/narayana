@@ -48,18 +48,15 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-client</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>narayana-lra</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -136,19 +133,16 @@
         <dependency>
           <groupId>org.jboss.narayana.rts</groupId>
           <artifactId>lra-coordinator-war</artifactId>
-          <version>${project.version}</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
           <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-          <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -185,7 +179,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>${version.antrun.plugin}</version>
             <executions>
               <execution>
                 <goals>
@@ -216,7 +209,6 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>${version.wildfly-maven-plugin}</version>
             <configuration>
               <skip>${skip.wildfly.plugin}</skip>
             </configuration>

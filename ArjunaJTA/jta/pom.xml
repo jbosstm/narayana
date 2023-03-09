@@ -36,29 +36,24 @@
     <dependency>
       <groupId>jakarta.transaction</groupId>
       <artifactId>jakarta.transaction-api</artifactId>
-      <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.resource</groupId>
       <artifactId>jakarta.resource-api</artifactId>
-      <version>${version.jakarta.resource.jakarta-resource-api}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.interceptor</groupId>
       <artifactId>jakarta.interceptor-api</artifactId>
-      <version>${version.jakarta.interceptor.jakarta-interceptors-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.inject</groupId>
       <artifactId>jakarta.inject-api</artifactId>
-      <version>${version.jakarta.inject.jakarta.inject-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
-      <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -71,103 +66,86 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
-      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-install</artifactId>
-      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-submit</artifactId>
-      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
-      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${version.postgresql}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>${version.mysql}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jnpserver</artifactId>
-      <version>4.2.2.GA</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>test-utils</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -272,13 +250,11 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss</groupId>
           <artifactId>jboss-transaction-spi</artifactId>
-          <version>${version.org.jboss.jboss-transaction-spi}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -290,40 +266,34 @@
         <dependency>
           <groupId>org.jboss.logging</groupId>
           <artifactId>jboss-logging</artifactId>
-          <version>${version.org.jboss.logging.jboss-logging}</version>
           <scope>provided</scope>
         </dependency>
 
         <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
-          <version>${version.junit}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
-          <version>${version.postgresql}</version>
           <scope>test</scope>
         </dependency>
 
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>${version.com.h2database}</version>
           <scope>test</scope>
         </dependency>
 
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
           <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-          <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.junit</groupId>
           <artifactId>arquillian-junit-container</artifactId>
-          <version>${version.org.jboss.arquillian.core}</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>
@@ -370,7 +340,6 @@
         <dependency>
           <groupId>org.jboss</groupId>
           <artifactId>jboss-transaction-spi</artifactId>
-          <version>${version.org.jboss.jboss-transaction-spi}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>

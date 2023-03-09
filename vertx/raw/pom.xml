@@ -40,17 +40,14 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.stm</groupId>
       <artifactId>stm</artifactId>
-      <version>${narayana.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${jboss-logging.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

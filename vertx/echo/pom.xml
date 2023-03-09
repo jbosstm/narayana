@@ -14,21 +14,19 @@
     <vertx.version>3.5.4</vertx.version>
   </properties>
 
+
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.stm</groupId>
       <artifactId>stm</artifactId>
-      <version>${narayana.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>3.1.4.GA</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

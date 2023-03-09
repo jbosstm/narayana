@@ -27,19 +27,16 @@
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>${version.org.apache.ant}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
-      <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
-      <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -51,7 +48,6 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-journal</artifactId>
-      <version>${version.org.apache.activemq}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -63,27 +59,22 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>txoj</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
@@ -93,22 +84,18 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>cdi</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <!--
     <dependency>
@@ -120,19 +107,16 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>idlj-idl-openjdk</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <build>

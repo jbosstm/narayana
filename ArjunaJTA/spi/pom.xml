@@ -41,7 +41,6 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
-      <version>${version.org.jboss.jboss-transaction-spi}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -55,14 +54,12 @@
 
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.naming</groupId>
       <artifactId>jnpserver</artifactId>
-      <version>5.0.3.GA</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -74,61 +71,51 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${version.postgresql}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>2.1.210</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
-      <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.inject</groupId>
       <artifactId>jakarta.inject-api</artifactId>
-      <version>${version.jakarta.inject.jakarta.inject-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.resource</groupId>
       <artifactId>jakarta.resource-api</artifactId>
-      <version>${version.jakarta.resource.jakarta-resource-api}</version>
     </dependency>
   </dependencies>
 

@@ -44,36 +44,41 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
     <sortpom.skip>true</sortpom.skip>
   </properties>
-
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom</artifactId>
+        <version>6.0.1.Final-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>jakarta.xml.bind</groupId> 
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
         <groupId>jakarta.enterprise</groupId>
         <artifactId>jakarta.enterprise.cdi-api</artifactId>
-        <version>${version.jakarta.enterprise}</version>
     </dependency>
     <dependency>
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
-        <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
         <optional>true</optional>
     </dependency>
     <dependency>
         <groupId>jakarta.inject</groupId>
         <artifactId>jakarta.inject-api</artifactId>
-        <version>${version.jakarta.inject.jakarta.inject-api}</version>
         <optional>true</optional>
     </dependency>
     <dependency>
         <groupId>jakarta.annotation</groupId>
         <artifactId>jakarta.annotation-api</artifactId>
-        <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
     </dependency>
   </dependencies>
 

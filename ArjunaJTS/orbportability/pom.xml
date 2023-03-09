@@ -32,43 +32,36 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>${version.org.apache.ant}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -81,14 +74,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${version.org.slf4j}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>${version.org.slf4j}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -159,18 +150,15 @@
         <dependency>
           <groupId>org.jboss.openjdk-orb</groupId>
           <artifactId>openjdk-orb</artifactId>
-          <version>${version.org.jboss.openjdk-orb}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl-openjdk</artifactId>
-          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl-openjdk</artifactId>
-          <version>${project.version}</version>
           <classifier>tests</classifier>
           <scope>test</scope>
         </dependency>
