@@ -245,18 +245,6 @@ public class FailedLRAIT extends TestBase {
         return isMoved;
     }
 
-    private JsonArray getAllRecords(URI lra) {
-        String coordinatorUrl = LRAConstants.getLRACoordinatorUrl(lra) + "/";
-
-        try (Response response = client.target(coordinatorUrl).path("").request().get()) {
-            Assert.assertTrue("Missing response body when querying for all LRAs", response.hasEntity());
-            String allLRAs = response.readEntity(String.class);
-
-            JsonReader jsonReader = Json.createReader(new StringReader(allLRAs));
-            return jsonReader.readArray();
-        }
-    }
-
     private URI invokeInTransaction(String resourcePrefix, String resourcePath, int expectedStatus) {
         try(Response response = client.target(baseURL.toURI())
                 .path(resourcePrefix)

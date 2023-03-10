@@ -80,6 +80,8 @@ import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.FORGET;
 import static io.narayana.lra.LRAConstants.LEAVE;
 import static io.narayana.lra.LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME;
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME;
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME;
 import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.STATUS;
@@ -365,11 +367,19 @@ public class NarayanaLRAClient implements Closeable {
     }
 
     public void cancelLRA(URI lraId) throws WebApplicationException {
-        endLRA(lraId, false);
+        endLRA(lraId, false, null, null);
     }
 
     public void closeLRA(URI lraId) throws WebApplicationException {
-        endLRA(lraId, true);
+        endLRA(lraId, true, null, null);
+    }
+
+    public void cancelLRA(URI lraId, String compensator, String userData) throws WebApplicationException {
+        endLRA(lraId, false, compensator, userData);
+    }
+
+    public void closeLRA(URI lraId, String compensator, String userData) throws WebApplicationException {
+        endLRA(lraId, true, compensator, userData);
     }
 
     /**
@@ -393,6 +403,14 @@ public class NarayanaLRAClient implements Closeable {
         return enlistCompensator(lraId, timeLimit, "",
                 compensateUri, completeUri,
                 forgetUri, leaveUri, afterUri, statusUri,
+                null);
+    }
+    public URI joinLRA(URI lraId, Long timeLimit,
+                       URI compensateUri, URI completeUri, URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
+                       StringBuilder compensatorData) throws WebApplicationException {
+        return enlistCompensator(lraId, timeLimit, "",
+                compensateUri, completeUri,
+                forgetUri, leaveUri, afterUri, statusUri,
                 compensatorData);
     }
 
@@ -407,7 +425,7 @@ public class NarayanaLRAClient implements Closeable {
      * @throws WebApplicationException if the LRA coordinator failed to enlist the participant
      */
     public URI joinLRA(URI lraId, Long timeLimit,
-                       URI participantUri, String compensatorData) throws WebApplicationException {
+                       URI participantUri, StringBuilder compensatorData) throws WebApplicationException {
         validateURI(participantUri, false, "Invalid participant URL: %s");
         StringBuilder linkHeaderValue
                 = makeLink(new StringBuilder(), null, "participant", participantUri.toASCIIString());
@@ -685,7 +703,7 @@ public class NarayanaLRAClient implements Closeable {
     private URI enlistCompensator(URI lraUri, Long timelimit, String uriPrefix,
                                   URI compensateUri, URI completeUri,
                                   URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
-                                  String compensatorData) {
+                                  StringBuilder compensatorData) {
         validateURI(completeUri, true, "Invalid complete URL: %s");
         validateURI(compensateUri, true, "Invalid compensate URL: %s");
         validateURI(leaveUri, true, "Invalid status URL: %s");
@@ -711,7 +729,7 @@ public class NarayanaLRAClient implements Closeable {
         return enlistCompensator(lraUri, timelimit, linkHeaderValue.toString(), compensatorData);
     }
 
-    private URI enlistCompensator(URI uri, Long timelimit, String linkHeader, String compensatorData) {
+    public URI enlistCompensator(URI uri, Long timelimit, String linkHeader, StringBuilder compensatorData) {
         // register with the coordinator
         // put the lra id in an http header
         Client client = null;
@@ -736,6 +754,7 @@ public class NarayanaLRAClient implements Closeable {
                     .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                     .request()
                     .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING)
+                    .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData)
                     .header("Link", linkHeader)
                     .async()
                     .put(Entity.text(compensatorData == null ? linkHeader : compensatorData))
@@ -759,6 +778,13 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             String recoveryUrl = null;
+                String prevParticipantData = response.getHeaderString(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME);
+
+                if (compensatorData != null && prevParticipantData != null) {
+                    compensatorData.setLength(0);
+                    compensatorData.append(prevParticipantData);
+                }
+
             try {
                 recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
                 return new URI(recoveryUrl);
@@ -781,7 +807,7 @@ public class NarayanaLRAClient implements Closeable {
         }
     }
 
-    private void endLRA(URI lra, boolean confirm) throws WebApplicationException {
+    private void endLRA(URI lra, boolean confirm, String compensator, String userData) throws WebApplicationException {
         Client client = null;
         Response response = null;
 
@@ -795,6 +821,8 @@ public class NarayanaLRAClient implements Closeable {
                     .path(confirm ? String.format(CLOSE_PATH, lraUid) : String.format(CANCEL_PATH, lraUid))
                     .request()
                     .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING)
+                    .header(NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME, compensator)
+                    .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, userData)
                     .async()
                     .put(Entity.text(""))
                     .get(END_TIMEOUT, TimeUnit.SECONDS);

@@ -45,6 +45,9 @@ public final class LRAConstants {
     public static final String RECOVERY_PARAM = "recoveryCount";
     public static final String HTTP_METHOD_NAME = "method"; // the name of the HTTP method used to invoke participants
 
+    public static final String API_VERSION_1_0 = "1.0";
+    public static final String API_VERSION_1_1 = "1.1";
+
     /*
      * Supported Narayana LRA API versions.
      * Any version not mentioned in the list of the supported versions is unsupported
@@ -53,22 +56,27 @@ public final class LRAConstants {
      * When a new version with a new features is added consider adding API tests under 'test/basic'.
      */
     public static final String[] NARAYANA_LRA_API_SUPPORTED_VERSIONS = new String[] {
-            "1.0"
+            API_VERSION_1_0,
+            API_VERSION_1_1
     };
 
     /**
      * The Narayana API version for LRA coordinator supported for the release.
      * Any higher version is considered as unimplemented and unknown.
      */
-    public static final String CURRENT_API_VERSION_STRING = "1.0";
+    public static final String CURRENT_API_VERSION_STRING = API_VERSION_1_1;
 
     public static final String NARAYANA_LRA_API_VERSION_HEADER_NAME = "Narayana-LRA-API-version";
+
+    public static final String NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME = "Narayana-LRA-Participant-Data";
+    public static final String NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME = "Narayana-LRA-Participant-Link";
 
     /**
      * Number of seconds to wait for requests to participant.
      * The timeout is hardcoded as the protocol expects retry in case of failure and timeout.
      */
     public static final long PARTICIPANT_TIMEOUT = 2;
+    public static final String ALLOW_PARTICIPANT_DATA = "lra.participant.data";
 
     private static final Pattern UID_REGEXP_EXTRACT_MATCHER = Pattern.compile(".*/([^/?]+).*");
 

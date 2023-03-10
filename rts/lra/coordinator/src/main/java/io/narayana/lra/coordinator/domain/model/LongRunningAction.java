@@ -47,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -399,15 +400,15 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    private int cancelLRA() {
-        return finishLRA(true);
-    }
-
     protected ReentrantLock tryLockTransaction() {
         return lraService.tryLockTransaction(getId());
     }
 
     public int finishLRA(boolean cancel) {
+        return finishLRA(cancel, null, null);
+    }
+
+    public int finishLRA(boolean cancel, String compensator, String userData) {
         ReentrantLock lock = null;
 
         // check whether the transaction should cancel due to a timeout:
@@ -428,6 +429,10 @@ public class LongRunningAction extends BasicAction {
                 }
 
                 return status();
+            }
+
+            if (userData != null && !userData.isEmpty() && compensator != null && !compensator.isEmpty()) {
+                updateCompensatorUserData(compensator, userData);
             }
 
             if (status == LRAStatus.Cancelling) {
@@ -681,6 +686,7 @@ public class LongRunningAction extends BasicAction {
         LRAParticipantRecord participant = findLRAParticipant(participantUrl, false);
 
         if (participant != null) {
+            participant.setCompensatorData(compensatorData);
             return participant; // must have already been enlisted
         }
 
@@ -697,11 +703,11 @@ public class LongRunningAction extends BasicAction {
     }
 
     private LRAParticipantRecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
-                                                   long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+                                                   long timeLimit, String compensatorData) {
         LRAParticipantRecord p = new LRAParticipantRecord(this, lraService, participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
-        String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), "UTF-8");
+        String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), StandardCharsets.UTF_8);
 
         p.setRecoveryURI(recoveryUrlBase, txId, pid);
 
@@ -722,6 +728,16 @@ public class LongRunningAction extends BasicAction {
         }
 
         return null;
+    }
+
+    private void updateCompensatorUserData(String compensator, String userData) {
+        LRAParticipantRecord participant = findLRAParticipant(compensator, false);
+
+        if (participant != null) {
+            participant.setCompensatorData(userData);
+        } else {
+            LRALogger.i18nLogger.warn_unknownParticipant(compensator);
+        }
     }
 
     public boolean forgetParticipant(String participantUrl) {
@@ -994,7 +1010,7 @@ public class LongRunningAction extends BasicAction {
 
                     updateState(LRAStatus.Cancelling);
                     trace_progress("scheduledAbort fired");
-                    cancelLRA();
+                    finishLRA(true);
                 }
             } finally {
                 lock.unlock();
