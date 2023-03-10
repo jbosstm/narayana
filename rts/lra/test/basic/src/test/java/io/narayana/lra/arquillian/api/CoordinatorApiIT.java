@@ -579,7 +579,8 @@ public class CoordinatorApiIT extends TestBase {
                 .path(encodedLraId)
                 .request()
                 .header(LRA_API_VERSION_HEADER_NAME, version)
-                .put(Entity.text("http://compensator.url:8080"))) {
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
             Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
                     Status.OK.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
@@ -720,7 +721,8 @@ public class CoordinatorApiIT extends TestBase {
                 .path(notExistingLRAid)
                 .request()
                 .header(LRA_API_VERSION_HEADER_NAME, version)
-                .put(Entity.text("http://localhost:8080"))) {
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
             Assert.assertEquals("Expected the join failing on unknown LRA id, PUT/404 is expected.",
                     Status.NOT_FOUND.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
@@ -743,7 +745,7 @@ public class CoordinatorApiIT extends TestBase {
                 .path(encodedLraId)
                 .request()
                 .header(LRA_API_VERSION_HEADER_NAME, version)
-                .put(Entity.text("this-is-not-an-url::::"))) {
+                .put(Entity.text("this-is-not-a-valid-url::::"))) {
             Assert.assertEquals("Expected the join failing on wrong compensator data format, PUT/412 is expected.",
                     Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
@@ -786,7 +788,7 @@ public class CoordinatorApiIT extends TestBase {
     public void leaveLRA() throws UnsupportedEncodingException {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
-        URI recoveryUri = lraClient.joinLRA(lraId, 0L, URI.create("http://localhost:8080"), "");
+        URI recoveryUri = lraClient.joinLRA(lraId, 0L, URI.create("http://localhost:8080"), new StringBuilder());
 
         String encodedLRAId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
         try (Response response = client.target(coordinatorUrl)

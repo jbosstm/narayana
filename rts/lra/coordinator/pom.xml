@@ -26,9 +26,17 @@
       <artifactId>microprofile-lra-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-config</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>

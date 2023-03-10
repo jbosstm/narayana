@@ -201,6 +201,7 @@
     <version.httpcomponents>4.5.14</version.httpcomponents>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
+    <version.io.smallrye.smallrye-config>1.5.0</version.io.smallrye.smallrye-config>
     <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
     <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
@@ -234,6 +235,7 @@
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
     <version.maven.jandex-plugin>1.0.6</version.maven.jandex-plugin>
+    <version.microprofile.config-api>3.0.2</version.microprofile.config-api>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
     <version.mysql>8.0.25</version.mysql>

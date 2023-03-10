@@ -23,12 +23,15 @@ package io.narayana.lra.filter;
 
 import io.narayana.lra.AnnotationResolver;
 import io.narayana.lra.Current;
+import io.narayana.lra.client.LRAParticipantData;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.logging.LRALogger;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.ws.rs.core.Link;
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
@@ -89,7 +92,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private static final String CURRENT_LRA_PROP = "currentLRA";
     private static final String NEW_LRA_PROP = "newLRA";
     private static final String ABORT_WITH_PROP = "abortWith";
-
+    private static final String PARTICIPANT_LINK_PROP = "compensatorURI";
     private static final Pattern START_END_QUOTES_PATTERN = Pattern.compile("^\"|\"$");
     private static final long DEFAULT_TIMEOUT_MILLIS = 0L;
 
@@ -100,6 +103,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private LRAParticipantRegistry lraParticipantRegistry;
 
     private NarayanaLRAClient lraClient;
+
+    @Inject
+    LRAParticipantData data;
 
     private boolean isTxInvalid(ContainerRequestContext containerRequestContext, LRA.Type type, URI lraId,
                                 boolean shouldNotBeNull, ArrayList<Progress> progress) {
@@ -402,14 +408,24 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         participant.augmentTerminationURIs(terminateURIs, baseUri);
                     }
 
-                    recoveryUrl = getLRAClient().joinLRA(lraId, timeLimit,
+                    String compensatorLink = buildCompensatorURI(
                             toURI(terminateURIs.get(COMPENSATE)),
                             toURI(terminateURIs.get(COMPLETE)),
                             toURI(terminateURIs.get(FORGET)),
                             toURI(terminateURIs.get(LEAVE)),
                             toURI(terminateURIs.get(AFTER)),
-                            toURI(terminateURIs.get(STATUS)),
-                            null);
+                            toURI(terminateURIs.get(STATUS)));
+                    StringBuilder previousParticipantData = new StringBuilder();
+
+                    // store the registration link in case the participant wants to associate data with the enlistment in the LRA
+                    containerRequestContext.setProperty(PARTICIPANT_LINK_PROP, compensatorLink);
+
+                    recoveryUrl = getLRAClient().enlistCompensator(lraId, timeLimit, compensatorLink, previousParticipantData);
+
+                    if (previousParticipantData.length() != 0) {
+                        // this participant has previously updated the LRAParticipantData bean so make it available for this invocation
+                        setUserDefinedData(previousParticipantData.toString());
+                    }
 
                     progress = updateProgress(progress, ProgressStep.Joined, null);
 
@@ -460,7 +476,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         URI current = (URI) requestContext.getProperty(CURRENT_LRA_PROP);
         URI toClose = (URI) requestContext.getProperty(TERMINAL_LRA_PROP);
         boolean isCancel = isJaxRsCancel(requestContext, responseContext);
-
+        // the service method has finished but the user data may have changed
+        String userData = getUserDefinedData(); // TODO save data on method entry and compare
+        String compensator = (String) requestContext.getProperty(PARTICIPANT_LINK_PROP);
 
         try {
             if (current != null && isCancel) {
@@ -501,9 +519,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     // do not attempt to close or cancel if the request filter tried but failed to start a new LRA
                     if (progress == null || progressDoesNotContain(progress, ProgressStep.StartFailed)) {
                         if (isCancel) {
-                            getLRAClient().cancelLRA(toClose);
+                            getLRAClient().cancelLRA(toClose, compensator, getUserDefinedData());
                         } else {
-                            getLRAClient().closeLRA(toClose);
+                            getLRAClient().closeLRA(toClose, compensator, getUserDefinedData());
                         }
 
                         progress = updateProgress(progress, ProgressStep.Ended, null);
@@ -524,6 +542,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         requestContext.getHeaders().remove(LRA_HTTP_CONTEXT_HEADER);
                     }
                 }
+            } else if (current != null && compensator != null && userData != null) {
+                getLRAClient().enlistCompensator(current, 0L, compensator.toString(), new StringBuilder(userData));
             }
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode()
@@ -739,5 +759,55 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     progress);
         }
         return null;
+    }
+
+    private String getUserDefinedData() {
+        try {
+            return data != null ? data.getData() : null;
+        } catch (ContextNotActiveException e) {
+            // TODO probably best to suppress subsequent warnings
+            LRALogger.i18nLogger.warn_missingContexts("CDI bean of type LRAParticipantData is not available", e);
+        }
+
+        return null;
+    }
+
+    private void setUserDefinedData(String userDefinedData) {
+        try {
+            if (data != null) {
+                data.setData(userDefinedData);
+            }
+        } catch (ContextNotActiveException e) {
+            LRALogger.i18nLogger.warn_missingContexts("CDI bean of type LRAParticipantData is not available", e);
+        }
+    }
+
+    private String buildCompensatorURI(URI compensate, URI complete, URI forget, URI leave, URI after, URI status) {
+        StringBuilder linkHeaderValue = new StringBuilder();
+
+        makeLink(linkHeaderValue, null, COMPENSATE, compensate);
+        makeLink(linkHeaderValue, null, COMPLETE, complete);
+        makeLink(linkHeaderValue, null, FORGET, forget);
+        makeLink(linkHeaderValue, null, LEAVE, leave);
+        makeLink(linkHeaderValue, null, AFTER, after);
+        makeLink(linkHeaderValue, null, STATUS, status);
+
+        return linkHeaderValue.toString();
+    }
+
+    private static void makeLink(StringBuilder b, String uriPrefix, String key, URI value) {
+        if (key == null || value == null) {
+            return;
+        }
+
+        String uri = value.toASCIIString();
+        String terminationUri = uriPrefix == null ? uri : String.format("%s%s", uriPrefix, uri);
+        Link link =  Link.fromUri(terminationUri).title(key + " URI").rel(key).type(MediaType.TEXT_PLAIN).build();
+
+        if (b.length() != 0) {
+            b.append(',');
+        }
+
+        b.append(link);
     }
 }

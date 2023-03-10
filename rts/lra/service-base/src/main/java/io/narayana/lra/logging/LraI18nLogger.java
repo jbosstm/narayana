@@ -168,6 +168,16 @@ public interface LraI18nLogger {
     @Message(id = 25035, value = "The start LRA call failed with cause: %s")
     void warn_startLRAFailed(String message, @Cause Throwable t);
 
+    @Message(id = 25036, value = "CDI Context not available: %s")
+    String warn_missingContexts(String reason, @Cause Throwable t);
+
+    @LogMessage(level = WARN)
+    @Message(id = 25037, value = "Participant `%s` is not registered")
+    void warn_unknownParticipant(String compensator);
+
+    @Message(id = 25038, value = "Invalid participant enlistment with LRA %s: participant data is disabled")
+    String error_participant_data_disallowed(String lraId);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

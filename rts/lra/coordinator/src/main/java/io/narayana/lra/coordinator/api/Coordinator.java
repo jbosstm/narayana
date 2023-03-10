@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
@@ -81,10 +82,12 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import static io.narayana.lra.LRAConstants.API_VERSION_1_0;
 import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
 import static io.narayana.lra.LRAConstants.COMPLETE;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME;
 import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
@@ -125,10 +128,10 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 )
 @Tag(name = "LRA Coordinator", description = "Operations to work with active LRAs (to start, to get a status, to finish, etc.)")
 public class Coordinator extends Application {
-    static final String LRA_API_VERSION = "1.0-RC1";
-
     @Context
     private UriInfo context;
+
+    private static final boolean allowParticipantData = initAllowParticipantData();
 
     private final LRAService lraService;
     private final RecoveryCoordinator recoveryCoordinator;
@@ -141,6 +144,22 @@ public class Coordinator extends Application {
     @Path(RECOVERY_COORDINATOR_PATH_NAME)
     public RecoveryCoordinator getRecoveryCoordinator() {
         return recoveryCoordinator;
+    }
+
+    private static boolean initAllowParticipantData() {
+        try {
+            // We cannot inject it using @ConfigProperty(name = LRAConstants.ALLOW_PARTICIPANT_DATA,defaultValue = "true")
+            // because CDI injection isn't guaranteed in JAX-RS Application classes
+            return ConfigProvider.getConfig().getValue(LRAConstants.ALLOW_PARTICIPANT_DATA, Boolean.class);
+        } catch (Exception e) {
+            return true; // the property is unset or there is no config provider so use the default value
+        }
+    }
+
+    private boolean isAllowParticipantData(String version) {
+        // only protocol version API_VERSION_1_0 doesn't support participant data
+        // and using a null version header is interpreted as meaning the caller doesn't care
+        return (version == null) || (allowParticipantData && !version.equals(API_VERSION_1_0));
     }
 
     @GET
@@ -404,13 +423,13 @@ public class Coordinator extends Application {
     @PUT
     @Path("nested/{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), false, true)).name()).build();
+        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), false, true, null, null)).name()).build();
     }
 
     @PUT
     @Path("nested/{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), true, true)).name()).build();
+        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), true, true, null, null)).name()).build();
     }
 
     @PUT
@@ -454,8 +473,10 @@ public class Coordinator extends Application {
             @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
             @PathParam("LraId") String txId,
             @Parameter(ref = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)
-            @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version) {
-        return Response.ok(endLRA(toURI(txId), false, false).name())
+            @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version,
+            @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME) @DefaultValue("") String compensator,
+            @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) @DefaultValue("") String userData) {
+        return Response.ok(endLRA(toURI(txId), false, false, compensator, userData).name())
                 .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                 .build();
     }
@@ -482,16 +503,17 @@ public class Coordinator extends Application {
         @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
         @PathParam("LraId")String lraId,
         @Parameter(ref = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)
-        @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version)
+        @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version,
+        @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME) @DefaultValue("") String compensator,
+        @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) @DefaultValue("") String userData)
             throws NotFoundException {
-        return Response.ok(endLRA(toURI(lraId), true, false).name())
+        return Response.ok(endLRA(toURI(lraId), true, false, compensator, userData).name())
                 .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                 .build();
     }
 
-
-    private LRAStatus endLRA(URI lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
-        LRAData lraData = lraService.endLRA(lraId, compensate, fromHierarchy);
+    private LRAStatus endLRA(URI lraId, boolean compensate, boolean fromHierarchy, String compensator, String userData) throws NotFoundException {
+        LRAData lraData = lraService.endLRA(lraId, compensate, fromHierarchy, compensator, userData);
 
         return lraData.getStatus();
     }
@@ -542,28 +564,52 @@ public class Coordinator extends Application {
             @HeaderParam("Link") @DefaultValue("") String compensatorLink,
             @Parameter(ref = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)
             @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version,
+            @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) @DefaultValue("") String userData,
             @RequestBody(name = "Compensator data",
-                description = "opaque data that will be stored with the coordinator and passed back to "
-                    + "the participant when the LRA is closed or cancelled.") String compensatorData) throws NotFoundException {
-        // test to see if the join request contains any participant specific data
-        boolean isLink = isLink(compensatorData);
+                description = "A compensator can also register with an LRA by putting the compensator end "
+                    + "points in the body of request as a link header. This feature is deprecated and undocumented "
+                    + "and will be removed in a later version of the protocol") String compensatorURL) throws NotFoundException {
 
-        if (compensatorLink != null && !compensatorLink.isEmpty()) {
-            return joinLRA(toURI(lraId), timeLimit, null, compensatorLink, compensatorData, version);
+        // test to see if the join request contains any participant specific data
+        if (userData != null && !userData.isEmpty() && !isAllowParticipantData(version)) {
+            String logMsg = LRALogger.i18nLogger.error_participant_data_disallowed(lraId);
+            LRALogger.logger.error(logMsg);
+
+            throw new WebApplicationException(logMsg,
+                    Response.status(PRECONDITION_FAILED).entity(logMsg)
+                            .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
+                            .build());
         }
 
-        if (!isLink) { // interpret the content as a standard participant url
-            compensatorData += "/";
+        // test to see if the compensator endpoints are in the body of the join request
+        boolean isLink = isLink(compensatorURL);
+
+        if (compensatorLink != null && !compensatorLink.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+
+            if (userData != null) {
+                sb.append(userData);
+            }
+
+            return joinLRA(toURI(lraId), timeLimit, null, compensatorLink, sb, version);
+        }
+
+        if (!isLink && !compensatorURL.isEmpty()) {
+            // interpret the content as a standard participant <url> with the convention that
+            // <url>/compensate, <url>/complete and <url>/status are the endpoints for compensating,
+            // completing and status reporting (this was the protocol in the early prototype and
+            // is deprecated (see issue JBTM-1488 Implement the REST-JDI specification)
+            compensatorURL += "/";
 
             Map<String, String> terminateURIs = new HashMap<>();
 
             try {
-                terminateURIs.put(COMPENSATE, new URL(compensatorData + "compensate").toExternalForm());
-                terminateURIs.put(COMPLETE, new URL(compensatorData + "complete").toExternalForm());
-                terminateURIs.put(STATUS, new URL(compensatorData + "status").toExternalForm());
+                terminateURIs.put(COMPENSATE, new URL(compensatorURL + "compensate").toExternalForm());
+                terminateURIs.put(COMPLETE, new URL(compensatorURL + "complete").toExternalForm());
+                terminateURIs.put(STATUS, new URL(compensatorURL + "status").toExternalForm());
             } catch (MalformedURLException e) {
                 String errorMsg = String.format("Cannot join to LRA id '%s' with body as compensator url '%s' is invalid",
-                        lraId, compensatorData);
+                        lraId, compensatorURL);
                 if (LRALogger.logger.isTraceEnabled()) {
                     LRALogger.logger.trace(errorMsg, e);
                 }
@@ -574,15 +620,15 @@ public class Coordinator extends Application {
                         .build();
             }
 
-            // register with the coordinator, put the lra id in an http header
+            // register with the coordinator, put the lra id in an HTTP header
             StringBuilder linkHeaderValue = new StringBuilder();
 
             terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, "", k, v)); // or use Collectors.joining(",")
 
-            compensatorData = linkHeaderValue.toString();
+            compensatorURL = linkHeaderValue.toString();
         }
 
-        return joinLRA(toURI(lraId), timeLimit, null, compensatorData, null, version);
+        return joinLRA(toURI(lraId), timeLimit, null, compensatorURL, null, version);
     }
 
 
@@ -612,13 +658,16 @@ public class Coordinator extends Application {
         }
     }
 
-    private Response joinLRA(URI lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData, String version)
+    private Response joinLRA(URI lraId, long timeLimit, String compensatorUrl, String linkHeader, StringBuilder userData, String version)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("%s%s/%s",
                 context.getBaseUri().toASCIIString(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
 
-        StringBuilder recoveryUrl = new StringBuilder();
+        if (userData == null) {
+            userData = new StringBuilder();
+        }
 
+        StringBuilder recoveryUrl = new StringBuilder();
         int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, compensatorUrl, linkHeader, recoveryUrlBase, userData);
 
         try {
@@ -626,6 +675,7 @@ public class Coordinator extends Application {
                     .entity(recoveryUrl.toString())
                     .location(new URI(recoveryUrl.toString()))
                     .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl)
+                    .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, userData)
                     .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                     .build();
         } catch (URISyntaxException e) {
@@ -638,7 +688,7 @@ public class Coordinator extends Application {
         }
     }
     /**
-     * A participant can resign from an LRA at any time prior to the completion of an activity by performing a PUT
+     * A participant can resign from an LRA at any time prior to the completion of an activity by performing a
      * PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>/remove with the URL of the participant.
      */
     @PUT

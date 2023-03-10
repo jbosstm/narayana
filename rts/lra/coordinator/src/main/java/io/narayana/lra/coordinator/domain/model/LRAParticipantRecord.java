@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static io.narayana.lra.LRAConstants.AFTER;
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME;
 import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
@@ -88,6 +89,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
     private String responseData;
     private String compensatorData;
+    private String previousCompensatorData;
     private LRAService lraService;
     private ParticipantStatus status;
     private boolean accepted;
@@ -345,6 +347,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                        .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData)
                         .async()
                         .put(Entity.text(""))
                         .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
@@ -447,7 +450,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             client = ClientBuilder.newClient();
             Invocation.Builder builder = client.target(target)
                 .request()
-                .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString());
+                .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData);
 
             if (target.equals(afterURI)) {
                 builder.header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, lra.getId().toASCIIString());
@@ -608,6 +612,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
+                        .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData)
                         .async()
                         .get()
                         .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS); // if the attempt times out the catch block below will return a heuristic
@@ -680,7 +685,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         return -1;
     }
 
-    private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String compensatorData) {
+    private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String cData) {
         String queryString = target.getUri().getQuery();
 
         if (queryString != null) {
@@ -695,9 +700,9 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                             case "jakarta.ws.rs.GET":
                                 return asyncInvoker.get();
                             case "jakarta.ws.rs.PUT":
-                                return asyncInvoker.put(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
+                                return asyncInvoker.put(Entity.entity(cData, MediaType.TEXT_PLAIN));
                             case "jakarta.ws.rs.POST":
-                                return asyncInvoker.post(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
+                                return asyncInvoker.post(Entity.entity(cData, MediaType.TEXT_PLAIN));
                             case "jakarta.ws.rs.DELETE":
                                 return asyncInvoker.delete();
                             default:
@@ -790,6 +795,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                     .header(LRA_HTTP_CONTEXT_HEADER, lraId)
                     .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI)
                     .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
+                    .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData)
                     .async()
                     .delete()
                     .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
@@ -1036,6 +1042,17 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         String path = lraId.getPath();
 
         return path.substring(path.lastIndexOf('/') + 1);
+    }
+
+    public void setCompensatorData(String compensatorData) {
+        String previous = this.compensatorData;
+
+        this.previousCompensatorData = this.compensatorData;
+        this.compensatorData = compensatorData;
+    }
+
+    public String getPreviousCompensatorData() {
+        return previousCompensatorData;
     }
 
     private void trace_progress(String reason) {

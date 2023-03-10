@@ -268,6 +268,10 @@ public class LRAService {
     }
 
     public LRAData endLRA(URI lraId, boolean compensate, boolean fromHierarchy) {
+        return endLRA(lraId, compensate, fromHierarchy, null, null);
+    }
+
+     public LRAData endLRA(URI lraId, boolean compensate, boolean fromHierarchy, String compensator, String userData) {
         lraTrace(lraId, "end LRA");
 
         LongRunningAction transaction = getTransaction(lraId);
@@ -278,7 +282,7 @@ public class LRAService {
                     .entity(errorMsg).build());
         }
 
-        transaction.finishLRA(compensate);
+        transaction.finishLRA(compensate, compensator, userData);
 
         if (BasicAction.Current() != null) {
             if (LRALogger.logger.isInfoEnabled()) {
@@ -321,7 +325,7 @@ public class LRAService {
 
     public synchronized int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
-                                    String compensatorData) {
+                                    StringBuilder compensatorData) {
         if (lra ==  null) {
             lraTrace(null, "Error missing LRA header in join request");
         } else {
@@ -362,9 +366,21 @@ public class LRAService {
         LRAParticipantRecord participant;
 
         try {
-            participant = transaction.enlistParticipant(lra,
-                    linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
-                    timeLimit, compensatorData);
+            if (compensatorData != null) {
+                participant = transaction.enlistParticipant(lra,
+                        linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
+                        timeLimit, compensatorData.toString());
+                // return any previously registered data
+                compensatorData.setLength(0);
+
+                if (participant.getPreviousCompensatorData() != null) {
+                    compensatorData.append(participant.getPreviousCompensatorData());
+                }
+            } else {
+                participant = transaction.enlistParticipant(lra,
+                        linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
+                        timeLimit, null);
+            }
         } catch (UnsupportedEncodingException e) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }

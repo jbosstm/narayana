@@ -885,9 +885,32 @@
         <type>war</type>
       </dependency>
       <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>${version.microprofile.config-api}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-config</artifactId>
+        <version>${version.io.smallrye.smallrye-config}</version>
+        <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
         <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
         <artifactId>microprofile-fault-tolerance-api</artifactId>
         <version>${version.microprofile.fault-tolerance}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.microprofile.lra</groupId>

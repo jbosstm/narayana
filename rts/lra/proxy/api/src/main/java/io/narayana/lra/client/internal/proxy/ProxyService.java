@@ -178,9 +178,10 @@ public class ProxyService {
             Optional<String> compensatorData = serializeParticipant(participant);
             URI participantUri = uriBuilder.build(lra, pId);
             long timeLimitInSeconds = Duration.of(timeLimit, unit).getSeconds();
+            StringBuilder sb = new StringBuilder(compensatorData.orElse(""));
 
-            URI participantRecoveryUrl
-                    = narayanaLRAClient.joinLRA(lraId, timeLimitInSeconds, participantUri, compensatorData.orElse(null));
+            URI participantRecoveryUrl = narayanaLRAClient.joinLRA(lraId, timeLimitInSeconds, participantUri, sb);
+
             return participantRecoveryUrl;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.status(0)

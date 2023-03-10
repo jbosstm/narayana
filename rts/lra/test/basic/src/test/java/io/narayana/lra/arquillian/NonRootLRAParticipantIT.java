@@ -92,7 +92,7 @@ public class NonRootLRAParticipantIT extends TestBase {
         URI completeURI = new URI(baseURL.toExternalForm() + "/participant/complete");
 
         // enlist the participant with these compensate and complete URIs into the LRA
-        lraClient.joinLRA(lraId, 0L, compensateURI, completeURI, null, null, null, null, null);
+        lraClient.joinLRA(lraId, 0L, compensateURI, completeURI, null, null, null, null, (StringBuilder) null);
         lraClient.closeLRA(lraId);
 
         try {
