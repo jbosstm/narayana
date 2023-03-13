@@ -27,7 +27,6 @@
   <properties>
     <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
-    <version.log4j-core>2.19.0</version.log4j-core>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -74,7 +73,7 @@
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
+      <artifactId>hamcrest</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jacoco</groupId>
