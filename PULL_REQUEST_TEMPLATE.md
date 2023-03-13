@@ -8,7 +8,7 @@ Please refer to our [guidelines for making contributions](https://github.com/jbo
 
 The build axis can be controlled by prefixing a ! on the following as appropriate:
 
-CORE TOMCAT AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_OPENJDKORB PERF LRA DB_TESTS mysql db2 postgres oracle
+CORE TOMCAT AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_OPENJDKORB PERFORMANCE LRA DB_TESTS mysql db2 postgres oracle
 
 By default the pull request will run with `JDK11`, if you prefix a `!` to `JDK11` then it will not run with `JDK11`.
 
