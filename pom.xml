@@ -228,6 +228,7 @@
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>5.9.2</version.junit.jupiter>
+    <version.log4j-core>2.19.0</version.log4j-core>
     <version.mariadb>1.2.2</version.mariadb>
     <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
