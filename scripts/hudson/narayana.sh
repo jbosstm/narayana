@@ -772,6 +772,8 @@ function qa_tests_once {
     fi
 
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
+    # if the tests fail very early a testoutput folder may not exist
+    [[ -d testoutput ]] || mkdir testoutput
     mv TEST-*.txt testoutput 2>/dev/null
     ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
     return $ok
