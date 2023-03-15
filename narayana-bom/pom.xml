@@ -220,7 +220,6 @@
         <groupId>jakarta.resource</groupId>
         <artifactId>jakarta.resource-api</artifactId>
         <version>${version.jakarta.resource.jakarta-resource-api}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -829,7 +828,6 @@
         <groupId>jakarta.transaction</groupId>
         <artifactId>jakarta.transaction-api</artifactId>
         <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -938,7 +936,6 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-transaction-spi</artifactId>
         <version>${version.org.jboss.jboss-transaction-spi}</version>
-        <scope>provided</scope>
         <exclusions>
           <exclusion>
             <groupId>org.jboss.logging</groupId>
