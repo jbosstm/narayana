@@ -39,14 +39,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.narayana.lra.LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME;
 import static io.narayana.lra.LRAConstants.CURRENT_API_VERSION_STRING;
-import static io.narayana.lra.LRAConstants.NARAYANA_LRA_API_SUPPORTED_VERSIONS;
-import static jakarta.ws.rs.core.Response.Status.EXPECTATION_FAILED;
 import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
@@ -57,8 +53,6 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
     public void filter(ContainerRequestContext requestContext) throws IOException {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
         URI lraId = null;
-
-        verifyHighestSupportedVersion(requestContext);
 
         if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
@@ -96,33 +90,6 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
         }
 
         Current.updateLRAContext(responseContext);
-    }
-
-    /**
-     * Verification if the version in the header is the supported version.
-     * Format and the string has to match of the list of the supported versions.
-     */
-    private void verifyHighestSupportedVersion(ContainerRequestContext requestContext) {
-        if (!requestContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)) {
-            // no header specified, going with 'null' further into processing
-            return;
-        }
-
-        String apiVersionString = requestContext.getHeaderString(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME);
-
-        if (requestContext.getHeaders().get(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME).size() > 1 && LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debugf("Multiple version headers for the request '%s', using version '%s'.",
-                            dumpInputStreamToString(requestContext.getEntityStream()), apiVersionString);
-        }
-
-        if (!Arrays.stream(NARAYANA_LRA_API_SUPPORTED_VERSIONS).anyMatch(v -> v.equals(apiVersionString))) {
-            String errorMsg = LRALogger.i18nLogger.get_wrongAPIVersionDemanded(
-                    apiVersionString, NARAYANA_LRA_API_SUPPORTED_VERSIONS.toString());
-            LRALogger.logger.debugf(errorMsg);
-            throw new WebApplicationException(errorMsg,
-                    Response.status(EXPECTATION_FAILED).entity(errorMsg)
-                            .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, CURRENT_API_VERSION_STRING).build());
-        }
     }
 
     private String dumpInputStreamToString(InputStream is) {
