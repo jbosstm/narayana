@@ -553,6 +553,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                     // the actual failure(s) will also have been added to the i18NLogger logs at the time they occurred
                     responseContext.setEntity(failureMessage, null, MediaType.TEXT_PLAIN_TYPE);
+                    responseContext.setStatus(412);
                 }
             }
         } finally {

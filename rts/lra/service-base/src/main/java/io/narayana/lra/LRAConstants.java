@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public final class LRAConstants {
     public static final String COORDINATOR_PATH_NAME = "lra-coordinator";
     public static final String RECOVERY_COORDINATOR_PATH_NAME = "recovery";
+    public static final String MIGRATE_PATH_NAME = "migrate";
 
     public static final String COMPLETE = "complete";
     public static final String COMPENSATE = "compensate";

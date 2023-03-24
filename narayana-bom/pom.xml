@@ -89,6 +89,19 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <!--
+      <dependency>
+        <groupId>io.mashona</groupId>
+        <artifactId>mashona-logwriting</artifactId>
+        <version>${version.io.mashona}</version>
+        <scope>provided</scope>
+      </dependency>
+      -->
+      <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>${version.redis.clients}</version>
+      </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>

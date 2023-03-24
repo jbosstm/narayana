@@ -446,6 +446,17 @@ public class LRAService {
         return failedLRAs.values().stream().map(LongRunningAction::getLRAData).collect(toList());
     }
 
+    /*
+     * Migrate records between coordinators.
+     *
+     * In this version of the PoC you should restart the coordinator in order to see
+     * the moved records - doing it dynamically would require asking the SlotStoreAdaptor to
+     * re-index the slots and since this is only a PoC we leave that as an "exercise for the reader"!
+     */
+    public boolean migrate(String fromNodeId, String toNodeId) {
+        return getRM().migrate(fromNodeId, toNodeId);
+    }
+
     private LRARecoveryModule getRM() {
         // since this method is reentrant we do not need any synchronization
         if (recoveryModule == null) {

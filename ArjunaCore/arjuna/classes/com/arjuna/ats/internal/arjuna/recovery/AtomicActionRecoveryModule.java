@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -20,6 +21,12 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.CloudId;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.RedisStoreEnvironmentBean;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.SharedSlots;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 
 /**
@@ -233,6 +240,28 @@ public class AtomicActionRecoveryModule implements RecoveryModule
             }
         }
    }
+
+    /**
+     * migrate logs from another node to this one
+     * @param fromNodeId the node id of the node from which we are migrating logs from
+     * @return
+     */
+    public synchronized boolean migrate(String fromNodeId) {
+        SlotStoreEnvironmentBean slotEnv = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
+        BackingSlots slotImpl = slotEnv.getBackingSlots();
+
+        if (slotImpl instanceof SharedSlots) {
+            RedisStoreEnvironmentBean redisEnv = BeanPopulator.getDefaultInstance(RedisStoreEnvironmentBean.class);
+            String nodeId = BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).getNodeIdentifier();
+            SharedSlots impl = (SharedSlots) slotImpl;
+            CloudId fromId = new CloudId(fromNodeId, redisEnv.getFailoverId());
+
+            // periodic recovery is blocked since this method and the recovery methods are synchronized
+            return impl.migrate(fromId);
+        }
+
+        return false;
+    }
 
    // 'type' within the Object Store for AtomicActions.
    private String _transactionType = new AtomicAction().type() ;

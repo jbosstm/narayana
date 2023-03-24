@@ -195,6 +195,7 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
 
             if (instance == null) {
                 this.backingSlotsClassName = null;
+
             } else if (instance != oldInstance) {
                 String name = ClassloadingUtility.getNameForClass(instance);
                 this.backingSlotsClassName = name;

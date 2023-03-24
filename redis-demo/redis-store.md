@@ -1,0 +1,80 @@
+# Some experiments in migrating transaction logs
+
+## Transaction stores 
+
+Some time ago I prototyped a Redis based implementation of the [SlotStore](https://www.narayana.io/docs/api/com/arjuna/ats/internal/arjuna/objectstore/slot/SlotStore.html)
+ backend suitable for installations where nodes hosting the storage can come and go making it well suited for cloud based deployments of the Recovery Manager.
+
+In the context of the [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem) of distributed computing, the recovery store needs to behave as a CP system,
+ie it needs to be able to tolerate network partitions and yet continue to provide Strong Consistency.
+Redis can provide the strong consistency guarantee if the [RedisRaft module](https://redis.com/blog/redisraft-new-strong-consistency-deployment-option/) is used with Redis running as a
+cluster. RedisRaft achieves consistency and partition tolerance by ensuring that:
+
+- acknowledged writes are guaranteed to be committed and never lost,
+- reads will always return the most up-to-date committed write,
+- the cluster is sized correctly: a RedisRaft cluster of 3 nodes can tolerate a single node failure and a cluster
+  of 5 can tolerate 2 node failures, ... ie if the cluster is to tolerate losing N nodes then the cluster size must be at least 2*N+1, thus the minimum
+  cluster size is 3 and the reason for having an odd number of nodes in the cluster is to avoid "split brain" scenarios during network partitions; an odd number guarantees that one side of the split will be in the majority.
+
+During network splits the cluster will become unavailable for [a while](https://redis.io/docs/reference/cluster-spec/), ie the cluster is designed to survive failures of a few nodes in the cluster, but it is not a suitable solution for applications that require availability in the event of large net splits, however transaction systems favour Consistency over Availability.
+
+A key motivator for this new SlotStore backend is to address a common problem with using the Narayana transaction stores on cloud platforms when scaling down a node that has in doubt transactions which can leave them unmanaged. Most cloud platforms can detect crashed nodes and restart them but this must be carefully managed to ensure that the restarted node is identically configured (same node identifier, same transaction store and same resource adapters).
+The current cloud solution, when running on Openshift, is to use a ReplicaSet and to veto scale down until all transactions are completed which can take an indeterminate amount of time, but if we can ask another member of the deployment to finish these in doubt transactions then all but the last node can be safely shutdown even with in doubt transactions. The resulting increase in availability in the presence of node or network failures is a significant benefit for transactional applications which, after all, is key reason why businesses are embracing cloud based deployments.
+
+Remark: Redis is offered as a managed service on a majority of cloud platforms which can help customers to get started with this solution. But note that standard Redis excludes the RedisRaft module which is a requirment for use as a transaction store.
+
+## A Redis backed store
+
+Redis is a key value store. Keys are stored in hash slots and hash slots are shared evenly amongst the shards (keys -> hash slots -> shards), the [redis cluster specication](https://redis.io/docs/reference/cluster-spec/) contains the details.
+Re-sharding involves moving hash slots to other nodes, impacting performance. Thus, if we can control which hash slots the [slot store] keys map onto then we can improve performance under both normal and failure conditions. This periodic rebalancing of the cluster can be optimised if keys belonging to the same recovery manager are stored in the same hash slot, additionally having the keys, for a particular recovery node, colocated on a single cluster node is good for the general performance of the transaction store.
+
+Also noteworthy is that the keys mapped to a particular hash slot can operated upon [transactionally](https://redis.io/docs/manual/transactions/), which is not the case for keys in different slots, meaning that no inter-node hand-shaking is required. This feature opens up the possibility, perhaps, of allowing concurrent access to recovery logs by different recovery managers - but that's something for a future iteration of the design, but if the logs in a store are shared then be aware that some Narayana recovery modules cache records so those implementations would need to re-evaluated, noting in particular that Redis has support for optimistic concurrency using the watch API which clients can use to observe updates to key values by other recovery managers.
+
+## Key space design
+
+A recovery manager has a unique node identifier. We'd like to be able to form "recovery groups" such that any recovery manager in the group can manage transactions created by the others, but not at the same time. To this end we assign a "failoverGroupId" to each recovery manager and use that as the Redis key prefix. This will force all keys created by members of the failover group into the same hash slot, a cloud example of this idea is that the pods in a deployment would all share the same failoverGroupId so any pod in the deployement can take over when the deployment is scaled down.
+
+## Failover
+
+Failover involves detecting when a member of the "recovery group" is removed from the cluster and to then migrate the keys to another member of the group. I added an example to the [LRA recovery coordinator](https://github.com/mmusgrov/narayana/blob/JBTM-3762/rts/lra/coordinator/src/main/java/io/narayana/lra/coordinator/api/RecoveryCoordinator.java#L207) and used the [jedis redis API](https://javadoc.io/doc/redis.clients/jedis/latest/redis/clients/jedis/UnifiedJedis.html#rename-java.lang.String-java.lang.String-) rename command to "migrate" the keys which is an atomic operation.
+
+## Issues
+
+The performance of Redis Raft in this implementation of the SlotStore backend is poor (more than 4 times slower than the default store); I have not invested any effort on improving it but may follow up with another post to discuss throughput since it is a general issue that needs to be solved for any cloud based object store, examples of topics to investigate include [pipelining redis commands](https://redis.io/docs/manual/pipelining/) (similar to how we batch writes to the Journal Store), using [Virtual Threads](https://openjdk.org/jeps/444), etc. 
+
+We are therefore investigating other alternatives, including an Infinispan based slot store backend - Infinispan now supports partition tolerance so it has become a suitable candidate for a transaction store. Such a store will produce many of the benefits of a Redis store although its performance will be a key implementation constraint.
+
+This design for the key space may not be suitable for transactions with subordinates or nested transactions or for ones that require participant logs to be distinct from the transaction log, such as JTS or XTS. I say may since a modification to the design should accomodate these models.
+
+## Assumptions
+
+The cloud platform administrator is responsible for:
+
+- detecting and restarting failed nodes;
+- issuing the migrate command on one of the remaining nodes
+- for detecting when the deployment is scaled down to zero with pending transactions (including orphans) and emitting a warning accordingly
+
+## Example of how to migrate logs
+
+The demo presents the use case of migrating logs between LRA coordinators. To run the demo you will need to:
+
+1. Clone and build a narayana git branch with support for a Redis backed store.
+2. Start a 3-node cluster of Redis nodes running RedisRaft.
+3. Build and start two LRA coordinators with distinct node id's, node1 and node2.
+4. Start an LRA on the first coordinator and then halt it to simulate a failure.
+5. View the redis keys using the Redis CLI noticing that the keys embed the node id of the owning coordinator.
+7. Ask the second coordinator to migrate the keys from node1 to node2.
+8. Coordinators maintain a cache of LRAs, but since this is just a PoC I haven't implemented refreshing internal caches so you will need to simulate that by restarting the second coordinator.
+9. When the first periodic recovery cycle runs (the default is every 2 minutes) the migrated LRAs will be detected which you can verify (`curl http://localhost:50001/lra-coordinator/|jq`).
+
+Please refer to the [demonstrator instructions](redis-store-demo.md) for the full details.
+
+# Notes
+
+The JIRA issue and branch is JBTM-3762.
+
+- implementation is: https://github.com/mmusgrov/narayana/tree/JBTM-3762/ArjunaCore/arjuna/classes/com/arjuna/ats/internal/arjuna/objectstore/slot/redis
+- tests are located at: https://github.com/mmusgrov/narayana/blob/JBTM-3762/ArjunaCore/arjuna/tests/classes/com/hp/mwtests/ts/arjuna/objectstore/RedisStoreTest.java
+- to run the tests: `mvn test -Predis-store -Dtest=RedisStoreTest#test1 -f ArjunaCore/arjuna/pom.xml`
+- [the demo](./redis-store-demo.md) is work in progress and is strictly a PoC
+- redis raft implementation: `git clone https://github.com/RedisLabs/redisraft.git` and build it with: cmake and make
