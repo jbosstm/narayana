@@ -191,6 +191,11 @@
             <goals>
               <goal>test-jar-no-fork</goal>
             </goals>
+            <configuration>
+              <excludes>
+                <exclude>jbossts-properties.xml</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
