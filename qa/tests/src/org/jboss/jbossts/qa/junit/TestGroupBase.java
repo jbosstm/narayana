@@ -60,7 +60,7 @@ public class TestGroupBase
         // no need to do this here as it gets done in tearDown
         // TaskImpl.cleanupTasks();
 
-        Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+        Task emptyObjectStore = createTask("emptyObjectStore0", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
         emptyObjectStore.perform();
 
         if(isRecoveryManagerNeeded) {
@@ -82,7 +82,7 @@ public class TestGroupBase
         servers.clear();
         objectStoreNamesToTaskIds.clear();
 
-        Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+        Task emptyObjectStore = createTask("emptyObjectStore1", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
         emptyObjectStore.perform();
 
         try {
