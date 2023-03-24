@@ -234,7 +234,7 @@
     <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
-    <version.maven.jandex-plugin>1.0.6</version.maven.jandex-plugin>
+    <version.maven.jandex-plugin>3.0.5</version.maven.jandex-plugin>
     <version.microprofile.config-api>3.0.2</version.microprofile.config-api>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
@@ -477,6 +477,19 @@
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>io.smallrye</groupId>
+          <artifactId>jandex-maven-plugin</artifactId>
+          <version>${version.maven.jandex-plugin}</version>
+          <executions>
+            <execution>
+              <id>make-index</id>
+              <goals>
+                <goal>jandex</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

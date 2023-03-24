@@ -106,6 +106,22 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>io.smallrye</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>uberjar-index</id>
+            <phase>package</phase>
+            <goals>
+                <goal>jandex-jar</goal>
+            </goals>
+            <configuration>
+                <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
         <executions>
