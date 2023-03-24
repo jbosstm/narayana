@@ -5,8 +5,15 @@
 
 package io.narayana.lra.coordinator.domain.model;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import io.narayana.lra.LRAData;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.RedisSlots;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.RedisStoreEnvironmentBean;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -21,6 +28,7 @@ import org.eclipse.microprofile.lra.annotation.Forget;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.test.TestPortProvider;
 import org.junit.After;
@@ -50,6 +58,8 @@ import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import redis.clients.jedis.Jedis;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -65,6 +75,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
@@ -76,6 +87,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class LRATest {
+    private static final Logger log = Logger.getLogger(LRATest.class);
     private static UndertowJaxrsServer server;
     private static LRAService service;
 
@@ -323,9 +335,36 @@ public class LRATest {
         }
     }
 
+    private static Boolean redisAvailable;
+    private static boolean isRedisRunning() {
+        if (redisAvailable != null) {
+            return redisAvailable;
+        }
+
+        RedisStoreEnvironmentBean env = BeanPopulator.getDefaultInstance(RedisStoreEnvironmentBean.class);
+
+        String uri = env.getRedisURI();
+
+        try (Jedis jedis = new Jedis(uri)) {
+            redisAvailable = true;
+        } catch (Exception e) {
+            redisAvailable = false;
+        }
+
+        return false;
+    }
+
     @BeforeClass
     public static void start() {
         System.setProperty("lra.coordinator.url", TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME));
+
+        if (isRedisRunning()) {
+            System.setProperty("com.arjuna.ats.arjuna.common.propertiesFile", "redis-jbossts-properties.xml");
+        } else {
+            log.warnf("LRATest: skipping Redis store tests because Redis is not running");
+            // or put the test in its own class and enable it via a maven profile
+            // (like we do in the ArjunaCore/arjuna module)
+        }
     }
 
     @Before
@@ -425,11 +464,35 @@ public class LRATest {
      */
     @Test
     public void testReplay() {
+        tryFinish(false);
+    }
+
+    /**
+     * test that a log can be migrated to another nodeId
+     */
+    @Test
+    public void testMigrate() {
+        if (!isRedisRunning()) {
+            return;
+        }
+
+        String storeType = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).getObjectStoreType();
+        String backingSlotsClassName = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class).getBackingSlotsClassName();
+
+        if (storeType == SlotStore.class.getSimpleName() && backingSlotsClassName == RedisSlots.class.getSimpleName()) {
+            tryFinish(true);
+        } else {
+            System.out.printf("skipping testMigrate because configured store does not support migration of logs%n");
+        }
+    }
+
+    private void tryFinish(boolean migrate) {
         int completions = completeCount.get();
         Response response = client.target(TestPortProvider.generateURL("/base/test/start-end"))
                 .queryParam("accept", "1")
                 .request()
                 .get();
+        assertEquals(200, response.getStatus());
         String lra = response.readEntity(String.class);
         URI lraId = null;
 
@@ -448,8 +511,29 @@ public class LRATest {
         // the LRA should still be finishing (ie there should be a log record)
         assertEquals(completions, completeCount.get());
 
-        service.recover();
-        assertTrue(testName + ": lra did not finish", isFinished(lraId));
+        if (migrate) {
+            migrate(lraId);
+        } else {
+            service.recover();
+
+            assertTrue(testName + ": lra did not finish", isFinished(lraId));
+        }
+    }
+
+    private void migrate(URI lraId) {
+        // migrate the log
+        String recoveryUrl = LRAConstants.getLRACoordinatorUrl(lraId) + "/" + RECOVERY_COORDINATOR_PATH_NAME;
+        String targetNode = "migration-node";
+        String migrateUrl = String.format("%s/migrate/%s", recoveryUrl, targetNode);
+
+        try(Response response = client.target(new URI(migrateUrl))
+                .request()
+                .post(Entity.text(""))) {
+
+            assertEquals(200, response.getStatus());
+        } catch (Exception e) {
+            fail("unexpected exception: " + e.getMessage());
+        }
     }
 
     /**

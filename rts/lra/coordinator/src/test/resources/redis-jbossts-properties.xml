@@ -1,0 +1,12 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="CoreEnvironmentBean.nodeIdentifier">from-node</entry>
+	<entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">io.narayana.lra.coordinator.internal.LRARecoveryModule</entry>
+
+	<entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+
+	<entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.redis.RedisSlots</entry>
+
+	<entry key="CoordinatorEnvironmentBean.transactionStatusManagerEnable">false</entry>
+</properties>

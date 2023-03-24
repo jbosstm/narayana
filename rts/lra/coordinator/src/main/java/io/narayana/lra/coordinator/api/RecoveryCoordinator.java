@@ -9,6 +9,7 @@ import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
+import jakarta.ws.rs.POST;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -35,8 +36,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static io.narayana.lra.LRAConstants.MIGRATE_PATH_NAME;
 import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.NOT_IMPLEMENTED;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @Tag(name = "LRA Recovery")
@@ -197,6 +201,27 @@ public class RecoveryCoordinator {
 
             return Response.status(PRECONDITION_FAILED).entity(String.format("%s: %s", lraId, e.getMessage())).build();
         }
+    }
+
+    @POST
+    @Path(MIGRATE_PATH_NAME + "/{fromNodeId}/{toNodeId}")
+    @Operation(summary = "Migrate recovering LRAs from another node. Only supported by particular stores")
+    // TODO we should have a method to move the logs in the other direction
+    // this is the default one so that we can migrate logs from a failed node
+    public Response migrateLRAs(
+            @Parameter(name = "fromNodeId",
+                    description = "The source nodeId from which to migrate logs from",
+                    required = true)
+            @PathParam("fromNodeId")String fromNodeId,
+
+            @Parameter(name = "toNodeId",
+                    description = "The target nodeId to which to migrate logs to",
+                    required = true)
+            @PathParam("toNodeId")String toNodeId) {
+
+        boolean supported = lraService.migrate(fromNodeId, toNodeId);
+
+        return Response.status(supported ? OK : NOT_IMPLEMENTED).build();
     }
 
     private Response removeLog(String lra) {

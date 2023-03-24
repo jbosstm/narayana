@@ -5,10 +5,17 @@
 
 package io.narayana.lra.coordinator.internal;
 
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.CloudId;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.RedisStoreEnvironmentBean;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.redis.SharedSlots;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -252,6 +259,29 @@ public class LRARecoveryModule implements RecoveryModule {
         if (getUids(FailedLongRunningAction.FAILED_LRA_TYPE, aa_uids)) {
             forEach(aa_uids, failedLRACreator, FailedLongRunningAction.FAILED_LRA_TYPE);
         }
+    }
+
+    /**
+     * migrate logs from another node to this one
+     * @param fromNodeId the node id of the node from which we are migrating logs from
+     * @return
+     */
+    public synchronized boolean migrate(String fromNodeId, String toNodeId) {
+        SlotStoreEnvironmentBean slotEnv = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
+        BackingSlots slotImpl = slotEnv.getBackingSlots();
+
+        if (slotImpl instanceof SharedSlots) {
+            RedisStoreEnvironmentBean redisEnv = BeanPopulator.getDefaultInstance(RedisStoreEnvironmentBean.class);
+            String nodeId = BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).getNodeIdentifier();
+            SharedSlots impl = (SharedSlots) slotImpl;
+            CloudId fromId = new CloudId(fromNodeId, redisEnv.getFailoverId());
+            CloudId toId = new CloudId(toNodeId, redisEnv.getFailoverId());
+
+            // periodic recovery is blocked since this method and the recovery methods are synchronized
+            return impl.migrate(fromId, toId);
+        }
+
+        return false;
     }
 
     private boolean getUids(final String type, InputObjectState aa_uids) {

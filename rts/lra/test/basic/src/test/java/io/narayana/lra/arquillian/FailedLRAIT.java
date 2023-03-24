@@ -11,6 +11,7 @@ import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
 import io.narayana.lra.arquillian.resource.SimpleLRAParticipant;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import io.narayana.lra.coordinator.domain.model.FailedLongRunningAction;
+import jakarta.ws.rs.client.Entity;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -20,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -190,6 +192,47 @@ public class FailedLRAIT extends TestBase {
         }
         // Removing Failed LRA record.
         removeFailedLRA(lraId);
+    }
+
+    /*    @Test
+    public void testMove() {
+        // create an LRA
+        // TODO
+        final String recoveryUrlBase = String.format("%s%s/%s/%s/migrate",
+                context.getBaseUri().toASCIIString(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
+
+
+
+        Response r = client.target(coordinatorPath + "/migrate").request().post(null);
+    }*/
+
+    /**
+     * test that a log can be migrated to another nodeId
+     */
+    @Test
+    public void testMigrateLRARecords() throws Exception {
+        // start an LRA which will return 202 when asked to compensate
+        URI lraId = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
+                START_LRA_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        lrasToAfterFinish.add(lraId);
+
+        // migrate the log
+        String recoveryUrl = getRecoveryUrl(lraId);
+        String targetNode = "migration-node";
+        String migrateUrl = String.format("%s/migrate/%s", recoveryUrl, targetNode);
+
+        try(Response response = client.target(new URI(migrateUrl))
+                .request()
+                .post(Entity.text(""))) {
+
+            int status = response.getStatus();
+
+            System.out.printf("status=%d%n", status);
+        } catch (Exception e) {
+            System.out.printf("exception: %s%n", e.getMessage());
+        }
+//        final String recoveryUrlBase = String.format("%s%s/%s/%s/migrate",
+//                context.getBaseUri().toASCIIString(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
     }
 
     /**
