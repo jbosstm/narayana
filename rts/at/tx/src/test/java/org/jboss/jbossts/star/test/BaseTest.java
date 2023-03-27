@@ -20,17 +20,16 @@
  */
 package org.jboss.jbossts.star.test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.net.ssl.SSLContext;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
+import com.squareup.okhttp.OkHttpClient;
+import io.quarkus.runtime.QuarkusApplication;
+import io.undertow.Undertow;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -45,27 +44,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
-import com.squareup.okhttp.OkHttpClient;
-import io.undertow.Undertow;
-/* jakarta TODO do we want to support Jersey/grizzly
-means we deleted SpdyEnabledHttpServer
-import jakarta.ws.rs.core.UriBuilder;
-import java.net.URI;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.ServerProperties;
-import com.sun.grizzly.http.SelectorThread;
-//import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
-*/
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
@@ -88,12 +66,24 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class BaseTest {
     protected static final Logger log = Logger.getLogger(BaseTest.class);
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_NETTY = false;
-    protected static boolean USE_UNDERTOW = true;
+    protected static boolean USE_UNDERTOW = false;
+    protected static boolean USE_QUARKUS = true;
 // jarkarta TODO jersey    private static HttpServer grizzlyServer;
     protected static final String USE_SPDY_PROP = "rts.usespdy";
     protected static final String USE_SSL_PROP = "rts.usessl";
@@ -111,6 +101,7 @@ public class BaseTest {
     private static NettyJaxrsServer netty = null;
 // jakarta TODO    private static SelectorThread threadSelector = null;
     private static UndertowJaxrsServer undertow;
+    private static Undertow quarkusUndertow;
 
     protected static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
@@ -124,6 +115,23 @@ public class BaseTest {
         undertow.deploy(new TMApplication(classes));//, SURL + "tx/");
 
         System.out.printf("server is ready:");
+
+    }
+
+    protected static void startQuarkusApplication(Class<?> ... classes) throws Exception {
+
+    QuarkusApplication quarkusApplication = new QuarkusApplication() {
+            @Override
+            public int run(String... args) {
+                UndertowJaxrsServer server = new UndertowJaxrsServer();
+                // create a deployment object and add our REST endpoint class to it
+                server.start(Undertow.builder().addHttpListener(PORT, "localhost"));
+                server.deploy(new TMApplication(classes));//, SURL + "tx/");
+                System.out.printf("server started");
+                return 0;
+            }
+        };
+        quarkusApplication.run();
     }
 
     protected static void startRestEasy(Class<?> ... classes) throws Exception {
@@ -191,8 +199,10 @@ public class BaseTest {
 
         if (USE_NETTY)
             startRestEasy(classes);
-        else if (USE_UNDERTOW)
+        if (USE_UNDERTOW)
             startUndertow(classes);
+        else if (USE_QUARKUS)
+            startQuarkusApplication(classes);
         else
             throw new RuntimeException("Grizzly app server not supported with jakarta");
 //            startJersey(packages);
