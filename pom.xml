@@ -269,7 +269,7 @@
     <version.org.springframework>3.2.2.RELEASE</version.org.springframework>
     <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
     <version.postgresql>42.3.1</version.postgresql>
-    <version.quarkus>3.0.0.Alpha4</version.quarkus>
+    <version.quarkus>3.0.0.Alpha5</version.quarkus>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>

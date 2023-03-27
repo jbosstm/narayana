@@ -38,9 +38,7 @@
     <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
     <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
     <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
-
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
@@ -156,6 +154,18 @@
       <groupId>jakarta.transaction</groupId>
       <artifactId>jakarta.transaction-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <!-- Quarkus -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy</artifactId>
+      <version>${version.quarkus}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.threads</groupId>
+          <artifactId>jboss-threads</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
