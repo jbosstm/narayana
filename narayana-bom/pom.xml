@@ -879,7 +879,7 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>io.smallrye</groupId>
+        <groupId>io.smallrye.config</groupId>
         <artifactId>smallrye-config</artifactId>
         <version>${version.io.smallrye.smallrye-config}</version>
         <scope>runtime</scope>
