@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
@@ -36,6 +37,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
@@ -55,8 +58,13 @@ import java.util.List;
 import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+
 
 @Tag(name = "LRA Recovery")
+@ApplicationScoped
+@ApplicationPath("/")
+@Path(RECOVERY_COORDINATOR_PATH_NAME)
 public class RecoveryCoordinator {
 
     private final Logger logger = Logger.getLogger(RecoveryCoordinator.class.getName());
