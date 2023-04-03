@@ -26,10 +26,8 @@
         <configuration>
             <!-- defaults to JBOSS_HOME
 <property name="jbossHome">$WORKSPACE/jboss-as/build/target/wildfly-$WILDFLY_MAIN_VERSION</property> -->
-<!--
-cp /home/mmusgrov/source/forks/narayana/tom/jboss-as/build/target/wildfly-8.0.0.Final-SNAPSHOT/standalone/configuration/standalone-full.xml /home/mmusgrov/source/forks/narayana/tom/jboss-as/build/target/wildfly-8.0.0.Final-SNAPSHOT/standalone/configuration/standalone-cmr.xml
--->
-            <property name="serverConfig">standalone-cmr.xml</property>
+
+            <property name="serverConfig">standalone.xml</property>
             <property name="javaVmArguments">${server.jvm.args}</property>
             <property name="managementAddress">${node.address}</property>
             <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
