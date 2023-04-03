@@ -230,7 +230,7 @@ public class CMRIntegrationTest {
 
 		long endTime = System.currentTimeMillis();
 
-		log.infof("%T Number of transactions: %d", new Date(), totalExecuted.intValue());
+		log.infof("%s Number of transactions: %d", new Date().toString(), totalExecuted.intValue());
 
 		long additionalCleanuptime = 0L; // postRunCleanup(dataSource);
 
