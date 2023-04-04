@@ -50,7 +50,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
- * Implementation of the tx store backed by HornetQ's journal.
+ * Implementation of the tx store backed by the Artemis journal.
  * This is a bean suitable for hooking into the app server lifecycle.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2010-03

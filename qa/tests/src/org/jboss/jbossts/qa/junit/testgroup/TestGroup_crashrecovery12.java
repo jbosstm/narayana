@@ -34,7 +34,7 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 	@Before public void setUp()
 	{
 		/*
-		 * Always run the hornetq store in process since that store is loaded only once
+		 * Always run the journal store in process since that store is loaded only once
 		 * on startup (ie subsequent additions to the store by external processes will
 		 * never be loaded).
 		 */

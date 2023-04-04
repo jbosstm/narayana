@@ -26,11 +26,9 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
- * A JavaBean containing assorted configuration properties for the HornetQ Journal based transaction logging system.
+ * A JavaBean containing assorted configuration properties for the Journal based transaction logging system.
  *
- * Parameters on this file serve a similar role to their counterparts in HornetQ.
- * The HornetQ docs therefore provide relevant information on usage:
- * http://hornetq.sourceforge.net/docs/hornetq-2.1.2.Final/user-manual/en/html/persistence.html#configuring.message.journal.journal-type
+ * Parameters on this file serve a similar role to their counterparts in the artemis journal.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2010-03
  */
@@ -329,8 +327,8 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     /**
      * Returns the target number of timer based buffer flushes per second.
-     * Caution: this property is functionally equivalent to HornetQ's
-     * journal-buffer-timeout but uses different units.
+     * Caution: this property is functionally equivalent to the artemis
+     * journal-buffer-timeout property but uses different units.
      *
      * Default 500.
      *

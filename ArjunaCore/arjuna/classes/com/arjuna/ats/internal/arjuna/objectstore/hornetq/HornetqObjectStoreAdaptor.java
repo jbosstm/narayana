@@ -107,7 +107,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public void stop()
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.stop()");
+            tsLogger.logger.trace("JournalStore.stop()");
         }
 
         try {
@@ -164,7 +164,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public InputObjectState read_committed(Uid u, String typeName) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.read_committed("+u+", "+typeName+")");
+            tsLogger.logger.trace("JournalStore.read_committed("+u+", "+typeName+")");
         }
 
         typeName = ensureTypenamePrefix(typeName);
@@ -184,7 +184,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public boolean remove_committed(Uid u, String typeName) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.remove_committed("+u+", "+typeName+")");
+            tsLogger.logger.trace("JournalStore.remove_committed("+u+", "+typeName+")");
         }
 
         typeName = ensureTypenamePrefix(typeName);
@@ -245,7 +245,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public int currentState(Uid u, String typeName) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.currentState("+u+", "+typeName+")");
+            tsLogger.logger.trace("JournalStore.currentState("+u+", "+typeName+")");
         }
 
         typeName = ensureTypenamePrefix(typeName);
@@ -286,7 +286,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public boolean write_committed(Uid u, String typeName, OutputObjectState buff) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.write_committed("+u+", "+typeName+")");
+            tsLogger.logger.trace("JournalStore.write_committed("+u+", "+typeName+")");
         }
 
         typeName = ensureTypenamePrefix(typeName);
@@ -298,7 +298,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public boolean allObjUids(String typeName, InputObjectState foundInstances) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.allObjUids("+typeName+")");
+            tsLogger.logger.trace("JournalStore.allObjUids("+typeName+")");
         }
 
         typeName = ensureTypenamePrefix(typeName);
@@ -319,7 +319,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public boolean allObjUids(String typeName, InputObjectState foundInstances, int matchState) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.allObjUids("+typeName+", "+matchState+")");
+            tsLogger.logger.trace("JournalStore.allObjUids("+typeName+", "+matchState+")");
         }
 
         boolean result = true;
@@ -365,7 +365,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public boolean allTypes(InputObjectState foundTypes) throws ObjectStoreException
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.allTypes()");
+            tsLogger.logger.trace("JournalStore.allTypes()");
         }
 
         boolean result = true;
