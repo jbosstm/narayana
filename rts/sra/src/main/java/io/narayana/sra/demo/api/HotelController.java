@@ -56,7 +56,7 @@ public class HotelController extends SRAParticipant {
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     @SRA(SRA.Type.REQUIRED)
-    public Booking bookRoom(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
+    public Booking bookRoom(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) @DefaultValue("") String sraId,
                             @QueryParam(HOTEL_NAME_PARAM) @DefaultValue("Default") String hotelName,
                             @QueryParam(HOTEL_BEDS_PARAM) @DefaultValue("1") Integer beds,
                             @QueryParam("mstimeout") @DefaultValue("500") Long timeout) {

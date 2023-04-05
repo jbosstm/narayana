@@ -112,7 +112,7 @@ public class TripController extends SRAParticipant {
     @Produces(MediaType.APPLICATION_JSON)
     // end = false because we want the SRA to be associated with a booking until the user confirms the booking
     @SRA(value = SRA.Type.REQUIRED, end = false)
-    public Response bookTrip( @HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
+    public Response bookTrip( @HeaderParam(RTS_HTTP_CONTEXT_HEADER) @DefaultValue("") String sraId,
                               @QueryParam(HotelController.HOTEL_NAME_PARAM) @DefaultValue("") String hotelName,
                               @QueryParam(HotelController.HOTEL_BEDS_PARAM) @DefaultValue("1") Integer hotelGuests,
                               @QueryParam(FlightController.FLIGHT_NUMBER_PARAM) @DefaultValue("") String flightNumber,

@@ -57,7 +57,7 @@ public class FlightController extends SRAParticipant {
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     @SRA(SRA.Type.REQUIRED)
-    public Booking bookFlight(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
+    public Booking bookFlight(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) @DefaultValue("") String sraId,
                               @QueryParam(FLIGHT_NUMBER_PARAM) @DefaultValue("") String flightNumber,
                               @QueryParam(FLIGHT_SEATS_PARAM) @DefaultValue("1") Integer seats,
                               @QueryParam("mstimeout") @DefaultValue("500") Long timeout) {
