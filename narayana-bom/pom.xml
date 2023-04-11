@@ -24,7 +24,6 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>artemis-journal</artifactId>
         <version>${version.org.apache.activemq}</version>
-        <scope>provided</scope>
         <exclusions>
           <exclusion>
             <groupId>io.netty</groupId>
@@ -36,38 +35,32 @@
         <groupId>io.mashona</groupId>
         <artifactId>mashona-logwriting</artifactId>
         <version>${version.io.mashona}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
         <version>${version.org.jboss.logging.jboss-logging}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging-processor</artifactId>
         <version>${version.org.jboss.logging.jboss-logging-processor}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>common</artifactId>
         <version>${project.version}</version>
         <classifier>tests</classifier>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.byteman</groupId>
         <artifactId>byteman-bmunit</artifactId>
         <version>${version.org.jboss.byteman}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
         <version>${version.com.h2database}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.arjunacore</groupId>
@@ -113,7 +106,6 @@
         <groupId>jakarta.annotation</groupId>
         <artifactId>jakarta.annotation-api</artifactId>
         <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>jakarta.ejb</groupId>
@@ -124,13 +116,11 @@
         <groupId>io.smallrye.reactive</groupId>
         <artifactId>smallrye-reactive-converter-api</artifactId>
         <version>${version.smallrye-converter-api}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
         <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
         <version>${version.org.jboss.arquillian.core}</version>
-        <scope>test</scope>
       </dependency>
 
       <!-- Standalone JNDI server -->
@@ -138,7 +128,6 @@
         <groupId>org.jboss.naming</groupId>
         <artifactId>jnpserver</artifactId>
         <version>${version.jnpserver}</version>
-        <scope>test</scope>
         <exclusions>
           <exclusion>
             <groupId>org.jboss.logging</groupId>
@@ -150,26 +139,22 @@
         <groupId>jboss</groupId>
         <artifactId>jnpserver</artifactId>
         <version>${version.jboss.jnpserver}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
         <version>${version.org.springframework}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.byteman</groupId>
         <artifactId>byteman-install</artifactId>
         <version>${version.org.jboss.byteman}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${version.org.mockito}</version>
-        <scope>test</scope>
         <exclusions>
           <!-- JUnit already comes with Hamcrest -->
           <exclusion>
@@ -189,7 +174,6 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>artemis-jakarta-server</artifactId>
         <version>${version.org.apache.activemq}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -227,26 +211,22 @@
         <artifactId>jta</artifactId>
         <version>${project.version}</version>
         <classifier>tests</classifier>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${version.org.slf4j}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${version.org.slf4j}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${version.org.slf4j}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -271,7 +251,6 @@
         <artifactId>idlj-idl-openjdk</artifactId>
         <version>${project.version}</version>
         <classifier>tests</classifier>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.openjdk-orb</groupId>
@@ -285,7 +264,6 @@
         <groupId>org.jboss.weld</groupId>
         <artifactId>weld-core-impl</artifactId>
         <version>${version.org.jboss.weld}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Test dependencies -->
@@ -293,20 +271,17 @@
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>byteman_support</artifactId>
         <version>${project.version}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>jakarta.xml.bind</groupId>
         <artifactId>jakarta.xml.bind-api</artifactId>
         <version>${version.jakarta.xml.bind.jakarta-xml-bind-api}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>jakarta.xml.ws</groupId>
         <artifactId>jakarta.xml.ws-api</artifactId>
         <version>${version.jakarta.xml.ws.jakarta.xml.ws-api}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Narayan full -->
@@ -359,7 +334,6 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-core</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>provided</scope>
         <!-- filter out unwanted jars -->
         <exclusions>
           <exclusion>
@@ -372,7 +346,6 @@
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>${version.commons-httpclient}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Ensure these are in the distribution -->
@@ -386,14 +359,12 @@
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
         <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.ws</groupId>
         <artifactId>jaxws-ri</artifactId>
         <version>${version.jaxws-ri}</version>
         <type>pom</type>
-        <scope>provided</scope>
         <exclusions>
           <exclusion>
             <groupId>com.sun.xml.bind</groupId>
@@ -549,7 +520,6 @@
         <groupId>org.jboss.byteman</groupId>
         <artifactId>byteman-dtest</artifactId>
         <version>${version.org.jboss.byteman}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
@@ -561,7 +531,6 @@
         <groupId>org.glassfish</groupId>
         <artifactId>jakarta.json</artifactId>
         <version>${version.glassfish.json}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -574,13 +543,11 @@
         <groupId>jakarta.activation</groupId>
         <artifactId>jakarta.activation-api</artifactId>
         <version>${version.jakarta.activation.jakarta.activation-api}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.ws</groupId>
         <artifactId>jaxws-rt</artifactId>
         <version>${version.jaxws-ri}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -604,7 +571,6 @@
         <groupId>org.jboss.narayana.arjunacore</groupId>
         <artifactId>arjunacore</artifactId>
         <version>${project.version}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
@@ -666,7 +632,6 @@
         <groupId>org.jboss.ws</groupId>
         <artifactId>jbossws-api</artifactId>
         <version>${version.org.jboss.ws}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Arquillian Maven Resolver -->
@@ -732,7 +697,6 @@
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging-annotations</artifactId>
         <version>${version.org.jboss.logging.jboss-logging-processor}</version>
-        <scope>provided</scope>
         <optional>true</optional>
       </dependency>
 
@@ -748,7 +712,6 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client-api</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>provided</scope>
         <!-- filter out unwanted jars -->
         <exclusions>
           <exclusion>
@@ -770,32 +733,27 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-netty4</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxb-provider</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.modules</groupId>
         <artifactId>jboss-modules</artifactId>
         <version>${version.jboss-modules}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>com.squareup.okhttp</groupId>
         <artifactId>okhttp</artifactId>
         <version>${version.squareup.okhttp}</version>
-        <scope>test</scope>
       </dependency>
 
       <!-- undertow with RestEasy -->
@@ -803,13 +761,11 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-undertow</artifactId>
         <version>${version.org.jboss.resteasy}</version>
-        <scope>test</scope>
       </dependency>
       <!-- end undertow with RestEasy -->
       <dependency>
@@ -822,7 +778,6 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest</artifactId>
         <version>${version.hamcrest}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>jakarta.ws.rs</groupId>
@@ -834,7 +789,6 @@
         <artifactId>restat-api</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.rts</groupId>
@@ -876,13 +830,11 @@
         <groupId>org.eclipse.microprofile.config</groupId>
         <artifactId>microprofile-config-api</artifactId>
         <version>${version.microprofile.config-api}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>io.smallrye.config</groupId>
         <artifactId>smallrye-config</artifactId>
         <version>${version.io.smallrye.smallrye-config}</version>
-        <scope>runtime</scope>
         <exclusions>
           <exclusion>
             <groupId>jakarta.annotation</groupId>
@@ -898,7 +850,6 @@
         <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
         <artifactId>microprofile-fault-tolerance-api</artifactId>
         <version>${version.microprofile.fault-tolerance}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.microprofile.lra</groupId>
@@ -909,7 +860,6 @@
         <groupId>org.eclipse.microprofile.openapi</groupId>
         <artifactId>microprofile-openapi-api</artifactId>
         <version>${version.org.eclipse.microprofile.openapi}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.microprofile.lra</groupId>
@@ -930,13 +880,11 @@
         <groupId>org.wildfly.arquillian</groupId>
         <artifactId>wildfly-arquillian-container-managed</artifactId>
         <version>${version.org.wildfly.arquillian}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>asm</groupId>
         <artifactId>asm-all</artifactId>
         <version>${version.asm}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.openjdk-orb</groupId>
@@ -958,7 +906,6 @@
         <groupId>tanukisoft</groupId>
         <artifactId>wrapper</artifactId>
         <version>${version.tanukisoft}</version>
-        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
