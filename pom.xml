@@ -186,6 +186,7 @@
     <testLogToFile>true</testLogToFile>
 
     <version.ant-contrib>1.0b3</version.ant-contrib>
+    <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.5.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.com.h2database>1.4.195</version.com.h2database>
     <version.com.ibm>11.5.0.0</version.com.ibm>
@@ -268,6 +269,8 @@
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.org.springframework>3.2.2.RELEASE</version.org.springframework>
     <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
+    <version.org.wildfly.core>20.0.0.Final</version.org.wildfly.core>
+    <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
     <version.postgresql>42.3.1</version.postgresql>
     <version.quarkus>3.0.0.Alpha5</version.quarkus>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>

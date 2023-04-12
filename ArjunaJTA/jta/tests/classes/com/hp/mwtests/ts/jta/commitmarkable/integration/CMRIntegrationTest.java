@@ -41,13 +41,16 @@ import jakarta.transaction.TransactionManager;
 import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.logging.Logger;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,23 +61,40 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.hp.mwtests.ts.jta.commitmarkable.DummyXAResource;
 import com.hp.mwtests.ts.jta.commitmarkable.Utils;
+import org.wildfly.extras.creaper.core.online.FailuresAllowedBlock;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
+import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
+
+import static org.wildfly.extras.creaper.core.ManagementClient.online;
+import static org.wildfly.extras.creaper.core.online.OnlineOptions.standalone;
 
 @RunWith(Arquillian.class)
+@ServerSetup(CMRIntegrationTest.SetupCMRDataSource.class)
+@BMRule(name = "Fail if CMR is not used",
+		targetClass = "com.arjuna.ats.arjuna.coordinator.BasicAction", targetMethod = "doCommit(boolean,com.arjuna.ats.arjuna.coordinator.AbstractRecord)",
+		binding = "record:com.arjuna.ats.arjuna.coordinator.AbstractRecord = $2",
+		condition = "!record.getClass().getName().equals(\"com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord\") && " +
+				"!record.getClass().getName().equals(\"com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord\")",
+		action = "System.err.println(\"[BYTEMAN RULE] This test doesn't use CommitMarkableResourceRecord!\")," +
+				"System.err.println(\"[BYTEMAN RULE] Record type is\" + record.getClass().getName())," +
+				"throw new java.lang.RuntimeException(\"This test doesn't use CommitMarkableResourceRecord!\")")
 public class CMRIntegrationTest {
 	private static final Logger log = Logger.getLogger(CMRIntegrationTest.class);
 
 	private static final String DEPENDENCIES = "Dependencies: com.h2database.h2, org.jboss.jts, org.jboss.jboss-transaction-spi\n";
 
 	@Deployment
-	public static JavaArchive createTestArchive() {
-		return ShrinkWrap
-				.create(JavaArchive.class, "test.jar")
-				.addClasses(DummyXAResource.class, Utils.class)
-				.addPackage("io.narayana.connectableresource")
-				.addAsManifestResource(new StringAsset(DEPENDENCIES),
-						"MANIFEST.MF")
-				.addAsManifestResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"),
-						"beans.xml");
+	public static WebArchive createTestArchive() {
+		WebArchive archive = ShrinkWrap
+				.create(WebArchive.class, "test.war")
+				// ManagementClient and "org.jboss.as.arquillian.api" are needed to avoid errors in WildFly but they do not affect tests
+				.addClasses(DummyXAResource.class, Utils.class, SetupCMRDataSource.class, ManagementClient.class)
+				.addPackages(true, "org.jboss.as.arquillian.api")
+				.addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"></beans>"), "beans.xml");
+
+		archive.setManifest(new StringAsset(DEPENDENCIES));
+
+		return archive;
 	}
 
 	@Resource(mappedName = "java:jboss/datasources/ExampleDS")
@@ -93,7 +113,8 @@ public class CMRIntegrationTest {
 		doTest(ds);
 	}
 
-	// @Test
+	@Test
+	@Ignore
 	public void testCMR1() throws Exception {
 
 		Utils.createTables(ds.getConnection());
@@ -321,6 +342,37 @@ public class CMRIntegrationTest {
 		}
 
 		return 0;
+	}
+
+	public static class SetupCMRDataSource implements ServerSetupTask {
+		@Override
+		public void setup(ManagementClient managementClient, String containerId) throws Exception {
+			// Creaper is employed to execute CLI commands on the instance of WildFly started by Arquillian
+			OnlineManagementClient creaper = online(standalone().wrap(managementClient.getControllerClient()));
+
+			try (FailuresAllowedBlock allowedBlock = creaper.allowFailures()) {
+				// The following two CLI commands configure WildFly to use Commit Markable Resource on ExampleDS
+				creaper.execute("/subsystem=datasources/data-source=ExampleDS:write-attribute(name=\"connectable\", value=\"true\")");
+				creaper.execute("/subsystem=transactions/commit-markable-resource=\"java:jboss/datasources/ExampleDS\":add(name=xids, batch-size=1, immediate-cleanup=false)");
+			}
+
+			// Reboot the server
+			new Administration(creaper).reload();
+		}
+
+		@Override
+		public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+			// Creaper is employed to execute CLI commands on the instance of WildFly started by Arquillian
+			OnlineManagementClient creaper = online(standalone().wrap(managementClient.getControllerClient()));
+
+			try (FailuresAllowedBlock allowedBlock = creaper.allowFailures()) {
+				// The following two CLI commands revert the use of Commit Markable Resource on ExampleDS
+				creaper.execute("/subsystem=datasources/data-source=ExampleDS:write-attribute(name=\"connectable\", value=\"false\")");
+				creaper.execute("/subsystem=transactions/commit-markable-resource=\"java:jboss/datasources/ExampleDS\":remove()");
+			}
+		}
+
+		// Reboot is not needed as the server is shut down at the end of the tests
 	}
 
 }
