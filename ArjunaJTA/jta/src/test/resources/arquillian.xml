@@ -24,14 +24,16 @@
 
    <container qualifier="jboss" default="true">
         <configuration>
-            <!-- defaults to JBOSS_HOME
-<property name="jbossHome">$WORKSPACE/jboss-as/build/target/wildfly-$WILDFLY_MAIN_VERSION</property> -->
-
             <property name="serverConfig">standalone.xml</property>
             <property name="javaVmArguments">${server.jvm.args}</property>
             <property name="managementAddress">${node.address}</property>
             <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
-        </configuration> 
+        </configuration>
    </container>
+
+    <extension qualifier="byteman">
+        <property name="autoInstallAgent">true</property>
+        <property name="agentProperties">org.jboss.byteman.verbose=true,prop:org.jboss.byteman.debug=true</property>
+    </extension>
 
 </arquillian>

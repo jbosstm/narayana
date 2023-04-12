@@ -127,10 +127,19 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.jboss.arquillian.core</groupId>
+        <artifactId>arquillian-core-api</artifactId>
+        <version>${version.org.jboss.arquillian.core}</version>
+      </dependency>
+      <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
         <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
         <version>${version.org.jboss.arquillian.core}</version>
-        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-extension-byteman</artifactId>
+        <version>${version.arquillian.byteman}</version>
       </dependency>
 
       <!-- Standalone JNDI server -->
@@ -930,6 +939,24 @@
         <groupId>org.wildfly.arquillian</groupId>
         <artifactId>wildfly-arquillian-container-managed</artifactId>
         <version>${version.org.wildfly.arquillian}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.wildfly.extras.creaper</groupId>
+        <artifactId>creaper-core</artifactId>
+        <version>${version.org.wildfly.extras.creaper}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-controller-client</artifactId>
+        <version>${version.org.wildfly.core}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-cli</artifactId>
+        <version>${version.org.wildfly.core}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
