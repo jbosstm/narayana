@@ -425,12 +425,6 @@
       <!-- qa -->
 
       <dependency>
-        <groupId>org.jboss</groupId>
-        <artifactId>jboss-transaction-spi-jakarta</artifactId>
-        <version>${version.org.jboss.jboss-transaction-spi}</version>
-      </dependency>
-
-      <dependency>
         <groupId>jboss.profiler.jvmti</groupId>
         <artifactId>jboss-profiler-jvmti</artifactId>
         <version>${version.jboss.profiler.jvmti}</version>
