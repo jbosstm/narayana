@@ -35,7 +35,6 @@ import jakarta.transaction.HeuristicMixedException;
 import jakarta.transaction.HeuristicRollbackException;
 import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.RollbackException;
-import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.UserTransaction;
@@ -111,36 +110,6 @@ public class CMRIntegrationTest {
 		Utils.createTables(ds.getConnection());
 
 		doTest(ds);
-	}
-
-	@Test
-	@Ignore
-	public void testCMR1() throws Exception {
-
-		Utils.createTables(ds.getConnection());
-
-		try {
-			userTransaction.begin();
-
-			tm.getTransaction().enlistResource(new DummyXAResource());
-
-			Connection connection = ds.getConnection();
-			Statement createStatement = connection.createStatement();
-			createStatement.execute("INSERT INTO foo (bar) VALUES (1)");
-			createStatement.close();
-
-			userTransaction.commit();
-		} catch (Exception e) {
-			log.infof(e, "XXX txn exception cause: %s", e.getCause());
-		} finally {
-			try {
-				if (userTransaction.getStatus() == Status.STATUS_ACTIVE
-						|| userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK)
-					userTransaction.rollback();
-			} catch (Throwable e) {
-				System.out.printf("XXX txn did not finish: %s%n", e.getCause());
-			}
-		}
 	}
 
 	private final int threadCount = 5;
