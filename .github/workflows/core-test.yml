@@ -1,0 +1,45 @@
+name: CORE
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  core-test:
+    name: CORE test with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
+    strategy:
+      matrix:
+        java-version: [ 11, 17 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        name: Set up JDK ${{ matrix.java-version }}
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: CORE test
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
+        env:
+          LRA_TCK_TIMEOUT_FACTOR: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: core-logs-jdk${{ matrix.java-version }}
+          path: |
+            jboss-as/dist/target/wildfly-*/standalone/log/
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: error
