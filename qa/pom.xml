@@ -45,8 +45,8 @@
       <artifactId>jboss-logging</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.transaction</groupId>
-      <artifactId>jakarta.transaction-api</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-journal</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -72,28 +72,8 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jacoco</groupId>
       <artifactId>org.jacoco.ant</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.report</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.agent</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
     </dependency>
     <dependency>
       <groupId>ant-contrib</groupId>
@@ -109,10 +89,6 @@
     </dependency>
 
     <!-- Narayana Dependencies -->
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>orbportability</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-idlj</artifactId>
@@ -260,6 +236,20 @@
             <phase>install</phase>
             <configuration>
               <excludeArtifactIds>ojdbc8, postgresql, mysql-connector-java, jcc</excludeArtifactIds>
+              <outputDirectory>${project.basedir}/ext</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Transitive dependencies are also copied as ant needs to have these jars in its classpath -->
+          <!-- This execution can be removed ONLY if ant is replaced with maven -->
+          <execution>
+            <id>TransitiveDependencies</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <excludeTransitive>false</excludeTransitive>
+              <includeGroupIds>org.slf4j, jakarta.transaction, org.hamcrest, org.apache.activemq, io.netty, org.jacoco, org.jboss.narayana.jts</includeGroupIds>
               <outputDirectory>${project.basedir}/ext</outputDirectory>
             </configuration>
           </execution>
