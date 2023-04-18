@@ -93,7 +93,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     public void start()
     {
         if(tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HornetqObjectStore.start()");
+            tsLogger.logger.trace("JournalStore.start()");
         }
 
         try {
