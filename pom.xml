@@ -188,7 +188,7 @@
     <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.5.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
-    <version.com.h2database>1.4.195</version.com.h2database>
+    <version.com.h2database>2.1.214</version.com.h2database>
     <version.com.ibm>11.5.0.0</version.com.ibm>
     <version.com.microsoft.sqlserver>mssql2005_sqljdbc_2.0</version.com.microsoft.sqlserver>
     <version.com.oracle>18.3.0.0</version.com.oracle>

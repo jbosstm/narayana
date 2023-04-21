@@ -33,7 +33,7 @@ public class TestCommitMarkableResourceFailAfterCommit extends
 	@BMScript("commitMarkableResourceFailAfterCommit")
 	public void testFailAfterCommitH2() throws Exception {
 		final JdbcDataSource dataSource = new JdbcDataSource();
-		dataSource.setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE;DB_CLOSE_DELAY=-1");
+		dataSource.setURL("jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1");
 
 		doTest(dataSource);
 	}

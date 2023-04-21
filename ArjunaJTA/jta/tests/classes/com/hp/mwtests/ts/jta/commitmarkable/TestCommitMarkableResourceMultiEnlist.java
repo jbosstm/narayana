@@ -65,7 +65,7 @@ public class TestCommitMarkableResourceMultiEnlist {
 			SystemException, IllegalStateException, RollbackException,
 			SQLException {
 		JdbcDataSource dataSource = new JdbcDataSource();
-		dataSource.setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE");
+		dataSource.setURL("jdbc:h2:mem:JBTMDB");
 
 		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
 				.transactionManager();

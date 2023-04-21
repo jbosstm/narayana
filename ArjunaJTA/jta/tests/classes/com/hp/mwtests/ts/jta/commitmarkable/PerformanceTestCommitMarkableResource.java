@@ -273,7 +273,7 @@ public class PerformanceTestCommitMarkableResource extends
 					.setCommitMarkableResourceRecordDeleteBatchSize(100);
 			dataSource = new JdbcDataSource();
 			((JdbcDataSource) dataSource)
-					.setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE;DB_CLOSE_DELAY=-1");
+					.setURL("jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1");
 			recoveryDataSource = ((JdbcDataSource) dataSource);
 		} else if (dbType.equals("postgres")) {
 
@@ -409,7 +409,7 @@ public class PerformanceTestCommitMarkableResource extends
 		} else if (dbType.equals("h2")) {
 			dataSource = new org.h2.jdbcx.JdbcDataSource();
 			((JdbcDataSource) dataSource)
-					.setURL("jdbc:h2:mem:JBTMDB2;MVCC=TRUE;DB_CLOSE_DELAY=-1");
+					.setURL("jdbc:h2:mem:JBTMDB2;DB_CLOSE_DELAY=-1");
 		} else if (dbType.equals("postgres")) {
 
 			dataSource = new PGXADataSource();

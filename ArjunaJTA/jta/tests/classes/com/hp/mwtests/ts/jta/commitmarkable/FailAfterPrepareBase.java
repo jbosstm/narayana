@@ -53,7 +53,7 @@ public class FailAfterPrepareBase extends TestCommitMarkableResourceBase {
     protected Uid generateCMRRecord(final DataSource dataSource) throws Exception {
 
         ((JdbcDataSource) dataSource)
-                .setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE;DB_CLOSE_DELAY=-1");
+                .setURL("jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1");
 
         // Test code
         Utils.createTables(dataSource.getConnection());
