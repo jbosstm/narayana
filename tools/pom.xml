@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
-    <version>6.0.1.Final</version>
+    <version>6.0.2.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>test-utils</artifactId>
@@ -24,7 +24,7 @@
       <dependency>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-bom</artifactId>
-        <version>6.0.1.Final</version>
+        <version>6.0.2.Final-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
