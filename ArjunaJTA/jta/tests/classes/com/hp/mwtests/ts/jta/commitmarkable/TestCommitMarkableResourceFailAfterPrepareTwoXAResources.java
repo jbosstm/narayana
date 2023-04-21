@@ -60,7 +60,7 @@ public class TestCommitMarkableResourceFailAfterPrepareTwoXAResources extends
 	public void testFailAfterPrepare() throws Exception {
 		final DataSource dataSource = new JdbcDataSource();
 		((JdbcDataSource) dataSource)
-				.setURL("jdbc:h2:mem:JBTMDB;MVCC=TRUE;DB_CLOSE_DELAY=-1");
+				.setURL("jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1");
 
 		// Test code
 		Utils.createTables(dataSource.getConnection());
