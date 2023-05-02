@@ -47,6 +47,16 @@ public class TMApplication extends Application {
     Set<Class<?>> classes = new HashSet<Class<?>> ();
 
     public TMApplication(Class<?> ... extraClasses) {
+        this();
+        
+        try
+        {
+            Collections.addAll(classes, extraClasses);
+        } catch (Throwable e) {
+          RESTATLogger.atI18NLogger.warn_jaxrsTM(e.getMessage(), e);
+        }
+    }
+    public TMApplication() {
 //        singletons.addAll(Arrays.asList(resources));
         try
         {
@@ -68,7 +78,6 @@ public class TMApplication extends Application {
 
             Collections.addAll(classes, resourceClasses);
             Collections.addAll(classes, mappers);
-            Collections.addAll(classes, extraClasses);
         } catch (Throwable e) {
           RESTATLogger.atI18NLogger.warn_jaxrsTM(e.getMessage(), e);
         }
