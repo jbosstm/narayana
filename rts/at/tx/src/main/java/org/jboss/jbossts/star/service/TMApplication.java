@@ -49,8 +49,7 @@ public class TMApplication extends Application {
     public TMApplication(Class<?> ... extraClasses) {
         this();
         
-        try
-        {
+        try {
             Collections.addAll(classes, extraClasses);
         } catch (Throwable e) {
           RESTATLogger.atI18NLogger.warn_jaxrsTM(e.getMessage(), e);
@@ -58,8 +57,7 @@ public class TMApplication extends Application {
     }
     public TMApplication() {
 //        singletons.addAll(Arrays.asList(resources));
-        try
-        {
+        try {
             // TODO move com/arjuna/ats/jbossatx/jt[as]/TransactionManagerService.isRecoveryManagerRunning
             // to RecoveryManager and change logging
             // by default do not colocate the coordinator and recovery manager
