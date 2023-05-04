@@ -48,7 +48,7 @@ public class TMApplication extends Application {
 
     public TMApplication(Class<?> ... extraClasses) {
         this();
-        
+
         try {
             Collections.addAll(classes, extraClasses);
         } catch (Throwable e) {
