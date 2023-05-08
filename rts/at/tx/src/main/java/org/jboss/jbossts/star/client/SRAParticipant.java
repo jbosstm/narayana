@@ -185,6 +185,10 @@ public abstract class SRAParticipant {
                 String data = getCompensatorData(activityId);
 
                 return data == null ? Response.ok().build() : Response.ok(data).build();
+
+            case TransactionPrepared:
+                return Response.status(Response.Status.OK).build();
+
             default:
                 String statusUrl = getStatusUrl(activityId);
 
