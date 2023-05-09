@@ -929,6 +929,17 @@
         <artifactId>wrapper</artifactId>
         <version>${version.tanukisoft}</version>
       </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-resteasy</artifactId>
+        <version>${version.quarkus}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.threads</groupId>
+            <artifactId>jboss-threads</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
