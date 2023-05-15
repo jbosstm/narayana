@@ -56,7 +56,7 @@ function rebase_narayana {
   fi
 
   # Update the pull to head  
-  git pull --rebase --ff-only origin $BRANCHPOINT
+  git pull --rebase origin $BRANCHPOINT
 
   if [ $? -ne 0 ]; then
     #comment_on_pull "Narayana rebase failed. Please rebase it manually."
