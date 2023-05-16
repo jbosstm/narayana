@@ -22,6 +22,7 @@ git checkout $ORIGIN_AS_BRANCH || fatal
 
 git remote add upstream $UPSTREAM_GIT_URL
 git pull --rebase --ff-only upstream $UPSTREAM_AS_BRANCH
+# This is a test
 
 if [ $? != 0 ]; then
   echo "Merge conflict needs manual intervention. Please go to '$TEMPORARY_REBASE_LOCATION/jboss-as' and resolve, then run:"

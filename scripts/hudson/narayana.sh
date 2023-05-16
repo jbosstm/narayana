@@ -832,6 +832,7 @@ function perf_tests {
       git checkout remotes/origin/pull/$PERF_PR_NUMBER/head
       [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
       git pull --rebase --ff-only origin main
+      # This is a test
       [ $? -eq 0 ] || fatal "git rebase failed"
     fi
   fi
