@@ -150,19 +150,9 @@
 			<fileMode>0755</fileMode>
 		</file>
 		<file>
-			<source>../ArjunaJTS/copyright.txt</source>
-			<fileMode>0644</fileMode>
-		</file>
-		<file>
 			<source>../common/etc/log4j.properties</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-		</file>
-		<file>
-			<source>../ext/third_party_licenses.txt</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>lib/ext</outputDirectory>
-			<destName>jts_third_party_licenses.txt</destName>
 		</file>
 		<file>
 			<source>../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml</source>
@@ -175,12 +165,6 @@
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>default-jts-idlj-jbossts-properties.xml</destName>
-		</file>
-		<file>
-			<source>../XTS/third_party_licenses.txt</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>lib/ext</outputDirectory>
-			<destName>xts_third_party_licenses.txt</destName>
 		</file>
 		<file>
 			<source>../rts/lra/coordinator/target/lra-coordinator.jar</source>

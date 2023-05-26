@@ -7,24 +7,32 @@ This includes bug reports, fixes, documentation, examples...
 If you are looking for an issue to work on and haven't had much previous experience with Narayana then you could work on one that has the label "good-first-issue" or look for issues whose "Estimated Difficulty" field is `Low`.
 But first, read this page.
 
-## Legal
+We use a four step process for contributions:
 
-All original contributions to Narayana are licensed under the
-[GNU LESSER GENERAL PUBLIC LICENSE Version 2.1](https://github.com/jbosstm/narayana/blob/main/LICENSE).
+1. Fork the project repository to your own GitHub account.
+1. Commit your changes to your fork.
+1. Create a GitHub Pull Request for your change, following the instructions in the pull request template.
+1. Perform a Code Review with the project maintainers on the pull request.
 
-All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/).
-The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the root directory of the repository.
+## Certificate of Origin and License
 
-New files MUST include a project [copyright statement](#legal). Please use comment characters appropriate to the file you are creating, for example if the new file is a Java source file then use the following statement:
+All files in this repository are subject to the Apache 2.0 license.
 
+By contributing to this project you agree to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). The DCO was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution (we adopt the "CoreOS method" approach to using the DCO in which there is no per-commit signoff ceremony).
+
+There are copies of the [license](LICENSE) and [DCO](dco.txt) in the root directory of this repository.
+
+New files MUST include the project SPDX License Identifier (Apache-2.0), for example Java files would include:
 
 ```
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX short identifier: Apache-2.0
  */
 ```
 
-and similarly for other file formats.
+Please use comment characters appropriate to the file you are creating.
+
+We do not require copyright notices on contributions, prefering instead for attribution to be tracked by information contained in the git commit.
 
 ## Reporting an issue
 
