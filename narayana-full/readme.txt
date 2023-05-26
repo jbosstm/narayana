@@ -42,7 +42,6 @@ This release contains:
   /
     jta-setup-env.[bat|sh] - This will configure an environment for use with Narayana JTA
     jts-*-setup-env.[bat|sh] - This will configure an environment for use with Narayana JTA
-    copyright.txt - A file to provide the copyright
     readme.txt - This file
     run_all_quickstarts.[bat|sh] - scripts to run all quickstarts. You will
     need to separately download and unzip the quickstarts before running these
