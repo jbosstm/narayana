@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2007 JBoss -->
+<!--
+  SPDX short identifier: Apache-2.0
+ -->
 <wsdl:definitions name="WSARJTX-COORDINATOR-RPC-BINDING"
 		  targetNamespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
 		  xmlns="http://schemas.xmlsoap.org/wsdl/" 

@@ -1,3 +1,7 @@
+#
+# SPDX short identifier: Apache-2.0
+#
+
           WELCOME TO NARAYANA
           -------------------
 This release of Narayana is designed for use standalone.
