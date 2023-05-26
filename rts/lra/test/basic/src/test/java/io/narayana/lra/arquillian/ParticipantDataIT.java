@@ -1,8 +1,7 @@
 /*
- * Copyright The Narayana Authors
- *
- * SPDX-License-Identifier: LGPL-2.1-only
+ * SPDX short identifier: Apache-2.0
  */
+
 
 package io.narayana.lra.arquillian;
 

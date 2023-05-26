@@ -20,11 +20,7 @@ New files MUST include a project [copyright statement](#legal). Please use comme
 
 ```
 /*
- *
- * Copyright The Narayana Authors
- *
- * SPDX-License-Identifier: LGPL-2.1-only
- *
+ * SPDX-License-Identifier: Apache-2.0
  */
 ```
 

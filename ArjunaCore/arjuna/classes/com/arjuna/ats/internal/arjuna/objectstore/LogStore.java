@@ -1,13 +1,7 @@
 /*
- * Copyright (C) 1998, 1999, 2000-2009,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: LogStore.java,v 1.4 2004/11/11 12:22:21 nmcl Exp $
+ * SPDX short identifier: Apache-2.0
  */
+
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
