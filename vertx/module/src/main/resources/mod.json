@@ -3,7 +3,7 @@
   "main":"org.jboss.stm.STMVerticle",
 
   "description":"STM implementation module for Vert.x. Relies on JBoss Narayana project.",
-  "licenses": ["LGPL 2.1"],
+  "licenses": ["Apache-2.0"],
   "author": "nmcl",
   "keywords": ["stm", "transactions", "narayana", "persistence", "actors"],
   "homepage": "https://github.com/nmcl/mod-stm"

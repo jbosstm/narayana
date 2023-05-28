@@ -10,12 +10,6 @@
   <artifactId>test-utils</artifactId>
   <name>Narayana: Test Utilities</name>
   <url>http://maven.apache.org</url>
-  <licenses>
-    <license>
-      <name>LGPL 2.1</name>
-      <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-    </license>
-  </licenses>
   <properties>
     <sortpom.skip>true</sortpom.skip>
   </properties>
