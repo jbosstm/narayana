@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package io.narayana.lra.coordinator.api;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;

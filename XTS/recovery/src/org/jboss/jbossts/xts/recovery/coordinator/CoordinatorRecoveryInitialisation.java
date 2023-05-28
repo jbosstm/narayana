@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.xts.recovery.coordinator;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;

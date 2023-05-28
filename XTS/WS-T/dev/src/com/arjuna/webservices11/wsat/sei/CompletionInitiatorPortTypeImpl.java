@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.webservices11.wsat.sei;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;

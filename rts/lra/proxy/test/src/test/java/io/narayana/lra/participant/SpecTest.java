@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package io.narayana.lra.participant;
 
 import io.narayana.lra.client.NarayanaLRAClient;

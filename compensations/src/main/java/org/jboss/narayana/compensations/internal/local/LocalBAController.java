@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.narayana.compensations.internal.local;
 
 import com.arjuna.mw.wsas.activity.ActivityHierarchy;

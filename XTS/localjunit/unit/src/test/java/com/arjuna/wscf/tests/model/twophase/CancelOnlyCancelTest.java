@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.wscf.tests.model.twophase;
 
 import org.jboss.arquillian.container.test.api.Deployment;

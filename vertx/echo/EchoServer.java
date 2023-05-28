@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 
 import io.vertx.core.Vertx;
 import io.vertx.core.AbstractVerticle;

@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.qa.junit;
 
 import org.junit.rules.TestWatchman;

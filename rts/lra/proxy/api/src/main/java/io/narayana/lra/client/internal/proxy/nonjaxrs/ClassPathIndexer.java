@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package io.narayana.lra.client.internal.proxy.nonjaxrs;
 
 import io.narayana.lra.logging.LRALogger;

@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.webservices11.wsat.processors;
 
 import com.arjuna.wst11.CompletionCoordinatorParticipant;

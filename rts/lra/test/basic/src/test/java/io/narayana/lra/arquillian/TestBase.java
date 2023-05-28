@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.LRAConstants;

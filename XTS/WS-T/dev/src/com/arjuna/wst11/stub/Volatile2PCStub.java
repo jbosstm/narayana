@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.wst11.stub;
 
 import com.arjuna.wst.Volatile2PCParticipant;

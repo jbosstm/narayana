@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.xts.bytemanSupport;
 
 import org.jboss.byteman.agent.submit.Submit;

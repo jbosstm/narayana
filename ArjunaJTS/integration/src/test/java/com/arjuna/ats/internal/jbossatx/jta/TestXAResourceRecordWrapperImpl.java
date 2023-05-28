@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.ats.internal.jbossatx.jta;
 
 import static org.junit.Assert.assertEquals;
