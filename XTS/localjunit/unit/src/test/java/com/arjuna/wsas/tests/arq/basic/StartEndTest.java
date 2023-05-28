@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.wsas.tests.arq.basic;
 
 import org.jboss.arquillian.container.test.api.Deployment;

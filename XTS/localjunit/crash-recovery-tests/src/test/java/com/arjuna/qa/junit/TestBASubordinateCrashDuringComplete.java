@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.qa.junit;
 
 import org.jboss.arquillian.junit.Arquillian;

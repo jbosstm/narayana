@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.xts.initialisation;
 
 import com.arjuna.mw.wsc11.deploy.WSCFInitialisation;

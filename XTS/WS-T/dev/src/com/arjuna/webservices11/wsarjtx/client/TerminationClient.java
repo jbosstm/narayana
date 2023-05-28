@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.webservices11.wsarjtx.client;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;

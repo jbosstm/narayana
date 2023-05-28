@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.webservices11.wscoor.sei;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;

@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.webservices11.wsba.client;
 
 import com.arjuna.webservices11.util.PrivilegedServiceFactory;

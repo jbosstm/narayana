@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.narayana.rest.integration;
 
 import jakarta.ws.rs.core.Response;

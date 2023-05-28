@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package com.arjuna.ats.jta.distributed.server.impl;
 
 import java.io.IOException;

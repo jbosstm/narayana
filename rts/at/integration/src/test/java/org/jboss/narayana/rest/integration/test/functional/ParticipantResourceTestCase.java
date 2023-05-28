@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.narayana.rest.integration.test.functional;
 
 import java.net.MalformedURLException;

@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;

@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.txbridge.tests.outbound.junit;
 
 import java.io.IOException;

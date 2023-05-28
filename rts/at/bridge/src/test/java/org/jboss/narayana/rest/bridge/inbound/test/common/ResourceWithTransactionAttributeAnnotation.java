@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.narayana.rest.bridge.inbound.test.common;
 
 import jakarta.ejb.Stateless;

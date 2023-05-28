@@ -1,3 +1,6 @@
+/*
+ * SPDX short identifier: Apache-2.0
+ */
 package org.jboss.jbossts.xts.recovery.coordinator.ba;
 
 import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
