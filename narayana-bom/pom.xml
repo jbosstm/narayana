@@ -220,7 +220,7 @@
         <version>${version.jakarta.xml.ws.jakarta.xml.ws-api}</version>
       </dependency>
 
-      <!-- Narayan full -->
+      <!-- Narayana full -->
       <dependency>
         <groupId>org.jboss.narayana.arjunacore</groupId>
         <artifactId>arjunacore-services</artifactId>
