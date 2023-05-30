@@ -4,7 +4,8 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /*
- * SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
  */
 
 /**

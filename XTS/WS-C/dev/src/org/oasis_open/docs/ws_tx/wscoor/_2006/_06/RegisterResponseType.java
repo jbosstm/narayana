@@ -1,5 +1,6 @@
 /*
- * SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
  */
 
 package org.oasis_open.docs.ws_tx.wscoor._2006._06;

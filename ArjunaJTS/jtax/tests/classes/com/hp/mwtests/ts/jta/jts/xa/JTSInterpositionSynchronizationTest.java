@@ -1,6 +1,7 @@
 package com.hp.mwtests.ts.jta.jts.xa;
 /*
- * SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
  */
 
 
