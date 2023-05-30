@@ -4,7 +4,8 @@ import org.jboss.stm.STMVerticle;
 import org.junit.Test;
 
 /*
- * SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
  */
 
 

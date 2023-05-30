@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!--
-  SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
   -->
 <web-app>
     <servlet-mapping>
