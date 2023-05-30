@@ -26,3 +26,4 @@ tomcat-deployment/
 narayana-tomcat/
 CosServices.cfg
 audit.log
+**/bin/
