@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX short identifier: Apache-2.0 -->
+<!--
+  SPDX short identifier: Apache-2.0
+  -->
 <beans version="4.0" bean-discovery-mode="annotated"
        xmlns="https://jakarta.ee/xml/ns/jakartaee"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

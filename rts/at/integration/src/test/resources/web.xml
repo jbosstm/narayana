@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<!-- SPDX short identifier: Apache-2.0 -->
+<!--
+  SPDX short identifier: Apache-2.0
+  -->
 <web-app>
     <servlet-mapping>
         <servlet-name>jakarta.ws.rs.core.Application</servlet-name>
