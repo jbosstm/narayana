@@ -26,13 +26,14 @@ New files MUST include the project SPDX License Identifier (Apache-2.0), for exa
 
 ```
 /*
- * SPDX short identifier: Apache-2.0
+ + Copyright The Narayana Authors
+ + SPDX short identifier: Apache-2.0
  */
 ```
 
-Please use comment characters appropriate to the file you are creating.
+Please use comment characters appropriate to the file you are creating. We also ask contributors *not* to include `@author` tags.
 
-We do not require copyright notices on contributions, prefering instead for attribution to be tracked by information contained in the git commit.
+Although copyright notices on contributions are not strictly necessary we do ask contributors to include the above text; code authors still receive attribution for their contribution via the information contained in the git commit.
 
 ## Reporting an issue
 
