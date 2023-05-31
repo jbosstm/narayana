@@ -41,6 +41,8 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
@@ -735,6 +737,7 @@ public class NarayanaLRAClient implements Closeable {
         Client client = null;
         Response response = null;
         URL lraId = null;
+        String data = compensatorData == null ? null : compensatorData.toString();
 
         try {
             lraId = uri.toURL();
@@ -748,16 +751,24 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             client = getClient();
+
             try {
+
+                MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+                headers.add(NARAYANA_LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING);
+
+                if (data != null) {
+                    headers.add(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, data);
+                }
+
+                headers.add("Link", linkHeader);
                 response = client.target(coordinatorUrl)
                     .path(LRAConstants.getLRAUid(uri))
                     .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                     .request()
-                    .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING)
-                    .header(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME, compensatorData)
-                    .header("Link", linkHeader)
+                    .headers(headers)
                     .async()
-                    .put(Entity.text(compensatorData == null ? linkHeader : compensatorData))
+                    .put(Entity.text(compensatorData == null ? linkHeader : data))
                     .get(JOIN_TIMEOUT, TimeUnit.SECONDS);
 
             String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";

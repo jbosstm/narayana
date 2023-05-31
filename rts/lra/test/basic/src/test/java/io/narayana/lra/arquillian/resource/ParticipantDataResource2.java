@@ -40,8 +40,9 @@ public class ParticipantDataResource2 {
     @Path(START_LRA_PATH)
     @LRA(value = LRA.Type.REQUIRES_NEW, end = false)
     public Response doStartLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId,
-                               @HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryUrl) {
-        data.setData(START_DATA);
+                               @HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryUrl,
+                               @HeaderParam(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) String pData) {
+        data.setData(pData);
 
         return Response.status(Response.Status.OK)
                 .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString())
@@ -53,10 +54,11 @@ public class ParticipantDataResource2 {
     @Path(END_LRA_PATH)
     @LRA(value = LRA.Type.REQUIRED)
     public Response doEndLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId,
-                             @HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryUrl) {
+                             @HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryUrl,
+                             @HeaderParam(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) String pData) {
         String prevData = data.getData();
 
-        data.setData(END_DATA);
+        data.setData(pData);
 
         return Response.status(Response.Status.OK)
                 .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString())
