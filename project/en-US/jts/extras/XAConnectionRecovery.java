@@ -1,14 +1,3 @@
-
-/*
- * Copyright (C) 2000, 2001,
- *
- * Hewlett-Packard,
- * Arjuna Labs,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- */
 package com.arjuna.ats.internal.jdbc.recovery;
 
 import com.arjuna.ats.jdbc.TransactionalDriver;
