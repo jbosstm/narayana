@@ -36,11 +36,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>io.mashona</groupId>
-        <artifactId>mashona-logwriting</artifactId>
-        <version>${version.io.mashona}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
         <version>${version.org.jboss.logging.jboss-logging}</version>
@@ -55,16 +50,6 @@
         <artifactId>common</artifactId>
         <version>${project.version}</version>
         <classifier>tests</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-bmunit</artifactId>
-        <version>${version.org.jboss.byteman}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${version.com.h2database}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.arjunacore</groupId>
@@ -126,16 +111,6 @@
         <artifactId>arquillian-core-api</artifactId>
         <version>${version.org.jboss.arquillian.core}</version>
       </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian.protocol</groupId>
-        <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-        <version>${version.org.jboss.arquillian.core}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-extension-byteman</artifactId>
-        <version>${version.arquillian.byteman}</version>
-      </dependency>
 
       <!-- Standalone JNDI server -->
       <dependency>
@@ -153,29 +128,6 @@
         <groupId>jboss</groupId>
         <artifactId>jnpserver</artifactId>
         <version>${version.jboss.jnpserver}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-        <version>${version.org.springframework}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-install</artifactId>
-        <version>${version.org.jboss.byteman}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${version.org.mockito}</version>
-        <exclusions>
-          <!-- JUnit already comes with Hamcrest -->
-          <exclusion>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -228,22 +180,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>orbportability</artifactId>
         <version>${project.version}</version>
@@ -271,20 +207,6 @@
         <artifactId>openjdk-orb-jakarta</artifactId>
         <version>${version.org.jboss.openjdk-orb}</version>
         <classifier>sources</classifier>
-      </dependency>
-
-      <!-- Compensation -->
-      <dependency>
-        <groupId>org.jboss.weld</groupId>
-        <artifactId>weld-core-impl</artifactId>
-        <version>${version.org.jboss.weld}</version>
-      </dependency>
-
-      <!-- Test dependencies -->
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>byteman_support</artifactId>
-        <version>${project.version}</version>
       </dependency>
 
       <dependency>
@@ -333,11 +255,6 @@
 
       <!-- This dependency should be removed in JBTM-3056 -->
       <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-test-servlet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>jbosstxbridge</artifactId>
         <version>${project.version}</version>
@@ -355,11 +272,6 @@
             <artifactId>commons-httpclient</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>${version.commons-httpclient}</version>
       </dependency>
 
       <!-- Ensure these are in the distribution -->
@@ -407,60 +319,6 @@
         </exclusions>
       </dependency>
 
-      <!-- qa -->
-
-      <dependency>
-        <groupId>jboss.profiler.jvmti</groupId>
-        <artifactId>jboss-profiler-jvmti</artifactId>
-        <version>${version.jboss.profiler.jvmti}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-core</artifactId>
-        <version>${version.hamcrest}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>org.jacoco.ant</artifactId>
-        <version>${version.org.jacoco}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>org.jacoco.report</artifactId>
-        <version>${version.org.jacoco}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>org.jacoco.core</artifactId>
-        <version>${version.org.jacoco}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>org.jacoco.agent</artifactId>
-        <version>${version.org.jacoco}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.ant</groupId>
-        <artifactId>ant</artifactId>
-        <version>${version.org.apache.ant}</version>
-      </dependency>
-      <dependency>
-        <groupId>ant-contrib</groupId>
-        <artifactId>ant-contrib</artifactId>
-        <version>${version.ant-contrib}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.messaging.mq</groupId>
-        <artifactId>fscontext</artifactId>
-        <version>${version.com.sun.messaging.mq.fscontext}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${version.log4j-core}</version>
-      </dependency>
-
       <!-- Narayana Dependencies -->
 
       <dependency>
@@ -490,49 +348,9 @@
 
       <dependency>
         <groupId>org.jboss.narayana</groupId>
-        <artifactId>test-utils</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana</groupId>
         <artifactId>common</artifactId>
         <version>${project.version}</version>
         <classifier>test-sources</classifier>
-      </dependency>
-
-      <!-- JDBC Drivers -->
-
-      <dependency>
-        <groupId>com.oracle.database.jdbc</groupId>
-        <artifactId>ojdbc8</artifactId>
-        <version>${version.com.oracle}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${version.postgresql}</version>
-      </dependency>
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${version.mysql}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.ibm.db2</groupId>
-        <artifactId>jcc</artifactId>
-        <version>${version.com.ibm}</version>
-      </dependency>
-
-      <!-- tx -->
-      <dependency>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-dtest</artifactId>
-        <version>${version.org.jboss.byteman}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${version.httpcomponents}</version>
       </dependency>
 
       <dependency>
@@ -642,28 +460,6 @@
         <version>${version.org.jboss.ws}</version>
       </dependency>
 
-      <!-- Arquillian Maven Resolver -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-api</artifactId>
-        <version>${version.org.jboss.shrinkwrap.resolvers}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-        <version>${version.org.jboss.shrinkwrap.resolvers}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian.junit</groupId>
-        <artifactId>arquillian-junit-container</artifactId>
-        <version>${version.org.jboss.arquillian.core}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
-        <version>${version.org.jboss.shrinkwrap.resolvers}</version>
-      </dependency>
-
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>ws-c11</artifactId>
@@ -681,25 +477,6 @@
         <version>${project.version}</version>
         <classifier>war</classifier>
         <type>war</type>
-      </dependency>
-
-      <!-- XTS: -->
-      <!-- test time dep only - XTS TestRunnerXMLServlet -->
-      <dependency>
-        <groupId>org.dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>${version.org.dom4j}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman</artifactId>
-        <version>${version.org.jboss.byteman}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-submit</artifactId>
-        <version>${version.org.jboss.byteman}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
@@ -752,17 +529,6 @@
         <artifactId>jboss-modules</artifactId>
         <version>${version.jboss-modules}</version>
       </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${version.junit}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.squareup.okhttp</groupId>
-        <artifactId>okhttp</artifactId>
-        <version>${version.squareup.okhttp}</version>
-      </dependency>
 
       <!-- undertow with RestEasy -->
       <dependency>
@@ -782,11 +548,6 @@
         <version>${version.jakarta.transaction.jakarta-transaction-api}</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest</artifactId>
-        <version>${version.hamcrest}</version>
-      </dependency>
       <dependency>
         <groupId>jakarta.ws.rs</groupId>
         <artifactId>jakarta.ws.rs-api</artifactId>
@@ -816,11 +577,6 @@
       <dependency>
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>narayana-lra</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-test-arquillian-extension</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -880,32 +636,9 @@
         <version>${version.org.jboss.resteasy}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.weld.se</groupId>
-        <artifactId>weld-se-shaded</artifactId>
-        <version>${version.org.jboss.weld}</version>
-      </dependency>
-      <dependency>
         <groupId>org.wildfly.arquillian</groupId>
         <artifactId>wildfly-arquillian-container-managed</artifactId>
         <version>${version.org.wildfly.arquillian}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.wildfly.extras.creaper</groupId>
-        <artifactId>creaper-core</artifactId>
-        <version>${version.org.wildfly.extras.creaper}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.wildfly.core</groupId>
-        <artifactId>wildfly-controller-client</artifactId>
-        <version>${version.org.wildfly.core}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.wildfly.core</groupId>
-        <artifactId>wildfly-cli</artifactId>
-        <version>${version.org.wildfly.core}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>asm</groupId>

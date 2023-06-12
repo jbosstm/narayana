@@ -16,14 +16,28 @@
   <name>Narayana: XTS byteman_support</name>
   <description>Reusable Byteman rules for xts</description>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom-test</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-submit</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <build>

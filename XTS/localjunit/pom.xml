@@ -30,6 +30,18 @@
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom-test</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -75,6 +87,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
@@ -89,6 +102,7 @@
     <dependency>
       <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 

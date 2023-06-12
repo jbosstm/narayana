@@ -44,23 +44,28 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-api</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-shaded</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>

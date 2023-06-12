@@ -41,6 +41,17 @@
     <test.logs.to.file>false</test.logs.to.file>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom-test</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- for testing -->
     <dependency>
