@@ -112,6 +112,7 @@
   </developers>
   <modules>
     <module>narayana-bom</module>
+    <module>narayana-bom-test</module>
     <module>tools</module>
     <module>ext</module>
     <module>common</module>
