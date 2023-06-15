@@ -55,7 +55,12 @@
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jackson2-provider</artifactId>
     </dependency>
-
+    <!--     jboss-threads version 2.x needed for Junit4 -->
+    <dependency>
+      <groupId>org.jboss.threads</groupId>
+      <artifactId>jboss-threads</artifactId>
+      <version>2.4.0.Final</version>
+    </dependency>
   </dependencies>
 
 </project>

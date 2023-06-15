@@ -143,7 +143,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${version.junit.jupiter}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -425,7 +424,6 @@
         <dependency>
           <groupId>org.jfree</groupId>
           <artifactId>jfreechart</artifactId>
-          <version>${version.jfree}</version>
         </dependency>
       </dependencies>
       <build>

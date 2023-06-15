@@ -19,9 +19,9 @@
   <description>LRA tests running LRA TCKs and Narayana LRA internal testsuite</description>
 
   <modules>
+    <module>arquillian-extension</module>
     <module>tck</module>
     <module>basic</module>
-    <module>arquillian-extension</module>
   </modules>
 
   <properties>
@@ -123,7 +123,6 @@
         <skip.wildfly.plugin>true</skip.wildfly.plugin>
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
-        <version.wildfly-maven-plugin>4.0.0.Final</version.wildfly-maven-plugin>
         <!-- this property is only used in direct submodules, if used outside this scope it needs to be redefined -->
         <wildfly.trace.logging.cli.script>${project.basedir}/../wildfly-trace-logging.cli</wildfly.trace.logging.cli.script>
       </properties>

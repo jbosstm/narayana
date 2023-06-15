@@ -81,7 +81,6 @@
     <dependency>
       <groupId>jakarta.inject</groupId>
       <artifactId>jakarta.inject-api</artifactId>
-      <version>${version.jakarta.inject.jakarta.inject-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -158,7 +157,6 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-remote</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -190,7 +188,6 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -223,7 +220,6 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

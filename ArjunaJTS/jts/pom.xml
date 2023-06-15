@@ -19,7 +19,6 @@
     <!-- This module builds a jar holding a set of Sun orb's IDL stubs -->
     <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
     <idlj.boot.args></idlj.boot.args>
-    <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <surefireArgLine></surefireArgLine>
   </properties>
 

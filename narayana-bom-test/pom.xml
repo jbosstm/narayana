@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <!--
+   Copyright The Narayana Authors
+   SPDX short identifier: Apache-2.0
+ -->
+
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
@@ -11,6 +16,42 @@
   <packaging>pom</packaging>
   <name>Narayana Bom Test</name>
   <description>Narayana BOM for test dependencies</description>
+
+  <properties>
+    <version.ant-contrib>1.0b3</version.ant-contrib>
+    <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
+    <version.arquillian.weld-embedded>3.0.2.Final</version.arquillian.weld-embedded>
+    <version.com.h2database>2.1.214</version.com.h2database>
+    <version.com.ibm>11.5.0.0</version.com.ibm>
+    <version.com.oracle>18.3.0.0</version.com.oracle>
+    <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
+    <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
+    <version.hamcrest>2.2</version.hamcrest>
+    <version.httpcomponents>4.5.14</version.httpcomponents>
+    <version.io.mashona>1.0.0.Beta1</version.io.mashona>
+    <version.jakartaee-api>10.0.0</version.jakartaee-api>
+    <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
+    <version.junit>4.13.1</version.junit>
+    <version.junit.jupiter>5.9.2</version.junit.jupiter>
+    <version.log4j-core>2.19.0</version.log4j-core>
+    <version.mariadb>1.2.2</version.mariadb>
+    <version.mysql>8.0.25</version.mysql>
+    <version.org.apache.ant>1.10.12</version.org.apache.ant>
+    <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
+    <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
+    <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
+    <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
+    <version.org.jboss.weld>5.0.1.Final</version.org.jboss.weld>
+    <version.org.mockito>3.8.0</version.org.mockito>
+    <version.org.slf4j>1.7.30</version.org.slf4j>
+    <version.org.springframework>3.2.2.RELEASE</version.org.springframework>
+    <version.org.wildfly.arquillian>5.0.0.Final</version.org.wildfly.arquillian>
+    <version.org.wildfly.core>20.0.0.Final</version.org.wildfly.core>
+    <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
+    <version.postgresql>42.3.1</version.postgresql>
+    <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
+  </properties>
 
   <dependencyManagement>
     <!-- Arjuna Core -->
@@ -303,6 +344,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${version.junit.jupiter}</version>
+        <scope>test</scope>
+      </dependency>
+      
+      <dependency>
         <groupId>com.squareup.okhttp</groupId>
         <artifactId>okhttp</artifactId>
         <version>${version.squareup.okhttp}</version>
@@ -327,6 +375,18 @@
         <groupId>org.jboss.weld.se</groupId>
         <artifactId>weld-se-shaded</artifactId>
         <version>${version.org.jboss.weld}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-weld-embedded</artifactId>
+        <version>${version.arquillian.weld-embedded}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.platform</groupId>
+        <artifactId>jakarta.jakartaee-api</artifactId>
+        <version>${version.jakartaee-api}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

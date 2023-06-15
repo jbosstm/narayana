@@ -26,12 +26,23 @@
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-bom-test</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
     </dependency>
 
     <dependency>
@@ -51,7 +62,6 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -79,13 +89,11 @@
     <dependency>
       <groupId>jakarta.json</groupId>
       <artifactId>jakarta.json-api</artifactId>
-      <version>${version.jakarta.json-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.json</artifactId>
-      <version>${version.glassfish.json}</version>
       <scope>test</scope>
     </dependency>
 
@@ -106,27 +114,23 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxb-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-netty4</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-core-spi</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>${version.commons-httpclient}</version>
       <scope>test</scope>
     </dependency>
 
@@ -139,14 +143,12 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>${version.org.jboss.arquillian.core}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
 
@@ -189,13 +191,11 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
           <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-          <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -251,13 +251,11 @@
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.org.wildfly.arquillian}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.protocol</groupId>
           <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-          <version>${version.org.jboss.arquillian.core}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

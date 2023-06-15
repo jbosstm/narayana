@@ -119,7 +119,6 @@
     <dependency>
       <groupId>org.jboss.ws</groupId>
       <artifactId>jbossws-api</artifactId>
-      <version>${version.org.jboss.ws}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -297,7 +296,6 @@
         <dependency>
           <groupId>io.mashona</groupId>
           <artifactId>mashona-logwriting</artifactId>
-          <version>${version.io.mashona}</version>
           <scope>compile</scope>
         </dependency>
       </dependencies>
@@ -410,7 +408,6 @@
         <dependency>
           <groupId>org.jfree</groupId>
           <artifactId>jfreechart</artifactId>
-          <version>${version.jfree}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>

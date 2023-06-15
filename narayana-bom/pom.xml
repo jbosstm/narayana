@@ -16,6 +16,58 @@
   <name>Narayana Bom</name>
   <description>Narayana BOM</description>
 
+  <properties>
+    <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
+    <version.glassfish.json>2.0.1</version.glassfish.json>
+    <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
+    <version.io.smallrye.smallrye-config>3.2.0</version.io.smallrye.smallrye-config>
+    <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
+    <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
+    <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
+    <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
+    <version.jakarta.enterprise.jakarta.enterprise.cdi-api>4.0.1</version.jakarta.enterprise.jakarta.enterprise.cdi-api>
+    <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
+    <version.jakarta.interceptor.jakarta-interceptors-api>2.1.0</version.jakarta.interceptor.jakarta-interceptors-api>
+    <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
+    <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
+    <version.jakarta.json.jakarta-json-api>2.0.1</version.jakarta.json.jakarta-json-api>
+    <version.jakarta.persistence.jakarta.persistence-api>3.1.0</version.jakarta.persistence.jakarta.persistence-api>
+    <version.jakarta.platform.jakarta.jakartaee-api>10.0.0</version.jakarta.platform.jakarta.jakartaee-api>
+    <version.jakarta.resource.jakarta-resource-api>2.0.0</version.jakarta.resource.jakarta-resource-api>
+    <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
+    <version.jakarta.transaction.jakarta-transaction-api>2.0.1</version.jakarta.transaction.jakarta-transaction-api>
+    <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
+    <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
+    <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
+    <version.jaxws-ri>4.0.0</version.jaxws-ri>
+    <version.jboss-modules>1.10.2.Final</version.jboss-modules>
+    <version.jboss.jnpserver>4.2.2.GA</version.jboss.jnpserver>
+    <version.jfree>1.5.3</version.jfree>
+    <version.jnpserver>5.0.3.GA</version.jnpserver>
+    <version.microprofile.config-api>3.0.2</version.microprofile.config-api>
+    <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
+    <version.org.apache.activemq>2.24.0</version.org.apache.activemq>
+    <version.org.eclipse.microprofile.openapi>3.1</version.org.eclipse.microprofile.openapi>
+    <version.org.eclipse.microprofile.reactive-streams-operators>3.0</version.org.eclipse.microprofile.reactive-streams-operators>
+    <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
+    <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
+    <version.org.jboss.invocation>2.0.0.Final</version.org.jboss.invocation>
+    <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
+    <version.org.jboss.jboss-transaction-spi>8.0.0.Final</version.org.jboss.jboss-transaction-spi>
+    <version.org.jboss.logging.jboss-logging>3.5.0.Final</version.org.jboss.logging.jboss-logging>
+    <version.org.jboss.logging.jboss-logging-processor>2.2.1.Final</version.org.jboss.logging.jboss-logging-processor>
+    <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
+    <version.org.jboss.openjdk-orb>9.0.1.Final</version.org.jboss.openjdk-orb>
+    <version.org.jboss.ws>2.0.0.Final</version.org.jboss.ws>
+    <version.quarkus>3.0.1.Final</version.quarkus>
+    <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
+    <version.sortpom>3.0.0</version.sortpom>
+    <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
+    <version.sun.jdk>jdk</version.sun.jdk>
+    <version.tanukisoft>3.2.3</version.tanukisoft>
+  </properties>
+
   <dependencyManagement>
     <!-- Arjuna Core -->
     <dependencies>
@@ -251,6 +303,11 @@
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>jbossxts</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>${version.jfree}</version>
       </dependency>
 
       <!-- This dependency should be removed in JBTM-3056 -->
@@ -596,6 +653,11 @@
         <version>${version.microprofile.config-api}</version>
       </dependency>
       <dependency>
+        <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
+        <artifactId>microprofile-reactive-streams-operators-api</artifactId>
+        <version>${version.org.eclipse.microprofile.reactive-streams-operators}</version>
+      </dependency>
+      <dependency>
         <groupId>io.smallrye.config</groupId>
         <artifactId>smallrye-config</artifactId>
         <version>${version.io.smallrye.smallrye-config}</version>
@@ -636,11 +698,6 @@
         <version>${version.org.jboss.resteasy}</version>
       </dependency>
       <dependency>
-        <groupId>org.wildfly.arquillian</groupId>
-        <artifactId>wildfly-arquillian-container-managed</artifactId>
-        <version>${version.org.wildfly.arquillian}</version>
-      </dependency>
-      <dependency>
         <groupId>asm</groupId>
         <artifactId>asm-all</artifactId>
         <version>${version.asm}</version>
@@ -649,6 +706,12 @@
         <groupId>org.jboss.openjdk-orb</groupId>
         <artifactId>openjdk-orb</artifactId>
         <version>${version.org.jboss.openjdk-orb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.openjdk-orb</groupId>
+        <artifactId>openjdk-orb</artifactId>
+        <version>${version.org.jboss.openjdk-orb}</version>
+        <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss</groupId>

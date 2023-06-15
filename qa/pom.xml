@@ -17,10 +17,6 @@
   <packaging>jar</packaging>
   <name>Narayana: qa</name>
 
-  <properties>
-    <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
-    <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -55,12 +51,10 @@
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
       <classifier>sources</classifier>
     </dependency>
     <dependency>

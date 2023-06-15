@@ -166,7 +166,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -203,7 +202,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -240,7 +238,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -278,7 +275,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -333,7 +329,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -347,19 +342,16 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-weld-embedded</artifactId>
-                    <version>${version.org.jboss.arquillian.container.weld}</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.junit.jupiter</groupId>
                     <artifactId>junit-jupiter</artifactId>
-                    <version>${version.junit.jupiter}</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>jakarta.platform</groupId>
                     <artifactId>jakarta.jakartaee-api</artifactId>
-                    <version>${version.jakarta.platform.jakarta.jakartaee-api}</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>

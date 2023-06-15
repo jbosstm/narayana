@@ -20,13 +20,11 @@
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
-      <version>${version.org.jboss.openjdk-orb}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
