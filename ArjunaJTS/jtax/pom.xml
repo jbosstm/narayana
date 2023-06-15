@@ -19,8 +19,6 @@
   <properties>
     <idlj.boot.args></idlj.boot.args>
     <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath</modular.jdk.args>
-    <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
-
     <surefireArgLine></surefireArgLine>
   </properties>
 
@@ -169,7 +167,6 @@
         <dependency>
           <groupId>org.jboss.openjdk-orb</groupId>
           <artifactId>openjdk-orb</artifactId>
-          <version>${version.org.jboss.openjdk-orb}</version>
         </dependency>
       </dependencies>
 

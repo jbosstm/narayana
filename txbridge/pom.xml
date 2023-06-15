@@ -361,21 +361,7 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
-                    <!-- exclude logmanager because an incompatible version is pulled in -->
-                    <exclusions>
-                        <exclusion>
-                            <artifactId>org.jboss.logmanager</artifactId>
-                            <groupId>jboss-logmanager</groupId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logmanager</groupId>
-                    <artifactId>jboss-logmanager</artifactId>
-                    <version>${version.org.jboss.logmanager}</version>
-                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -432,23 +418,7 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
                     <scope>test</scope>
-
-                    <!-- exclude logmanager because an incompatible version is pulled in
-                      -->
-                    <exclusions>
-                        <exclusion>
-                            <artifactId>org.jboss.logmanager</artifactId>
-                            <groupId>jboss-logmanager</groupId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logmanager</groupId>
-                    <artifactId>jboss-logmanager</artifactId>
-                    <version>${version.org.jboss.logmanager}</version>
-                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>

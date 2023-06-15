@@ -228,7 +228,6 @@
         <dependency>
         <groupId>org.jfree</groupId>
         <artifactId>jfreechart</artifactId>
-        <version>${version.jfree}</version>
       <scope>provided</scope>
       </dependency>
     </dependencies>

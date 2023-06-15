@@ -144,7 +144,6 @@
         <dependency>
         <groupId>org.jfree</groupId>
         <artifactId>jfreechart</artifactId>
-        <version>${version.jfree}</version>
       </dependency>
     </dependencies>
   </profile>  
