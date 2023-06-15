@@ -35,7 +35,7 @@
     <version.junit.jupiter>5.9.2</version.junit.jupiter>
     <version.log4j-core>2.19.0</version.log4j-core>
     <version.mariadb>1.2.2</version.mariadb>
-    <version.mysql>8.0.25</version.mysql>
+    <version.mysql>8.0.28</version.mysql>
     <version.org.apache.ant>1.10.12</version.org.apache.ant>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
