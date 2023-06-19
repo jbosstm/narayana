@@ -180,36 +180,33 @@
     <testLogToFile>true</testLogToFile>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.5.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
+
+    <version.doxia>1.8.1</version.doxia>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.javadoc.plugin>3.5.0</version.javadoc.plugin>
     <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
     <version.maven.jandex-plugin>3.0.5</version.maven.jandex-plugin>
+
+    <!-- Needed forWildflyLRACoordinatorDeployment class -->
+    <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
+
+    <!-- This property is used in WarDeployment (XTS) -->
+    <version.org.dom4j>2.1.3</version.org.dom4j>
+
+    <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
+    <!-- Needed forWildflyLRACoordinatorDeployment class -->
+    <version.org.jboss.resteasy>6.2.2.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.quarkus-bom>3.0.1.Final</version.quarkus-bom>
     <version.quarkus-maven-plugin>3.0.1.Final</version.quarkus-maven-plugin>
     <version.sortpom>3.0.0</version.sortpom>
     <version.wildfly-maven-plugin>4.1.0.Final</version.wildfly-maven-plugin>
 
-    <!--     These properties are needed here because they are used in WildflyLRACoordinatorDeployment class -->
-    <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
-    <version.org.jboss.resteasy>6.2.2.Final</version.org.jboss.resteasy>
-     <!-- end of needed properties -->
-
-    <!-- profiles' properties -->
-    <version.org.jacoco>0.8.8</version.org.jacoco>
-    <version.doxia>1.8.1</version.doxia>
-    <!-- end of profiles' properties -->
-    
-
-    <!-- This property is used in WarDeployment (XTS) -->
-    <version.org.dom4j>2.1.3</version.org.dom4j>
-    <!-- end of needed properties -->
-    
   </properties>
 
   <repositories>

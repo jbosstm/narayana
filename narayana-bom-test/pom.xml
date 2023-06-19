@@ -349,7 +349,7 @@
         <version>${version.junit.jupiter}</version>
         <scope>test</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>com.squareup.okhttp</groupId>
         <artifactId>okhttp</artifactId>
