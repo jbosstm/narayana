@@ -251,7 +251,6 @@
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${version.com.oracle}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -278,7 +277,6 @@
         <dependency>
           <groupId>com.ibm.db2</groupId>
           <artifactId>jcc</artifactId>
-          <version>${version.com.ibm}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -305,7 +303,6 @@
         <dependency>
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
-          <version>${version.postgresql}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -332,7 +329,6 @@
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>${version.mysql}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -359,7 +355,6 @@
         <dependency>
           <groupId>org.mariadb.jdbc</groupId>
           <artifactId>mariadb-java-client</artifactId>
-          <version>${version.mariadb}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
