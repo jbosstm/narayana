@@ -105,47 +105,53 @@ public class BACoordinator extends TwoPhaseCoordinator
      * @throws SystemException if there are incomplete ParticipantCompletion participants or if one of the
      * CoordinatorCompletion participants fails to complete.
      */
-    public synchronized void complete () throws WrongStateException,
+    public void complete () throws WrongStateException,
             SystemException
 	{
-        int status = status();
+		synchronizationLock.lock();
 
-        if (status == ActionStatus.RUNNING)
-		{
-            // check that all ParticipantCompletion participants have completed
-            // throwing a wobbly if not
+		try {
+			int status = status();
 
-            if (pendingList != null)
-            {
-                RecordListIterator iter = new RecordListIterator(pendingList);
-                AbstractRecord absRec = iter.iterate();
+			if (status == ActionStatus.RUNNING)
+			{
+				// check that all ParticipantCompletion participants have completed
+				// throwing a wobbly if not
 
-                while (absRec != null)
-                {
-                    if (absRec instanceof ParticipantRecord)
-                    {
-                        ParticipantRecord pr = (ParticipantRecord) absRec;
+				if (pendingList != null)
+				{
+					RecordListIterator iter = new RecordListIterator(pendingList);
+					AbstractRecord absRec = iter.iterate();
 
-                        if (!pr.complete()) {
+					while (absRec != null)
+					{
+						if (absRec instanceof ParticipantRecord)
+						{
+							ParticipantRecord pr = (ParticipantRecord) absRec;
 
-                            // ok, we must force a rollback
+							if (!pr.complete()) {
 
-                            preventCommit();
+								// ok, we must force a rollback
 
-                            wscfLogger.i18NLogger.warn_model_sagas_arjunacore_BACoordinator_1(get_uid());
+								preventCommit();
 
-                            throw new SystemException("Participant failed to complete");
-                        }
-                    }
+								wscfLogger.i18NLogger.warn_model_sagas_arjunacore_BACoordinator_1(get_uid());
 
-                    absRec = iter.iterate();
-                }
-            }
+								throw new SystemException("Participant failed to complete");
+							}
+						}
+
+						absRec = iter.iterate();
+					}
+				}
+			}
+			else
+			{
+				throw new WrongStateException();
+			}
+		} finally {
+			synchronizationLock.unlock();
 		}
-		else
-        {
-            throw new WrongStateException();
-        }
     }
 
     /**
@@ -225,99 +231,123 @@ public class BACoordinator extends TwoPhaseCoordinator
 	 *                Thrown if any other error occurs.
 	 */
 
-	public synchronized void delistParticipant (String participantId)
+	public void delistParticipant (String participantId)
 			throws InvalidParticipantException, WrongStateException,
 			SystemException
 	{
-		if (participantId == null)
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+		synchronizationLock.lock();
 
-        int status = status();
-        // exit is only legitimate when the TX is in these states
-        switch (status) {
-            case ActionStatus.RUNNING:
-            case ActionStatus.ABORT_ONLY:
-                changeParticipantStatus(participantId, DELISTED);
-                break;
-            default:
-                throw new WrongStateException(
-                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
-        }
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+
+			int status = status();
+			// exit is only legitimate when the TX is in these states
+			switch (status) {
+				case ActionStatus.RUNNING:
+				case ActionStatus.ABORT_ONLY:
+					changeParticipantStatus(participantId, DELISTED);
+					break;
+				default:
+					throw new WrongStateException(
+							wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
+			}
+		} finally {
+			synchronizationLock.unlock();
+		}
     }
 
-	public synchronized void participantCompleted (String participantId)
+	public void participantCompleted (String participantId)
 			throws InvalidParticipantException, WrongStateException,
 			SystemException
 	{
-		if (participantId == null)
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+		synchronizationLock.lock();
 
-        int status = status();
-        // completed is only legitimate when the TX is in these states
-        switch (status) {
-            case ActionStatus.ABORTED:
-                break;
-            case ActionStatus.RUNNING:
-            case ActionStatus.ABORT_ONLY:
-                changeParticipantStatus(participantId, COMPLETED);
-                break;
-            default:
-                throw new WrongStateException(
-                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
-        }
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+
+			int status = status();
+			// completed is only legitimate when the TX is in these states
+			switch (status) {
+				case ActionStatus.ABORTED:
+					break;
+				case ActionStatus.RUNNING:
+				case ActionStatus.ABORT_ONLY:
+					changeParticipantStatus(participantId, COMPLETED);
+					break;
+				default:
+					throw new WrongStateException(
+							wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
+			}
+		} finally {
+			synchronizationLock.unlock();
+		}
 	}
 
-	public synchronized void participantFaulted (String participantId)
+	public void participantFaulted (String participantId)
 			throws InvalidParticipantException, SystemException
 	{
-		if (participantId == null)
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+		synchronizationLock.lock();
 
-        int status = status();
-        // faulted is only legitimate when the TX is in these states
-        switch (status) {
-            case ActionStatus.RUNNING:
-                // if a participant notifies this then we need to mark the transaction as abort only
-                preventCommit();
-                // !!! deliberate drop through !!!
-            case ActionStatus.ABORT_ONLY:
-            case ActionStatus.COMMITTING:
-            case ActionStatus.COMMITTED:    // this can happen during recovery processing
-            case ActionStatus.ABORTING:
-                changeParticipantStatus(participantId, FAILED);
-                break;
-            default:
-                throw new SystemException(
-                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
-        }
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+
+			int status = status();
+			// faulted is only legitimate when the TX is in these states
+			switch (status) {
+				case ActionStatus.RUNNING:
+					// if a participant notifies this then we need to mark the transaction as abort only
+					preventCommit();
+					// !!! deliberate drop through !!!
+				case ActionStatus.ABORT_ONLY:
+				case ActionStatus.COMMITTING:
+				case ActionStatus.COMMITTED:    // this can happen during recovery processing
+				case ActionStatus.ABORTING:
+					changeParticipantStatus(participantId, FAILED);
+					break;
+				default:
+					throw new SystemException(
+							wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
+			}
+		} finally {
+			synchronizationLock.unlock();
+		}
     }
 
     // n.b. this is only appropriate for the 1.1 protocol
 
-    public synchronized void participantCannotComplete (String participantId)
+    public void participantCannotComplete (String participantId)
             throws InvalidParticipantException, WrongStateException, SystemException
     {
-        if (participantId == null)
-            throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+		synchronizationLock.lock();
 
-        int status = status();
-        // cannot complete is only legitimate when the TX is in these states
-        switch (status) {
-            case ActionStatus.RUNNING:
-                // if a participant notifies this then we need to mark the transaction as abort only
-                preventCommit();
-                // !!! deliberate drop through !!!
-            case ActionStatus.ABORT_ONLY:
-                changeParticipantStatus(participantId, DELISTED);
-                break;
-            default:
-                throw new WrongStateException(
-                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
-        }
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
+
+			int status = status();
+			// cannot complete is only legitimate when the TX is in these states
+			switch (status) {
+				case ActionStatus.RUNNING:
+					// if a participant notifies this then we need to mark the transaction as abort only
+					preventCommit();
+					// !!! deliberate drop through !!!
+				case ActionStatus.ABORT_ONLY:
+					changeParticipantStatus(participantId, DELISTED);
+					break;
+				default:
+					throw new WrongStateException(
+							wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
+			}
+		} finally {
+			synchronizationLock.unlock();
+		}
     }
 
     /**

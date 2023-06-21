@@ -67,82 +67,88 @@ public class LogWriteStateManager extends StateManager
 	super(ot);
     }
     
-    protected synchronized boolean modified ()
+    protected boolean modified ()
     {
-	if (tsLogger.logger.isTraceEnabled()) {
-        tsLogger.logger.trace("StateManager::modified() for object-id " + get_uid());
-    }
+		synchronizationLock.lock();
 
-	if ((super.objectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
-	    return super.modified();
-	
-	BasicAction action = BasicAction.Current();
-	
-	if ((super.objectType() == ObjectType.NEITHER) || (super.status() == ObjectStatus.DESTROYED)) /*  NEITHER => no recovery info */
-	{
-	    return true;
-	}
-    
-	if (super.status() == ObjectStatus.PASSIVE) {
-        tsLogger.i18NLogger.warn_StateManager_10();
+		try {
+			if (tsLogger.logger.isTraceEnabled()) {
+				tsLogger.logger.trace("StateManager::modified() for object-id " + get_uid());
+			}
 
-        activate();
-    }
-	
-	/*
-	 * Need not have gone through active if new object.
-	 */
+			if ((super.objectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
+				return super.modified();
 
-	if (status() == ObjectStatus.PASSIVE_NEW)
-	    setStatus(ObjectStatus.ACTIVE_NEW);
-    
-	if (action != null)
-	{
-	    /*
-	     * Check if this is the first call to modified in this action.
-	     * BasicList insert returns FALSE if the entry is already
-	     * present.
-	     */
+			BasicAction action = BasicAction.Current();
 
-	    createLists();
-	    
-	    synchronized (modifyingActions)
-	    {
-		if ((!modifyingActions.isEmpty()) &&
-		    (modifyingActions.get(action.get_uid()) != null))
-		{
-		    return true;
+			if ((super.objectType() == ObjectType.NEITHER) || (super.status() == ObjectStatus.DESTROYED)) /*  NEITHER => no recovery info */
+			{
+				return true;
+			}
+
+			if (super.status() == ObjectStatus.PASSIVE) {
+				tsLogger.i18NLogger.warn_StateManager_10();
+
+				activate();
+			}
+
+			/*
+			 * Need not have gone through active if new object.
+			 */
+
+			if (status() == ObjectStatus.PASSIVE_NEW)
+				setStatus(ObjectStatus.ACTIVE_NEW);
+
+			if (action != null)
+			{
+				/*
+				 * Check if this is the first call to modified in this action.
+				 * BasicList insert returns FALSE if the entry is already
+				 * present.
+				 */
+
+				createLists();
+
+				synchronized (modifyingActions)
+				{
+					if ((!modifyingActions.isEmpty()) &&
+							(modifyingActions.get(action.get_uid()) != null))
+					{
+						return true;
+					}
+					else
+						modifyingActions.put(action.get_uid(), action);
+				}
+
+				/* If here then its a new action */
+
+				OutputObjectState state = new OutputObjectState(objectUid, type());
+				int rStatus = AddOutcome.AR_ADDED;
+
+				if (save_state(state, ObjectType.RECOVERABLE))
+				{
+					TxLogWritePersistenceRecord record = new TxLogWritePersistenceRecord(state, super.getStore(), this);
+
+					if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
+					{
+						synchronized(modifyingActions)
+						{
+							modifyingActions.remove(action.get_uid());  // remember to unregister with action
+						}
+
+						record = null;
+
+						return false;
+					}
+				}
+				else
+					return false;
+			}
+
+			return true;
+		} finally {
+			synchronizationLock.unlock();
 		}
-		else
-		    modifyingActions.put(action.get_uid(), action);
-	    }
-	
-	    /* If here then its a new action */
-	
-	    OutputObjectState state = new OutputObjectState(objectUid, type());
-	    int rStatus = AddOutcome.AR_ADDED;
-	
-	    if (save_state(state, ObjectType.RECOVERABLE))
-	    {
-		TxLogWritePersistenceRecord record = new TxLogWritePersistenceRecord(state, super.getStore(), this);
-	    
-		if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
-		{
-		    synchronized(modifyingActions)
-		    {
-			modifyingActions.remove(action.get_uid());  // remember to unregister with action
-		    }
-		    
-		    record = null;
-
-		    return false;
-		}
-	    }
-	    else
-		return false;
-	}
-	
-	return true;
     }
     
 }

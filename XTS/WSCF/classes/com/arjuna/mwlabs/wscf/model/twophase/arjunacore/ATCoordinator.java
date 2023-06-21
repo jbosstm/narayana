@@ -225,34 +225,47 @@ public class ATCoordinator extends TwoPhaseCoordinator
 		return _theId;
 	}
 
-	public synchronized void participantRolledBack (String participantId)
+	public void participantRolledBack (String participantId)
 			throws InvalidParticipantException, WrongStateException,
 			SystemException
 	{
-		if (participantId == null)
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
+		synchronizationLock.lock();
 
-		if (status() == ActionStatus.RUNNING)
-			changeParticipantStatus(participantId, ROLLEDBACK);
-		else
-			throw new WrongStateException();
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
+
+			if (status() == ActionStatus.RUNNING)
+				changeParticipantStatus(participantId, ROLLEDBACK);
+			else
+				throw new WrongStateException();
+		} finally {
+			synchronizationLock.unlock();
+		}
+
 	}
 
-	public synchronized void participantReadOnly (String participantId)
+	public void participantReadOnly (String participantId)
 			throws InvalidParticipantException, SystemException
 	{
-		if (participantId == null)
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
+		synchronizationLock.lock();
 
-		if (status() == ActionStatus.RUNNING)
-		{
-			changeParticipantStatus(participantId, READONLY);
+		try {
+			if (participantId == null)
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
+
+			if (status() == ActionStatus.RUNNING)
+			{
+				changeParticipantStatus(participantId, READONLY);
+			}
+			else
+				throw new SystemException(
+						wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_3());
+		} finally {
+			synchronizationLock.unlock();
 		}
-		else
-			throw new SystemException(
-                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_3());
 	}
 
     @Override

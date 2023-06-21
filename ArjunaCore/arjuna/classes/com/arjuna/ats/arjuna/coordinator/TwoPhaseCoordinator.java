@@ -9,6 +9,8 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -45,8 +47,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	{
 		if (parentAction != null)
 		{
-		    if (typeOfAction() == ActionType.NESTED)
-			parentAction.addChildAction(this);
+			if (typeOfAction() == ActionType.NESTED)
+				parentAction.addChildAction(this);
 		}
 
 		return super.Begin(parentAction);
@@ -58,14 +60,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (parent() != null)
 		{
-		    parent().removeChildAction(this);
+			parent().removeChildAction(this);
 		}
 
-        boolean canEnd = true;
-        if(status() != ActionStatus.ABORT_ONLY || TxControl.isBeforeCompletionWhenRollbackOnly())
-        {
-            canEnd = beforeCompletion();
-        }
+		boolean canEnd = true;
+		if(status() != ActionStatus.ABORT_ONLY || TxControl.isBeforeCompletionWhenRollbackOnly())
+		{
+			canEnd = beforeCompletion();
+		}
 
 		if (canEnd)
 		{
@@ -82,11 +84,11 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	/**
 	 * If this method is called and a transaction is not in a status of RUNNING,
 	 * ABORT_ONLY or COMMITTING then do not call afterCompletion.
-	 * 
+	 *
 	 * A scenario where this may occur is if during the completion of a previous
-	 * transaction, a runtime exception is thrown from one of the AbstractRecords 
+	 * transaction, a runtime exception is thrown from one of the AbstractRecords
 	 * methods.
-	 * 
+	 *
 	 * RuntimeExceptions are not part of the contract of the API and as such all we
 	 * can do is leave the transaction alone.
 	 */
@@ -114,125 +116,137 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		int result = AddOutcome.AR_REJECTED;
 
 		// only allow registration for top-level transactions.
-		
+
 		if (parent() != null)
 			return AddOutcome.AR_REJECTED;
 
 		switch (status())
 		{
-		// https://jira.jboss.org/jira/browse/JBTM-608
-		case ActionStatus.RUNNING:
-		case ActionStatus.PREPARING:
-		{
+			// https://jira.jboss.org/jira/browse/JBTM-608
+			case ActionStatus.RUNNING:
+			case ActionStatus.PREPARING:
+			{
 
-			if (runningSynchronizations != null) {
-				if (executingInterposedSynchs && !sr.isInterposed())
-					return AddOutcome.AR_REJECTED;
+				if (runningSynchronizations != null) {
+					if (executingInterposedSynchs && !sr.isInterposed())
+						return AddOutcome.AR_REJECTED;
 
-				runningSynchronizations.add(synchronizationCompletionService.submit(
-						new AsyncBeforeSynchronization(this, sr)));
+					runningSynchronizations.add(synchronizationCompletionService.submit(
+							new AsyncBeforeSynchronization(this, sr)));
 
-				return AddOutcome.AR_ADDED;
-			}
-
-			// disallow addition of Synchronizations that would appear
-			// earlier in sequence than any that has already been called
-			// during the pre-commmit phase. This generic support is required for
-			// JTA Synchronization ordering behaviour
-			if(_currentRecord != null) {
-				if(sr.compareTo(_currentRecord) != 1) {
-					return AddOutcome.AR_REJECTED;
-				}
-			}
-
-			synchronized (_syncLock) {
-				if (_synchs == null) {
-					// Synchronizations should be stored (or at least iterated) in their natural order
-					_synchs = new TreeSet<SynchronizationRecord>();
+					return AddOutcome.AR_ADDED;
 				}
 
-				// need to guard against synchs being added while we are performing beforeCompletion processing
-				if (_synchs.add(sr)) {
-					result = AddOutcome.AR_ADDED;
+				// disallow addition of Synchronizations that would appear
+				// earlier in sequence than any that has already been called
+				// during the pre-commmit phase. This generic support is required for
+				// JTA Synchronization ordering behaviour
+				if(_currentRecord != null) {
+					if(sr.compareTo(_currentRecord) != 1) {
+						return AddOutcome.AR_REJECTED;
+					}
+				}
+
+				_syncLock.lock();
+
+				try {
+					if (_synchs == null) {
+						// Synchronizations should be stored (or at least iterated) in their natural order
+						_synchs = new TreeSet<SynchronizationRecord>();
+					}
+
+					// need to guard against synchs being added while we are performing beforeCompletion processing
+					if (_synchs.add(sr)) {
+						result = AddOutcome.AR_ADDED;
+					}
+				} finally {
+					_syncLock.unlock();
 				}
 			}
-            }
 			break;
 			default:
 				break;
-			}
+		}
 
 		return result;
 	}
 
-    private boolean asyncBeforeCompletion() {
-        boolean problem = false;
-        Collection<SynchronizationRecord> interposedSynchs = new ArrayList<SynchronizationRecord>();
+	private boolean asyncBeforeCompletion() {
+		boolean problem = false;
+		Collection<SynchronizationRecord> interposedSynchs = new ArrayList<SynchronizationRecord>();
 
-        synchronized (_syncLock) {
-            synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
-            runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
+		_syncLock.lock();
 
-            for (SynchronizationRecord synchRecord : _synchs) {
-                if (synchRecord.isInterposed())
-                    interposedSynchs.add(synchRecord);
-                else
-                    runningSynchronizations.add(synchronizationCompletionService.submit(
-                            new AsyncBeforeSynchronization(this, synchRecord)));
-            }
+		try {
+			synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
+			runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
 
-            // any further additions to _synchs from here on can only be interposed synchronizations
-        }
+			for (SynchronizationRecord synchRecord : _synchs) {
+				if (synchRecord.isInterposed())
+					interposedSynchs.add(synchRecord);
+				else
+					runningSynchronizations.add(synchronizationCompletionService.submit(
+							new AsyncBeforeSynchronization(this, synchRecord)));
+			}
 
-        try {
-            int processed = 0;
+			// any further additions to _synchs from here on can only be interposed synchronizations
+		} finally {
+			_syncLock.unlock();
+		}
 
-            do {
-                synchronized (_syncLock) {
-                    if (processed == runningSynchronizations.size()) {
-                        if (executingInterposedSynchs || interposedSynchs.isEmpty())
-                            break; // all synchronizations have been executed
+		try {
+			int processed = 0;
 
-                        // all non interposed synchronizations have been executed
-                        executingInterposedSynchs = true;
-                        processed = 0;
-                        runningSynchronizations.clear();
+			do {
+				_syncLock.lock();
 
-                        for (SynchronizationRecord synchRecord : interposedSynchs) {
-                            runningSynchronizations.add(synchronizationCompletionService.submit(
-                                    new AsyncBeforeSynchronization(this, synchRecord)));
-                        }
-                    }
-                }
+				try {
+					if (processed == runningSynchronizations.size()) {
+						if (executingInterposedSynchs || interposedSynchs.isEmpty())
+							break; // all synchronizations have been executed
 
-                processed += 1;
+						// all non interposed synchronizations have been executed
+						executingInterposedSynchs = true;
+						processed = 0;
+						runningSynchronizations.clear();
 
-                try {
-                    if (!synchronizationCompletionService.take().get())
-                        problem = true;
-                } catch (ExecutionException e) {
-                    if (_deferredThrowable == null)
-                        _deferredThrowable = e.getCause();
+						for (SynchronizationRecord synchRecord : interposedSynchs) {
+							runningSynchronizations.add(synchronizationCompletionService.submit(
+									new AsyncBeforeSynchronization(this, synchRecord)));
+						}
+					}
+				} finally {
+					_syncLock.unlock();
+				}
 
-                    // the wrapper around the synchronization will already have logged the error
-                    problem = true;
-                } catch (InterruptedException e) {
-                    tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), e);
-                    problem = true;
-                }
-            } while (!problem);
-        }  finally {
-            // if there was a problem then cancel any remaining synchronizations
-            try {
-                for (Future<Boolean> f : runningSynchronizations)
-                    f.cancel(false); // canceling a completed task is a null op
-            } finally {
-                runningSynchronizations.clear();
-            }
-        }
+				processed += 1;
 
-        return !problem;
-    }
+				try {
+					if (!synchronizationCompletionService.take().get())
+						problem = true;
+				} catch (ExecutionException e) {
+					if (_deferredThrowable == null)
+						_deferredThrowable = e.getCause();
+
+					// the wrapper around the synchronization will already have logged the error
+					problem = true;
+				} catch (InterruptedException e) {
+					tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), e);
+					problem = true;
+				}
+			} while (!problem);
+		}  finally {
+			// if there was a problem then cancel any remaining synchronizations
+			try {
+				for (Future<Boolean> f : runningSynchronizations)
+					f.cancel(false); // canceling a completed task is a null op
+			} finally {
+				runningSynchronizations.clear();
+			}
+		}
+
+		return !problem;
+	}
 
 	/**
 	 * @return <code>true</code> if the transaction is running,
@@ -273,106 +287,109 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	/**
 	 * Drive beforeCompletion participants.
-	 * 
+	 *
 	 * @return true if successful, false otherwise.
 	 */
-	
+
 	protected boolean beforeCompletion ()
 	{
-	    boolean problem = false;
+		boolean problem = false;
 
-	    synchronized (_syncLock)
-	    {
-	        if (!_beforeCalled)
-	        {
-	            _beforeCalled = true;
+		_syncLock.lock();
 
-	            /*
-	             * If we have a synchronization list then we must be top-level.
-	             */
-                if (_synchs == null) {
-	                /*
-	                 * beforeCompletions already called. Assume everything is alright
-	                 * to proceed to commit. The TM instance will flag the outcome. If
-	                 * it's rolling back, then we'll get an exception. If it's committing
-	                 * then we'll be blocked until the commit (assuming we're still the
-	                 * slower thread).
-	                 */
-                } else if (TxControl.asyncBeforeSynch && _synchs.size() > 1) {
-                    problem = !asyncBeforeCompletion();
-                } else {
-	                /*
-	                 * We must always call afterCompletion() methods, so just catch (and
-	                 * log) any exceptions/errors from beforeCompletion() methods.
-	                 *
-	                 * If one of the Syncs throws an error the Record wrapper returns false
-	                 * and we will rollback. Hence we don't then bother to call beforeCompletion
-	                 * on the remaining records (it's not done for rollabcks anyhow).
-	                 *
-	                 * Since Synchronizations may register other Synchronizations, we can't simply
-	                 * iterate the collection. Instead we work from an ordered copy, which we periodically
-	                 * check for freshness. The addSynchronization method uses _currentRecord to disallow
-	                 * adding records in the part of the array we have already traversed, thus all
-	                 * Synchronization will be called and the (jta only) rules on ordering of interposed
-	                 * Synchronization will be respected.
-	                 */
+		try {
+			if (!_beforeCalled)
+			{
+				_beforeCalled = true;
 
-	                int lastIndexProcessed = -1;
-	                SynchronizationRecord[] copiedSynchs;
-	                // need to guard against synchs being added while we are performing beforeCompletion processing
-	                copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-	                while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+				/*
+				 * If we have a synchronization list then we must be top-level.
+				 */
+				if (_synchs == null) {
+					/*
+					 * beforeCompletions already called. Assume everything is alright
+					 * to proceed to commit. The TM instance will flag the outcome. If
+					 * it's rolling back, then we'll get an exception. If it's committing
+					 * then we'll be blocked until the commit (assuming we're still the
+					 * slower thread).
+					 */
+				} else if (TxControl.asyncBeforeSynch && _synchs.size() > 1) {
+					problem = !asyncBeforeCompletion();
+				} else {
+					/*
+					 * We must always call afterCompletion() methods, so just catch (and
+					 * log) any exceptions/errors from beforeCompletion() methods.
+					 *
+					 * If one of the Syncs throws an error the Record wrapper returns false
+					 * and we will rollback. Hence we don't then bother to call beforeCompletion
+					 * on the remaining records (it's not done for rollabcks anyhow).
+					 *
+					 * Since Synchronizations may register other Synchronizations, we can't simply
+					 * iterate the collection. Instead we work from an ordered copy, which we periodically
+					 * check for freshness. The addSynchronization method uses _currentRecord to disallow
+					 * adding records in the part of the array we have already traversed, thus all
+					 * Synchronization will be called and the (jta only) rules on ordering of interposed
+					 * Synchronization will be respected.
+					 */
 
-	                    // if new Synchronization have been registered, refresh our copy of the collection:
+					int lastIndexProcessed = -1;
+					SynchronizationRecord[] copiedSynchs;
+					// need to guard against synchs being added while we are performing beforeCompletion processing
+					copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+					while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+
+						// if new Synchronization have been registered, refresh our copy of the collection:
 						if(copiedSynchs.length != _synchs.size()) {
 							copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
 						}
 
-	                    lastIndexProcessed = lastIndexProcessed+1;
-	                    _currentRecord = copiedSynchs[lastIndexProcessed];
+						lastIndexProcessed = lastIndexProcessed+1;
+						_currentRecord = copiedSynchs[lastIndexProcessed];
 
-	                    try
-	                    {
-	                        problem = !_currentRecord.beforeCompletion();
+						try
+						{
+							problem = !_currentRecord.beforeCompletion();
 
-	                        // if something goes wrong, we can't just throw the exception, we need to continue to
-	                        // complete the transaction. However, the exception may have interesting information that
-	                        // we want later, so we keep a reference to it as well as logging it.
+							// if something goes wrong, we can't just throw the exception, we need to continue to
+							// complete the transaction. However, the exception may have interesting information that
+							// we want later, so we keep a reference to it as well as logging it.
 
-	                    }
-	                    catch (Exception ex) {
-	                        tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), ex);
-	                        if (_deferredThrowable == null) {
-	                            _deferredThrowable = ex;
-	                        }
-	                        problem = true;
-	                    }
-	                    catch (Error er) {
-	                        tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), er);
-	                        if (_deferredThrowable == null) {
-	                            _deferredThrowable = er;
-	                        }
-	                        problem = true;
-	                    }
-	                }
-	            }
-	        }
+						}
+						catch (Exception ex) {
+							tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), ex);
+							if (_deferredThrowable == null) {
+								_deferredThrowable = ex;
+							}
+							problem = true;
+						}
+						catch (Error er) {
+							tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), er);
+							if (_deferredThrowable == null) {
+								_deferredThrowable = er;
+							}
+							problem = true;
+						}
+					}
+				}
+			}
 
-            if (problem && !preventCommit()) {
-	            /*
-	             * This should not happen. If it does, continue with commit
-	             * to tidy-up.
-	             */
+			if (problem && !preventCommit()) {
+				/*
+				 * This should not happen. If it does, continue with commit
+				 * to tidy-up.
+				 */
 
-                tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_1();
-            }
-	    }
+				tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_1();
+			}
+		} finally {
+			_syncLock.unlock();
+		}
 
-	    return !problem;
+		return !problem;
 	}
 
-    protected boolean asyncAfterCompletion(int myStatus, boolean report_heuristics) {
-        boolean problem = false;
+	protected boolean asyncAfterCompletion(int myStatus, boolean report_heuristics) {
+		boolean problem = false;
 
 		if (synchronizationCompletionService == null) {
 			synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
@@ -381,103 +398,104 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 			runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
 		}
 
-        // note there is no need to synchronize on _synchs since synchronizations cannot be registered once
-        // the action has started to commit
-        for (Iterator<SynchronizationRecord> i =_synchs.iterator(); i.hasNext(); ) {
-            SynchronizationRecord synchRecord = i.next();
+		// note there is no need to synchronize on _synchs since synchronizations cannot be registered once
+		// the action has started to commit
+		for (Iterator<SynchronizationRecord> i =_synchs.iterator(); i.hasNext(); ) {
+			SynchronizationRecord synchRecord = i.next();
 
-            if (!report_heuristics && synchRecord instanceof HeuristicNotification)
-                ((HeuristicNotification) synchRecord).heuristicOutcome(getHeuristicDecision());
+			if (!report_heuristics && synchRecord instanceof HeuristicNotification)
+				((HeuristicNotification) synchRecord).heuristicOutcome(getHeuristicDecision());
 
-            if (synchRecord.isInterposed()) {
-                // run interposed synchronizations first
-                i.remove();
+			if (synchRecord.isInterposed()) {
+				// run interposed synchronizations first
+				i.remove();
 
-                runningSynchronizations.add(synchronizationCompletionService.submit(
-                        new AsyncAfterSynchronization(this, synchRecord, myStatus)));
-            }
-        }
+				runningSynchronizations.add(synchronizationCompletionService.submit(
+						new AsyncAfterSynchronization(this, synchRecord, myStatus)));
+			}
+		}
 
-        int processed = 0;
+		int processed = 0;
 
-        executingInterposedSynchs = true;
+		executingInterposedSynchs = true;
 
-        while (true) {
-            if (processed == runningSynchronizations.size()) {
-                if (!executingInterposedSynchs || _synchs.isEmpty())
-                    break; // all synchronizations have been executed
+		while (true) {
+			if (processed == runningSynchronizations.size()) {
+				if (!executingInterposedSynchs || _synchs.isEmpty())
+					break; // all synchronizations have been executed
 
-                // all interposed synchronizations have been executed
-                executingInterposedSynchs = false;
-                processed = 0;
-                runningSynchronizations.clear();
+				// all interposed synchronizations have been executed
+				executingInterposedSynchs = false;
+				processed = 0;
+				runningSynchronizations.clear();
 
-                for (SynchronizationRecord synchRecord : _synchs) {
-                    runningSynchronizations.add(synchronizationCompletionService.submit(
-                            new AsyncAfterSynchronization(this, synchRecord, myStatus)));
-                }
+				for (SynchronizationRecord synchRecord : _synchs) {
+					runningSynchronizations.add(synchronizationCompletionService.submit(
+							new AsyncAfterSynchronization(this, synchRecord, myStatus)));
+				}
 
-                _synchs.clear();
-            }
+				_synchs.clear();
+			}
 
-            processed += 1;
+			processed += 1;
 
-            try {
-                if (!synchronizationCompletionService.take().get())
-                    problem = true;
-            } catch (InterruptedException e) {
-                problem = true;
-            } catch (ExecutionException e) {
-                problem = true;
-            }
-        }
+			try {
+				if (!synchronizationCompletionService.take().get())
+					problem = true;
+			} catch (InterruptedException e) {
+				problem = true;
+			} catch (ExecutionException e) {
+				problem = true;
+			}
+		}
 
-        return !problem;
-    }
-
-	/**
-         * Drive afterCompletion participants.
-         * 
-         * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
-         * 
-         * @return true if successful, false otherwise.
-         */
-	
-	protected boolean afterCompletion (int myStatus)
-	{
-	    return afterCompletion(myStatus, false);
+		return !problem;
 	}
-	
+
 	/**
 	 * Drive afterCompletion participants.
-	 * 
+	 *
 	 * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
-	 * @param report_heuristics does the caller want to be informed about heurisitics at the point of invocation?
-	 * 
+	 *
 	 * @return true if successful, false otherwise.
 	 */
-	
+
+	protected boolean afterCompletion (int myStatus)
+	{
+		return afterCompletion(myStatus, false);
+	}
+
+	/**
+	 * Drive afterCompletion participants.
+	 *
+	 * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
+	 * @param report_heuristics does the caller want to be informed about heurisitics at the point of invocation?
+	 *
+	 * @return true if successful, false otherwise.
+	 */
+
 	protected boolean afterCompletion (int myStatus, boolean report_heuristics)
 	{
 		if (myStatus == ActionStatus.RUNNING) {
-            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_3();
+			tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_3();
 
-            return false;
-        }
+			return false;
+		}
 
 		boolean problem = false;
 
-		synchronized (_syncLock)
-		{
+		_syncLock.lock();
+
+		try {
 			if (!_afterCalled)
 			{
 				_afterCalled = true;
 
-                if (_synchs == null) {
-                    return !problem;
-                } else if (TxControl.asyncAfterSynch && _synchs.size() > 1) {
-                    problem = asyncAfterCompletion(myStatus, report_heuristics);
-                } else {
+				if (_synchs == null) {
+					return !problem;
+				} else if (TxControl.asyncAfterSynch && _synchs.size() > 1) {
+					problem = asyncAfterCompletion(myStatus, report_heuristics);
+				} else {
 					// afterCompletions should run in reverse order compared to
 					// beforeCompletions
 					Stack stack = new Stack();
@@ -507,70 +525,76 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 						 * participants do with the information (e.g., OTS allows for the CORBA Notification Service
 						 * to be used).
 						 */
-						
+
 						if (!report_heuristics)
 						{
-						    if (record instanceof HeuristicNotification)
-						    {
-						        ((HeuristicNotification) record).heuristicOutcome(getHeuristicDecision());
-						    }
+							if (record instanceof HeuristicNotification)
+							{
+								((HeuristicNotification) record).heuristicOutcome(getHeuristicDecision());
+							}
 						}
-						
+
 						try
 						{
 							if (!record.afterCompletion(myStatus)) {
-                                tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4(record.toString());
+								tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4(record.toString());
 
-                                problem = true;
-                            }
+								problem = true;
+							}
 						}
 						catch (Exception ex) {
-                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4a(record.toString(), ex);
-                            problem = true;
-                        }
+							tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4a(record.toString(), ex);
+							problem = true;
+						}
 						catch (Error er) {
-                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4b(record.toString(), er);
-                            problem = true;
-                        }
+							tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4b(record.toString(), er);
+							problem = true;
+						}
 					}
 
-                        // nulling _syncs causes concurrency problems, so dispose contents instead:
-                        _synchs.clear();
+					// nulling _syncs causes concurrency problems, so dispose contents instead:
+					_synchs.clear();
 				}
 			}
+		} finally {
+			_syncLock.unlock();
 		}
 
 		return !problem;
 	}
 
-    public java.util.Map<Uid, String> getSynchronizations()
-    {
-        java.util.Map<Uid, String> synchs = new java.util.HashMap<Uid, String> ();
+	public java.util.Map<Uid, String> getSynchronizations()
+	{
+		java.util.Map<Uid, String> synchs = new java.util.HashMap<Uid, String> ();
 
-        synchronized (_syncLock) {
-            if (_synchs != null)
-            {
-                for (Object _synch : _synchs)
-                {
-                    SynchronizationRecord synch = (SynchronizationRecord) _synch;
+		_syncLock.lock();
 
-                    synchs.put(synch.get_uid(), synch.toString());
-                }
-            }
-        }
+		try {
+			if (_synchs != null)
+			{
+				for (Object _synch : _synchs)
+				{
+					SynchronizationRecord synch = (SynchronizationRecord) _synch;
 
-        return synchs;
-    }
+					synchs.put(synch.get_uid(), synch.toString());
+				}
+			}
+		} finally {
+			_syncLock.unlock();
+		}
+
+		return synchs;
+	}
 
 	@Override
-	public synchronized void recordStackTraces() {
+	public void recordStackTraces() {
 		// callback for the Reaper to tell us when it's time to take a snapshot of our threads.
 		// the heavy lifting is actually done up in BasicAction, but we're Reapable and it's not.
 		super.recordStackTraces();
 	}
 
 	@Override
-	public synchronized void outputCapturedStackTraces() {
+	public void outputCapturedStackTraces() {
 		// callback for the Reaper to tell us when it's time to dump any previously captured
 		// thread traces, which is usually right before a timeout (cancel)
 		// as above, the heavy lifting is actually done up in BasicAction, but we're Reapable and it's not.
@@ -579,13 +603,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 
 	private SortedSet<SynchronizationRecord> _synchs;
-    private List<Future<Boolean>> runningSynchronizations = null;
-    private CompletionService<Boolean> synchronizationCompletionService = null;
-    private boolean executingInterposedSynchs = false;
+	private List<Future<Boolean>> runningSynchronizations = null;
+	private CompletionService<Boolean> synchronizationCompletionService = null;
+	private boolean executingInterposedSynchs = false;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 	private Throwable _deferredThrowable;
 
-	private Object _syncLock = new Object();
+	private Lock _syncLock = new ReentrantLock();
 
 	private boolean _beforeCalled = false;
 	private boolean _afterCalled = false;
