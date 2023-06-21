@@ -645,9 +645,15 @@ public class ParticipantRecord extends
     /**
      * record the fact that this participant has completed
      */
-    public final synchronized void completed ()
+    public final void completed ()
     {
-        _completed = true;
+		synchronizationLock.lock();
+
+		try {
+			_completed = true;
+		} finally {
+			synchronizationLock.unlock();
+		}
     }
 
     /**
@@ -656,9 +662,15 @@ public class ParticipantRecord extends
      * @caveat it is only appropriate to call this if this is a CoordinatorCompletion participant
      * @return true if the participant is still able to be sent a complete request otherwise false
      */
-    public final synchronized boolean isActive ()
+    public final boolean isActive ()
     {
-        return !_completed && !_exited;
+		synchronizationLock.lock();
+
+		try {
+			return !_completed && !_exited;
+		} finally {
+			synchronizationLock.unlock();
+		}
     }
 
     /**
