@@ -512,6 +512,16 @@ public class StateManager
     }
 
     /**
+     * @return the time the object was created in milliseconds since midnight, January 1, 1970 UTC
+     * @see System.currentTimeMillis
+     */
+
+    public final long getCreationTimeMillis()
+    {
+        return creationTimeMillis;
+    }
+
+    /**
      * Destroy the object (e.g., remove its state from the persistent store.)
      * Calls to destroy for volatile objects (ones not maintained within the
      * volatile object store) are ignored, and FALSE is returned.
@@ -688,14 +698,13 @@ public class StateManager
             else
                 UidHelper.packInto(Uid.nullUid(), os);
             
-            long birthDate = System.currentTimeMillis();
-            
             if (tsLogger.logger.isTraceEnabled()) {
                 tsLogger.logger.trace("StateManager.packHeader for object-id " + get_uid()
-                        + " birth-date " + birthDate);
+                        + " birth-date " + creationTimeMillis);
+            }
             }
             
-            os.packLong(birthDate);
+            os.packLong(creationTimeMillis);
         }
         catch (IOException ex)
         {
@@ -748,11 +757,11 @@ public class StateManager
                 throw new IOException(tsLogger.i18NLogger.get_StateManager_15());
             }
             
-            long birthDate = os.unpackLong();
+            creationTimeMillis = os.unpackLong();
             
             if (tsLogger.logger.isTraceEnabled()) {
                 tsLogger.logger.trace("StateManager.unpackHeader for object-id " + get_uid()
-                        + " birth-date " + birthDate);
+                        + " birth-date " + creationTimeMillis);
             }
             
             hdr.setTxId(txId);
@@ -1474,6 +1483,7 @@ public class StateManager
     private int currentStatus = ObjectStatus.PASSIVE;
     private int initialStatus = ObjectStatus.PASSIVE;
     private int myType;
+    private long creationTimeMillis = System.currentTimeMillis();
     private ParticipantStore participantStore = null;
     private String storeRoot = null;
     private ReentrantLock mutex = new ReentrantLock();
