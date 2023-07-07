@@ -21,7 +21,7 @@
     <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
     <version.arquillian.weld-embedded>3.0.2.Final</version.arquillian.weld-embedded>
-    <version.com.h2database>2.1.214</version.com.h2database>
+    <version.com.h2database>2.2.220</version.com.h2database>
     <version.com.ibm>11.5.0.0</version.com.ibm>
     <version.com.oracle>18.3.0.0</version.com.oracle>
     <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
