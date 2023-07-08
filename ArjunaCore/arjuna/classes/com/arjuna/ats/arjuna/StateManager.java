@@ -702,7 +702,6 @@ public class StateManager
                 tsLogger.logger.trace("StateManager.packHeader for object-id " + get_uid()
                         + " birth-date " + creationTimeMillis);
             }
-            }
             
             os.packLong(creationTimeMillis);
         }
