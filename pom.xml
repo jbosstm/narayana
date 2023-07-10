@@ -200,7 +200,7 @@
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
     <!-- Needed forWildflyLRACoordinatorDeployment class -->
-    <version.org.jboss.resteasy>6.2.2.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>6.2.5.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.quarkus-bom>3.0.1.Final</version.quarkus-bom>
     <version.quarkus-maven-plugin>3.0.1.Final</version.quarkus-maven-plugin>

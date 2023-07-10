@@ -24,8 +24,6 @@
      -->
     <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
     <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
-    <!-- jakarta.servlet-api version 6.0.0 does not include jakarta/servlet/SingleThreadModel needed for undertow-->
-    <version.jakarta.servlet.jakarta-servlet-api>5.0.0</version.jakarta.servlet.jakarta-servlet-api>
   </properties>
 
   <dependencyManagement>
@@ -48,7 +46,6 @@
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
