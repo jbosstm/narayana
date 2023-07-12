@@ -548,10 +548,10 @@ public class SRAClient implements SRAClientAPI, Closeable {
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
                 throw new IllegalSRAStateException(sraUrl.toString(), "Too late to join with this SRA", null);
             } else if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-                String reason = response.readEntity(String.class);
+                String reason = response.hasEntity() ? response.readEntity(String.class) : "";
 
                 sraTrace(String.format("enlist in SRA failed (%d): %s",
-                        response.getStatus(), response.readEntity(String.class)), sraUrl);
+                        response.getStatus(), reason), sraUrl);
 
                 throw new GenericSRAException(sraUrl, response.getStatus(),
                         "unable to register particiapnt: " + reason, null);
