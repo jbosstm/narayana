@@ -12,7 +12,7 @@
 
   <groupId>org.jboss.narayana.vertx</groupId>
   <artifactId>stm-error-demo</artifactId>
-  <version>7.0.0.Final</version>
+  <version>7.0.1.Final-SNAPSHOT</version>
 
   <properties>
     <!-- the main class -->

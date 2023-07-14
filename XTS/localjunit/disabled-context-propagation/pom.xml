@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.jboss.narayana.xts</groupId>
     <artifactId>localjunit</artifactId>
-    <version>7.0.0.Final</version>
+    <version>7.0.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>localjunit-disabled-context-propagation-tests</artifactId>
