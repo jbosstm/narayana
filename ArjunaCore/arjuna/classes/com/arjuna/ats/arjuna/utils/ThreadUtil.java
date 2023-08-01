@@ -7,6 +7,8 @@ package com.arjuna.ats.arjuna.utils;
 
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides utilities to manage thread ids.
@@ -26,6 +28,11 @@ public class ThreadUtil
      * The thread id counter.
      */
     private static AtomicLong id = new AtomicLong();
+
+    /**
+     * Lock for synchronizing access to the WeakHashMap
+     */
+    private static final Lock lock = new ReentrantLock();
 
     /**
      * Get the string ID for the current thread.
@@ -53,7 +60,8 @@ public class ThreadUtil
 
         }
 
-        synchronized (ThreadUtil.class) {
+        lock.lock();
+        try {
             final String id = THREAD_ID.get(thread);
             if (id != null) {
                 if (thread == Thread.currentThread()) {
@@ -69,6 +77,8 @@ public class ThreadUtil
                 LOCAL_ID.set(newId);
             }
             return newId;
+        } finally {
+            lock.unlock();
         }
     }
 
