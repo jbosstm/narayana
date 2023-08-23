@@ -152,20 +152,8 @@
       <arg value="develop"/>
     </exec>
 
-    <!-- Build web page and push to jboss.org -->
-    <exec executable="bash" dir="${workdir}/narayana.io/">
-      <arg value="-c"/>
-      <arg value="${awestruct.executable} -P production"/>
-    </exec>
-    <antcall target="rsync.web"/>
-  </target>
-
-  <target name="rsync.web" if="${rsync.enabled}">
-    <exec executable="bash" dir="${workdir}/narayana.io/" failonerror="true">
-      <arg value="-c"/>
-      <arg value="rsync --partial --progress --rsh=ssh --delete-after -r _site/* jbosstm@{rsync.host}:www_htdocs/jbosstm/" />
-    </exec>
-  </target>
+    <!-- We no longer build automatically web pages, nor push automatically to the file server to jboss.org -->
+    <!-- To manually update the website follow the instructions in README (https://github.com/jbosstm/narayana.io/blob/develop/README.md) -->
   
   <target name="web-docs" depends="docs.check" if="docs.exist" description="Update documentations on Narayana web page">
     <delete dir="${workdir}/narayana.io/docs/product"/>
