@@ -396,6 +396,28 @@ public class LRATest {
     }
 
     /**
+     * Run a loop of LRAs so that a debugger can watch memory
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testForLeaks() throws URISyntaxException {
+        int txnCount = 10;
+        // verify that the participant complete request is issued when a method annotated with @LRA returns
+        int completions = completeCount.get();
+
+        // start some LRAs
+        for (int i = 0; i < txnCount; i++) {
+            String lraId = client.target(TestPortProvider.generateURL("/base/test/start-end")).request().get(String.class);
+            LRAStatus status = getStatus(new URI(lraId));
+            assertTrue("LRA should have closed", status == null || status == LRAStatus.Closed);
+        }
+
+        // Remark: there should be no memory leaks in LRAService
+
+        assertEquals(completions + txnCount, completeCount.get());
+    }
+
+    /**
      * test that participants that report LRAStatus.Closing are replayed
      */
     @Test
