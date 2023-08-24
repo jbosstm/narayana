@@ -43,7 +43,7 @@ public class LRAService {
     private final Map<URI, LongRunningAction> lras = new ConcurrentHashMap<>();
     private final Map<URI, LongRunningAction> recoveringLRAs = new ConcurrentHashMap<>();
     private final Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
-    private final Map<String, String> participants = new ConcurrentHashMap<>();
+    private final Map<LongRunningAction, Map<String, String>> lraParticipants = new ConcurrentHashMap<>();
     private LRARecoveryModule recoveryModule;
 
     public LongRunningAction getTransaction(URI lraId) throws NotFoundException {
@@ -195,7 +195,11 @@ public class LRAService {
     public void remove(URI lraId) {
         lraTrace(lraId, "remove LRA");
 
-        lras.remove(lraId);
+        LongRunningAction lra = lras.remove(lraId);
+
+        if (lra != null) {
+            lraParticipants.remove(lra);
+        }
 
         recoveringLRAs.remove(lraId);
 
@@ -209,18 +213,35 @@ public class LRAService {
     public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
         assert recoveryURI != null;
         assert compensatorUrl != null;
+        LongRunningAction transaction = getTransaction(lraId);
+        Map<String, String> participants = lraParticipants.get(transaction);
 
-        participants.put(recoveryURI, compensatorUrl);
+        // the <participants> collection should be thread safe against update requests, even though such concurrent
+        // updates are improbable because only LRAService.joinLRA and RecoveryCoordinator.replaceCompensator
+        // do updates but those are sequential operations anyway
+        if (participants == null) {
+            participants = new ConcurrentHashMap<>();
+            participants.put(recoveryURI, compensatorUrl);
+            lraParticipants.put(transaction, participants);
+        } else {
+            participants.replace(recoveryURI, compensatorUrl);
+        }
 
-        if (persist && lraId != null) {
-            LongRunningAction transaction = getTransaction(lraId);
-
+        if (persist) {
             transaction.updateRecoveryURI(compensatorUrl, recoveryURI);
         }
     }
 
     public String getParticipant(String rcvCoordId) {
-        return participants.get(rcvCoordId);
+        for (Map<String, String> compensators : lraParticipants.values()) {
+            String compensator = compensators.get(rcvCoordId);
+
+            if (compensator != null) {
+                return compensator;
+            }
+        }
+
+        return null;
     }
 
     public synchronized LongRunningAction startLRA(String baseUri, URI parentLRA, String clientId, Long timelimit) {
@@ -427,11 +448,11 @@ public class LRAService {
 
     private LRARecoveryModule getRM() {
         // since this method is reentrant we do not need any synchronization
-        if (recoveryModule != null) {
-            return recoveryModule;
+        if (recoveryModule == null) {
+            recoveryModule = LRARecoveryModule.getInstance();
         }
 
-        return LRARecoveryModule.getInstance();
+        return recoveryModule;
     }
 
     private List<LRAData> getDataByStatus(Map<URI, LongRunningAction> lrasToFilter, LRAStatus status) {
