@@ -7,10 +7,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana</groupId>
-    <artifactId>narayana-all</artifactId>
+    <artifactId>narayana-boms</artifactId>
     <version>7.0.1.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>org.jboss.narayana</groupId>
+
   <artifactId>narayana-bom</artifactId>
   <packaging>pom</packaging>
   <name>Narayana Bom</name>
