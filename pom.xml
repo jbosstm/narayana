@@ -190,7 +190,7 @@
     <version.maven.jandex-plugin>3.0.5</version.maven.jandex-plugin>
 
     <!-- Needed forWildflyLRACoordinatorDeployment class -->
-    <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
+    <version.microprofile.lra>2.0</version.microprofile.lra>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
 
     <!-- This property is used in WarDeployment (XTS) -->
