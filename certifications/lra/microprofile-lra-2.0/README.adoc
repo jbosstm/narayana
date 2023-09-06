@@ -71,7 +71,7 @@ OS name: "linux", version: "5.19.11-200.fc36.x86_64", arch: "amd64", family: "un
 
 Command - `WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh`
 
-Results failsafe-reports zip - xref:lra-1.0-jdk-11-ccr-results.zip[lra-1.0-jdk-11-ccr-results.zip]
+Results failsafe-reports zip - xref:lra-2.0-jdk-11-ccr-results.zip[lra-2.0-jdk-11-ccr-results.zip]
 
 Results:
 
@@ -154,7 +154,7 @@ OS name: "linux", version: "5.19.11-200.fc36.x86_64", arch: "amd64", family: "un
 
 Command - `WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh`
 
-Results failsafe-reports zip - xref:lra-1.0-jdk-17-ccr-results.zip[lra-1.0-jdk-17-ccr-results.zip]
+Results failsafe-reports zip - xref:lra-2.0-jdk-17-ccr-results.zip[lra-2.0-jdk-17-ccr-results.zip]
 
 Results:
 
