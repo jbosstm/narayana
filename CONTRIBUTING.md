@@ -4,7 +4,11 @@ Want to contribute? Great!
 
 We try to make it easy, and all contributions, even the smaller ones, are more than welcome.
 This includes bug reports, fixes, documentation, examples...
+
 If you are looking for an issue to work on and haven't had much previous experience with Narayana then you could work on one that has the label "good-first-issue" or look for issues whose "Estimated Difficulty" field is `Low`.
+
+On the other hand, if you are set to tackle a big, complicated issue or an issue that will have a high impact on the code base, it is highly recommended to follow the [Request for enhancement (RFE) [workflow](https://github.com/jbosstm/narayana-proposals/blob/main/README.md). Choosing to employ this workflow before starting the development of the selected RFE will help the Narayana core team and yourself to clarify the requirements, the constraints, and the overall design to tackle the issue in advance. In other words, employing the RFE workflow will make sure that the Narayana core team and yourself are on the same page before starting coding.
+
 But first, read this page.
 
 We use a four step process for contributions:
