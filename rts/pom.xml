@@ -95,7 +95,6 @@
         <id>community</id>
         <modules>
           <module>lra</module>
-          <module>sra</module>
         </modules>
       </profile>
     </profiles>
