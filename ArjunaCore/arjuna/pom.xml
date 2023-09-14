@@ -140,9 +140,16 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
