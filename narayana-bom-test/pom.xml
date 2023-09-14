@@ -349,6 +349,18 @@
         <version>${version.junit.jupiter}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${version.junit.jupiter}</version>
+        <scope>test</scope>
+      </dependency>
+      <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
+      <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <version>${version.junit.jupiter}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.squareup.okhttp</groupId>
