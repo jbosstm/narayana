@@ -254,12 +254,6 @@
         <version>${project.version}</version>
         <classifier>tests</classifier>
       </dependency>
-      <dependency>
-        <groupId>org.jboss.openjdk-orb</groupId>
-        <artifactId>openjdk-orb-jakarta</artifactId>
-        <version>${version.org.jboss.openjdk-orb}</version>
-        <classifier>sources</classifier>
-      </dependency>
 
       <dependency>
         <groupId>jakarta.xml.bind</groupId>
