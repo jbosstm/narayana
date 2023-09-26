@@ -1,3 +1,7 @@
+/*
+ * Copyright The Narayana Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.arjuna.mwlabs.wst11.at;
 
 import com.arjuna.mw.wsc11.context.Context;

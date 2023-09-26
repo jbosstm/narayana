@@ -1,6 +1,6 @@
 /*
    Copyright The Narayana Authors
-   SPDX short identifier: Apache-2.0
+   SPDX-License-Identifier: Apache-2.0
  */
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.AtomicAction;

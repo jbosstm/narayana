@@ -1,3 +1,7 @@
+/*
+ * Copyright The Narayana Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.arjuna.mw.wsc11.context;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;

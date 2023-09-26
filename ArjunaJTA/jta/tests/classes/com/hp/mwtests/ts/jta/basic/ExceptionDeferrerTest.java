@@ -1,3 +1,7 @@
+/*
+ * Copyright The Narayana Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.hp.mwtests.ts.jta.basic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
