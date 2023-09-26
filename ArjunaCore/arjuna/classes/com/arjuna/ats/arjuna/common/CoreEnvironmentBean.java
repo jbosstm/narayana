@@ -2,7 +2,6 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
 package com.arjuna.ats.arjuna.common;
 
 import java.io.File;

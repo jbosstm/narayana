@@ -2,9 +2,6 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
-
-
 package com.arjuna.ats.internal.arjuna.utils;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
