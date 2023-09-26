@@ -1,3 +1,7 @@
+/*
+ * Copyright The Narayana Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.hp.mwtests.ts.arjuna.reaper;
 
 import com.arjuna.ats.arjuna.common.Uid;

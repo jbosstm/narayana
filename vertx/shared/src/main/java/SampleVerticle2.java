@@ -1,5 +1,5 @@
 /*
-   SPDX short identifier: Apache-2.0
+   SPDX-License-Identifier: Apache-2.0
  */
 /*
  * Copyright 2011 the original author or authors.
