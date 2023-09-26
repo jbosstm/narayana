@@ -2,15 +2,6 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
-
-
-/*
- *
- * Dipose Record Class.
- *
- */
-
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import java.io.IOException;

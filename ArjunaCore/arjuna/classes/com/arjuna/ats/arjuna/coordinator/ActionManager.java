@@ -2,9 +2,6 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
-
-
 package com.arjuna.ats.arjuna.coordinator;
 
 import java.util.Map;

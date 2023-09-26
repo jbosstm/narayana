@@ -2,19 +2,16 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
-
-
-/*
- * Note: This impl has come from HP-TS-2.2 via. HP-MS 1.0
- */
-
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver;
+
+/*
+ * Note: This impl has come from HP-TS-2.2 via. HP-MS 1.0
+ */
 
 /**
  * JDBC store implementation driver-specific code. This version for MS SQL

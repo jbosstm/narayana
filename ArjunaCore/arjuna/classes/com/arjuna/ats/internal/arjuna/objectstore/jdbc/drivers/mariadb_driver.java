@@ -2,7 +2,6 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.Blob;
