@@ -23,7 +23,7 @@
         <!-- the main verticle class name -->
         <!--main.verticle>io.vertx.example.HelloWorldVerticle</main.verticle>-->
         <main.verticle>ClientVerticle</main.verticle>
-        <vertx.version>3.5.4</vertx.version>
+        <vertx.version>3.9.15</vertx.version>
         <narayana.version>${project.version}</narayana.version>
         <jboss-logging.version>3.1.4.GA</jboss-logging.version>
     </properties>
