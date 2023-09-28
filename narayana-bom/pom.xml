@@ -39,7 +39,7 @@
     <version.jakarta.ws.rs.jakarta-ws-rs-api>3.1.0</version.jakarta.ws.rs.jakarta-ws-rs-api>
     <version.jakarta.xml.bind.jakarta-xml-bind-api>4.0.0</version.jakarta.xml.bind.jakarta-xml-bind-api>
     <version.jakarta.xml.ws.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws.jakarta.xml.ws-api>
-    <version.jaxws-ri>4.0.0</version.jaxws-ri>
+    <version.jaxws-ri>4.0.1</version.jaxws-ri>
     <version.jboss-modules>1.10.2.Final</version.jboss-modules>
     <version.jboss.jnpserver>4.2.2.GA</version.jboss.jnpserver>
     <version.jfree>1.5.3</version.jfree>
