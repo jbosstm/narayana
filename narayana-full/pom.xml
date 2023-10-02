@@ -370,6 +370,7 @@
                     <dependencySourceExclude>jakarta.enterprise:jakarta.enterprise.cdi-api</dependencySourceExclude>
                     <dependencySourceExclude>jakarta.enterprise:jakarta.enterprise.lang-model</dependencySourceExclude>
                     <dependencySourceExclude>jakarta.el:jakarta.el-api</dependencySourceExclude>
+                    <dependencySourceExclude>org.apache.activemq:artemis-journal</dependencySourceExclude>
                   </dependencySourceExcludes>
                 </configuration>
               </execution>
