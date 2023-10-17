@@ -16,10 +16,10 @@
   <name>Narayana Bom</name>
   <description>Narayana BOM is for centralising dependency management for development purposes</description>
 
-<!--
+  <!--
     This Bill of Materials (BOM) is for centralising dependency management across the various modules of Narayana.
     The BOM is intended for development purposes within Narayana.
--->
+  -->
 
   <properties>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>

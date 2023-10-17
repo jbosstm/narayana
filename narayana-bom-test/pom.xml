@@ -17,11 +17,10 @@
   <name>Narayana Bom Test</name>
   <description>Narayana BOM is for centralising dependency management for development purposes (test scoped dependencies)</description>
 
-<!--
-	This Bill of Materials (BOM) is for centralising dependency management across the various modules of Narayana.
+  <!--
+    This Bill of Materials (BOM) is for centralising dependency management across the various modules of Narayana.
     The BOM is intended for development purposes within Narayana.
--->
-
+  -->
   <properties>
     <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
