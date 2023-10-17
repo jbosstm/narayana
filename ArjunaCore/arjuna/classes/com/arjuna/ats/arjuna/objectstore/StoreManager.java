@@ -129,16 +129,8 @@ public class StoreManager
     {
         ObjectStoreEnvironmentBean storeEnvBean = BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, name);
         String storeType = storeEnvBean.getObjectStoreType();
-        ObjectStoreAPI store;
-
-        try
-        {
-            store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name);
-        }
-        catch (final Throwable ex)
-        {
-            throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
-        }
+        ObjectStoreAPI store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name,
+                true);
 
         if(store == null) {
             throw new FatalError(tsLogger.i18NLogger.init_StoreManager_instantiate_class_failure(name, storeType));

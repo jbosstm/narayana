@@ -94,8 +94,12 @@ public class ClassloadingUtility
      *   null for default ctor or default bean instance..
      * @return an instance of the specified class, or null.
      */
-    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName)
-    {
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName) {
+        return loadAndInstantiateClass(iface, className, environmentBeanInstanceName, false);
+    }
+
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName,
+                                                boolean failOnError) {
         T instance = null;
 
         try {
@@ -120,12 +124,22 @@ public class ClassloadingUtility
                 instance = clazz.newInstance();
             }
 
-        } catch (InstantiationException e) {
-            commonLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
+        } catch (InstantiationException | InvocationTargetException e) {
+            String message = commonLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
+            if (failOnError) {
+                if (e.getCause() != null) {
+                    throw new Error(message, e.getCause().fillInStackTrace());
+                }
+            }
+            commonLogger.logger.warn(message);
         } catch (IllegalAccessException e) {
-            commonLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
-        } catch(InvocationTargetException e) {
-            commonLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
+            String message = commonLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
+            if (failOnError) {
+                if (e.getCause() != null) {
+                    throw new Error(message, e.getCause().fillInStackTrace());
+                }
+            }
+            commonLogger.logger.warn(message);
         }
 
         return instance;
