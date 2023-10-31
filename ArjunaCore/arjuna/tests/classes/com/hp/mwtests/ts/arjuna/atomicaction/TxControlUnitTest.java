@@ -5,7 +5,9 @@
 
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import static com.arjuna.ats.arjuna.coordinator.TxControl.NODE_NAME_SIZE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -55,5 +57,14 @@ public class TxControlUnitTest
         TxControl.setXANodeName(nodeName);
         
         assertTrue(TxControl.getXANodeName().equals(nodeName));
+    }
+
+    @Test
+    public void testNodeName () {
+        try {
+            TxControl.setXANodeName(new String(new char[NODE_NAME_SIZE + 1]));
+        } catch (IllegalArgumentException e) {
+            assertNotNull("IllegalArgumentException has no detail message.", e.getMessage());
+        }
     }
 }

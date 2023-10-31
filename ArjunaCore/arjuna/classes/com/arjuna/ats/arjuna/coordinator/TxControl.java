@@ -146,9 +146,11 @@ public class TxControl
 	{
 		byte[] bytes = name.getBytes(StandardCharsets.UTF_8);
 	    if (bytes.length > NODE_NAME_SIZE) {
-            tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
+	        String message = tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
 
-            throw new IllegalArgumentException();
+	        tsLogger.logger.warn(message);
+
+	        throw new IllegalArgumentException(message);
         }
 	    
 		xaNodeName = name;
