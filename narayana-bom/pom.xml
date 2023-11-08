@@ -28,7 +28,6 @@
     <version.io.smallrye.smallrye-config>3.2.0</version.io.smallrye.smallrye-config>
     <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
     <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
-    <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
     <version.jakarta.enterprise>4.0.0</version.jakarta.enterprise>
     <version.jakarta.enterprise.jakarta.enterprise.cdi-api>4.0.1</version.jakarta.enterprise.jakarta.enterprise.cdi-api>
     <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
@@ -152,11 +151,6 @@
         <groupId>jakarta.annotation</groupId>
         <artifactId>jakarta.annotation-api</artifactId>
         <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.ejb</groupId>
-        <artifactId>jakarta.ejb-api</artifactId>
-        <version>${version.jakarta.ejb.jakarta-ejb-api}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye.reactive</groupId>
