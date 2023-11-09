@@ -272,7 +272,7 @@
     <version.org.wildfly.core>20.0.0.Final</version.org.wildfly.core>
     <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
     <version.postgresql>42.3.1</version.postgresql>
-    <version.quarkus>3.0.0.Alpha5</version.quarkus>
+    <version.quarkus>3.0.1.Final</version.quarkus>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
