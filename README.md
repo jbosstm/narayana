@@ -23,7 +23,7 @@ https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInN
 
 Requirements
 ------------
-To build this project you will need a JDK (Java Development Kit) with a minimum version of 11.
+To build this project you will need a JDK (Java Development Kit) with a minimum version of 11 and a Maven with a minimum version specified in the [maven wrapper properties file](.mvn/wrapper/maven-wrapper.properties)
 
 The commands to do this will vary depending upon which operating system you are building on.
 
