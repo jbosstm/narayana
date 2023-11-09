@@ -32,28 +32,8 @@ function rebase_narayana {
   rm -rf .git/rebase-apply
   git clean -f -d -x
   
-  # Work out the branch point
-  git branch -D 4.17
-  git branch 4.17 origin/4.17
-  git branch -D main
-  git branch main origin/main
-  myRev=`git rev-parse HEAD`
-  ancestor417=`git merge-base $myRev 4.17`
-  ancestorMain=`git merge-base $myRev main`
-  if [ `uname` = "Darwin" ]
-  then
-  	cutLen=8
-  else
-  	cutLen=7
-  fi
-  distanceFromMain=`git log $ancestorMain..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
-  distanceFrom417=`git log $ancestor417..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
-  if [ "$distanceFromMain" -lt "$distanceFrom417" ]
-  then
-    export BRANCHPOINT=main
-  else
-    export BRANCHPOINT=4.17
-  fi
+ export BRANCHPOINT=6.0
+  
 
   # Update the pull to head  
   git pull --rebase --ff-only origin $BRANCHPOINT

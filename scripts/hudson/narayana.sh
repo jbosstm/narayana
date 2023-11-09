@@ -353,7 +353,7 @@ function clone_as {
     cd jboss-as
   else
     echo "First time checkout of WildFly"
-    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
+    git clone https://github.com/jbosstm/jboss-as.git -b 6_BRANCH -o jbosstm
     [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
@@ -372,8 +372,8 @@ function clone_as {
     echo "This is the AS_BRANCH $AS_BRANCH commit"
     echo $(git rev-parse HEAD)
 
-    echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
-    git pull --rebase upstream main
+    echo "Rebasing the wildfly upstream/29.x on top of the AS_BRANCH $AS_BRANCH"
+    git pull --rebase upstream 29.x
     [ $? -eq 0 ] || fatal "git rebase failed"
 
     if [ $REDUCE_SPACE = 1 ]; then
