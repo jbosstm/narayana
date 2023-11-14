@@ -24,6 +24,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.recovery.AdvancedAtomicActionExpiryScanner;
 import com.arjuna.ats.internal.arjuna.recovery.AdvancedAtomicActionPurgeExpiryScanner;
+import com.arjuna.ats.internal.arjuna.recovery.BasicActionExpiryScanner;
 
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * This test class covers multiple {@code ExpiryScanner} classes.
  *
- * {@link BasicActionExpiryScanner}
+ * @see BasicActionExpiryScanner}
  * @see AdvancedAtomicActionExpiryScanner
  * @see AdvancedAtomicActionPurgeExpiryScanner
  */
