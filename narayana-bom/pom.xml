@@ -64,7 +64,6 @@
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>9.0.1.Final</version.org.jboss.openjdk-orb>
     <version.org.jboss.ws>2.0.0.Final</version.org.jboss.ws>
-    <version.quarkus>3.2.6.Final</version.quarkus>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
@@ -721,17 +720,6 @@
         <groupId>tanukisoft</groupId>
         <artifactId>wrapper</artifactId>
         <version>${version.tanukisoft}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-resteasy</artifactId>
-        <version>${version.quarkus}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.threads</groupId>
-            <artifactId>jboss-threads</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
