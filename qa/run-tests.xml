@@ -69,6 +69,7 @@
     <property name="testoutput.zipname" value="testoutput.zip"/>
     <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
     <property name="profile" value=""/>
+	<property environment="env"/>
 
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
@@ -386,6 +387,7 @@
                 <equals arg1="@{methods}" arg2=""/>
             </condition>
 
+            <var name="DatabaseName" value="DatabaseName"/>
             <var name="objectStoreElements" value=""/>
             <if>
                 <equals arg1="${profile}" arg2="postgres"/>
@@ -450,12 +452,20 @@
                     <if>
                         <equals arg1="${profile}" arg2="oracle"/>
                         <then>
-                            <var name="jdbcstore.database.properties"
-                                 value="ClassName=${jdbc.datasource.class};ServiceName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}"/>
+                            <var name="DatabaseName" value="ServiceName"/>
                         </then>
+                    </if>
+                	<if>
+                        <equals arg1="${env.DATABASE_MODE}" arg2="dballocator"/>
+	                    <then>
+	                    	<replaceregexp file="${env.JDBC_DATA}" match="&quot;" replace="" flags="g" byline="true"/>
+	                        <property file="${env.JDBC_DATA}"/>
+	                    	<var name="jdbcstore.database.properties"
+	                    	     value="ClassName=${jdbc.datasource.class};${DatabaseName}=${db_name};User=${db_username};Password=${db_password};ServerName=${db_hostname};PortNumber=${db_port}${jdbc.db.properties}"/>
+	                    </then>
                         <else>
                             <var name="jdbcstore.database.properties"
-                                 value="ClassName=${jdbc.datasource.class};DatabaseName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}"/>
+                                 value="ClassName=${jdbc.datasource.class};${DatabaseName}=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}"/>
                         </else>
                     </if>
                     <var name="objectStoreElements"
