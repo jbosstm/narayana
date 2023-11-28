@@ -173,6 +173,11 @@ public class LRAParentAbstractRecord extends AbstractRecord {
     }
 
     @Override
+    public boolean doSave() {
+        return true;
+    }
+
+    @Override
     public void alter(AbstractRecord a) {
     }
 

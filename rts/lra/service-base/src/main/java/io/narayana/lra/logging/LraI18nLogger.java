@@ -162,6 +162,9 @@ public interface LraI18nLogger {
     @Message(id = 25038, value = "Invalid participant enlistment with LRA %s: participant data is disabled")
     String error_participant_data_disallowed(String lraId);
 
+    @Message(id = 25039, value = "Invalid argument passed to method: %s")
+    String error_invalidArgument(String reason);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

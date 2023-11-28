@@ -51,6 +51,7 @@ public class LongRunningAction extends BasicAction {
     private static final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(10);
     private URI id;
     private URI parentId;
+    private LongRunningAction inVMParent;
     private String clientId;
     private List<LRAParticipantRecord> pending;
     private LRAStatus status;
@@ -63,11 +64,18 @@ public class LongRunningAction extends BasicAction {
     public LongRunningAction(LRAService lraService, String baseUrl, LongRunningAction parent, String clientId) throws URISyntaxException {
         super(new Uid());
 
+        if (lraService == null) {
+            // all callers of this constructor pass in a non-null value
+            // but if any future change to the code does pass in null then throw an error
+            throw new Error(LRALogger.i18nLogger.error_invalidArgument("null LRAService"));
+        }
+
         this.lraService = lraService;
 
         if (parent != null) {
             this.id = Current.buildFullLRAUrl(String.format("%s/%s", baseUrl, get_uid().fileStringForm()), parent.getId());
             this.parentId = parent.getId();
+            inVMParent = parent;
         } else {
             this.id = new URI(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
         }
@@ -81,6 +89,12 @@ public class LongRunningAction extends BasicAction {
 
     public LongRunningAction(LRAService lraService, Uid rcvUid) {
         super(rcvUid);
+
+        if (lraService == null) {
+            // all callers of this constructor pass in a non-null value
+            // but if any future change to the code does pass in null then throw an error
+            throw new Error(LRALogger.i18nLogger.error_invalidArgument("null LRAService"));
+        }
 
         this.lraService = lraService;
         this.id = null;
@@ -256,6 +270,23 @@ public class LongRunningAction extends BasicAction {
             finishTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             status = LRAStatus.valueOf(os.unpackString());
 
+            if (parentId != null) {
+                inVMParent = lraService.lookupTransaction(parentId);
+                if (inVMParent != null) {
+                    // this parent is in-VM
+                    par = new LRAParentAbstractRecord(inVMParent, this); // the new LRA we want parent to know about
+
+                    if (inVMParent.add(par) != AddOutcome.AR_ADDED) {
+                        LRALogger.logger.infof("unable to add %s", par);
+                    }
+
+                    LRAChildAbstractRecord childAR = new LRAChildAbstractRecord(par);
+
+                    if (add(childAR) == AddOutcome.AR_REJECTED) {
+                        LRALogger.logger.infof("unable to add child %s", childAR);
+                    }
+                }
+            }
             /*
              * If the time limit has already been reached then the difference between now and the scheduled
              * abort time will be negative. Since scheduling a task with a negative time will run it immediately
@@ -553,9 +584,21 @@ public class LongRunningAction extends BasicAction {
         updateState(); // ensure the record is removed if it finished otherwise persisted the state
 
         if (!isRecovering()) {
-            if (lraService != null) {
-                lraService.finished(this, false);
+            boolean delete = false;
+
+            if (inVMParent != null) {
+                switch (inVMParent.getLRAStatus()) {
+                    case Closed:
+                    case Closing:
+                    case FailedToClose:
+                        delete = true; // delete the nested LRA if the parent went down the close path
+                        break;
+                    default:
+                        break;
+                }
             }
+
+            lraService.finished(this, delete);
         }
 
         trace_progress("doEnd finished");
@@ -887,13 +930,13 @@ public class LongRunningAction extends BasicAction {
             // however LRA does not use thread association (the context is passed explicitly,
             // the reason for this is that services do not have access to ArjunaCore and use
             // JAX-RS to propagate the context
-            LongRunningAction localParent = lraService.lookupTransaction(parentId);
+            inVMParent = lraService.lookupTransaction(parentId);
 
-            if (localParent != null) {
+            if (inVMParent != null) {
                 // this parent is in-VM
-                par = new LRAParentAbstractRecord(localParent, this); // the new LRA we want parent to know about
+                par = new LRAParentAbstractRecord(inVMParent, this); // the new LRA we want parent to know about
 
-                if (localParent.add(par) != AddOutcome.AR_ADDED) {
+                if (inVMParent.add(par) != AddOutcome.AR_ADDED) {
                     return ActionStatus.INVALID;
                 }
 
