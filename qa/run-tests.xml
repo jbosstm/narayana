@@ -244,21 +244,78 @@
         <fail if="failed-tests" message="some tests failed"/>
     </target>
     <target name="junit-jdbc-testsuite">
-        <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
-        <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-        <junit-tests tests="jdbcresources01_pgsql_jndi"/>
-        <junit-tests tests="jdbcresources02_pgsql_jndi"/>
-        <junit-tests tests="jdbcresources01_mysql_jndi"/>
-        <junit-tests tests="jdbcresources02_mysql_jndi"/>
-        <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
-        <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
+    	<if>
+            <equals arg1="${profile}" arg2="postgres"/>
+                <then>
+                    <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+                    <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+                </then>
+            <elseif>
+                <equals arg1="${profile}" arg2="mysql"/>
+                <then>
+                    <junit-tests tests="jdbcresources01_mysql_jndi"/>
+                    <junit-tests tests="jdbcresources02_mysql_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="oracle"/>
+                <then>
+                    <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+                    <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="db2"/>
+                <then>
+                    <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
+                    <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
+                </then>
+            </elseif>
+    		<else>
+                <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+                <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+                <junit-tests tests="jdbcresources01_mysql_jndi"/>
+                <junit-tests tests="jdbcresources02_mysql_jndi"/>
+                <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+                <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+                <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
+                <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
+    		</else>
+        </if>
+        <fail if="failed-tests" message="some tests failed"/>
     </target>
     <target name="junit-jdbc-crachrec">
         <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-        <junit-tests tests="crashrecovery11-oracle_jndi"/>
-        <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
-        <junit-tests tests="crashrecovery11-pgsql_jndi"/>
-        <junit-tests tests="crashrecovery11-mysql_jndi"/>
+        <if>
+            <equals arg1="${profile}" arg2="postgres"/>
+            <then>
+                <junit-tests tests="crashrecovery11_pgsql_jndi"/>
+            </then>
+            <elseif>
+                <equals arg1="${profile}" arg2="mysql"/>
+                <then>
+                    <junit-tests tests="crashrecovery11_mysql_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="oracle"/>
+                <then>
+                    <junit-tests tests="crashrecovery11_oracle_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="db2"/>
+                <then>
+                    <junit-tests tests="crashrecovery11_ibmdb2_jndi"/>
+                </then>
+            </elseif>
+          <else>
+            <junit-tests tests="crashrecovery11_oracle_jndi"/>
+            <junit-tests tests="crashrecovery11_ibmdb2_jndi"/>
+            <junit-tests tests="crashrecovery11_pgsql_jndi"/>
+            <junit-tests tests="crashrecovery11_mysql_jndi"/>
+          </else>
+        </if>
         <fail if="failed-tests" message="some tests failed"/>
     </target>
     <target name="jta">
@@ -278,10 +335,36 @@
         <!-- jtatest01 : 6 tests, minute-->
         <junit-tests tests="jtatests01"/>
         <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-        <junit-tests tests="jdbclocals01_oracle_jndi"/>
-        <junit-tests tests="jdbclocals01_pgsql_jndi"/>
-        <junit-tests tests="jdbclocals01_mysql_jndi"/>
-        <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
+    	<if>
+            <equals arg1="${profile}" arg2="postgres"/>
+            <then>
+                <junit-tests tests="jdbclocals01_pgsql_jndi"/>
+            </then>
+            <elseif>
+                <equals arg1="${profile}" arg2="mysql"/>
+                <then>
+                    <junit-tests tests="jdbclocals01_mysql_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="oracle"/>
+                <then>
+                    <junit-tests tests="jdbclocals01_oracle_jndi"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${profile}" arg2="db2"/>
+                <then>
+                    <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
+                </then>
+            </elseif>
+          <else>
+            <junit-tests tests="jdbclocals01_mysql_jndi"/>
+            <junit-tests tests="jdbclocals01_pgsql_jndi"/>
+            <junit-tests tests="jdbclocals01_oracle_jndi"/>
+            <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
+          </else>
+    	</if>
         <fail if="failed-tests" message="some tests failed"/>
     </target>
     <target name="performance">

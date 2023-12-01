@@ -46,13 +46,15 @@ To debug spawned processes, edit TaskImpl.properties to set debug command line a
 enable a robust debugging mode by setting a system property tasks.remote.debug. This is set in the junit
 process and will set debugging ports up incrementing from port 5000 for the first spawned process.
 
-For jdbc tests, ensure the required drivers are present (cd qa && mvn install)
-and create a suitable config/jdbc_profiles/<name_of_testnode_host>/ file by copying the existing
-config/jdbc_profiles/_template/ directory or rely on the one in config/jdbc_profiles/default
+For JDBC tests, ensure the required drivers are present (`cd qa && mvn install`). Then, starting from `config/jdbc_profiles/_template/JDBCProfiles`, create a suitable `JDBCProfiles` file in:
+* `config/jdbc_profiles/<name_of_testnode_host>/` to use this configuration for a specific testnode host
+* `config/jdbc_profiles/default/` to apply a default configuration to all testnode hosts
 By convention each test node has two accounts on each database server, with names of '<testnode_hostname>1'
 and '<testnode_hostname>2'. This allows for testing of transactions with two resources. These accounts
 need table creation privs plus the usual CRUD. The actual tables will be created automatically when the
 tests run.
+Please note that if the parameter `profile` is passed as an `ant` parameter (e.g. `-Dprofile=postgres`)
+then QA will only run against the specified database profile.
 
 # Running a single test
 There is a way to run specific QA tests. In the run-tests.xml there is a target "onetest" - it runs a 
