@@ -867,7 +867,6 @@ function generate_code_coverage_report {
 }
 
 ulimit -a
-ulimit -u unlimited
 ulimit -c unlimited
 ulimit -a
 
