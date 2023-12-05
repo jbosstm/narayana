@@ -243,7 +243,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>sybasejbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -270,7 +270,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>oraclejbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -296,7 +296,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>db2jbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -322,7 +322,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>postgresjbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -348,7 +348,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mysqljbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -374,7 +374,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mariadbjbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -404,7 +404,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mssqljbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>

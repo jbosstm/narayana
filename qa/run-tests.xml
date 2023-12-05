@@ -392,11 +392,6 @@
                 <then>
                     <property name="jdbcstore-profile" value="true"/>
                     <property name="jdbc.datasource.class" value="org.postgresql.ds.PGSimpleDataSource"/>
-                    <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
-                    <property name="jdbc.db.name" value="jbossts"/>
-                    <property name="jdbc.db.user" value="dtf11"/>
-                    <property name="jdbc.db.password" value="dtf11"/>
-                    <property name="jdbc.db.port" value="5432"/>
                     <property name="jdbc.db.properties" value=""/>
                 </then>
                 <elseif>
@@ -404,11 +399,6 @@
                     <then>
                         <property name="jdbcstore-profile" value="true"/>
                         <property name="jdbc.datasource.class" value="com.mysql.cj.jdbc.MysqlDataSource"/>
-                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
-                        <property name="jdbc.db.name" value="jbossts"/>
-                        <property name="jdbc.db.user" value="dtf11"/>
-                        <property name="jdbc.db.password" value="dtf11"/>
-                        <property name="jdbc.db.port" value="3306"/>
                         <property name="jdbc.db.properties" value=""/>
                     </then>
                 </elseif>
@@ -417,11 +407,6 @@
                     <then>
                         <property name="jdbcstore-profile" value="true"/>
                         <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource"/>
-                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
-                        <property name="jdbc.db.name" value="XEPDB1"/>
-                        <property name="jdbc.db.user" value="dtf11"/>
-                        <property name="jdbc.db.password" value="dtf11"/>
-                        <property name="jdbc.db.port" value="1521"/>
                         <property name="jdbc.db.properties" value=";NetworkProtocol=tcp;DriverType=thin"/>
                     </then>
                 </elseif>
@@ -430,11 +415,6 @@
                     <then>
                         <property name="jdbcstore-profile" value="true"/>
                         <property name="jdbc.datasource.class" value="com.ibm.db2.jcc.DB2DataSource"/>
-                        <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com"/>
-                        <property name="jdbc.db.name" value="BTDB1"/>
-                        <property name="jdbc.db.user" value="db2"/>
-                        <property name="jdbc.db.password" value="db2"/>
-                        <property name="jdbc.db.port" value="50000"/>
                         <property name="jdbc.db.properties" value=";DriverType=4"/>
                     </then>
                 </elseif>
@@ -443,11 +423,6 @@
                     <then>
                         <property name="jdbcstore-profile" value="true"/>
                         <property name="jdbc.datasource.class" value="com.sybase.jdbc3.jdbc.SybDataSource"/>
-                        <property name="jdbc.db.url" value="vmg07.mw.lab.eng.bos.redhat.com"/>
-                        <property name="jdbc.db.name" value="jbossts"/>
-                        <property name="jdbc.db.user" value="jbossts0"/>
-                        <property name="jdbc.db.password" value="jbossts0"/>
-                        <property name="jdbc.db.port" value="5000"/>
                         <property name="jdbc.db.properties" value=" -DObjectStoreEnvironmentBean.dropTable=false"/>
                     </then>
                 </elseif>
@@ -457,11 +432,6 @@
                   <then>
                     <property name="jdbcstore-profile" value="true" />
                     <property name="jdbc.datasource.class" value="com.microsoft.sqlserver.jdbc.SQLServerDataSource" />
-                    <property name="jdbc.db.url" value="dev30.mw.lab.eng.bos.redhat.com" />
-                    <property name="jdbc.db.name" value="jbossts" />
-                    <property name="jdbc.db.user" value="dtf11" />
-                    <property name="jdbc.db.password" value="dtf11" />
-                    <property name="jdbc.db.port" value="3918" />
                     <property name="jdbc.db.properties" value="" />
                   </then>
                 </elseif>
@@ -490,8 +460,11 @@
                     </if>
                     <var name="objectStoreElements"
                          value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.createTable=false -DObjectStoreEnvironmentBean.communicationStore.createTable=false -DObjectStoreEnvironmentBean.stateStore.createTable=false"/>
-                    <echo message="Running with JDBC object store settings - DB: ${jdbcstore.database.properties}"/>
-                    <echo message="MBean settings: ${objectStoreElements}"/>
+<!--                    masking database information-->
+                	<echo message="Running with JDBC profile: ${profile}"/>
+                	<var name="maskedDBinformation"
+                	    value="ClassName=${jdbc.datasource.class};${DatabaseName}=****;User=****;Password=****;ServerName=****;PortNumber=***${jdbc.db.properties}"/>
+                    <echo message="MBean settings: -DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${maskedDBinformation} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${maskedDBinformation} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${maskedDBinformation} -DObjectStoreEnvironmentBean.createTable=false -DObjectStoreEnvironmentBean.communicationStore.createTable=false -DObjectStoreEnvironmentBean.stateStore.createTable=false"/>
                 </then>
             </if>
 
