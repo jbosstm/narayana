@@ -13,12 +13,12 @@ DB1_JNDI_NumberOfDrivers=2
 DB1_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_JNDI_Driver0=com.merant.sequelink.jdbc.SequeLinkDriver
 DB1_JNDI_Binding=merant_oracle_jndi1
-DB1_JNDI_DatabaseURL=jdbc\:arjuna:reuseconnection=true\:merant_oracle_jndi1
-DB1_JNDI_DatabaseUser=VMWARE011
-DB1_JNDI_DatabasePassword=vmware011
-DB1_JNDI_DatabaseName=empay
-DB1_JNDI_Host=xxmerant_oracle_hostxx
-DB1_JNDI_Port=20000
+DB1_JNDI_DatabaseURL=
+DB1_JNDI_DatabaseUser=
+DB1_JNDI_DatabasePassword=
+DB1_JNDI_DatabaseName=
+DB1_JNDI_Host=
+DB1_JNDI_Port=
 
 # DB2
 
@@ -26,12 +26,12 @@ DB2_JNDI_NumberOfDrivers=2
 DB2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_JNDI_Driver0=com.merant.sequelink.jdbc.SequeLinkDriver
 DB2_JNDI_Binding=merant_oracle_jndi2
-DB2_JNDI_DatabaseURL=jdbc\:arjuna:reuseconnection=true\:merant_oracle_jndi2
-DB2_JNDI_DatabaseUser=VMWARE012
-DB2_JNDI_DatabasePassword=vmware012
-DB2_JNDI_DatabaseName=empay
-DB2_JNDI_Host=xxmerant_oracle_hostxx
-DB2_JNDI_Port=20001
+DB2_JNDI_DatabaseURL=
+DB2_JNDI_DatabaseUser=
+DB2_JNDI_DatabasePassword=
+DB2_JNDI_DatabaseName=
+DB2_JNDI_Host=
+DB2_JNDI_Port=
 
 ##########################################################################
 # MSSQL Server JNDI Profile
@@ -41,12 +41,12 @@ DB_SQL_JNDI_NumberOfDrivers=2
 DB_SQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
 DB_SQL_JNDI_Binding=sqlserver_jndi
-DB_SQL_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi
-DB_SQL_JNDI_DatabaseUser=VMWARE011
-DB_SQL_JNDI_DatabasePassword=vmware011
-DB_SQL_JNDI_DatabaseName=dtf
-DB_SQL_JNDI_Host=vmware02
-DB_SQL_JNDI_Port=1433
+DB_SQL_JNDI_DatabaseURL=
+DB_SQL_JNDI_DatabaseUser=
+DB_SQL_JNDI_DatabasePassword=
+DB_SQL_JNDI_DatabaseName=
+DB_SQL_JNDI_Host=
+DB_SQL_JNDI_Port=
 
 ######################################################################
 # MSSQL Server JNDI Pair
@@ -58,12 +58,12 @@ DB_SQL1_JNDI_NumberOfDrivers=2
 DB_SQL1_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL1_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
 DB_SQL1_JNDI_Binding=sqlserver_jndi1
-DB_SQL1_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi1
-DB_SQL1_JNDI_DatabaseUser=VMWARE011
-DB_SQL1_JNDI_DatabasePassword=vmware011
-DB_SQL1_JNDI_DatabaseName=dtf
-DB_SQL1_JNDI_Host=vmware02
-DB_SQL1_JNDI_Port=1433
+DB_SQL1_JNDI_DatabaseURL=
+DB_SQL1_JNDI_DatabaseUser=
+DB_SQL1_JNDI_DatabasePassword=
+DB_SQL1_JNDI_DatabaseName=
+DB_SQL1_JNDI_Host=
+DB_SQL1_JNDI_Port=
 
 # DB2
 
@@ -71,12 +71,12 @@ DB_SQL2_JNDI_NumberOfDrivers=2
 DB_SQL2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL2_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
 DB_SQL2_JNDI_Binding=sqlserver_jndi2
-DB_SQL2_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi2
-DB_SQL2_JNDI_DatabaseUser=VMWARE012
-DB_SQL2_JNDI_DatabasePassword=vmware012
-DB_SQL2_JNDI_DatabaseName=dtf
-DB_SQL2_JNDI_Host=vmware02
-DB_SQL2_JNDI_Port=1433
+DB_SQL2_JNDI_DatabaseURL=
+DB_SQL2_JNDI_DatabaseUser=
+DB_SQL2_JNDI_DatabasePassword=
+DB_SQL2_JNDI_DatabaseName=
+DB_SQL2_JNDI_Host=
+DB_SQL2_JNDI_Port=
 
 #################### Oracle thin #############################################
 #
@@ -86,9 +86,9 @@ DB_SQL2_JNDI_Port=1433
 THIN_DB_NumberOfDrivers=2
 THIN_DB_Driver0=oracle.jdbc.driver.OracleDriver
 THIN_DB_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
-THIN_DB_DatabaseURL=jdbc:arjuna:oracle:thin:@xxoracle_thin_hostxx:1521:empay
-THIN_DB_DatabaseUser=VMWARE011
-THIN_DB_DatabasePassword=vmware011
+THIN_DB_DatabaseURL=
+THIN_DB_DatabaseUser=
+THIN_DB_DatabasePassword=
 THIN_DB_DatabaseDynamicClass=com.arjuna.JDBC2.drivers.oracle_8_1_6
 
 
@@ -101,9 +101,9 @@ THIN_DB_DatabaseDynamicClass=com.arjuna.JDBC2.drivers.oracle_8_1_6
 THIN_DB1_NumberOfDrivers=2
 THIN_DB1_Driver0=oracle.jdbc.driver.OracleDriver
 THIN_DB1_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
-THIN_DB1_DatabaseURL=jdbc:arjuna:oracle:thin:@xxoracle_thin_hostxx:1521:empay
-THIN_DB1_DatabaseUser=VMWARE011
-THIN_DB1_DatabasePassword=vmware011
+THIN_DB1_DatabaseURL=
+THIN_DB1_DatabaseUser=
+THIN_DB1_DatabasePassword=
 THIN_DB1_DatabaseDynamicClass=com.arjuna.JDBC2.drivers.oracle_8_1_6
 
 # DB 2
@@ -111,9 +111,9 @@ THIN_DB1_DatabaseDynamicClass=com.arjuna.JDBC2.drivers.oracle_8_1_6
 THIN_DB2_NumberOfDrivers=2
 THIN_DB2_Driver0=oracle.jdbc.driver.OracleDriver
 THIN_DB2_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
-THIN_DB2_DatabaseURL=jdbc:arjuna:oracle:thin:@xxoracle_thin_hostxx:1521:empay
-THIN_DB2_DatabaseUser=VMWARE012
-THIN_DB2_DatabasePassword=vmware012
+THIN_DB2_DatabaseURL=
+THIN_DB2_DatabaseUser=
+THIN_DB2_DatabasePassword=
 THIN_DB2_DatabaseDynamicClass=com.arjuna.JDBC2.drivers.oracle_8_1_6
 
 ##########################################################################
@@ -124,12 +124,12 @@ DB_THIN_JNDI_NumberOfDrivers=2
 DB_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_THIN_JNDI_Binding=oracle_thin
-DB_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin
-DB_THIN_JNDI_DatabaseUser=VMWARE011
-DB_THIN_JNDI_DatabasePassword=vmware011
-DB_THIN_JNDI_DatabaseName=hunnin
-DB_THIN_JNDI_Host=vmware02
-DB_THIN_JNDI_Port=1521
+DB_THIN_JNDI_DatabaseURL=
+DB_THIN_JNDI_DatabaseUser=
+DB_THIN_JNDI_DatabasePassword=
+DB_THIN_JNDI_DatabaseName=
+DB_THIN_JNDI_Host=
+DB_THIN_JNDI_Port=
 
 ######################################################################
 # Oracle thin JNDI Pair
@@ -141,12 +141,12 @@ DB1_THIN_JNDI_NumberOfDrivers=2
 DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_THIN_JNDI_Binding=oracle_thin1
-DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
-DB1_THIN_JNDI_DatabaseUser=VMWARE011
-DB1_THIN_JNDI_DatabasePassword=vmware011
-DB1_THIN_JNDI_DatabaseName=hunnin
-DB1_THIN_JNDI_Host=vmware02
-DB1_THIN_JNDI_Port=1521
+DB1_THIN_JNDI_DatabaseURL=
+DB1_THIN_JNDI_DatabaseUser=
+DB1_THIN_JNDI_DatabasePassword=
+DB1_THIN_JNDI_DatabaseName=
+DB1_THIN_JNDI_Host=
+DB1_THIN_JNDI_Port=
 
 # DB2
 
@@ -154,12 +154,12 @@ DB2_THIN_JNDI_NumberOfDrivers=2
 DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_THIN_JNDI_Binding=oracle_thin2
-DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
-DB2_THIN_JNDI_DatabaseUser=VMWARE012
-DB2_THIN_JNDI_DatabasePassword=vmware012
-DB2_THIN_JNDI_DatabaseName=hunnin
-DB2_THIN_JNDI_Host=vmware02
-DB2_THIN_JNDI_Port=1521
+DB2_THIN_JNDI_DatabaseURL=
+DB2_THIN_JNDI_DatabaseUser=
+DB2_THIN_JNDI_DatabasePassword=
+DB2_THIN_JNDI_DatabaseName=
+DB2_THIN_JNDI_Host=
+DB2_THIN_JNDI_Port=
 
 ##########################################################################
 # PostgreSQL JNDI Profile
@@ -176,14 +176,14 @@ DB_PGSQL_JNDI_Binding=pgsql
 # to which it is written by JNDIManager
 # The JNDI manager knows which XA datasource class to use
 # based on the non-xa driver class given above.
-DB_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql
+DB_PGSQL_JNDI_DatabaseURL=
 # username and pass
-DB_PGSQL_JNDI_DatabaseUser=test1
-DB_PGSQL_JNDI_DatabasePassword=test1
+DB_PGSQL_JNDI_DatabaseUser=
+DB_PGSQL_JNDI_DatabasePassword=
 # datasource properties:
-DB_PGSQL_JNDI_DatabaseName=test
-DB_PGSQL_JNDI_Host=localhost
-##DB_PGSQL_JNDI_Port=1521
+DB_PGSQL_JNDI_DatabaseName=
+DB_PGSQL_JNDI_Host=
+##DB_PGSQL_JNDI_Port=
 
 ######################################################################
 # PostgreSQL JNDI Pair
@@ -193,21 +193,21 @@ DB1_PGSQL_JNDI_NumberOfDrivers=2
 DB1_PGSQL_JNDI_Driver0=org.postgresql.Driver
 DB1_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_PGSQL_JNDI_Binding=pgsql1
-DB1_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql1
-DB1_PGSQL_JNDI_DatabaseUser=test1
-DB1_PGSQL_JNDI_DatabasePassword=test1
-DB1_PGSQL_JNDI_DatabaseName=test
-DB1_PGSQL_JNDI_Host=localhost
+DB1_PGSQL_JNDI_DatabaseURL=
+DB1_PGSQL_JNDI_DatabaseUser=
+DB1_PGSQL_JNDI_DatabasePassword=
+DB1_PGSQL_JNDI_DatabaseName=
+DB1_PGSQL_JNDI_Host=
 
 DB2_PGSQL_JNDI_NumberOfDrivers=2
 DB2_PGSQL_JNDI_Driver0=org.postgresql.Driver
 DB2_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_PGSQL_JNDI_Binding=pgsql2
-DB2_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql2
-DB2_PGSQL_JNDI_DatabaseUser=test2
-DB2_PGSQL_JNDI_DatabasePassword=test2
-DB2_PGSQL_JNDI_DatabaseName=test
-DB2_PGSQL_JNDI_Host=localhost
+DB2_PGSQL_JNDI_DatabaseURL=
+DB2_PGSQL_JNDI_DatabaseUser=
+DB2_PGSQL_JNDI_DatabasePassword=
+DB2_PGSQL_JNDI_DatabaseName=
+DB2_PGSQL_JNDI_Host=
 
 ##########################################################################
 # MySQL JNDI Profile
@@ -217,12 +217,12 @@ DB_MYSQL_JNDI_NumberOfDrivers=2
 DB_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_MYSQL_JNDI_Binding=mysql
-DB_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql
-DB_MYSQL_JNDI_DatabaseUser=test1
-DB_MYSQL_JNDI_DatabasePassword=test1
-DB_MYSQL_JNDI_DatabaseName=test
-DB_MYSQL_JNDI_Host=localhost
-##DB_MYSQL_JNDI_Port=1521
+DB_MYSQL_JNDI_DatabaseURL=
+DB_MYSQL_JNDI_DatabaseUser=
+DB_MYSQL_JNDI_DatabasePassword=
+DB_MYSQL_JNDI_DatabaseName=
+DB_MYSQL_JNDI_Host=
+##DB_MYSQL_JNDI_Port=
 
 ######################################################################
 # MySQL JNDI Pair
@@ -232,21 +232,21 @@ DB1_MYSQL_JNDI_NumberOfDrivers=2
 DB1_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_MYSQL_JNDI_Binding=mysql1
-DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
-DB1_MYSQL_JNDI_DatabaseUser=test1
-DB1_MYSQL_JNDI_DatabasePassword=test1
-DB1_MYSQL_JNDI_DatabaseName=test
-DB1_MYSQL_JNDI_Host=localhost
+DB1_MYSQL_JNDI_DatabaseURL=
+DB1_MYSQL_JNDI_DatabaseUser=
+DB1_MYSQL_JNDI_DatabasePassword=
+DB1_MYSQL_JNDI_DatabaseName=
+DB1_MYSQL_JNDI_Host=
 
 DB2_MYSQL_JNDI_NumberOfDrivers=2
 DB2_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB2_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_MYSQL_JNDI_Binding=mysql2
-DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
-DB2_MYSQL_JNDI_DatabaseUser=test2
-DB2_MYSQL_JNDI_DatabasePassword=test2
-DB2_MYSQL_JNDI_DatabaseName=test
-DB2_MYSQL_JNDI_Host=localhost
+DB2_MYSQL_JNDI_DatabaseURL=
+DB2_MYSQL_JNDI_DatabaseUser=
+DB2_MYSQL_JNDI_DatabasePassword=
+DB2_MYSQL_JNDI_DatabaseName=
+DB2_MYSQL_JNDI_Host=
 
 ######################################################################
 
@@ -262,11 +262,11 @@ DB_FSQL_JNDI_NumberOfDrivers=2
 DB_FSQL_JNDI_Driver0=COM.FirstSQL.Dbcp.DbcpXADataSource
 DB_FSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_FSQL_JNDI_Binding=firstsql
-DB_FSQL_JNDI_DatabaseURL=jdbc:arjuna:firstsql
-DB_FSQL_JNDI_DatabaseUser=vmware011
-DB_FSQL_JNDI_DatabasePassword=vmware011
-DB_FSQL_JNDI_Host=bigboy.atl.ncl.ac.uk
-DB_FSQL_JNDI_Port=8000
+DB_FSQL_JNDI_DatabaseURL=
+DB_FSQL_JNDI_DatabaseUser=
+DB_FSQL_JNDI_DatabasePassword=
+DB_FSQL_JNDI_Host=
+DB_FSQL_JNDI_Port=
 
 ######################################################################
 # First SQL thin JNDI Pair
@@ -278,11 +278,11 @@ DB1_FSQL_JNDI_NumberOfDrivers=2
 DB1_FSQL_JNDI_Driver0=COM.FirstSQL.Dbcp.DbcpXADataSource
 DB1_FSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_FSQL_JNDI_Binding=firstsql1
-DB1_FSQL_JNDI_DatabaseURL=jdbc:arjuna:firstsql1
-DB1_FSQL_JNDI_DatabaseUser=vmware011
-DB1_FSQL_JNDI_DatabasePassword=vmware011
-DB1_FSQL_JNDI_Host=bigboy.atl.ncl.ac.uk
-DB1_FSQL_JNDI_Port=8000
+DB1_FSQL_JNDI_DatabaseURL=
+DB1_FSQL_JNDI_DatabaseUser=
+DB1_FSQL_JNDI_DatabasePassword=
+DB1_FSQL_JNDI_Host=
+DB1_FSQL_JNDI_Port=
 
 # DB2
 
@@ -290,11 +290,11 @@ DB2_FSQL_JNDI_NumberOfDrivers=2
 DB2_FSQL_JNDI_Driver0=COM.FirstSQL.Dbcp.DbcpXADataSource
 DB2_FSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_FSQL_JNDI_Binding=firstsql2
-DB2_FSQL_JNDI_DatabaseURL=jdbc:arjuna:firstsql2
-DB2_FSQL_JNDI_DatabaseUser=vmware012
-DB2_FSQL_JNDI_DatabasePassword=vmware012
-DB2_FSQL_JNDI_Host=bigboy.atl.ncl.ac.uk
-DB2_FSQL_JNDI_Port=8000
+DB2_FSQL_JNDI_DatabaseURL=
+DB2_FSQL_JNDI_DatabaseUser=
+DB2_FSQL_JNDI_DatabasePassword=
+DB2_FSQL_JNDI_Host=
+DB2_FSQL_JNDI_Port=
 
 ################################################################################
 # Object store default settings (oracle)
@@ -302,9 +302,9 @@ DB2_FSQL_JNDI_Port=8000
 
 OBJECTSTORE_DB_NumberOfDrivers=1
 OBJECTSTORE_DB_Driver0=oracle.jdbc.driver.OracleDriver
-OBJECTSTORE_DB_DatabaseURL=jdbc\:oracle\:thin\:@(description=(address=(host=hunnin)(protocol=tcp)(port=1521))(connect_data=(sid=hunnin)))
-OBJECTSTORE_DB_DatabaseUser=VMWARE011
-OBJECTSTORE_DB_DatabasePassword=vmware011
+OBJECTSTORE_DB_DatabaseURL=
+OBJECTSTORE_DB_DatabaseUser=
+OBJECTSTORE_DB_DatabasePassword=
 
 ################################################################################
 # MSSQLServer Object Store
@@ -313,6 +313,6 @@ OBJECTSTORE_DB_DatabasePassword=vmware011
 MSSQL_OBJECTSTORE_DB_NumberOfDrivers=1
 MSSQL_OBJECTSTORE_DB_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
 MSSQL_OBJECTSTORE_DB_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
-MSSQL_OBJECTSTORE_DB_DatabaseURL=jdbc\:microsoft\:sqlserver\://hunnin\:1433
-MSSQL_OBJECTSTORE_DB_DatabaseUser=VMWARE011
-MSSQL_OBJECTSTORE_DB_DatabasePassword=vmware011
+MSSQL_OBJECTSTORE_DB_DatabaseURL=
+MSSQL_OBJECTSTORE_DB_DatabaseUser=
+MSSQL_OBJECTSTORE_DB_DatabasePassword=
