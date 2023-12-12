@@ -20,14 +20,18 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class SimplePooledDynamicDataSourceJDBCAccess extends DynamicDataSourceJDBCAccess {
-    private List<WrappedConnection> unallocatedConnections = new ArrayList<WrappedConnection>();
-    private List<WrappedConnection> allocatedConnections = new ArrayList<WrappedConnection>();
+
+    private List<WrappedConnection> unallocatedConnections = Collections
+            .synchronizedList(new ArrayList<WrappedConnection>());
+    private List<WrappedConnection> allocatedConnections = Collections
+            .synchronizedList(new ArrayList<WrappedConnection>());
 
     @Override
     public void finalize() {
