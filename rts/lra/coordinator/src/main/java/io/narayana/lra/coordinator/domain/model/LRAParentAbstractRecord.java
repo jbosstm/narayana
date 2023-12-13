@@ -193,6 +193,11 @@ public class LRAParentAbstractRecord extends AbstractRecord {
     }
 
     @Override
+    public boolean doSave() {
+        return true;
+    }
+
+    @Override
     public boolean shouldAdd(AbstractRecord a) {
         return false;
     }
