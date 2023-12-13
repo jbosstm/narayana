@@ -250,7 +250,38 @@ public class LongRunningAction extends BasicAction {
             String s = os.unpackString();
             id = s == null ? null : new URI(s);
             s = os.unpackString();
-            parentId = s == null ? null : new URI(s);
+            if (s == null) {
+                parentId = null;
+            } else {
+                parentId = new URI(s);
+
+                LongRunningAction localParent = lraService.lookupTransaction(parentId);
+
+                // if the parent LRA is in the same JVM as the nested LRA (remark, parents are saved before children)
+                // then it's possible to avoid JAX-RS calls by invoking transaction records directly instead:
+                if (localParent != null) {
+                    // this LRA has a parent that is in-VM, so we can optimise away the JAX-RS calls when moving the
+                    // LRA to an end state:
+                    if (par == null) {
+                        // this must be the restoration of state after a crash, otherwise par would have been set in
+                        // the constructor, so fix up the parent and child records (this code should be identical to
+                        // what the constructor does and should be pulled out into its own routine if changes occur):
+                        par = new LRAParentAbstractRecord(localParent, this);
+
+                        if (localParent.add(par) != AddOutcome.AR_ADDED) {
+                            LRALogger.i18nLogger.warn_restoreState("add parent failed");
+                            return false;
+                        }
+
+                        LRAChildAbstractRecord childAR = new LRAChildAbstractRecord(par);
+
+                        if (add(childAR) == AddOutcome.AR_REJECTED) {
+                            LRALogger.i18nLogger.warn_restoreState("add child failed");
+                            return false;
+                        }
+                    }
+                }
+            }
             clientId = os.unpackString();
             startTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             finishTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
