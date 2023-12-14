@@ -30,25 +30,30 @@ New files MUST include the project SPDX License Identifier (Apache-2.0), for exa
 
 ```
 /*
- + Copyright The Narayana Authors
- + SPDX short identifier: Apache-2.0
+   Copyright The Narayana Authors
+   SPDX-License-Identifier: Apache-2.0
  */
 ```
 
 Please use comment characters appropriate to the file you are creating. We also ask contributors *not* to include `@author` tags.
 
-Although copyright notices on contributions are not strictly necessary we do ask contributors to include the above text; code authors still receive attribution for their contribution via the information contained in the git commit.
+Although copyright notices on contributions are not strictly necessary we do ask contributors to include the above text; code authors still receive attribution for their contribution via the information contained in the git commit metadata.
 
 ## Reporting an issue
 
 If you believe you found a bug (and all software has bugs) we'll need to know how to reproduce it, what you are seeing and what you would expect to see.
 To report the issue use the [JBTM issue tracker](https://issues.redhat.com/projects/JBTM). Fill in as many fields as are relevant including the following:
 
-`Affects Version/s`: The version where you found the issue.
-`Fix Version/s`: Leave this field blank, the engineer who fixes the issue will set the correct version when the PR is merged.
-`Component/s`: The components relevant to the problem. Leave the field blank if you're not sure which components are affected.
+- *Affects Version/s*: The version where you found the issue.
+- *Fix Version/s*: Leave this field blank, the engineer who fixes the issue will set the correct version when the PR is merged.
+- *Component/s*: The components relevant to the problem. Leave the field blank if you're not sure which components are affected.
 
 Don't forget to indicate which version of Narayana, Java and Maven you are using.
+
+Additionally, for more involved items of work, if you are able to estimate the work required to fix the issue or RFE please provide, as best you can, details using the following fields:
+
+- *Original and Remaining Estimate* for estimating resources
+- *Estimated Difficulty* for estimating complexity
 
 ## Making open source more inclusive
 
