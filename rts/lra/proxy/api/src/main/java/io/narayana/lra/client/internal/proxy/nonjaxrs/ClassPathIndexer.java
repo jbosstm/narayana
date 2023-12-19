@@ -2,6 +2,7 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
+
 package io.narayana.lra.client.internal.proxy.nonjaxrs;
 
 import io.narayana.lra.logging.LRALogger;
@@ -56,7 +57,7 @@ class ClassPathIndexer {
     private List<URL> collectURLsFromClassPath() {
         List<URL> urls = new ArrayList<>();
 
-        for (String s : System.getProperty("java.class.path").split(System.getProperty("path.separator"))) {
+        for (String s : System.getProperty("java.class.path").split(File.pathSeparator)) {
             if (s.endsWith(".jar")) {
                 try {
                     urls.add(new File(s).toURI().toURL());
@@ -71,7 +72,7 @@ class ClassPathIndexer {
 
     private void processFile(InputStream inputStream, Indexer indexer) throws IOException {
         ZipInputStream zis = new ZipInputStream(inputStream, StandardCharsets.UTF_8);
-        ZipEntry ze = null;
+        ZipEntry ze;
 
         while ((ze = zis.getNextEntry()) != null) {
             String entryName = ze.getName();
@@ -83,7 +84,7 @@ class ClassPathIndexer {
 
     private void tryToIndexContextModuleClassLoader(Indexer indexer) throws IOException {
         try {
-            this.getClass().forName("org.jboss.modules.ModuleClassLoader");
+            Class.forName("org.jboss.modules.ModuleClassLoader");
         } catch (ClassNotFoundException cnfe) {
             log.debug("Cannot load class 'org.jboss.modules.ModuleClassLoader' to index resources", cnfe);
             return;
@@ -96,7 +97,7 @@ class ClassPathIndexer {
             while (resources.hasNext()) {
                 Resource resource = resources.next();
                 if (resource.getURL().getFile().endsWith("class")) {
-                    try (InputStream is = resource.openStream()) {
+                    try (InputStream ignored = resource.openStream()) {
                         indexer.index(resource.openStream());
                     }
                 }

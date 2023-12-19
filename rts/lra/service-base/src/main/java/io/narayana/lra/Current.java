@@ -132,7 +132,7 @@ public class Current {
                         String[] pa = parents.split(",");
 
                         if (pa.length > 0) {
-                            return URLDecoder.decode(pa[0], "UTF-8");
+                            return URLDecoder.decode(pa[0], StandardCharsets.UTF_8);
                         }
                     }
 
@@ -232,14 +232,10 @@ public class Current {
 
             if (nvp.length == 2 && nvp[0].contains(PARENT_LRA_PARAM_NAME)) { // ignore null parameter values
                 // Child has a parent. See if its parent matches theParent:
-                try {
-                    String parentCandidate = URLDecoder.decode(nvp[1], StandardCharsets.UTF_8.name());
+                String parentCandidate = URLDecoder.decode(nvp[1], StandardCharsets.UTF_8);
 
-                    if (parentCandidate.contains(theParent) || theParent.contains(parentCandidate)) {
-                        return true;
-                    }
-                } catch (UnsupportedEncodingException ignore) {
-                    // not a candidate
+                if (parentCandidate.contains(theParent) || theParent.contains(parentCandidate)) {
+                    return true;
                 }
             }
         }
@@ -294,7 +290,7 @@ public class Current {
     }
 
     public static void popAll() {
-        lraContexts.set(null);
+        lraContexts.remove();
     }
 
     public static void clearContext(MultivaluedMap<String, String> headers) {

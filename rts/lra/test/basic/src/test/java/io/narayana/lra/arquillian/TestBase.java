@@ -2,9 +2,11 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
+
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.LRAConstants;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.client.NarayanaLRAClient;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -51,7 +53,7 @@ public abstract class TestBase {
 
     @After
     public void after() {
-        List<URI> lraURIList = lraClient.getAllLRAs().stream().map(x -> x.getLraId()).collect(Collectors.toList());
+        List<URI> lraURIList = lraClient.getAllLRAs().stream().map(LRAData::getLraId).collect(Collectors.toList());
         for (URI lraToFinish: lrasToAfterFinish) {
             if (lraURIList.contains(lraToFinish)) {
                 lraClient.cancelLRA(lraToFinish);
@@ -75,20 +77,20 @@ public abstract class TestBase {
         }
     }
 
-    protected URI invokeInTransaction(URL baseURL, String resourcePrefix, String resourcePath, int expectedStatus) {
+    protected URI invokeInTransaction(URL baseURL, int expectedStatus) {
         try(Response response = client.target(baseURL.toURI())
-                .path(resourcePrefix)
-                .path(resourcePath)
+                .path(io.narayana.lra.arquillian.resource.LRAUnawareResource.ROOT_PATH)
+                .path(io.narayana.lra.arquillian.resource.LRAUnawareResource.RESOURCE_PATH)
                 .request()
                 .get()) {
 
-            Assert.assertTrue("Expecting a non empty body in response from " + resourcePrefix + "/" + resourcePath,
+            Assert.assertTrue("Expecting a non empty body in response from " + io.narayana.lra.arquillian.resource.LRAUnawareResource.ROOT_PATH + "/" + io.narayana.lra.arquillian.resource.LRAUnawareResource.RESOURCE_PATH,
                     response.hasEntity());
 
             String entity = response.readEntity(String.class);
 
             Assert.assertEquals(
-                    "response from " + resourcePrefix + "/" + resourcePath + " was " + entity,
+                    "response from " + io.narayana.lra.arquillian.resource.LRAUnawareResource.ROOT_PATH + "/" + io.narayana.lra.arquillian.resource.LRAUnawareResource.RESOURCE_PATH + " was " + entity,
                     expectedStatus, response.getStatus());
 
             return new URI(entity);

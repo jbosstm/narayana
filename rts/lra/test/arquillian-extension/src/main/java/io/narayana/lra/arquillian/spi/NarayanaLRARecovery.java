@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.spi;
 
 import io.narayana.lra.LRAConstants;
@@ -45,9 +44,8 @@ public class NarayanaLRARecovery implements LRARecoveryService {
      */
     private boolean recoverLRAs(URI lraId) {
         // trigger a recovery scan
-        Client recoveryCoordinatorClient = ClientBuilder.newClient();
 
-        try {
+        try (Client recoveryCoordinatorClient = ClientBuilder.newClient()) {
             URI lraCoordinatorUri = LRAConstants.getLRACoordinatorUrl(lraId);
             URI recoveryCoordinatorUri = UriBuilder.fromUri(lraCoordinatorUri)
                     .path(RECOVERY_COORDINATOR_PATH_NAME).build();
@@ -58,14 +56,8 @@ public class NarayanaLRARecovery implements LRARecoveryService {
             String json = response.readEntity(String.class);
             response.close();
 
-            if (json.contains(lraId.toASCIIString())) {
-                // intended LRA didn't recover
-                return false;
-            }
-
-            return true;
-        } finally {
-            recoveryCoordinatorClient.close();
+            // intended LRA didn't recover
+            return !json.contains(lraId.toASCIIString());
         }
     }
 }

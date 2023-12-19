@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -17,6 +16,10 @@ import jakarta.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import static java.lang.System.getProperty;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class OpenAPIIT extends TestBase {
     private static final Logger log = Logger.getLogger(OpenAPIIT.class);
@@ -37,11 +40,16 @@ public class OpenAPIIT extends TestBase {
 
     @Test
     public void test() throws URISyntaxException, MalformedURLException {
-        URL url = new URL("http://" + System.getProperty("lra.coordinator.host", "localhost")+":"+ System.getProperty("lra.coordinator.port", "8080")+"/openapi");
+        URL url = new URL("http://"
+                + getProperty("lra.coordinator.host", "localhost")+":"
+                + getProperty("lra.coordinator.port", "8080")+"/openapi");
         Response response = client.target(url.toURI()).request().get();
         String output = response.readEntity(String.class);
-        org.junit.Assert.assertTrue("WildFly OpenAPI document has paths at wrong location", !output.contains("/lra-coordinator/lra-coordinator:"));
-        org.junit.Assert.assertTrue("WildFly OpenAPI document does not have paths for expected location", output.contains("/lra-coordinator:"));
-        org.junit.Assert.assertTrue("WildFly OpenAPI document does not have server URL", output.contains("url: /lra-coordinator"));
+        assertFalse("WildFly OpenAPI document has paths at wrong location",
+                output.contains("/lra-coordinator/lra-coordinator:"));
+        assertTrue("WildFly OpenAPI document does not have paths for expected location",
+                output.contains("/lra-coordinator:"));
+        assertTrue("WildFly OpenAPI document does not have server URL",
+                output.contains("url: /lra-coordinator"));
     }
 }

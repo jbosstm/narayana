@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
@@ -50,7 +49,7 @@ public class FailingParticipantCallsIT extends TestBase {
     public void testFailingAfterLRA() throws LRACallbackException {
         Client client = ClientBuilder.newClient();
         Response response = null;
-        URI lra = null;
+        URI lra;
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())

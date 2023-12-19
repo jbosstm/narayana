@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -109,7 +108,7 @@ class RecoveringLRA extends LongRunningAction {
         }
     }
 
-    private int _theStatus; // Current transaction status
+    private final int _theStatus; // Current transaction status
 
     // Flag to indicate that this transaction has been re-activated successfully.
     private boolean _activated = false;

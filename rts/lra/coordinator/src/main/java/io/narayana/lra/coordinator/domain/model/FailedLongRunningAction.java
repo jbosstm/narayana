@@ -9,9 +9,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
 public class FailedLongRunningAction extends LongRunningAction {
-
     public static final String FAILED_LRA_TYPE = "/StateManager/BasicAction/LongRunningAction/Failed";
-
 
     public FailedLongRunningAction(LRAService lraService, Uid rcvUid) {
         super(lraService, rcvUid);

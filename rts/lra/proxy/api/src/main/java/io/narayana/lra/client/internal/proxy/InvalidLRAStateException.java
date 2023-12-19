@@ -5,7 +5,7 @@
 
 package io.narayana.lra.client.internal.proxy;
 
-class InvalidLRAStateException extends Exception {
+public class InvalidLRAStateException extends Exception {
     InvalidLRAStateException() {
         this("Invalid state");
     }

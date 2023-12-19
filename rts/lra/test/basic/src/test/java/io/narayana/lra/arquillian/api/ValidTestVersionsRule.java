@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.api;
 
 import org.junit.AssumptionViolatedException;
@@ -38,7 +37,7 @@ public class ValidTestVersionsRule implements MethodRule {
                 // ignoring to run the test when annotation does specify the version
                 return new Statement() {
                     @Override
-                    public void evaluate() throws Throwable {
+                    public void evaluate() {
                         throw new AssumptionViolatedException("Test " + method.getName() + " annotated with annotation " +
                                 ValidTestVersions.class.getSimpleName() + " and the current '" + VERSION_FIELD_NAME + "' field is not in set " +
                                 "of the versions to run with");
@@ -60,7 +59,7 @@ public class ValidTestVersionsRule implements MethodRule {
                     field.setAccessible(true);
                     return (String) field.get(objectToSearch);
                 } catch (IllegalAccessException iae) {
-                    new IllegalStateException("Cannot get value of '" + VERSION_FIELD_NAME + "' field with reflection", iae);
+                    throw new IllegalStateException("Cannot get value of '" + VERSION_FIELD_NAME + "' field with reflection", iae);
                 }
             }
         }

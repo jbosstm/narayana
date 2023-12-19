@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,12 +23,12 @@ import java.util.List;
 /**
  * Parameterized Arquillian JUnit runner adding the possibility to run parameterized JUnit test cases ,
  * while using the functionality of Arquillian of executing tests within the container.
- *
- * Adjusted from the HAL testsuite (https://github.com/hal/testsuite).
+ * <p>
+ * Adjusted from the HAL testsuite (<a href="https://github.com/hal/testsuite">...</a>).
  */
 public class ArquillianParametrized extends ParentRunner<Arquillian> {
 
-    private List<Arquillian> arquillians = new ArrayList<>();
+    private final List<Arquillian> arquillians = new ArrayList<>();
     private final List<FrameworkMethod> ignoredMethods;
 
     public ArquillianParametrized(Class<?> testClass) throws Throwable {
@@ -91,7 +90,7 @@ public class ArquillianParametrized extends ParentRunner<Arquillian> {
                 throw new Exception("Wrong number of parameters and @Parameter fields." +
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
             }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            Object testClassInstance = getTestClass().getJavaClass().getDeclaredConstructor().newInstance();
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameterized.Parameter annotation = field.getAnnotation(Parameterized.Parameter.class);
@@ -164,7 +163,7 @@ public class ArquillianParametrized extends ParentRunner<Arquillian> {
             if (iter.hasNext()) {
                 if (!(iter.next() instanceof Object[])) { // it's single value
                     List<Object[]> multiValue = new ArrayList<>();
-                    for (Object parameter: (Iterable<? extends Object>) parameters) {
+                    for (Object parameter: (Iterable<?>) parameters) {
                         multiValue.add(new Object[]{parameter});
                     }
                     return multiValue;
@@ -207,7 +206,7 @@ public class ArquillianParametrized extends ParentRunner<Arquillian> {
     }
 
     private String nameFor(String namePattern, int index, Object[] parameters) {
-        String finalPattern = namePattern.replaceAll("\\{index\\}",
+        String finalPattern = namePattern.replaceAll("\\{index}",
                 Integer.toString(index));
         String name = MessageFormat.format(finalPattern, parameters);
         return "[" + name + "]";

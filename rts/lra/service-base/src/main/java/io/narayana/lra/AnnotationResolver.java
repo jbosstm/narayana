@@ -15,7 +15,7 @@ public class AnnotationResolver {
 
     /**
      * Finds the annotation on the method with the following criteria:
-     *
+     * <p>
      * 1. Find the annotation on method directly. If not present,
      * 2. Find the annotation on the same method in the superclass (superclass hierarchy). If not present,
      * 3. Find the annotation on the same method in the implemented interfaces (and interfaces implemented by
@@ -41,11 +41,7 @@ public class AnnotationResolver {
 
         // search the implemented interfaces in the hierarchy
         annotation = resolveAnnotationInInterfaces(annotationClass, method, method.getDeclaringClass());
-        if (annotation != null) {
-            return annotation;
-        }
-
-        return null;
+        return annotation;
     }
 
     /**

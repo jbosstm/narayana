@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.client;
 
 import static org.junit.Assert.assertEquals;
@@ -48,7 +47,7 @@ public class LRAAsyncIT extends TestBase {
     private static final int NUMBER_OF_TASKS = 10;
     //In order to have calls as much concurrent as possible
     //the number of threads should be equals or greater to the number of tasks
-    private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_TASKS);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_TASKS);
 
     @ArquillianResource
     public URL baseURL;
@@ -117,7 +116,7 @@ public class LRAAsyncIT extends TestBase {
      */
     @Test
     public void testNoCurrent() {
-            URI lra2 = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
+            invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
 
             Callable<URI> callableTask = () -> {
                 URI lra = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);

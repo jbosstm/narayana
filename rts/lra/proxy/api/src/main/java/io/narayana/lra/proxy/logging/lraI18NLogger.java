@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.proxy.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;

@@ -19,7 +19,7 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT
 @Provider
 public class ClientLRARequestFilter implements ClientRequestFilter {
 
-    private boolean canPropagate;
+    private final boolean canPropagate;
 
     public ClientLRARequestFilter() {
         canPropagate = ConfigProvider.getConfig()

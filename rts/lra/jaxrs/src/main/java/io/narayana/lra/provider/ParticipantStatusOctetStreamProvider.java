@@ -2,6 +2,7 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
+
 package io.narayana.lra.provider;
 
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;

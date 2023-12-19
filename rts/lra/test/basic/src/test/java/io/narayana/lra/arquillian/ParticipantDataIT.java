@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.ParticipantDataResource;
@@ -34,7 +33,7 @@ import static io.narayana.lra.LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_
 /**
  * There is a spec requirement to report failed LRAs but the spec only requires that a failure message is reported
  * (not how it is reported). Failure records are vital pieces of data needed to aid failure tracking and analysis.
- *
+ * <p>
  * The Narayana implementation allows failed LRAs to be directly queried. The following tests validate that the
  * correct failure records are kept until explicitly removed.
  */

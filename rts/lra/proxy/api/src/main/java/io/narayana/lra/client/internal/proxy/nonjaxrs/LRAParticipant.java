@@ -42,12 +42,12 @@ import static io.narayana.lra.LRAConstants.FORGET;
 import static io.narayana.lra.LRAConstants.STATUS;
 
 /**
- * Keeps references to individual non-JAX-RS paraticipant methods in
+ * Keeps references to individual non-JAX-RS participant methods in
  * single LRA participant class.
  */
 public class LRAParticipant {
 
-    private Class<?> javaClass;
+    private final Class<?> javaClass;
     private Method compensateMethod;
     private Method completeMethod;
     private Method statusMethod;
@@ -55,7 +55,7 @@ public class LRAParticipant {
     private Method afterLRAMethod;
     private Object instance;
 
-    private Map<URI, ParticipantResult> participantStatusMap = new HashMap<>();
+    private final Map<URI, ParticipantResult> participantStatusMap = new HashMap<>();
 
     public LRAParticipant(Class<?> javaClass) {
         this.javaClass = javaClass;
@@ -69,7 +69,7 @@ public class LRAParticipant {
 
     synchronized Response compensate(URI lraId, URI parentId) {
         if (participantStatusMap.containsKey(lraId)) {
-            processCompletionStageResult(compensateMethod, lraId, parentId, COMPENSATE);
+            processCompletionStageResult(compensateMethod, lraId, parentId, COMPENSATE).close();
         }
 
         return invokeParticipantMethod(compensateMethod, lraId, parentId, COMPENSATE);
@@ -77,7 +77,7 @@ public class LRAParticipant {
 
     synchronized Response complete(URI lraId, URI parentId) {
         if (participantStatusMap.containsKey(lraId)) {
-            processCompletionStageResult(completeMethod, lraId, parentId, COMPLETE);
+            processCompletionStageResult(completeMethod, lraId, parentId, COMPLETE).close();
         }
 
         return invokeParticipantMethod(completeMethod, lraId, parentId, COMPLETE);
@@ -233,7 +233,7 @@ public class LRAParticipant {
 
             return processResult(result, participantResult.getType(), type);
         } else {
-            // participant is still compensating / compeleting
+            // participant is still compensating / completing
             return Response.accepted().build();
         }
     }
@@ -241,15 +241,11 @@ public class LRAParticipant {
     private boolean shouldInvokeParticipantMethod(Object result) {
         if (result instanceof ParticipantStatus) {
             ParticipantStatus participantStatus = (ParticipantStatus) result;
-            if (participantStatus.equals(ParticipantStatus.Compensating) ||
-                participantStatus.equals(ParticipantStatus.Completing)) {
-                return true;
-            }
-        } else if (result instanceof Response && ((Response) result).getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
-            return true;
+            return participantStatus.equals(ParticipantStatus.Compensating) ||
+                    participantStatus.equals(ParticipantStatus.Completing);
+        } else {
+            return result instanceof Response && ((Response) result).getStatus() == Response.Status.ACCEPTED.getStatusCode();
         }
-
-        return false;
     }
 
     private Response invokeParticipantMethod(Method method, URI lraId,
@@ -309,7 +305,7 @@ public class LRAParticipant {
         Response.ResponseBuilder builder = Response.status(Response.Status.OK);
 
         // when the return type is void (Void.TYPE) or CompletionStage<Void> (Void.class)
-        // the result is equal to null so we need to first check the result type
+        // the result is equal to null, so we need to first check the result type
         if (resultType.equals(Void.TYPE) || resultType.equals(Void.class)) {
             // void return type and no exception was thrown
             builder.entity(type.equals(COMPLETE) ? ParticipantStatus.Completed.name() : ParticipantStatus.Compensated.name());
@@ -402,7 +398,7 @@ public class LRAParticipant {
     private static final class ParticipantResult {
 
         private boolean ready;
-        private Class<?> type;
+        private final Class<?> type;
         private Object value;
 
         ParticipantResult(Class<?> type) {

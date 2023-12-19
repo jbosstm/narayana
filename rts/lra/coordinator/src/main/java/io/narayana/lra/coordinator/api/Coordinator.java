@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
@@ -247,7 +246,7 @@ public class Coordinator extends Application {
      * of the form <coordinator url>/{@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>.
      * Adding a query parameter, {@value LRAConstants#TIMELIMIT_PARAM_NAME}=<timeout>, will start a new lra with the specified timeout.
      * If the lra is terminated because of a timeout, the lra URL is deleted and all further invocations on the URL will return 404.
-     * The invoker can assume this was equivalent to a compensate operation.
+     * The invoker can assume this was equivalent to a compensation operation.
      */
     @POST
     @Path("start")
@@ -255,12 +254,12 @@ public class Coordinator extends Application {
     @Bulkhead
     @Operation(summary = "Start a new LRA",
         description = "The LRA model uses a presumed nothing protocol: the coordinator must communicate "
-            + "with Compensators in order to inform them of the LRA activity. Every time a "
+            + "with participants in order to inform them of the LRA activity. Every time a "
             + "Compensator is enrolled with an LRA, the coordinator must make information about "
             + "it durable so that the Compensator can be contacted when the LRA terminates, "
-            + "even in the event of subsequent failures. Compensators, clients and coordinators "
+            + "even in the event of subsequent failures. Participants, clients and coordinators "
             + "cannot make any presumption about the state of the global transaction without "
-            + "consulting the coordinator and all compensators, respectively.")
+            + "consulting the coordinator and all participants, respectively.")
     @APIResponses({
         @APIResponse(responseCode = "201",
             description = "The request was successful and the response body contains the id of the new LRA",
@@ -300,22 +299,20 @@ public class Coordinator extends Application {
             String compensatorUrl = String.format("%s/nested/%s", coordinatorUrl, LRAConstants.getLRAUid(lraId));
 
             if (!lraService.hasTransaction(parentId)) {
-                Client client = null;
-                Response response = null;
 
-                try {
-                    client = ClientBuilder.newClient();
-                    response = client.target(parentId)
-                        .request()
-                        .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, CURRENT_API_VERSION_STRING)
-                        .async()
-                        .put(Entity.text(compensatorUrl))
-                        .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+                try (Client client = ClientBuilder.newClient()) {
+                    try (Response response = client.target(parentId)
+                            .request()
+                            .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, CURRENT_API_VERSION_STRING)
+                            .async()
+                            .put(Entity.text(compensatorUrl))
+                            .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)) {
 
-                    if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                        String errMessage = String.format("The coordinator at %s returned an unexpected response: %d"
-                                + "when the LRA '%s' tried to join the parent LRA '%s'", parentId, response.getStatus(), lraId, parentLRA);
-                        return Response.status(response.getStatus()).entity(errMessage).build();
+                        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                            String errMessage = String.format("The coordinator at %s returned an unexpected response: %d"
+                                    + "when the LRA '%s' tried to join the parent LRA '%s'", parentId, response.getStatus(), lraId, parentLRA);
+                            return Response.status(response.getStatus()).entity(errMessage).build();
+                        }
                     }
                 } catch (Exception e) {
                     String errorMsg = String.format("Cannot contact the LRA Coordinator at '%s' for LRA '%s' joining parent LRA '%s'",
@@ -324,10 +321,6 @@ public class Coordinator extends Application {
                     throw new WebApplicationException(errorMsg, e,
                             Response.status(INTERNAL_SERVER_ERROR).header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                                     .entity(errorMsg).build());
-                } finally {
-                    if (client != null) {
-                        client.close();
-                    }
                 }
             }
         }
@@ -400,7 +393,7 @@ public class Coordinator extends Application {
             case Cancelling: return ParticipantStatus.Compensating;
             case FailedToClose: return ParticipantStatus.FailedToComplete;
             case FailedToCancel: return ParticipantStatus.FailedToCompensate;
-            default: return null;
+            default: throw new RuntimeException("Invalid LRAStatus enum value: " + lraStatus);
         }
     }
 
@@ -426,20 +419,18 @@ public class Coordinator extends Application {
 
     /**
      * Performing a PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>/close will trigger the successful completion
-     * of the LRA and all compensators will be dropped by the LRA Coordinator.
-     * The complete message will be sent to the compensators.
+     * of the LRA and all participants will be dropped by the LRA Coordinator.
+     * The complete message will be sent to the participants.
      * Upon termination, the URL is implicitly deleted. If it no longer exists, then 404 will be returned.
      * The invoker cannot know for sure whether the lra completed or compensated without enlisting a participant.
      */
-    // TODO: Question: is this message best effort or at least once?
-    // TODO rework spec to allow an LRAStatus header everywhere
     @PUT
     @Path("{LraId}/close")
     @Produces(MediaType.TEXT_PLAIN)
     @Operation(summary = "Attempt to close an LRA",
         description = "Trigger the successful completion of the LRA. All"
-            + " compensators will be dropped by the coordinator."
-            + " The complete message will be sent to the compensators."
+            + " participants will be dropped by the coordinator."
+            + " The complete message will be sent to the participants."
             + " Upon termination, the URL is implicitly deleted."
             + " The invoker cannot know for sure whether the lra completed"
             + " or compensated without enlisting a participant.")
@@ -470,7 +461,7 @@ public class Coordinator extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Attempt to cancel an LRA",
         description = " Trigger the compensation of the LRA. All"
-            + " compensators will be triggered by the coordinator (ie the compensate message will be sent to each compensators)."
+            + " participants will be triggered by the coordinator (ie the compensate message will be sent to each participants)."
             + " Upon termination, the URL is implicitly deleted."
             + " The invoker cannot know for sure whether the lra completed or compensated without enlisting a participant.")
     @APIResponses({
@@ -512,7 +503,7 @@ public class Coordinator extends Application {
             content = @Content(schema = @Schema(description = "A URI representing the recovery id of this join request",implementation = String.class)),
             headers = {
                 @Header(name = LRA_HTTP_RECOVERY_HEADER, description = "It contains a unique resource reference for that participant:\n"
-                        + " - HTTP GET on the reference returns the original participant URL;\n" // TODO: verify recovery coordinator works this way
+                        + " - HTTP GET on the reference returns the original participant URL;\n" // Note that isn't a test for this
                         + " - HTTP PUT on the reference will overwrite the old participant URL with the new one supplied.",
                     schema = @Schema(implementation = String.class)),
                 @Header(ref = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) }),
@@ -575,7 +566,7 @@ public class Coordinator extends Application {
                 sb.append(userData);
             }
 
-            return joinLRA(toURI(lraId), timeLimit, null, compensatorLink, sb, version);
+            return joinLRA(toURI(lraId), timeLimit, compensatorLink, sb, version);
         }
 
         if (!isLink && !compensatorURL.isEmpty()) {
@@ -607,29 +598,27 @@ public class Coordinator extends Application {
             // register with the coordinator, put the lra id in an HTTP header
             StringBuilder linkHeaderValue = new StringBuilder();
 
-            terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, "", k, v)); // or use Collectors.joining(",")
+            terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, k, v)); // or use Collectors.joining(",")
 
             compensatorURL = linkHeaderValue.toString();
         }
 
-        return joinLRA(toURI(lraId), timeLimit, null, compensatorURL, null, version);
+        return joinLRA(toURI(lraId), timeLimit, compensatorURL, null, version);
     }
 
 
-    private static StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
+    private static void makeLink(StringBuilder b, String key, String value) {
 
-        if (value == null) {
-            return b;
+        if (value != null) {
+
+            Link link = Link.fromUri(value).rel(key).type(MediaType.TEXT_PLAIN).build();
+
+            if (b.length() != 0) {
+                b.append(',');
+            }
+
+            b.append(link);
         }
-
-        String terminationUri = uriPrefix == null ? value : String.format("%s%s", uriPrefix, value);
-        Link link =  Link.fromUri(terminationUri).rel(key).type(MediaType.TEXT_PLAIN).build();
-
-        if (b.length() != 0) {
-            b.append(',');
-        }
-
-        return b.append(link);
     }
 
     private boolean isLink(String linkString) {
@@ -642,7 +631,7 @@ public class Coordinator extends Application {
         }
     }
 
-    private Response joinLRA(URI lraId, long timeLimit, String compensatorUrl, String linkHeader, StringBuilder userData, String version)
+    private Response joinLRA(URI lraId, long timeLimit, String linkHeader, StringBuilder userData, String version)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("%s%s/%s",
                 context.getBaseUri().toASCIIString(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
@@ -652,7 +641,7 @@ public class Coordinator extends Application {
         }
 
         StringBuilder recoveryUrl = new StringBuilder();
-        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, compensatorUrl, linkHeader, recoveryUrlBase, userData);
+        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, null, linkHeader, recoveryUrlBase, userData);
 
         try {
             return Response.status(status)
