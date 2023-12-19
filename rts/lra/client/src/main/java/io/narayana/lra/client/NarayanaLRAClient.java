@@ -87,7 +87,7 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 /**
  * WARNING: NarayanaLRAClient is an internal utility class and is subject to change
  * (however it will be made available with improved guarantees in a subsequent release).
- *
+ * <p>
  * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the preferred mechanism is to use
  * the annotation in the {@link org.eclipse.microprofile.lra.annotation} package
  */
@@ -111,7 +111,7 @@ public class NarayanaLRAClient implements Closeable {
 
     /**
      * constrain how long client operations take before giving up
-     *
+     * <p>
      * WARNING: NarayanaLRAClient is an internal utility class and is subject to change
      * (but it will be made available with improved guarantees in a subsequent release).
      */
@@ -320,7 +320,7 @@ public class NarayanaLRAClient implements Closeable {
                 if (verbose) {
                     LRALogger.logger.error(logMsg);
                 }
-                throwGenericLRAException(null, response.getStatus(), // TODO the catch (Exception) block already catches this one
+                throwGenericLRAException(null, response.getStatus(), // Remark the catch block already catches this one
                         logMsg, null);
 
                 return null;
@@ -517,7 +517,7 @@ public class NarayanaLRAClient implements Closeable {
 
         StringBuilder linkHeaderValue = new StringBuilder();
 
-        if (paths.size() != 0) {
+        if (!paths.isEmpty()) {
             paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
             paths.put(LINK_TEXT, linkHeaderValue.toString());
         }
@@ -790,7 +790,7 @@ public class NarayanaLRAClient implements Closeable {
                 return null;
             }
         } catch (WebApplicationException webApplicationException) {
-            throw new WebApplicationException(uri.toASCIIString(), GONE); // not sure why we think it's gone TODO
+            throw new WebApplicationException(uri.toASCIIString(), GONE); // not sure why we think it's gone
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new WebApplicationException("join LRA client request timed out, try again later",
                     Response.Status.SERVICE_UNAVAILABLE.getStatusCode());

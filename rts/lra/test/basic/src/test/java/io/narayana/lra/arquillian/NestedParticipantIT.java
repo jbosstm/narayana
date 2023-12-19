@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.NestedParticipant;
@@ -24,7 +23,6 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -36,10 +34,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
 public class NestedParticipantIT extends TestBase {
-
     private static final Logger log = Logger.getLogger(NestedParticipantIT.class);
-
-    private NarayanaLRARecovery narayanaLRARecovery = new NarayanaLRARecovery();
+    private final NarayanaLRARecovery narayanaLRARecovery = new NarayanaLRARecovery();
 
     @ArquillianResource
     public URL baseURL;
@@ -70,13 +66,13 @@ public class NestedParticipantIT extends TestBase {
      * Verifies that the AfterLRA notification in nested participant is received correctly.
      */
     @Test
-    public void nestedParticipantAfterLRACallTest() throws UnsupportedEncodingException {
+    public void nestedParticipantAfterLRACallTest() {
         Response response = null;
 
         URI parentLRA = lraClient.startLRA(NestedParticipantIT.class.getName() + "#nestedParticipantAfterLRACallTest");
         lrasToAfterFinish.add(parentLRA);
 
-        URI nestedLRA = null;
+        URI nestedLRA;
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
@@ -96,7 +92,7 @@ public class NestedParticipantIT extends TestBase {
                     .path(NestedParticipant.ROOT_PATH)
                     .path(NestedParticipant.GET_COUNTER)
                     .queryParam("type", LRAMetricType.Nested.name())
-                    .queryParam("lraId", URLEncoder.encode(parentLRA.toString(), StandardCharsets.UTF_8.toString())))
+                    .queryParam("lraId", URLEncoder.encode(parentLRA.toString(), StandardCharsets.UTF_8)))
                     .request()
                     .get();
 
@@ -113,7 +109,7 @@ public class NestedParticipantIT extends TestBase {
 
         // close nested LRA
         lraClient.closeLRA(nestedLRA);
-        // the nested LRA should be in Closed state, however, we keep it in Closing state
+        // the nested LRA should be in Closed state, however, we keep it in Closing state,
         // so we can't wait for the recovery of the nested LRA
         // https://issues.redhat.com/browse/JBTM-3330
         narayanaLRARecovery.waitForEndPhaseReplay(nestedLRA);
@@ -122,7 +118,7 @@ public class NestedParticipantIT extends TestBase {
                 .path(NestedParticipant.ROOT_PATH)
                 .path(NestedParticipant.GET_COUNTER)
                 .queryParam("type", LRAMetricType.Completed.name())
-                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8.toString())))
+                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8)))
                 .request()
                 .get();
 
@@ -135,7 +131,7 @@ public class NestedParticipantIT extends TestBase {
                 .path(NestedParticipant.ROOT_PATH)
                 .path(NestedParticipant.GET_COUNTER)
                 .queryParam("type", LRAMetricType.Nested.name())
-                .queryParam("lraId", URLEncoder.encode(parentLRA.toString(), StandardCharsets.UTF_8.toString())))
+                .queryParam("lraId", URLEncoder.encode(parentLRA.toString(), StandardCharsets.UTF_8)))
                 .request()
                 .get();
 
@@ -148,7 +144,7 @@ public class NestedParticipantIT extends TestBase {
                 .path(NestedParticipant.ROOT_PATH)
                 .path(NestedParticipant.GET_COUNTER)
                 .queryParam("type", LRAMetricType.AfterLRA.name())
-                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8.toString())))
+                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8)))
                 .request()
                 .get();
 
@@ -164,7 +160,7 @@ public class NestedParticipantIT extends TestBase {
                 .path(NestedParticipant.ROOT_PATH)
                 .path(NestedParticipant.GET_COUNTER)
                 .queryParam("type", LRAMetricType.AfterLRA.name())
-                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8.toString())))
+                .queryParam("lraId", URLEncoder.encode(nestedLRA.toString(), StandardCharsets.UTF_8)))
                 .request()
                 .get();
 
@@ -218,22 +214,15 @@ public class NestedParticipantIT extends TestBase {
         // and nest another one under it
         URI child = lraClient.startLRA(NestedParticipantIT.class.getName() + "#testParentContext child");
 
-        Response response = null;
-
-        try {
-            response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
-                    .path(NestedParticipant.ROOT_PATH)
-                    .path(NestedParticipant.PATH))
-                    .request()
-                    .get();
+        try (Response response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
+                        .path(NestedParticipant.ROOT_PATH)
+                        .path(NestedParticipant.PATH))
+                .request()
+                .get()) {
 
             assertEquals("parent context was not propagated correctly: " + response.readEntity(String.class),
                     200, response.getStatus());
         } finally {
-            if (response != null) {
-                response.close();
-            }
-
             lraClient.closeLRA(parent);
             assertNull("testParentContext: close LRA is still on the current thread", lraClient.getCurrent());
         }

@@ -120,7 +120,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Long timeout = null;
 
         URI suspendedLRA = null;
-        URI incommingLRA = null;
+        URI incomingLRA = null;
         URI recoveryUrl;
         boolean isLongRunning = false;
         boolean requiresActiveLRA = false;
@@ -158,7 +158,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
-                incommingLRA = new URI(Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
+                incomingLRA = new URI(Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
             } catch (URISyntaxException e) {
                 String msg = String.format("header %s contains an invalid URL %s",
                         LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
@@ -175,24 +175,26 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 String compensatorId = terminateURIs.get("Link");
 
                 if (compensatorId == null) {
-                    abortWith(containerRequestContext, incommingLRA.toASCIIString(),
+                    abortWith(containerRequestContext, incomingLRA.toASCIIString(),
                             Response.Status.BAD_REQUEST.getStatusCode(),
                             "Missing complete or compensate annotations", null);
                     return; // user error, bail out
                 }
 
+                progress = new ArrayList<>();
+
                 try {
-                    getLRAClient().leaveLRA(incommingLRA, compensatorId);
-                    progress = updateProgress(progress, ProgressStep.Left, null); // leave succeeded
+                    getLRAClient().leaveLRA(incomingLRA, compensatorId);
+                    progress.add(new Progress(ProgressStep.Left, null)); // leave succeeded
                 } catch (WebApplicationException e) {
-                    progress = updateProgress(progress, ProgressStep.LeaveFailed, e.getMessage()); // leave may have failed
-                    abortWith(containerRequestContext, incommingLRA.toASCIIString(),
+                    progress.add(new Progress(ProgressStep.LeaveFailed, e.getMessage())); // leave may have failed
+                    abortWith(containerRequestContext, incomingLRA.toASCIIString(),
                             e.getResponse().getStatus(),
                             e.getMessage(), progress);
                     return; // the error will be handled or reported via the response filter
                 } catch (ProcessingException e) { // a remote coordinator was unavailable
-                    progress = updateProgress(progress, ProgressStep.LeaveFailed, e.getMessage()); // leave may have failed
-                    abortWith(containerRequestContext, incommingLRA.toASCIIString(),
+                    progress.add(new Progress(ProgressStep.LeaveFailed, e.getMessage())); // leave may have failed
+                    abortWith(containerRequestContext, incomingLRA.toASCIIString(),
                             Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                             e.getMessage(), progress);
                     return; // the error will be handled or reported via the response filter
@@ -207,11 +209,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 Current.clearContext(headers);
             }
 
-            if (incommingLRA != null) {
-                Current.push(incommingLRA);
-                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incommingLRA);
-                containerRequestContext.setProperty(CURRENT_LRA_PROP, incommingLRA);
-                Current.addActiveLRACache(incommingLRA);
+            if (incomingLRA != null) {
+                Current.push(incomingLRA);
+                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incomingLRA);
+                containerRequestContext.setProperty(CURRENT_LRA_PROP, incomingLRA);
+                Current.addActiveLRACache(incomingLRA);
             }
 
             return; // not transactional
@@ -222,22 +224,22 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             Object lraContext = containerRequestContext.getProperty(LRA_HTTP_CONTEXT_HEADER);
 
             if (lraContext != null) {
-                incommingLRA = (URI) lraContext;
+                incomingLRA = (URI) lraContext;
             }
         }
 
-        if (endAnnotation && incommingLRA == null) {
+        if (endAnnotation && incomingLRA == null) {
             return;
         }
 
-        if (incommingLRA != null) {
+        if (incomingLRA != null) {
             // set the parent context header
             try {
-                headers.putSingle(LRA_HTTP_PARENT_CONTEXT_HEADER, Current.getFirstParent(incommingLRA));
+                headers.putSingle(LRA_HTTP_PARENT_CONTEXT_HEADER, Current.getFirstParent(incomingLRA));
             } catch (UnsupportedEncodingException e) {
-                abortWith(containerRequestContext, incommingLRA.toASCIIString(),
+                abortWith(containerRequestContext, incomingLRA.toASCIIString(),
                         Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                        String.format("incoming LRA %s contains an invalid parent: %s", incommingLRA, e.getMessage()),
+                        String.format("incoming LRA %s contains an invalid parent: %s", incomingLRA, e.getMessage()),
                         progress);
                 return; // any previous actions (the leave request) will be reported via the response filter
             }
@@ -245,17 +247,17 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         switch (type) {
             case MANDATORY: // a txn must be present
-                if (isTxInvalid(containerRequestContext, type, incommingLRA, true, progress)) {
+                if (isTxInvalid(containerRequestContext, type, incomingLRA, true, progress)) {
                     // isTxInvalid will have called abortWith (thus aborting the rest of the filter chain)
-                    return; // any previous actions (eg the leave request) will be reported via the response filter
+                    return; // any previous actions (e.g. the leave request) will be reported via the response filter
                 }
 
-                lraId = incommingLRA;
+                lraId = incomingLRA;
                 requiresActiveLRA = true;
 
                 break;
             case NEVER: // a txn must not be present
-                if (isTxInvalid(containerRequestContext, type, incommingLRA, false, progress)) {
+                if (isTxInvalid(containerRequestContext, type, incomingLRA, false, progress)) {
                     // isTxInvalid will have called abortWith (thus aborting the rest of the filter chain)
                     return; // any previous actions (the leave request) will be reported via the response filter
                 }
@@ -264,25 +266,25 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 break;
             case NOT_SUPPORTED:
-                suspendedLRA = incommingLRA;
+                suspendedLRA = incomingLRA;
                 lraId = null; // must not run with any context
 
                 break;
             case NESTED:
-                // FALLTHRU
+                // FALLTHROUGH
             case REQUIRED:
-                if (incommingLRA != null) {
+                if (incomingLRA != null) {
                     if (type == NESTED) {
-                        headers.putSingle(LRA_HTTP_PARENT_CONTEXT_HEADER, incommingLRA.toASCIIString());
+                        headers.putSingle(LRA_HTTP_PARENT_CONTEXT_HEADER, incomingLRA.toASCIIString());
 
                         // if there is an LRA present nest a new LRA under it
-                        suspendedLRA = incommingLRA;
+                        suspendedLRA = incomingLRA;
 
                         if (progress == null) {
                             progress = new ArrayList<>();
                         }
 
-                        newLRA = lraId = startLRA(containerRequestContext, incommingLRA, method, timeout, progress);
+                        newLRA = lraId = startLRA(containerRequestContext, incomingLRA, method, timeout, progress);
 
                         if (newLRA == null) {
                             // startLRA will have called abortWith on the request context
@@ -290,15 +292,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             return;
                         }
                     } else {
-                        lraId = incommingLRA;
+                        lraId = incomingLRA;
                         // incomingLRA will be resumed
                         requiresActiveLRA = true;
                     }
 
                 } else {
-                    if (progress == null) { // NB my IDE seems to think this check is redundant
-                        progress = new ArrayList<>();
-                    }
+                    progress = new ArrayList<>();
                     newLRA = lraId = startLRA(containerRequestContext, null, method, timeout, progress);
 
                     if (newLRA == null) {
@@ -311,7 +311,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 break;
             case REQUIRES_NEW:
 //                    previous = AtomicAction.suspend();
-                suspendedLRA = incommingLRA;
+                suspendedLRA = incomingLRA;
 
                 if (progress == null) {
                     progress = new ArrayList<>();
@@ -326,13 +326,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 break;
             case SUPPORTS:
-                lraId = incommingLRA;
+                lraId = incomingLRA;
 
                 // incomingLRA will be resumed if not null
 
                 break;
             default:
-                lraId = incommingLRA;
+                lraId = incomingLRA;
         }
 
         if (lraId == null) {
@@ -350,12 +350,12 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             containerRequestContext.setProperty(TERMINAL_LRA_PROP, lraId);
         }
 
-        // store state with the current thread. TODO for the async version use containerRequestContext.setProperty("lra", Current.peek());
+        // store state with the current thread
         Current.updateLRAContext(lraId, headers); // make the current LRA available to the called method
 
         if (newLRA != null) {
             if (suspendedLRA != null) {
-                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incommingLRA);
+                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incomingLRA);
             }
 
             containerRequestContext.setProperty(NEW_LRA_PROP, newLRA);
@@ -375,7 +375,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             return; // any previous actions (such as leave and start requests) will be reported via the response filter
         }
 
-        // TODO make sure it is possible to do compensations inside a new LRA
         if (!endAnnotation) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
@@ -461,7 +460,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         URI toClose = (URI) requestContext.getProperty(TERMINAL_LRA_PROP);
         boolean isCancel = isJaxRsCancel(requestContext, responseContext);
         // the service method has finished but the user data may have changed
-        String userData = getUserDefinedData(); // TODO save data on method entry and compare
+        String userData = getUserDefinedData();
         String compensator = (String) requestContext.getProperty(PARTICIPANT_LINK_PROP);
 
         try {
@@ -527,7 +526,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     }
                 }
             } else if (current != null && compensator != null && userData != null) {
-                getLRAClient().enlistCompensator(current, 0L, compensator.toString(), new StringBuilder(userData));
+                getLRAClient().enlistCompensator(current, 0L, compensator, new StringBuilder(userData));
             }
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode()
@@ -542,7 +541,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             /*
              * report any failed steps (ie if progress contains any failures) to the caller.
-             * If either filter encountered a failure they may have completed partial actions and
+             * If either filter encountered a failure they may have completed partial actions, and
              * we need tell the caller which steps failed and which ones succeeded. We use a
              * different warning code for each scenario:
              */
@@ -552,7 +551,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 if (failureMessage != null) {
                     LRALogger.logger.warn(failureMessage);
 
-                    // the actual failure(s) will also have been added to the i18NLogger logs at the time they occured
+                    // the actual failure(s) will also have been added to the i18NLogger logs at the time they occurred
                     responseContext.setEntity(failureMessage, null, MediaType.TEXT_PLAIN_TYPE);
                 }
             }
@@ -621,7 +620,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
     }
 
-    // list of steps (both successful and unsuccesful) performed so far by the request and response filter
+    // list of steps (both successful and unsuccessful) performed so far by the request and response filter
     // and is used for error reporting
     private static class Progress {
         static EnumSet<ProgressStep> failures = EnumSet.of(
@@ -667,7 +666,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
          * where
          *
          * <major code>: corresponds to the id of the message in the logs
-         * <failed op codes>: each digit corresponds to the enum ordinal calue of the ProgressStep enum value that was successful
+         * <failed op codes>: each digit corresponds to the enum ordinal value of the ProgressStep enum value that was successful
          * <successful op codes>: each digit corresponds to the enum ordinal value of the ProgressStep enum value that failed
          * <details of failed ops>: comma separated list of failed operation details "<op name> (<exception message>)"
          * <details of successful ops>: comma separated list of successful operation details "<op name> (<op description>)"
@@ -749,7 +748,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         try {
             return data != null ? data.getData() : null;
         } catch (ContextNotActiveException e) {
-            // TODO probably best to suppress subsequent warnings
             LRALogger.i18nLogger.warn_missingContexts("CDI bean of type LRAParticipantData is not available", e);
         }
 
@@ -769,24 +767,23 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private String buildCompensatorURI(URI compensate, URI complete, URI forget, URI leave, URI after, URI status) {
         StringBuilder linkHeaderValue = new StringBuilder();
 
-        makeLink(linkHeaderValue, null, COMPENSATE, compensate);
-        makeLink(linkHeaderValue, null, COMPLETE, complete);
-        makeLink(linkHeaderValue, null, FORGET, forget);
-        makeLink(linkHeaderValue, null, LEAVE, leave);
-        makeLink(linkHeaderValue, null, AFTER, after);
-        makeLink(linkHeaderValue, null, STATUS, status);
+        makeLink(linkHeaderValue, COMPENSATE, compensate);
+        makeLink(linkHeaderValue, COMPLETE, complete);
+        makeLink(linkHeaderValue, FORGET, forget);
+        makeLink(linkHeaderValue, LEAVE, leave);
+        makeLink(linkHeaderValue, AFTER, after);
+        makeLink(linkHeaderValue, STATUS, status);
 
         return linkHeaderValue.toString();
     }
 
-    private static void makeLink(StringBuilder b, String uriPrefix, String key, URI value) {
+    private static void makeLink(StringBuilder b, String key, URI value) {
         if (key == null || value == null) {
             return;
         }
 
         String uri = value.toASCIIString();
-        String terminationUri = uriPrefix == null ? uri : String.format("%s%s", uriPrefix, uri);
-        Link link =  Link.fromUri(terminationUri).title(key + " URI").rel(key).type(MediaType.TEXT_PLAIN).build();
+        Link link =  Link.fromUri(uri).title(key + " URI").rel(key).type(MediaType.TEXT_PLAIN).build();
 
         if (b.length() != 0) {
             b.append(',');

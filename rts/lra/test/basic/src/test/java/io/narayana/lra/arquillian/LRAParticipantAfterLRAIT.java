@@ -3,11 +3,9 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.LRAParticipantAfterLRA;
-import org.eclipse.microprofile.lra.tck.service.spi.LRACallbackException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.logging.Logger;
@@ -45,7 +43,7 @@ public class LRAParticipantAfterLRAIT extends TestBase {
     }
 
     @Test
-    public void testAfterLRACount() throws LRACallbackException {
+    public void testAfterLRACount() {
         Client client = ClientBuilder.newClient();
         Response response = null;
         try {
@@ -75,5 +73,4 @@ public class LRAParticipantAfterLRAIT extends TestBase {
         }
 
     }
-
 }

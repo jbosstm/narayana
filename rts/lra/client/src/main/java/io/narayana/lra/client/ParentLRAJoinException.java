@@ -5,7 +5,6 @@
 
 package io.narayana.lra.client;
 
-
 import jakarta.ws.rs.core.Response;
 
 public class ParentLRAJoinException extends Exception {

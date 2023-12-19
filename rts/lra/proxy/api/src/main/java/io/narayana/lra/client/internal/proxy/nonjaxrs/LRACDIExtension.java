@@ -23,6 +23,7 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.util.AnnotationLiteral;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.Set;
  */
 public class LRACDIExtension implements Extension {
 
-    private ClassPathIndexer classPathIndexer = new ClassPathIndexer();
+    private final ClassPathIndexer classPathIndexer = new ClassPathIndexer();
     private Index index;
     private final Map<String, LRAParticipant> participants = new HashMap<>();
 
@@ -64,8 +65,9 @@ public class LRACDIExtension implements Extension {
                 if (participantBeans.isEmpty()) {
                     // resource is not registered as managed bean so register a custom managed instance
                     try {
-                        participant.setInstance(participant.getJavaClass().newInstance());
-                    } catch (InstantiationException | IllegalAccessException e) {
+                        participant.setInstance(participant.getJavaClass().getDeclaredConstructor().newInstance());
+                    } catch (InstantiationException | IllegalAccessException |
+                             InvocationTargetException | NoSuchMethodException e) {
                         LRALogger.i18nLogger.error_cannotProcessParticipant(e);
                     }
                 }

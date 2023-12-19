@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -78,7 +77,7 @@ public class LRAParticipantWithoutStatusURI {
     @DELETE
     @Path("delete")
     @Forget
-    public Response foget() {
+    public Response forget() {
         forgetCount.incrementAndGet();
 
         return Response.ok().build();

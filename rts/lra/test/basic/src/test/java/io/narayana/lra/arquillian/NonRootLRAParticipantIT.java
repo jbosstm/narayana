@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.NonRootLRAParticipant;
@@ -87,6 +86,5 @@ public class NonRootLRAParticipantIT extends TestBase {
             fail("testFinishLRA: received unexpected response code (" + e.getResponse().getStatus()
                     + ") getting LRA status " + e.getMessage());
         }
-
     }
 }

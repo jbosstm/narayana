@@ -18,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.jboss.logging.Logger;
 
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -42,9 +41,6 @@ import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @Tag(name = "LRA Recovery")
 public class RecoveryCoordinator {
-
-    private final Logger logger = Logger.getLogger(RecoveryCoordinator.class.getName());
-
     @Context
     private UriInfo context;
 
@@ -84,13 +80,13 @@ public class RecoveryCoordinator {
         return compensatorUrl;
     }
 
-    // Performing a PUT on the recovery URL will overwrite the old <compensor URL> with the new one supplied
+    // Performing a PUT on the recovery URL will overwrite the old <participant URL> with the new one supplied
     // and return the old url
     @PUT
     @Path("{LRAId}/{RecCoordId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update the endpoint that a participant is prepared to accept requests on.",
-        description = "Performing a PUT on the recovery URL will overwrite the old <compensor URL> with the new one supplied" +
+        description = "Performing a PUT on the recovery URL will overwrite the old <participant URL> with the new one supplied" +
             " and return the old url. The old value is returned." +
             "The full URL was returned when the participant first joined the LRA.")
     @APIResponses({
@@ -110,7 +106,7 @@ public class RecoveryCoordinator {
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
 
         if (compensatorUrl != null) {
-            URI lra = null;
+            URI lra;
 
             try {
                 lra = new URI(lraId);
@@ -134,7 +130,7 @@ public class RecoveryCoordinator {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "List recovering Long Running Actions",
-        description = "Returns LRAs that are recovering (ie some compensators still need to be ran)")
+        description = "Returns LRAs that are recovering (ie some participants still need to be ran)")
     @APIResponse(responseCode = "200",
         content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAData.class)))
     public List<LRAData> getRecoveringLRAs() {

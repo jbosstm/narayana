@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
@@ -152,8 +151,9 @@ public interface LraI18nLogger {
     @Message(id = 25035, value = "The start LRA call failed with cause: %s")
     void warn_startLRAFailed(String message, @Cause Throwable t);
 
+    @LogMessage(level = WARN)
     @Message(id = 25036, value = "CDI Context not available: %s")
-    String warn_missingContexts(String reason, @Cause Throwable t);
+    void warn_missingContexts(String reason, @Cause Throwable t);
 
     @LogMessage(level = WARN)
     @Message(id = 25037, value = "Participant `%s` is not registered")
@@ -161,6 +161,9 @@ public interface LraI18nLogger {
 
     @Message(id = 25038, value = "Invalid participant enlistment with LRA %s: participant data is disabled")
     String error_participant_data_disallowed(String lraId);
+
+    @Message(id = 25039, value = "Invalid argument passed to method: %s")
+    String error_invalidArgument(String reason);
 
     /*
         Allocate new messages directly above this notice.

@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.LRAUnawareResource;
@@ -50,8 +49,8 @@ public class LRAPropagationIT extends TestBase {
     public void noLRATest() throws WebApplicationException {
         URI lraId = lraClient.startLRA(LRAPropagationIT.class.getName());
 
-        URI returnedLraId = invokeInTransaction(baseURL, LRAUnawareResource.ROOT_PATH,
-            LRAUnawareResource.RESOURCE_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        URI returnedLraId = invokeInTransaction(baseURL,
+                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         assertNotEquals("While calling non-LRA method the resource should not propagate the LRA id when mp.lra.propagation.active=false",
             lraId, returnedLraId);

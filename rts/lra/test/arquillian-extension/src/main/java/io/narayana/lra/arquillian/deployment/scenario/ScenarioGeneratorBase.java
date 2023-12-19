@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.deployment.scenario;
 
 import io.narayana.lra.arquillian.deployment.Deployment;
@@ -44,23 +43,22 @@ public class ScenarioGeneratorBase {
     Instance<ArquillianDescriptor> arquillianDescriptorInstance;
 
     /**
-     * This methods return a {@link Map} representing the properties defined in the <code>extension</code>
+     * This method return a {@link Map} representing the properties defined in the <code>extension</code>
      * section and identifiable with the parameter <code>extensionName</code>
-     * @param extensionName The name assigned to the extension section
      * @return {@link Map} representing a set of properties
      */
-    Map<String, String> getExtensionProperties(final String extensionName) {
+    Map<String, String> getExtensionProperties() {
 
         ArquillianDescriptor arquillianDescriptor = arquillianDescriptorInstance.get();
 
         Optional<Map<String, String>> checkExistence = arquillianDescriptor.getExtensions().stream()
-                .filter(x -> x.getExtensionName().equals(extensionName))
+                .filter(x -> x.getExtensionName().equals(LRACoordinatorScenarioGenerator.EXTENSION_NAME))
                 .map(ExtensionDef::getExtensionProperties).findAny();
 
-        if (!checkExistence.isPresent()) {
+        if (checkExistence.isEmpty()) {
             String message = String.format("%s: there is not extension section with name %s defined in the %s file",
                     this.getClass().getSimpleName(),
-                    extensionName,
+                    LRACoordinatorScenarioGenerator.EXTENSION_NAME,
                     System.getProperty("arquillian.xml", "arquillian.xml"));
 
             log.warn(message);
@@ -70,7 +68,7 @@ public class ScenarioGeneratorBase {
     }
 
     /**
-     * This methods checks that the properties in the {@link List} <code>toCheck</code>
+     * This method checks that the properties in the {@link List} <code>toCheck</code>
      * are present in the {@link Map} <code>properties</code>
      * @param properties {@link Map} representing the properties of an extension
      * @param toCheck {@link List} of properties that need to be defined
@@ -97,11 +95,10 @@ public class ScenarioGeneratorBase {
      * @param deploymentMethodPropertyName name of the deployment method property
      * @return {@link Method}
      * @throws ClassNotFoundException if the specified class is not valid
-     * @throws NoSuchMethodException if the specified method is not valid
      * @throws RuntimeException if anything else goes wrong
      */
     Method getDeploymentMethodFromConfiguration(final Map<String, String> properties, final String deploymentMethodPropertyName)
-            throws ClassNotFoundException, NoSuchMethodException, RuntimeException{
+            throws ClassNotFoundException, RuntimeException{
 
         String property = properties.get(deploymentMethodPropertyName).trim();
 

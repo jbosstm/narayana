@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.LRAConstants;
@@ -31,7 +30,6 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.core.Response;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -48,7 +46,7 @@ import static org.junit.Assert.fail;
 /**
  * There is a spec requirement to report failed LRAs but the spec only requires that a failure message is reported
  * (not how it is reported). Failure records are vital pieces of data needed to aid failure tracking and analysis.
- *
+ * <p>
  * The Narayana implementation allows failed LRAs to be directly queried. The following tests validate that the
  * correct failure records are kept until explicitly removed.
  */
@@ -83,7 +81,7 @@ public class FailedLRAIT extends TestBase {
      * test that a failure record is created when a participant (with status reporting) fails to compensate
      */
     @Test
-    public void testWithStatusCompensateFailed() throws Exception {
+    public void testWithStatusCompensateFailed() {
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
         lrasToAfterFinish.add(lraId);
@@ -97,7 +95,7 @@ public class FailedLRAIT extends TestBase {
      * test that a failure record is created when a participant (with status reporting) fails to complete
      */
     @Test
-    public void testWithStatusCompleteFailed() throws Exception {
+    public void testWithStatusCompleteFailed() {
         // invoke a method that should run with an LRA
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
@@ -113,7 +111,7 @@ public class FailedLRAIT extends TestBase {
      * test that a failure record is created when a participant (without status reporting) fails to compensate
      */
     @Test
-    public void testCompensateFailed() throws Exception {
+    public void testCompensateFailed() {
         URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
         lrasToAfterFinish.add(lraId);
@@ -127,7 +125,7 @@ public class FailedLRAIT extends TestBase {
      * test that a failure record is created when a participant (without status reporting) fails to complete
      */
     @Test
-    public void testCompleteFailed() throws Exception {
+    public void testCompleteFailed() {
         URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
         lrasToAfterFinish.add(lraId);
@@ -159,7 +157,7 @@ public class FailedLRAIT extends TestBase {
         assertThat("deleting an LRA in wrong format that JAX-RS understands as non-existent URL binding or as method not-allowed",
                 status3, anyOf(equalTo(404), equalTo(405)));
 
-        int status4 = removeFailedLRA(getRecoveryUrl(lraId), URLEncoder.encode("http://example.com", StandardCharsets.UTF_8.name()));
+        int status4 = removeFailedLRA(getRecoveryUrl(lraId), URLEncoder.encode("http://example.com", StandardCharsets.UTF_8));
         assertEquals("using correct URI format but such that has empty path component and thus non-existent, " +
                 "expecting internal server error", 500, status4);
 
@@ -182,7 +180,7 @@ public class FailedLRAIT extends TestBase {
      * test that a created failure record is moved to failedLRAType location
      */
     @Test
-    public void testToMoveFailedLRARecords() throws Exception {
+    public void testToMoveFailedLRARecords() {
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
         lrasToAfterFinish.add(lraId);
@@ -199,10 +197,8 @@ public class FailedLRAIT extends TestBase {
      *
      * @param lra the LRA whose state is to be validated
      * @return true if the Failed LRA record is moved to another location
-     * @throws Exception if the state cannot be determined
      */
-    private boolean validateFailedRecordMoved(URI lra) throws Exception {
-        boolean isMoved = false;
+    private boolean validateFailedRecordMoved(URI lra) {
         String failedLRAId = null;
         JsonArray failedRecords = getFailedRecords(lra);
         for (JsonValue failedLRA : failedRecords) {
@@ -213,10 +209,7 @@ public class FailedLRAIT extends TestBase {
             }
         }
         JsonArray allRecords = getAllRecords(lra);
-        if (allRecords.isEmpty() && failedLRAId != null) {
-            isMoved = true;
-        } else {
-            isMoved = true;
+        if (!allRecords.isEmpty() || failedLRAId == null) {
             for (JsonValue lraRec : allRecords) {
                 String lraId = lraRec.asJsonObject().getString("lraId");
                 lraId = lraId.replaceAll("\\\\", "");
@@ -226,7 +219,7 @@ public class FailedLRAIT extends TestBase {
             }
         }
 
-        return isMoved;
+        return true;
     }
 
     private URI invokeInTransaction(String resourcePrefix, String resourcePath, int expectedStatus) {
@@ -258,9 +251,8 @@ public class FailedLRAIT extends TestBase {
      * @param lra the LRA whose state is to be validated
      * @param state the state that the target LRA should be in
      * @return true if the LRA is in the target state and that its log was successfully removed
-     * @throws Exception if the state cannot be determined
      */
-    private boolean validateStateAndRemove(URI lra, LRAStatus state) throws Exception {
+    private boolean validateStateAndRemove(URI lra, LRAStatus state) {
         JsonArray failedRecords = getFailedRecords(lra);
         for (JsonValue failedLRA : failedRecords) {
             String lraId = failedLRA.asJsonObject().getString("lraId");
@@ -294,9 +286,9 @@ public class FailedLRAIT extends TestBase {
     }
 
     // ask the recovery coordinator to delete its log for an LRA
-    private int removeFailedLRA(URI lra) throws UnsupportedEncodingException {
+    private int removeFailedLRA(URI lra) {
         String recoveryUrl = getRecoveryUrl(lra);
-        String txId = URLEncoder.encode(lra.toASCIIString(), "UTF-8");
+        String txId = URLEncoder.encode(lra.toASCIIString(), StandardCharsets.UTF_8);
 
         return removeFailedLRA(recoveryUrl, txId);
     }

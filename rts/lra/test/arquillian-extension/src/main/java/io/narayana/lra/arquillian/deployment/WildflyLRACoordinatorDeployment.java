@@ -3,13 +3,11 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.deployment;
 
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-//import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
@@ -63,7 +61,6 @@ public class WildflyLRACoordinatorDeployment implements Deployment<WebArchive> {
                                 "org.jboss.narayana.rts:lra-service-base:" + projectVersion)
                         .withoutTransitivity().asFile())
                 // Adds a manifest to activate jts and logging submodules of Wildfly
-                // TODO: try without "export services"
                 .addAsManifestResource(new StringAsset(ManifestMF),"MANIFEST.MF")
                 // Adds an empty beans.xml to activate the bean in discovery-mode set to "all"
                 .addAsWebInfResource(EmptyAsset.INSTANCE,"beans.xml");

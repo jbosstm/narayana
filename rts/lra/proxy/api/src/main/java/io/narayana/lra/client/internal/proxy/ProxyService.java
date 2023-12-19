@@ -37,7 +37,7 @@ import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 
 @ApplicationScoped
 public class ProxyService {
-    private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
+    private static List<ParticipantProxy> participants;
 
     @Inject
     private NarayanaLRAClient narayanaLRAClient;
@@ -46,14 +46,14 @@ public class ProxyService {
 
     @PostConstruct
     void init() {
-        if (participants == null) { // TODO figure out why ProxyService is constructed twice
+        if (participants == null) {
             participants = new ArrayList<>();
         }
 
         int httpPort = Integer.getInteger("lra.http.port", 8081);
         String httpHost = System.getProperty("lra.http.host", "localhost");
 
-        // TODO if the proxy is restarted on a different endpoint it should notify the recovery coordinator
+        // Note that if the proxy is restarted on a different endpoint it should notify the recovery coordinator
 
         uriBuilder = UriBuilder.fromPath(LRA_PROXY_PATH + "/{lra}/{pid}");
         uriBuilder.scheme("http")
@@ -83,7 +83,7 @@ public class ProxyService {
 
         LRAProxyParticipant participant = proxy.getParticipant();
 
-        if (participant == null && participantData != null && participantData.length() > 0) {
+        if (participant == null && participantData != null && !participantData.isEmpty()) {
             participant = deserializeParticipant(lraId, participantData).orElse(null);
         }
 
@@ -115,7 +115,7 @@ public class ProxyService {
 
             return Response.ok().build();
         } else {
-            LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toASCIIString());
+            LRAProxyLogger.logger.errorf("proxy recovery: null participant for callback %s", lraId.toASCIIString());
         }
 
         return Response.status(NOT_FOUND).build();
@@ -133,7 +133,7 @@ public class ProxyService {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
-            String errorMsg = String.format("Cannot find participant proxy for LRA id %s, participant id %%s",
+            String errorMsg = String.format("Cannot find participant proxy for LRA id %s, participant id %s",
                     lraId, participantId);
             throw new NotFoundException(errorMsg,
                     Response.status(NOT_FOUND).entity(errorMsg).build());
@@ -150,12 +150,11 @@ public class ProxyService {
     }
 
     public URI joinLRA(LRAProxyParticipant participant, URI lraId, Long timeLimit, ChronoUnit unit) {
-        // TODO if lraId == null then register a join all new LRAs
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
             String pId = proxy.getParticipantId();
-            String lra = URLEncoder.encode(lraId.toASCIIString(), StandardCharsets.UTF_8.name());
+            String lra = URLEncoder.encode(lraId.toASCIIString(), StandardCharsets.UTF_8);
 
             participants.add(proxy);
 
@@ -164,9 +163,7 @@ public class ProxyService {
             long timeLimitInSeconds = Duration.of(timeLimit, unit).getSeconds();
             StringBuilder sb = new StringBuilder(compensatorData.orElse(""));
 
-            URI participantRecoveryUrl = narayanaLRAClient.joinLRA(lraId, timeLimitInSeconds, participantUri, sb);
-
-            return participantRecoveryUrl;
+            return narayanaLRAClient.joinLRA(lraId, timeLimitInSeconds, participantUri, sb);
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.status(0)
                 .entity(lraId + ": Exception whilst joining with this LRA").build());
@@ -187,25 +184,6 @@ public class ProxyService {
     }
 
     private static Optional<LRAProxyParticipant> deserializeParticipant(URI lraId, final String objectAsString) {
-        return Optional.empty(); // TODO
-/*        final byte[] data = Base64.getDecoder().decode(objectAsString);
-
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
-            return Optional.of((LRAParticipant) ois.readObject());
-        } catch (final IOException | ClassNotFoundException e) {
-            for (LRAParticipantDeserializer ds : deserializers) {
-                LRAParticipant participant = ds.deserialize(lraId, data);
-
-                if (participant != null) {
-                    return Optional.of(participant);
-                }
-            }
-
-            LRAProxyLogger.i18NLogger.warn_cannotDeserializeParticipant(lraId.toExternalForm(),
-                    deserializers.size() == 0 ? "null" : deserializers.get(0).getClass().getCanonicalName(),
-                    e.getMessage());
-
-            return Optional.empty();
-        }*/
+        return Optional.empty();
     }
 }

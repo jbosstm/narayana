@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;

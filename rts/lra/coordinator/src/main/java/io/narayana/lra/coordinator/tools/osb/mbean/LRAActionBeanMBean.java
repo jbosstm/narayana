@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.coordinator.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;

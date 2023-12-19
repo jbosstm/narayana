@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.LRAData;
@@ -63,7 +62,6 @@ import static org.junit.Assert.fail;
 @RunAsClient
 public class LRACoordinatorRecoveryIT extends UnmanagedTestBase {
 
-    // TODO - IMPORTANT!
     // This class needs to be re-factored if (and when) there will be the possibility
     // to manually start and stop lra-coordinator in Quarkus through Arquillian.
 
@@ -274,7 +272,7 @@ public class LRACoordinatorRecoveryIT extends UnmanagedTestBase {
     private int recover() {
         Client client = ClientBuilder.newClient();
 
-        // TODO: remove this delay when a byteman rule is used to sync the restart of lra-coordinator
+        // A byteman rule could be used to sync the restart of lra-coordinator, until just wait.
         // This delay makes sure that the 2-phase recovery mechanism has started
         doWait(LRAListener.LRA_SHORT_TIMELIMIT * 1000);
 

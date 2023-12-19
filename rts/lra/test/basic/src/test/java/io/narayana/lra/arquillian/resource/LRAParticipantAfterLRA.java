@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.LRAResponse;
@@ -35,15 +34,12 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_ENDED_C
 @LRA(value = LRA.Type.REQUIRED)
 public class LRAParticipantAfterLRA {
     public static final String SIMPLE_PARTICIPANT_RESOURCE_PATH = "lra-participant-type-required";
-    public static final String START_LRA_PATH = "start-lra";
     public static final String DO_LRA_PATH = "/do";
     public static final String COMPLETE_LRA_PATH = "/complete";
     public static final String AFTER_LRA_PATH = "/after";
     public static final String COUNTER_LRA_PATH = "/counter";
-    public static final String RESET_ACCEPTED_PATH = "reset-accepted";
-
     private static final AtomicInteger afterLRACounter = new AtomicInteger(0);
-    private static Logger log = Logger.getLogger(LRAParticipantAfterLRA.class);
+    private static final Logger log = Logger.getLogger(LRAParticipantAfterLRA.class);
 
     @Context
     private UriInfo context;

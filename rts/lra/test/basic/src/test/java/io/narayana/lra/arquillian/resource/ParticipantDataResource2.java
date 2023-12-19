@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import io.narayana.lra.client.LRAParticipantData;
@@ -70,18 +69,18 @@ public class ParticipantDataResource2 {
     @Path("/compensate")
     @Compensate
     public Response compensate(@HeaderParam(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) String pData) {
-        return checkBean(true, END_DATA, pData);
+        return checkBean(true, pData);
     }
 
     @PUT
     @Path("/complete")
     @Compensate
     public Response complete(@HeaderParam(NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) String pData) {
-        return checkBean(false, END_DATA, pData);
+        return checkBean(false, pData);
     }
 
-    private Response checkBean(boolean compensate, String expectedData, String actualData) {
-        if (expectedData.equals(actualData)) {
+    private Response checkBean(boolean compensate, String actualData) {
+        if (END_DATA.equals(actualData)) {
             return Response.status(Response.Status.OK).build();
         } else {
             return Response.ok(compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete).build();

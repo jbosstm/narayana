@@ -2,6 +2,7 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
+
 package io.narayana.lra.participant;
 
 import io.narayana.lra.client.NarayanaLRAClient;
@@ -93,17 +94,15 @@ public class SpecTest {
     }
 
      private String checkStatusAndClose(Response response, int expected, boolean readEntity) {
-        try {
-            if (expected != -1 && response.getStatus() != expected) {
-                throw new WebApplicationException(response);
-            }
+         try (response) {
+             if (expected != -1 && response.getStatus() != expected) {
+                 throw new WebApplicationException(response);
+             }
 
-            if (readEntity) {
-                return response.readEntity(String.class);
-            }
-        } finally {
-            response.close();
-        }
+             if (readEntity) {
+                 return response.readEntity(String.class);
+             }
+         }
 
         return null;
     }

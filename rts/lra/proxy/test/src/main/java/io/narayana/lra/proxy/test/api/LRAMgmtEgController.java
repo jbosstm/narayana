@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.proxy.test.api;
 
 import io.narayana.lra.client.internal.proxy.ProxyService;

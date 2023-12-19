@@ -17,14 +17,9 @@ import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.narayana.lra.LRAConstants.CURRENT_API_VERSION_STRING;
 import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
@@ -74,11 +69,5 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
         }
 
         Current.updateLRAContext(responseContext);
-    }
-
-    private String dumpInputStreamToString(InputStream is) {
-        try (Stream<String> lines = new BufferedReader(new InputStreamReader(is)).lines()) {
-            return lines.collect(Collectors.joining(System.lineSeparator()));
-        }
     }
 }

@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.api;
 
 import io.narayana.lra.LRAConstants;
@@ -26,7 +25,6 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -57,7 +55,7 @@ import static org.hamcrest.core.IsNot.not;
  * The test may be annotated with {@link ValidTestVersions}.
  * That way we can say the test will be executed only for the defined versions.
  * The execution for a version not defined in the annotation is skipped.
- *
+ * <p>
  * When a new API version is added - when the new version
  * <ul>
  *     <li>does <b>not</b> change the functionality of the API endpoint
@@ -104,14 +102,15 @@ public class CoordinatorApiIT extends TestBase {
      */
     @Test
     public void getAllLRAs() {
-        // be aware of risk of non monotonic java time, ie. https://www.javaadvent.com/2019/12/measuring-time-from-java-to-kernel-and-back.html
+        // be aware of risk of non-monotonic java time,
+        // i.e. https://www.javaadvent.com/2019/12/measuring-time-from-java-to-kernel-and-back.html
         long beforeTime = Instant.now().toEpochMilli();
 
         String clientId1 = testRule.getMethodName() + "_OK_1";
         String clientId2 = testRule.getMethodName() + "_OK_2";
         URI lraId1 = lraClient.startLRA(clientId1);
         URI lraId2 = lraClient.startLRA(lraId1, clientId2, 0L, null);
-        lrasToAfterFinish.add(lraId1); // lraId2 is nested and will be closed in regards to lraId1
+        lrasToAfterFinish.add(lraId1); // lraId2 is nested and will be closed in regard to lraId1
 
         List<LRAData> data;
         try (Response response = client.target(coordinatorUrl)
@@ -119,7 +118,7 @@ public class CoordinatorApiIT extends TestBase {
             Assert.assertEquals("Expected that the call succeeds, GET/200.", Status.OK.getStatusCode(), response.getStatus());
             Assert.assertEquals("Provided API header, expected that one is returned",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
-            data = response.readEntity(new GenericType<List<LRAData>>() {});
+            data = response.readEntity(new GenericType<>() {});
         }
 
         Optional<LRAData> lraTopOptional = data.stream().filter(record -> record.getLraId().equals(lraId1)).findFirst();
@@ -164,7 +163,8 @@ public class CoordinatorApiIT extends TestBase {
         try (Response response = client.target(coordinatorUrl).request()
                 .header(LRA_API_VERSION_HEADER_NAME, version).get()) {
             Assert.assertEquals("Expected that the call succeeds, GET/200.", Status.OK.getStatusCode(), response.getStatus());
-            List<LRAData> data = response.readEntity(new GenericType<List<LRAData>>() {});
+            List<LRAData> data = response.readEntity(new GenericType<>() {
+            });
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
             Collection<URI> returnedLraIds = data.stream().map(LRAData::getLraId).collect(Collectors.toList());
@@ -174,7 +174,7 @@ public class CoordinatorApiIT extends TestBase {
         try (Response response = client.target(coordinatorUrl)
                 .queryParam(STATUS_PARAM_NAME, "Active").request().get()) {
             Assert.assertEquals("Expected that the call succeeds, GET/200.", Status.OK.getStatusCode(), response.getStatus());
-            List<LRAData> data = response.readEntity(new GenericType<List<LRAData>>() {});
+            List<LRAData> data = response.readEntity(new GenericType<>() {});
             Collection<URI> returnedLraIds = data.stream().map(LRAData::getLraId).collect(Collectors.toList());
             MatcherAssert.assertThat("Expected the coordinator returns the first started top-level LRA",
                     returnedLraIds, hasItem(lraId1));
@@ -207,11 +207,11 @@ public class CoordinatorApiIT extends TestBase {
      * Finding a status of a started LRA.
      */
     @Test
-    public void getLRAStatus() throws UnsupportedEncodingException {
+    public void getLRAStatus() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl).path(encodedLraId).path("status")
                 .request().header(LRA_API_VERSION_HEADER_NAME, version).get()) {
             Assert.assertEquals("Expected that the get status call succeeds, GET/200.", Status.OK.getStatusCode(), response.getStatus());
@@ -224,11 +224,11 @@ public class CoordinatorApiIT extends TestBase {
 
     /**
      * GET - /{lraId}/status
-     * Finding a status of a non existing LRA or wrong LRA id.
+     * Finding a status of a non-existing LRA or wrong LRA id.
      */
-    public void getLRAStatusFailed() throws UnsupportedEncodingException {
+    public void getLRAStatusFailed() {
         String nonExistingLRAId = "http://localhost:1234/Non-Existing-LRA-id";
-        String nonExistingLRAIdEncodedForUrl = URLEncoder.encode("http://localhost:1234/Non-Existing-LRA-id", StandardCharsets.UTF_8.name());
+        String nonExistingLRAIdEncodedForUrl = URLEncoder.encode("http://localhost:1234/Non-Existing-LRA-id", StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl).path(nonExistingLRAIdEncodedForUrl).path("status")
                 .request().header(LRA_API_VERSION_HEADER_NAME, version).get()) {
             Assert.assertEquals("LRA ID " + nonExistingLRAIdEncodedForUrl + " was expected not being found, GET/404.",
@@ -253,17 +253,18 @@ public class CoordinatorApiIT extends TestBase {
      * Obtaining info of a started LRA.
      */
     @Test
-    public void getLRAInfo() throws UnsupportedEncodingException {
+    public void getLRAInfo() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl).path(encodedLraId)
                 .request().header(LRA_API_VERSION_HEADER_NAME, version).get()) {
             Assert.assertEquals("Expected that the get status call succeeds, GET/200.", Status.OK.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
-            LRAData data = response.readEntity(new GenericType<LRAData>() {});
+            LRAData data = response.readEntity(new GenericType<>() {
+            });
             Assert.assertEquals("Expected the returned LRA to be the one that was started by test", lraId, data.getLraId());
             Assert.assertEquals("Expected the returned LRA being Active", LRAStatus.Active, data.getStatus());
             Assert.assertTrue("Expected the returned LRA is top-level", data.isTopLevel());
@@ -296,7 +297,7 @@ public class CoordinatorApiIT extends TestBase {
      * Starting and closing an LRA.
      */
     @Test
-    public void startCloseLRA() throws UnsupportedEncodingException {
+    public void startCloseLRA() {
         URI lraId1, lraId2;
 
         try (Response response = client.target(coordinatorUrl)
@@ -323,7 +324,7 @@ public class CoordinatorApiIT extends TestBase {
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
         }
 
-        String encodedLraId1 = URLEncoder.encode(lraId1.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId1 = URLEncoder.encode(lraId1.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path("start")
                 .queryParam(CLIENT_ID_PARAM_NAME, testRule.getMethodName() + "_2")
@@ -383,7 +384,7 @@ public class CoordinatorApiIT extends TestBase {
      * Starting and canceling an LRA.
      */
     @Test
-    public void startCancelLRA() throws UnsupportedEncodingException {
+    public void startCancelLRA() {
         URI lraId;
         try (Response response = client.target(coordinatorUrl)
                 .path("start")
@@ -402,7 +403,7 @@ public class CoordinatorApiIT extends TestBase {
         Collection<URI> returnedLraIds = lraClient.getAllLRAs().stream().map(LRAData::getLraId).collect(Collectors.toList());
         MatcherAssert.assertThat("Expected the coordinator knows about the LRA", returnedLraIds, hasItem(lraId));
         try (Response response = client.target(coordinatorUrl)
-                .path(URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name()) + "/cancel")
+                .path(URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8) + "/cancel")
                 .request()
                 .put(null)) {
             lrasToAfterFinish.clear(); // we've closed the LRA manually just now, skipping the @After
@@ -495,7 +496,7 @@ public class CoordinatorApiIT extends TestBase {
      * Renewing the time limit of the started LRA.
      */
     @Test
-    public void renewTimeLimit() throws UnsupportedEncodingException {
+    public void renewTimeLimit() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
@@ -503,7 +504,7 @@ public class CoordinatorApiIT extends TestBase {
         Assert.assertTrue("Expected the started LRA will be retrieved by LRA client get", data.isPresent());
         Assert.assertEquals("Expected not defined finish time", 0L, data.get().getFinishTime());
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
                 .path("renew")
@@ -554,11 +555,11 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via entity body.
      */
     @Test
-    public void joinLRAWithBody() throws UnsupportedEncodingException {
+    public void joinLRAWithBody() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
                 .request()
@@ -576,7 +577,7 @@ public class CoordinatorApiIT extends TestBase {
                     recoveryUrlBody, recoveryHeaderUrlMessage);
             Assert.assertEquals("Expecting returned body and location have got the same content",
                     recoveryUrlBody, recoveryUrlLocation.toString());
-            MatcherAssert.assertThat("Expected returned message contains the subpath of LRA recovery URL",
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
                     recoveryUrlBody, containsString("lra-coordinator/recovery"));
             MatcherAssert.assertThat("Expected returned message contains the LRA id",
                     recoveryUrlBody, containsString(encodedLraId));
@@ -588,11 +589,11 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via link header.
      */
     @Test
-    public void joinLRAWithLinkSimple() throws UnsupportedEncodingException {
+    public void joinLRAWithLinkSimple() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
                 .request()
@@ -610,7 +611,7 @@ public class CoordinatorApiIT extends TestBase {
                     recoveryUrlBody, recoveryHeaderUrlMessage);
             Assert.assertEquals("Expecting returned body and location have got the same content",
                     recoveryUrlBody, recoveryUrlLocation.toString());
-            MatcherAssert.assertThat("Expected returned message contains the subpath of LRA recovery URL",
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
                     recoveryUrlBody, containsString("lra-coordinator/recovery"));
             MatcherAssert.assertThat("Expected returned message contains the LRA id",
                     recoveryUrlBody, containsString(encodedLraId));
@@ -622,11 +623,11 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via link header with link rel specified.
      */
     @Test
-    public void joinLRAWithLinkCompensate() throws UnsupportedEncodingException {
+    public void joinLRAWithLinkCompensate() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         Link link = Link.fromUri("http://compensate.url:8080").rel("compensate").build();
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
@@ -641,7 +642,7 @@ public class CoordinatorApiIT extends TestBase {
             String recoveryUrlBody = response.readEntity(String.class);
             Assert.assertEquals("Expecting returned body and recovery header have got the same content",
                     recoveryUrlBody, recoveryHeaderUrlMessage);
-            MatcherAssert.assertThat("Expected returned message contains the subpath of LRA recovery URL",
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
                     recoveryUrlBody, containsString("lra-coordinator/recovery"));
         }
     }
@@ -651,13 +652,13 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via link header with link after specified.
      */
     @Test
-    public void joinLRAWithLinkAfter() throws UnsupportedEncodingException {
+    public void joinLRAWithLinkAfter() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         Link afterLink = Link.fromUri("http://after.url:8080").rel("after").build();
-        Link unknownLink = Link.fromUri("http://unknow.url:8080").rel("uknown").build();
+        Link unknownLink = Link.fromUri("http://unknow.url:8080").rel("unknown").build();
         String linkList = afterLink.toString() + "," + unknownLink.toString();
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
@@ -670,8 +671,8 @@ public class CoordinatorApiIT extends TestBase {
             String recoveryUrlBody = response.readEntity(String.class);
             Assert.assertEquals("Expecting returned body and recovery header have got the same content",
                     recoveryUrlBody, recoveryHeaderUrlMessage);
-            MatcherAssert.assertThat("Expected returned message contains the subpath of LRA recovery URL",
-                    URLDecoder.decode(recoveryUrlBody, StandardCharsets.UTF_8.name()), containsString("lra-coordinator/recovery"));
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
+                    URLDecoder.decode(recoveryUrlBody, StandardCharsets.UTF_8), containsString("lra-coordinator/recovery"));
         }
     }
 
@@ -680,10 +681,10 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via link header with wrong link format.
      */
     @Test
-    public void joinLRAIncorrectLinkFormat() throws UnsupportedEncodingException {
+    public void joinLRAIncorrectLinkFormat() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
                 .request()
@@ -721,10 +722,10 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via entity body of a wrong format.
      */
     @Test
-    public void joinLRAWrongCompensatorData() throws UnsupportedEncodingException {
+    public void joinLRAWrongCompensatorData() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
                 .request()
@@ -744,11 +745,11 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via link header missing required rel items.
      */
     @Test
-    public void joinLRAWithLinkNotEnoughData() throws UnsupportedEncodingException {
+    public void joinLRAWithLinkNotEnoughData() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
 
-        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         Link link = Link.fromUri("http://complete.url:8080").rel("complete").build();
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLraId)
@@ -769,12 +770,12 @@ public class CoordinatorApiIT extends TestBase {
      * Leaving an LRA as participant.
      */
     @Test
-    public void leaveLRA() throws UnsupportedEncodingException {
+    public void leaveLRA() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
         URI recoveryUri = lraClient.joinLRA(lraId, 0L, URI.create("http://localhost:8080"), new StringBuilder());
 
-        String encodedLRAId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLRAId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl)
                 .path(encodedLRAId)
                 .path("remove")
@@ -806,9 +807,9 @@ public class CoordinatorApiIT extends TestBase {
      * Leaving a non-existing LRA as participant.
      */
     @Test
-    public void leaveLRANonExistingFailure() throws UnsupportedEncodingException {
+    public void leaveLRANonExistingFailure() {
         String nonExistingLRAId = "http://localhost:1234/Non-Existing-LRA-id";
-        String encodedNonExistingLRAId = URLEncoder.encode(nonExistingLRAId, StandardCharsets.UTF_8.name());
+        String encodedNonExistingLRAId = URLEncoder.encode(nonExistingLRAId, StandardCharsets.UTF_8);
         try (Response response = client.target(coordinatorUrl).path(encodedNonExistingLRAId).path("remove").request()
                 .header(LRA_API_VERSION_HEADER_NAME, version).put(Entity.text("nothing"))) {
             Assert.assertEquals("Expected that the call finds not found of " + encodedNonExistingLRAId + ", PUT/404.",
@@ -821,7 +822,7 @@ public class CoordinatorApiIT extends TestBase {
 
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
-        String encodedLRAId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8.name());
+        String encodedLRAId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
         String nonExistingParticipantUrl = "http://localhost:1234/Non-Existing-participant-LRA";
         try (Response response = client.target(coordinatorUrl).path(encodedLRAId).path("remove").request()
                 .header(LRA_API_VERSION_HEADER_NAME, version).put(Entity.text(nonExistingParticipantUrl))) {

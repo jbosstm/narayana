@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import io.narayana.lra.client.NarayanaLRAClient;
@@ -43,19 +42,19 @@ public class LRAParticipant {
     @Context
     UriInfo uriInfo;
 
-    private NarayanaLRAClient lraClient = new NarayanaLRAClient();
+    private final NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
     @GET
     @Path(CREATE_OR_CONTINUE_LRA)
     @LRA(value = LRA.Type.REQUIRED, end = false)
     public Response beginLRAWithRemoteCalls(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lra1) {
-        valididateLRAIsActive("lra1 should be active", lraClient.getStatus(lra1));
+        validateLRAIsActive("lra1 should be active", lraClient.getStatus(lra1));
 
         // start a new LRA
         URI lra2 = remoteInvocation(lra1, START_NEW_LRA);
 
-        valididateLRAIsActive("lra1 should still be active", lraClient.getStatus(lra1));
-        valididateLRAIsActive("lra2 should be active", lraClient.getStatus(lra2));
+        validateLRAIsActive("lra1 should still be active", lraClient.getStatus(lra1));
+        validateLRAIsActive("lra2 should be active", lraClient.getStatus(lra2));
 
         // lra1 should be the current context for remote invocations even though lra2 is active
         if (!lra1.equals(lraClient.getCurrent())) {
@@ -65,7 +64,7 @@ public class LRAParticipant {
 
         URI lra3 = remoteInvocation(lra2, CONTINUE_LRA); // lra2 is still active, use it for the next invocation
 
-        valididateLRAIsActive("lra2 should still be active", lraClient.getStatus(lra2));
+        validateLRAIsActive("lra2 should still be active", lraClient.getStatus(lra2));
         if (!lra2.equals(lra3)) { // lra3 was a continuation of lra2
             throw new WebApplicationException(
                     Response.status(Response.Status.PRECONDITION_FAILED).entity("lra2 should equal lra3").build());
@@ -76,7 +75,7 @@ public class LRAParticipant {
         // the status of lra2 should be NOT_FOUND or not active
         try {
             // verify that the LRA is no longer active
-            valididateLRAIsNotActive("lra2 should no longer be active", lraClient.getStatus(lra2));
+            validateLRAIsNotActive(lraClient.getStatus(lra2));
         } catch (NotFoundException ignore) {
             // LRA is not active
         }
@@ -89,12 +88,12 @@ public class LRAParticipant {
     @Path(CREATE_OR_CONTINUE_LRA2)
     @LRA(value = LRA.Type.REQUIRED, end = false)
     public Response beginLRAWithRemoteCalls2(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lra1) {
-        valididateLRAIsActive("lra1 should be active", lraClient.getStatus(lra1));
+        validateLRAIsActive("lra1 should be active", lraClient.getStatus(lra1));
 
         URI lra2 = lraClient.startLRA("lra");
         lraClient.closeLRA(lra2); // use the (proprietary) client API to close the LRA started above (START_NEW_LRA)
 
-        valididateLRAIsNotActive("lra2 should no longer be active", lraClient.getStatus(lra2));
+        validateLRAIsNotActive(lraClient.getStatus(lra2));
 
         // the original LRA (lra1) will still be active (because of the end = false attribute)
         return Response.status(Response.Status.OK).entity(lra1.toASCIIString()).build();
@@ -159,15 +158,17 @@ public class LRAParticipant {
         }
     }
 
-    private void valididateLRAIsActive(String message, LRAStatus status) {
+    private void validateLRAIsActive(String message, LRAStatus status) {
         if (!status.equals(LRAStatus.Active)) {
             throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED).entity(message).build());
         }
     }
 
-    private void valididateLRAIsNotActive(String message, LRAStatus status) {
+    private void validateLRAIsNotActive(LRAStatus status) {
         if (status.equals(LRAStatus.Active)) {
-            throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED).entity(message).build());
+            throw new WebApplicationException(
+                    Response.status(Response.Status.PRECONDITION_FAILED).entity(
+                            "lra2 should no longer be active").build());
         }
     }
 }

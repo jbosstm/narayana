@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.appender;
 
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
@@ -50,7 +49,7 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
                 .filter(x -> x.getExtensionName().equals(EXTENSION_NAME))
                 .map(ExtensionDef::getExtensionProperties).findAny();
 
-        if (!checkExistence.isPresent()) {
+        if (checkExistence.isEmpty()) {
             return null;
         }
 

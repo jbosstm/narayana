@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.client.internal.proxy;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @ApplicationScoped
 @Path(ParticipantProxyResource.LRA_PROXY_PATH)
@@ -34,7 +34,7 @@ public class ParticipantProxyResource {
     public Response complete(@PathParam("lraId")String lraId,
                          @PathParam("pId")String participantId,
                          String participantData) throws URISyntaxException, UnsupportedEncodingException {
-        return proxyService.notifyParticipant(toURI(lraId, true), participantId, participantData, false);
+        return proxyService.notifyParticipant(toURI(lraId), participantId, participantData, false);
     }
 
     @Path("{lraId}/{pId}/compensate")
@@ -42,14 +42,14 @@ public class ParticipantProxyResource {
     public Response compensate(@PathParam("lraId")String lraId,
                                @PathParam("pId")String participantId,
                                String participantData) throws URISyntaxException, UnsupportedEncodingException {
-        return proxyService.notifyParticipant(toURI(lraId, true), participantId, participantData, true);
+        return proxyService.notifyParticipant(toURI(lraId), participantId, participantData, true);
     }
 
     @Path("{lraId}/{pId}")
     @DELETE
     public void forget(@PathParam("lraId")String lraId,
                        @PathParam("pId")String participantId) throws URISyntaxException, UnsupportedEncodingException {
-        proxyService.notifyForget(toURI(lraId, true), participantId);
+        proxyService.notifyForget(toURI(lraId), participantId);
     }
 
     @Path("{lraId}/{pId}")
@@ -57,7 +57,7 @@ public class ParticipantProxyResource {
     public String status(@PathParam("lraId")String lraId,
                        @PathParam("pId")String participantId) throws UnsupportedEncodingException, InvalidLRAStateException {
         try {
-            return proxyService.getStatus(toURI(lraId, true), participantId).name();
+            return proxyService.getStatus(toURI(lraId), participantId).name();
         } catch (URISyntaxException e) {
             String logMsg = LRAProxyLogger.i18NLogger.error_gettingParticipantStatus(participantId, lraId, e);
             LRAProxyLogger.logger.error(logMsg);
@@ -65,15 +65,11 @@ public class ParticipantProxyResource {
         }
     }
 
-    private URI toURI(String url, boolean decode) throws URISyntaxException, UnsupportedEncodingException {
+    private URI toURI(String url) throws URISyntaxException, UnsupportedEncodingException {
         if (url == null) {
             return null;
         }
 
-        if (decode) {
-            url = URLDecoder.decode(url, "UTF-8");
-        }
-
-        return new URI(url);
+        return new URI(URLDecoder.decode(url, StandardCharsets.UTF_8));
     }
 }

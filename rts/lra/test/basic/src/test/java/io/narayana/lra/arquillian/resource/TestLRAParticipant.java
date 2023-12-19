@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.annotation.Compensate;

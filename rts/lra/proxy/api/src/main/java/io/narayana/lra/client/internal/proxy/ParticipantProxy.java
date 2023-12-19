@@ -14,8 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 class ParticipantProxy {
-    private URI lraId;
-    private String participantId;
+    private final URI lraId;
+    private final String participantId;
     private LRAProxyParticipant participant;
     private Future<Void> future;
     private boolean compensate;
@@ -82,7 +82,7 @@ class ParticipantProxy {
         return compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
     }
 
-    Optional<ParticipantStatus> getStatus() throws InvalidLRAStateException {
+    Optional<ParticipantStatus> getStatus() {
         if (future == null) {
             return Optional.empty();
         }

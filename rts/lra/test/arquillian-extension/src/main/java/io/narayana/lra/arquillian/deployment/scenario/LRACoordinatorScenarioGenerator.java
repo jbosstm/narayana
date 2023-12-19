@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.deployment.scenario;
 
 import io.narayana.lra.arquillian.deployment.WildflyLRACoordinatorDeployment;
@@ -49,7 +48,7 @@ public class LRACoordinatorScenarioGenerator extends ScenarioGeneratorBase imple
         List<DeploymentDescription> descriptions = new ArrayList<>();
 
         // Fetch all properties in the section EXTENSION_NAME
-        Map<String, String> extensionProperties = getExtensionProperties(EXTENSION_NAME);
+        Map<String, String> extensionProperties = getExtensionProperties();
 
         // If the section of this extension is not in the arquillian.xml file, it means that this extension
         // does not need to start. As a consequence, an empty list of DeploymentDescription is returned

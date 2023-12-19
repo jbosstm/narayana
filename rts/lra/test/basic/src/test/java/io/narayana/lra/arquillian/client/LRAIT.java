@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.client;
 
 import io.narayana.lra.arquillian.Deployer;
@@ -29,7 +28,6 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 
 public class LRAIT extends TestBase {
 
@@ -114,7 +112,7 @@ public class LRAIT extends TestBase {
 
     /**
      * JBTM-3223 Validate LRA behaviour when multiple LRA's are active on the same thread
-     *
+     * <p>
      * when multiple LRA's are active on the same thread that as one LRA finishes that:
      * a) the next one is handled correctly
      * b) creating another one still works fine

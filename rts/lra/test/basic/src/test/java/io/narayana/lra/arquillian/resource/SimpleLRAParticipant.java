@@ -3,7 +3,6 @@
    SPDX-License-Identifier: Apache-2.0
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -29,7 +28,7 @@ public class SimpleLRAParticipant {
     public static final String START_LRA_PATH = "start-lra";
     public static final String RESET_ACCEPTED_PATH = "reset-accepted";
 
-    private static AtomicBoolean accepted = new AtomicBoolean(false);
+    private static final AtomicBoolean accepted = new AtomicBoolean(false);
 
     @GET
     @Path(START_LRA_PATH)

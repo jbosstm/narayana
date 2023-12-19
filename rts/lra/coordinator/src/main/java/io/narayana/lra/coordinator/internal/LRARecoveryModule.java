@@ -207,27 +207,6 @@ public class LRARecoveryModule implements RecoveryModule {
                 }
             }
         });
-
-    }
-
-    public void getRecoveringLRAs(Map<URI, LongRunningAction> lras) {
-        InputObjectState aa_uids = new InputObjectState();
-
-        // for LRA call reactivate and add it to the input list
-        if (getUids(_transactionType, aa_uids)) {
-            Collection<Uid> uids = processTransactions(aa_uids);
-            uids.forEach(uid -> {
-                int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, uid);
-                RecoveringLRA lra = new RecoveringLRA(service, uid, status);
-
-                if (lra.isActivated()) {
-                    lras.put(lra.getId(), lra);
-                } else {
-                    LRALogger.logger.infof("LRARecoverModule: failed to activate LRA record %s",
-                            uid.fileStringForm());
-                }
-            });
-        }
     }
 
     /**
@@ -291,7 +270,6 @@ public class LRARecoveryModule implements RecoveryModule {
                 }
 
                 return false;
-
             }
         }
     }
@@ -334,7 +312,7 @@ public class LRARecoveryModule implements RecoveryModule {
         } while (true);
     }
 
-    private LRAService service;
+    private final LRAService service;
 
     // 'type' within the Object Store for LRAs.
     private final String _transactionType = LongRunningAction.getType();
