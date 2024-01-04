@@ -57,6 +57,7 @@
     <version.postgresql>42.6.0</version.postgresql>
     <version.quarkus>3.2.6.Final</version.quarkus>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
+    <version.asm>9.6</version.asm>
   </properties>
 
   <dependencyManagement>
@@ -187,7 +188,11 @@
         <version>${version.jboss.profiler.jvmti}</version>
         <scope>test</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.ow2.asm</groupId>
+        <artifactId>asm</artifactId>
+        <version>${version.asm}</version>
+      </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-core</artifactId>
