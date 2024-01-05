@@ -601,6 +601,7 @@
             <csv destfile="${output.report.dir}/report.csv"/>
             <xml destfile="${output.report.dir}/report.xml"/>
         </jacoco:report>
+        <fail if="failed-tests" message="jacoco report generation failed"/>
     </target>
 
     <!--
