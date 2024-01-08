@@ -348,25 +348,25 @@ function clone_as {
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
-    echo "Updating existing checkout of WildFly"
+#    echo "Updating existing checkout of WildFly"
     cd jboss-as
 
-    git remote | grep upstream
-    if [ $? -ne 0 ]; then
-      git remote add upstream https://github.com/wildfly/wildfly.git
-    fi
+#    git remote | grep upstream
+#    if [ $? -ne 0 ]; then
+#      git remote add upstream https://github.com/wildfly/wildfly.git
+#    fi
     #Abort any partially complete rebase
-    git rebase --abort
-    git checkout 5_11_BRANCH
-    [ $? -eq 0 ] || fatal "git checkout 5_11_BRANCH failed"
-    git fetch
-    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_11_BRANCH
-    [ $? -eq 0 ] || fatal "git reset 5_11_BRANCH failed"
-    git clean -f -d -x
-    [ $? -gt 1 ] || fatal "git clean failed"
-    git rebase --abort
-    rm -rf .git/rebase-apply
+    #git rebase --abort
+    #git checkout 5_11_BRANCH
+    #[ $? -eq 0 ] || fatal "git checkout 5_11_BRANCH failed"
+    #git fetch
+    #[ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
+    #git reset --hard jbosstm/5_11_BRANCH
+    #[ $? -eq 0 ] || fatal "git reset 5_11_BRANCH failed"
+    #git clean -f -d -x
+    #[ $? -gt 1 ] || fatal "git clean failed"
+    #git rebase --abort
+    #rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
     git clone https://github.com/jbosstm/jboss-as.git -b 5_11_BRANCH -o jbosstm
@@ -374,24 +374,24 @@ function clone_as {
 
     cd jboss-as
 
-    git remote add upstream https://github.com/wildfly/wildfly.git
+    #git remote add upstream https://github.com/wildfly/wildfly.git
   fi
 
-  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
-  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-  [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
+  #[ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+  #[ $? -eq 0 ] || fatal "git fetch of pulls failed"
+  #[ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
+  #[ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+  #[ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
 
-  git fetch upstream
-  echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/master)
-  echo "This is the AS_BRANCH $AS_BRANCH commit"
-  echo $(git rev-parse HEAD)
+ # git fetch upstream
+#  echo "This is the JBoss-AS commit"
+#  echo $(git rev-parse upstream/master)
+#  echo "This is the AS_BRANCH $AS_BRANCH commit"
+#  echo $(git rev-parse HEAD)
 
-  echo "Rebasing the wildfly upstream/23.x on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase --ff-only upstream 23.x
-  [ $? -eq 0 ] || fatal "git rebase failed"
+#  echo "Rebasing the wildfly upstream/23.x on top of the AS_BRANCH $AS_BRANCH"
+#  git pull --rebase --ff-only upstream 23.x
+#  [ $? -eq 0 ] || fatal "git rebase failed"
   
   if [ $REDUCE_SPACE = 1 ]; then
     echo "Deleting git dir to reduce disk usage"
