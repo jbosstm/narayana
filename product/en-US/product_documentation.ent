@@ -1,6 +1,6 @@
 <!ENTITY PRODUCT "Narayana">
 <!ENTITY BOOKID "Narayana_Documentation">
-<!ENTITY VERSION "6.0.3.Final-SNAPSHOT-SNAPSHOT">
+<!ENTITY VERSION "6.0.2.Final-SNAPSHOT">
 <!ENTITY YEAR "2014">
 <!ENTITY HOLDER "JBoss.org">
 <!ENTITY APPSERVER "WildFly Application Server">
