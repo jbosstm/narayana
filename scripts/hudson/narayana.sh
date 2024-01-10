@@ -768,7 +768,7 @@ function qa_tests_once {
 
     if [ $codeCoverage = true ]; then
       echo "generating test coverage report"
-      ant -f run-tests.xml jacoco-report
+      ant -f run-tests.xml jacoco-report -v
     fi
 
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)

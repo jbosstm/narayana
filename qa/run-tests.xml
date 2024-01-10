@@ -568,25 +568,20 @@
             <structure name="Narayana QA Report">
                 <classfiles>
                     <fileset dir="..">
+                        <exclude name="**/antbuildsystem/**"/>
                         <exclude name="**/idlj/**"/>
+                        <exclude name="**/compensations/**"/>
                         <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
-                        <exclude name="**/XTS/localjunit/unit/**"/>
-                        <exclude name="**/blacktie/blacktie-admin-services/**"/>
-                        <exclude name="**/blacktie/blacktie/**"/>
-                        <exclude name="**/blacktie/integration-tests/**"/>
-                        <exclude name="**/blacktie/wildfly*/**"/>
-                        <exclude name="**/blacktie/btadmin/**"/>
+                        <exclude name="**/XTS/**"/>
                         <exclude name="**/jboss-as/**"/>
                         <exclude name="**/narayana-full/**"/>
                         <exclude name="**/qa/**"/>
                         <exclude name="**/tools/**"/>
-                        <exclude name="**/apache-karaf*/**"/>
-                        <exclude name="**/hornetq*/**"/>
-                        <exclude name="**/lra*/**"/>
+                        <exclude name="**/rts/**"/>
                         <exclude name="**/vertx/**"/>
-                        <exclude name="**/openjdk-orb-**.jar"/>
-                        <exclude name="**/ext/jacocoant.jar"/>
-                        <exclude name="**/dependenc*/**.jar"/>
+                        <exclude name="**/STM/**"/>
+                        <exclude name="**/txbridge/**"/>
+                        <exclude name="**/ext/**"/>
                     </fileset>
                 </classfiles>
                 <sourcefiles encoding="UTF-8">
