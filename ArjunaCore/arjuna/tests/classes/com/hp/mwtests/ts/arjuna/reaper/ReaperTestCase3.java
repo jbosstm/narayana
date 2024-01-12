@@ -229,7 +229,14 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
         // byteman rules will ensure that the reaper and reaperworker rendezvous gte deleted
         // under this call
 
+        long start = System.currentTimeMillis();
+
         TransactionReaper.terminate(false);
+
+        long duration = System.currentTimeMillis() - start;
+
+        // should complete quickly
+        assertTrue(duration < 500);
 
         assertEquals(0, reaper.numberOfTransactions());
 
