@@ -100,6 +100,7 @@ public class ReaperElementManager
         flushPending();
         for(ReaperElement reaperElement : elementsOrderedByTimeout) {
             reaperElement.setNextCheckAbsoluteMillis(0);
+            reaperElement.setTransactionTimeoutAbsoluteMillis(0);
         }
     }
 
