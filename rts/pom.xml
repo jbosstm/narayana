@@ -91,14 +91,9 @@
         </plugins>
       </build>
     </profile>
-      <profile>
-        <id>community</id>
-        <modules>
-          <module>lra</module>
-        </modules>
-      </profile>
     </profiles>
   <modules>
     <module>at</module>
+    <module>lra</module>
   </modules>
 </project>
