@@ -232,7 +232,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>sybasejbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -246,7 +246,7 @@
       <dependencies>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
-          <artifactId>ojdbc8</artifactId>
+          <artifactId>ojdbc10</artifactId>
           <version>${version.com.oracle}</version>
           <scope>test</scope>
         </dependency>
@@ -260,7 +260,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>oraclejbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -274,7 +274,6 @@
         <dependency>
           <groupId>com.ibm.db2</groupId>
           <artifactId>jcc</artifactId>
-          <version>${version.com.ibm}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -287,7 +286,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>db2jbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -314,7 +313,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>postgresjbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -328,7 +327,6 @@
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>${version.mysql}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -341,7 +339,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mysqljbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -368,7 +366,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mariadbjbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -398,7 +396,7 @@
               <systemProperties>
                 <property>
                   <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                  <value>mssqljbossts-properties.xml</value>
+                  <value>dbjbossts-properties.xml</value>
                 </property>
               </systemProperties>
             </configuration>
