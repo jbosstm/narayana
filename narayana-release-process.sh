@@ -41,29 +41,10 @@ if [[ $M2OK == n* ]]
 then
   exit
 fi
-read -p "To upload an lra-coordinator image to quay.io you will need a quay.io account with permission to push to jbosstm. Do you have this (if you have access but don't want to upload, answer n* and then the next question)?: " QUAYIOOK
-if [[ $QUAYIOOK == n* ]]
-then
-  read -p "Do you want to continue without uploading lra-coordinator image?" NOQUAYIO
-  if [[ $NOQUAYIO == n* ]]
-  then
-    exit
-  fi
-  QUAYIOOK=n
-fi
 read -p "Until ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT is fixed you will need to go to https://issues.jboss.org/projects/JBTM?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=released-unreleased, rename (Actions -> Edit) 5.next to $CURRENT, create a new 5.next version, Actions -> Release on the new $CURRENT. Have you done this? y/n " JIRAOK
 if [[ $JIRAOK == n* ]]
 then
   exit
-fi
-
-if [[ $QUAYIOOK != n* ]]
-then
-  # Do this early to prevent later interactive need
-  echo "logging in to quay.io ..."
-  # log in to quay.io
-  podman login quay.io
-  [ $? -ne 0 ] && echo "Login to quay.io was not succesful" && exit
 fi
 
 git fetch upstream --tags
@@ -132,16 +113,10 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
-  echo 1>&2 Could not install narayana
-  exit
-fi
-./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
-if [[ $? != 0 ]]
-then
-  echo 1>&2 Could not deploy narayana to nexus
+  echo 1>&2 Could not build narayana
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
@@ -152,34 +127,6 @@ then
 fi
 cd -
 
-# Building and pushing the lra coordinator docker image
-cd ~/tmp/narayana/$CURRENT/sources/jboss-dockerfiles/lra/lra-coordinator
-git checkout $CURRENT
-if [[ $? != 0 ]]
-then
-  echo 1>&2 jboss-dockerfiles: Tag $CURRENT did not exist
-  exit
-fi
-
-if [[ $QUAYIOOK != n* ]]
-then
-  echo "building, tagging and pushing podman images to quay.io ..."
-#read -p "Have you logged in (podman login quay.io), if not you will be prompted (y/n): " ok
-#if [[ $ok == y* ]]; then
-  # build the lra-coordinator image
-  podman build --tag lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
-  # tag it and push it
-  podman tag lra-coordinator quay.io/jbosstm/lra-coordinator:${CURRENT}
-  podman tag lra-coordinator quay.io/jbosstm/lra-coordinator:latest
-
-  # push the image
-  podman push quay.io/jbosstm/lra-coordinator:${CURRENT}
-  podman push quay.io/jbosstm/lra-coordinator:latest
-  # the image will appear in https://quay.io/repository/jbosstm/lra-coordinator?tab=tags
-#else
-#  echo "alternatively run the above commands manually"
-#fi
-fi
 
 # not sure why we need to look at CI at this point so commenting it out
 # xdg-open https://ci-jenkins-csb-narayana.apps.ocp-c1.prod.psi.redhat.com/ &
