@@ -92,10 +92,6 @@ else
   read
 fi
 
-rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
-rm -rf $PWD/localrepo
-
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 if [[ $? != 0 ]]
