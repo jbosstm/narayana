@@ -109,10 +109,16 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
 if [[ $? != 0 ]]
 then
-  echo 1>&2 Could not build narayana
+  echo 1>&2 Could not install narayana
+  exit
+fi
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+if [[ $? != 0 ]]
+then
+  echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
