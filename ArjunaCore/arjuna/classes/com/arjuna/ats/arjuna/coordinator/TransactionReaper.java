@@ -713,23 +713,23 @@ public class TransactionReaper
 
         synchronized (this) {
             _inShutdown = true;
+            /*
+                * If the caller does not want to wait for the normal transaction timeout
+                * periods to elapse before terminating, then we first start by enabling
+                * our time machine!
+                */
+
+            if (!waitForTransactions) {
+                _reaperElements.setAllTimeoutsToZero();
+                nextDynamicCheckTime.set(0);
+                notifyAll();
+            }
 
             /*
                 * Wait for all of the transactions to
                 * terminate normally.
                 */
             while (!_reaperElements.isEmpty()) {
-                /*
-                 * If the caller does not want to wait for the normal transaction timeout
-                 * periods to elapse before terminating, then we first start by enabling
-                 * our time machine!
-                 */
-
-                if (!waitForTransactions) {
-                    _reaperElements.setAllTimeoutsToZero();
-                    nextDynamicCheckTime.set(0);
-                    notifyAll();
-                }
                 
                 try {
                     this.wait(1000);
