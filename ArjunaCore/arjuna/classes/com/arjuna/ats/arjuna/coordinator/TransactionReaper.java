@@ -568,7 +568,7 @@ public class TransactionReaper
             throw new IllegalStateException(tsLogger.i18NLogger.get_coordinator_TransactionReaper_1());
         }
 
-        if (_dynamic && reaperElement.getNextCheckAbsoluteMillis() < nextDynamicCheckTime.get()) {
+        if (reaperElement.getNextCheckAbsoluteMillis() < nextDynamicCheckTime.get()) {
             updateCheckTimeForEarlierInsert(reaperElement.getNextCheckAbsoluteMillis());
         }
     }
