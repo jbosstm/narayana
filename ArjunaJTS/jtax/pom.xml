@@ -217,9 +217,9 @@
       <build>
         <plugins>
           <plugin>
-            <inherited>false</inherited>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
+            <inherited>false</inherited>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
