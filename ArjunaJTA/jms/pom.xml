@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.jboss.narayana.jta</groupId>
     <artifactId>narayana-jta-all</artifactId>
-    <version>7.0.1.Final</version>
+    <version>7.0.2.Final-SNAPSHOT</version>
   </parent>
   <artifactId>jms</artifactId>
   <name>Narayana: ArjunaJTA JMS</name>
