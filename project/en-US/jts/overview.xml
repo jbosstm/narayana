@@ -143,9 +143,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-img-2phase.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>2-Phase commit protocol</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 

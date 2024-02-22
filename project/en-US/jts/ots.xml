@@ -48,9 +48,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-ots_architecture.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>OTS architecture</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -1541,12 +1541,12 @@
                 <imageobject>
                     <imagedata fileref="images/jts-top_level_transaction_current.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         Creation of a top-level transaction using
                         <interfacename>Current</interfacename>
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <figure>
@@ -1558,12 +1558,12 @@
                 <imageobject>
                     <imagedata fileref="images/jts-subtransaction_current.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         Creation of a subtransaction using
                         <interfacename>Current</interfacename>
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -1708,9 +1708,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-resource_nested_transactions.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Resource interface and nested transactions</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>
@@ -1917,11 +1917,11 @@
                 <imageobject>
                     <imagedata fileref="images/jts-register_subtran_aware.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         <methodname>register_subtran_aware</methodname>
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <figure>
@@ -1933,11 +1933,11 @@
                 <imageobject>
                     <imagedata fileref="images/jts-register_resource.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         <methodname>register_resource</methodname>
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>
@@ -2033,10 +2033,10 @@
                 <imageobject>
                     <imagedata fileref="images/jts-interface_relationship.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Relationship between Control, Resource, SubtransactionAwareResource, and Synchronization
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -2101,14 +2101,14 @@
                 <imageobject>
                     <imagedata fileref="images/jts-control_and_resources.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         Relationship between a transaction
                         <interfacename>Control</interfacename>
                         and the resources registered
                         with it
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>
@@ -2137,9 +2137,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-subtransaction-commit.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Subtransaction commit</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>
@@ -2156,9 +2156,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-subtransaction-rollback.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Subtransaction rollback</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>
@@ -2183,9 +2183,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-top-level-commit.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Top-level commit</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <figure>
@@ -2194,9 +2194,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-top-level-rollback.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Top-level rollback</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -2351,9 +2351,9 @@
                 <imageobject>
                     <imagedata fileref="images/jts-resource-and-recoverycoordinator.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Resource and RecoveryCoordinator</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
     </section>

@@ -163,11 +163,11 @@
                     <imageobject>
                         <imagedata fileref="images/jts-jbossts-class-hierarchy.png" format="PNG" />
                     </imageobject>
-                    <textobject>
+                    <caption>
                         <para>&PARENT_PRODUCT;
                             class hierarchy
                         </para>
-                    </textobject>
+                    </caption>
                 </mediaobject>
             </figure>
             <para>

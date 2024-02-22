@@ -233,9 +233,9 @@
                         <imageobject>
                             <imagedata fileref="images/jts-sequence-diagram.png" format="PNG" />
                         </imageobject>
-                        <textobject>
+                        <caption>
                             <para>Sequence diagram</para>
-                        </textobject>
+                        </caption>
                     </mediaobject>
                 </figure>
             </section>

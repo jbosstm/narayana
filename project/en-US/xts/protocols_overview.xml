@@ -101,7 +101,7 @@
                 <imageobject>
                     <imagedata fileref="images/xts-fig-ws-c-overview.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         The WS-C specification speaks of
                         <firstterm>activities</firstterm>
@@ -109,7 +109,7 @@
                         involving one or more parties. These parties may be services, components, or even objects. At this level, an
                         activity is minimally specified and is simply created, run, and then completed.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -152,9 +152,9 @@
                 <imageobject>
                     <imagedata fileref="images/xts-fig-wsc-four-roles.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>Four roles in WS-C</para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -264,9 +264,9 @@
                     <imageobject>
                         <imagedata fileref="images/xts-fig-wsc-wst-interop.png" format="PNG" />
                     </imageobject>
-                    <textobject>
+                    <caption>
                         <para>WSC WST Interop</para>
-                    </textobject>
+                    </caption>
                 </mediaobject>
             </figure>
 
@@ -339,9 +339,9 @@
                     <imageobject>
                         <imagedata fileref="images/xts-ws-trans-global-view.png" format="PNG" />
                     </imageobject>
-                    <textobject>
+                    <caption>
                         <para>Global view</para>
-                    </textobject>
+                    </caption>
                 </mediaobject>
             </figure>
 
@@ -369,9 +369,9 @@
                     <imageobject>
                         <imagedata fileref="images/xts-fig-ws-trans-services-participants.png" format="PNG" />
                     </imageobject>
-                    <textobject>
+                    <caption>
                         <para>Services and Participants</para>
-                    </textobject>
+                    </caption>
                 </mediaobject>
             </figure>
             <para>
@@ -625,9 +625,9 @@
                         <imageobject>
                             <imagedata fileref="images/xts-fig-2pc-participant-state-transitions.png" format="PNG" />
                         </imageobject>
-                        <textobject>
+                        <caption>
                             <para>2PC state transitions</para>
-                        </textobject>
+                        </caption>
                     </mediaobject>
                 </figure>
 
@@ -662,9 +662,9 @@
                         <imageobject>
                             <imagedata fileref="images/xts-fig-at-model.png" format="PNG" />
                         </imageobject>
-                        <textobject>
+                        <caption>
                             <para>AT Model</para>
-                        </textobject>
+                        </caption>
                     </mediaobject>
                 </figure>
             </section> <!-- <title>Atomic Transactions </title> -->
@@ -875,9 +875,9 @@
                         <imageobject>
                             <imagedata fileref="images/xts-fig-bawpc-state-transitions.png" format="PNG" />
                         </imageobject>
-                        <textobject>
+                        <caption>
                             <para>Transitions</para>
-                        </textobject>
+                        </caption>
                     </mediaobject>
                 </figure>
 
@@ -895,9 +895,9 @@
                         <imageobject>
                             <imagedata fileref="images/xts-fig-bawcc-state-transitions.png" format="PNG" />
                         </imageobject>
-                        <textobject>
+                        <caption>
                             <para>Transitions</para>
-                        </textobject>
+                        </caption>
                     </mediaobject>
                 </figure>
             </section> <!-- <title>Business Activities</title> -->

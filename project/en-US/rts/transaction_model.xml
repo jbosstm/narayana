@@ -50,9 +50,9 @@
                 <imageobject>
                     <imagedata fileref="images/rts-architecture.png" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <phrase>Architecture image</phrase>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>These components are enumerated below and discussed in the following sections:</para>
@@ -103,9 +103,9 @@
                 <imageobject>
                     <imagedata fileref="images/rts-state_transitions.png" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <phrase>StateTransitions image</phrase>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>

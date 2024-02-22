@@ -202,7 +202,7 @@
                 <imageobject>
                     <imagedata fileref="images/independent_top_level_action.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         a typical nesting of atomic actions, where action B is nested within action A. Although atomic action C is
                         logically nested within action B (it had its Begin operation invoked while B was active) because
@@ -211,7 +211,7 @@
                         structure. Because of the nature of independent top-level actions they should be used with caution and only
                         in situations where their use has been carefully examined.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>

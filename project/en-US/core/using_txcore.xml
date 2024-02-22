@@ -363,9 +363,9 @@
                                     <imageobject>
                                         <imagedata fileref="images/single_object_model.png" format="PNG" />
                                     </imageobject>
-                                    <textobject>
+                                    <caption>
                                         <para>Single Object Model</para>
-                                    </textobject>
+                                    </caption>
                                 </mediaobject>
                             </figure>
                         </listitem>
@@ -384,9 +384,9 @@
                                     <imageobject>
                                         <imagedata fileref="images/multiple_object_model.png" format="PNG" />
                                     </imageobject>
-                                    <textobject>
+                                    <caption>
                                         <para>Multiple Object Model</para>
-                                    </textobject>
+                                    </caption>
                                 </mediaobject>
                             </figure>
                         </listitem>

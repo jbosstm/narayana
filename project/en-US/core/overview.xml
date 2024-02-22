@@ -282,7 +282,7 @@
                 <imageobject>
                     <imagedata width="440" fileref="images/core-txoj-lifecycle.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <orderedlist>
                         <listitem>
                             <para>
@@ -323,7 +323,7 @@
                             </para>
                         </listitem>
                     </orderedlist>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <note>

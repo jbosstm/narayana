@@ -183,7 +183,7 @@
                 <imageobject>
                     <imagedata fileref="images/transactions-overview-fig-web-services-context-flow.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         As shown in Figure 1, whenever an application message is sent, the Client API automatically creates a context and
                         embeds it into the message. Similarly, any transaction-aware services are able to extract that
@@ -192,7 +192,7 @@
                         approach is that the business logic contained within the client application and services are not
                         peppered with transaction-processing code.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
     </section>
@@ -236,7 +236,7 @@
                 <imageobject>
                     <imagedata fileref="images/transactions-overview-fig-two-phase-commit-overview.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <itemizedlist>
                         <listitem>
                             <para>A transaction is started, and some work is performed.</para>
@@ -259,7 +259,7 @@
                                 in their original states.</para>
                         </listitem>
                     </itemizedlist>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <note>
@@ -531,7 +531,7 @@
                 <imageobject>
                     <imagedata fileref="images/transactions-overview-fig-interpositions.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         The diagram shows a
                         <firstterm>top-level coordinator</firstterm>
@@ -551,7 +551,7 @@
                         messages to its participants, combining their responses and returning them back to its parent
                         coordinator.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <para>

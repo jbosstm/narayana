@@ -86,7 +86,7 @@
             <imageobject>
                 <imagedata fileref="images/xts-fig-web-services-transaction.png" format="PNG" />
             </imageobject>
-            <textobject>
+            <caption>
                 <variablelist>
                     <varlistentry>
                         <term>Transaction Service</term>
@@ -121,7 +121,7 @@
                         </listitem>
                     </varlistentry>
                 </variablelist>
-            </textobject>
+            </caption>
         </mediaobject>
     </figure>
 
@@ -213,7 +213,7 @@
                 <imageobject>
                     <imagedata fileref="images/xts-fig-web-services-context-flow.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         Whenever an application message is sent, the XTS Client API automatically creates a context and embeds it into
                         the message. Similarly, any transaction-aware services can extract that context using the XTS service-side
@@ -222,7 +222,7 @@
                         transaction was initiated elsewhere on the Web. The value of this approach is that the business logic contained
                         within the client application and services are not peppered with transaction-processing code.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
     </section>
@@ -320,7 +320,7 @@
                 <imageobject>
                     <imagedata fileref="images/xts-fig-two-phase-commit-overview.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <itemizedlist>
                         <listitem>
                             <para>A transaction is started, and some work is performed.</para>
@@ -345,7 +345,7 @@
                             </para>
                         </listitem>
                     </itemizedlist>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 
@@ -635,7 +635,7 @@
                 <imageobject>
                     <imagedata fileref="images/xts-fig-interpositions.png" format="PNG" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <para>
                         The diagram shows a
                         <firstterm>top-level coordinator</firstterm>
@@ -656,7 +656,7 @@
                         messages to its participants, combining their responses and returning them back to its parent
                         coordinator.
                     </para>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
 

@@ -22,9 +22,9 @@
             <imageobject>
                 <imagedata fileref="Common_Content/images/title_logo.svg" format="SVG" />
             </imageobject>
-            <textobject>
+            <caption>
                 <phrase>Logo</phrase>
-            </textobject>
+            </caption>
         </inlinemediaobject>
     </corpauthor>
     <!--FOR PUBLICAN -->

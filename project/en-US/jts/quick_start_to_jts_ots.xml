@@ -220,9 +220,9 @@
                 <imageobject>
                     <imagedata fileref="extras/interposition.gif" format="GIF" />
                 </imageobject>
-                <textobject>
+                <caption>
                     <phrase>Interposition</phrase>
-                </textobject>
+                </caption>
             </mediaobject>
         </figure>
         <note>
