@@ -1,5 +1,5 @@
 #!/bin/sh -e
-MAVEN_VERSION=3.2.5
+MAVEN_VERSION=3.3.9
 MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.zip
 
 if [ -d tools ]; then
