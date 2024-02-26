@@ -361,7 +361,7 @@
                                 <title>Single Object Model</title>
                                 <mediaobject>
                                     <imageobject>
-                                        <imagedata fileref="images/single_object_model.png" format="PNG" />
+                                        <imagedata fileref="images/appendix-single_object_model.png" format="PNG" />
                                     </imageobject>
                                     <caption>
                                         <para>Single Object Model</para>
@@ -382,7 +382,7 @@
                                 <title>Multiple Object Model</title>
                                 <mediaobject>
                                     <imageobject>
-                                        <imagedata fileref="images/multiple_object_model.png" format="PNG" />
+                                        <imagedata fileref="images/appendix-multiple_object_model.png" format="PNG" />
                                     </imageobject>
                                     <caption>
                                         <para>Multiple Object Model</para>

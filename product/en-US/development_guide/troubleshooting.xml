@@ -107,7 +107,7 @@ uba.close();
             <title>Successful close of activity</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="images/fig-pcp-race-success.png" format="PNG" />
+                    <imagedata fileref="images/development-guide-fig-pcp-race-success.png" format="PNG" />
                 </imageobject>
             </mediaobject>
         </figure>
@@ -207,7 +207,7 @@ uba.close();
         <title>Failure to close the activity</title>
         <mediaobject>
             <imageobject>
-                <imagedata fileref="images/fig-pcp-race-failure.png" format="PNG" />
+                <imagedata fileref="images/development-guide-fig-pcp-race-failure.png" format="PNG" />
             </imageobject>
         </mediaobject>
     </figure>
