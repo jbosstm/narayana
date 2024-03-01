@@ -343,6 +343,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				    }
 				}
 
+				// This is used to ensure that if xa_rollback fails
+				boolean destroyState = true;
 				try
 				{
 					_theXAResource.rollback(_tranID);
@@ -401,6 +403,14 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 								destroyState();
 								break;
 							}
+						case XAException.XAER_RMFAIL:
+							if (_prepared) {
+								// We do not want to delete the state on disk because that would prevent the recovery
+								// manager from reattempting recovery and XAER_RMFAIL out of xa_rollback is transient
+								// failure
+								destroyState = false;
+							}
+							break;
 						default:
 							destroyState();
 
@@ -422,7 +432,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				{
 				    _phaseTwoStarted = true;
 					if (_prepared)
-						destroyState();
+						if (destroyState)
+							destroyState();
 					else
 						removeConnection();
 				}
