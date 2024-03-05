@@ -84,8 +84,8 @@ public class Cleanup01
 				{
 					System.err.println("Cleanup01.main: " + s);
 					System.err.println("SQL state is: " + s.getSQLState());
-					if (s.getSQLState() == "42000" ||	/* no table to drop */
-							s.getSQLState() == "42S02" ||	/* table not found */
+					if ("42000".equals(s.getSQLState()) ||	/* no table to drop */
+							"42S02".equals(s.getSQLState()) ||	/* table not found */
 							s.getSQLState() == null)		/* connection failed */
 					{
 						trying = false;
