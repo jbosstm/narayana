@@ -12,6 +12,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
 
@@ -28,12 +29,13 @@ public class LRAParentAbstractRecord extends AbstractRecord {
     private boolean committed;
     private URI parentId;
     private URI childId;
+    private LRAService lraService;
 
     public LRAParentAbstractRecord() {
         super();
     }
 
-    public LRAParentAbstractRecord(BasicAction parent, LongRunningAction child) {
+    public LRAParentAbstractRecord(BasicAction parent, LongRunningAction child, LRAService lraService) {
         super(new Uid());
         // use theChild to drive B but only if B committed, so ...
 
@@ -41,6 +43,7 @@ public class LRAParentAbstractRecord extends AbstractRecord {
             parentId = ((LongRunningAction) parent).getId();
         }
 
+        this.lraService = lraService;
         childId = child.getId();
         committed = false; // assume default as it's the safest route to take if something goes wrong
     }
@@ -140,7 +143,14 @@ public class LRAParentAbstractRecord extends AbstractRecord {
     @Override
     public int topLevelCommit() {
         LongRunningAction parent = getParentLRA();
-        LongRunningAction child = getChildLRA();
+        LongRunningAction child;
+
+        try {
+            child = getChildLRA();
+        } catch (Exception e) {
+            // the child must already have cancelled
+            child = null;
+        }
 
         if (parent == null || child == null) {
             return TwoPhaseOutcome.FINISH_ERROR;
@@ -158,6 +168,11 @@ public class LRAParentAbstractRecord extends AbstractRecord {
 
         if (child.finishLRA(false) != TwoPhaseOutcome.FINISH_OK) {
             return TwoPhaseOutcome.HEURISTIC_HAZARD;
+        }
+
+        if (committed) {
+            // the parent has committed so clean up the nested LRA
+            lraService.finished(getChildLRA(), true);
         }
 
         return TwoPhaseOutcome.FINISH_OK;
