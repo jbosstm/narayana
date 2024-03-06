@@ -6,6 +6,7 @@
 package io.narayana.lra.coordinator.domain.model;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -55,6 +56,7 @@ import java.net.URISyntaxException;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -720,6 +722,19 @@ public class LRATest {
             // there should be just 1 compensation (the first nested LRA)
             assertEquals("multiLevelNestedActivity: step 9 (called test path " +
                     resourcePath.getUri() + ")",1, compensateCount.get());
+        }
+
+        // verify that the coordinator does not return any LRAs
+        // ie assert lraClient.getAllLRAs().isEmpty() but for clarity check each one
+        List<LRAData> lras = lraClient.getAllLRAs();
+        LRAData parentData = new LRAData();
+        parentData.setLraId(lra);
+        assertFalse("parent LRA should not have been returned", lras.contains(parentData));
+
+        for (URI uri : uris) {
+            LRAData nestedData = new LRAData();
+            nestedData.setLraId(uri);
+            assertFalse("child LRA should not have been returned", lras.contains(nestedData));
         }
     }
 
