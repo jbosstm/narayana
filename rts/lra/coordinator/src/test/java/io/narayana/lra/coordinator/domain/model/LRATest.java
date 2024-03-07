@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -789,6 +790,28 @@ public class LRATest {
         assertEquals(compensations + 1, compensateCount.get());
         LRAStatus status = getStatus(new URI(lraId));
         assertTrue("LRA should have cancelled", status == null || status == LRAStatus.Cancelled);
+    }
+
+    @Test
+    public void testTimeOutWithNoParticipants() {
+        URI lraId = lraClient.startLRA(null, "testTimeLimit", 100L, ChronoUnit.MILLIS);
+
+        // a) wait for the time limit to be reached
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // b) verify that the coordinator either removed it from its cache or it cancelled the LRA
+        LRAStatus status = getStatus(lraId);
+        assertTrue("LRA should have cancelled but it's in state " + status,
+                status == null || status == LRAStatus.Cancelled);
+        try {
+            lraClient.cancelLRA(lraId);
+            fail("should not be able to cancel a timed out LRA");
+        } catch (WebApplicationException ignore) {
+        }
     }
 
     private void runLRA(boolean cancel) {

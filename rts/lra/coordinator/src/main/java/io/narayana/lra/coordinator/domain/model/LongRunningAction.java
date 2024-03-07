@@ -1076,7 +1076,11 @@ public class LongRunningAction extends BasicAction {
                         LRALogger.logger.debugf("LongRunningAction.abortLRA cancelling LRA `%s", id);
                     }
 
-                    updateState(LRAStatus.Cancelling);
+                    if (getSize(pendingList) == 0 && getSize(preparedList) == 0 && getSize(heuristicList) == 0) {
+                        updateState(LRAStatus.Cancelled);
+                    } else {
+                        updateState(LRAStatus.Cancelling);
+                    }
                     if (LRALogger.logger.isTraceEnabled()) {
                         trace_progress("scheduledAbort fired");
                     }
