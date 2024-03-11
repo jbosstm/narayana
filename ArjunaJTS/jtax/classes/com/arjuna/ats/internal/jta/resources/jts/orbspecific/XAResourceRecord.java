@@ -431,9 +431,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				finally
 				{
 				    _phaseTwoStarted = true;
-					if (_prepared)
-						if (destroyState)
-							destroyState();
+					if (_prepared && destroyState)
+						destroyState();
 					else
 						removeConnection();
 				}
