@@ -54,6 +54,8 @@ public class EmptyObjectStore
                 BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setCreateTable(true);
 
                 storeEnvBean.setDropTable(true);
+                // This is going to override the configuration that is specified on the command line to not create a table (https://github.com/jbosstm/narayana/blob/2cb9d4765bdd7dcd1865cf8f329298b84c725d8c/qa/run-tests.xml#L503) so alert a message to mention this
+                System.out.println("Please be aware that if createTable has been set for the store on the command line, it is being force set to true for EmptyObjectStore");
                 storeEnvBean.setCreateTable(true);
 
                 // the first get on a store initializes it (which, for a JDBC store, includes table reinitialization)
