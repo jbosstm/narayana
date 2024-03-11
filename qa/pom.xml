@@ -60,10 +60,12 @@
     <dependency>
       <groupId>jboss.profiler.jvmti</groupId>
       <artifactId>jboss-profiler-jvmti</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jacoco</groupId>
