@@ -15,6 +15,9 @@
   <name>Narayana: ArjunaJTA JMS</name>
   <description>Narayana JMS integration</description>
 
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

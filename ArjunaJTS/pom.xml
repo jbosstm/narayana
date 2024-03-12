@@ -26,6 +26,7 @@
     <module>integration</module>
   </modules>
   <properties>
+    <checkstyle.skip>true</checkstyle.skip>
     <modular.jdk.args></modular.jdk.args>
   </properties>
   <dependencyManagement>

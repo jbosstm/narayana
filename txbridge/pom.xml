@@ -31,6 +31,7 @@
         <server.jvm.args>
             ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
+        <checkstyle.skip>true</checkstyle.skip>
         <sortpom.skip>true</sortpom.skip>
     </properties>
     <build>

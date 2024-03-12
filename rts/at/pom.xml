@@ -24,8 +24,6 @@
     <module>bridge</module>
   </modules>
   <properties>
-    <checkstyle.skip>false</checkstyle.skip>
-    <sortpom.skip>false</sortpom.skip>
     <version.asm>3.3.1</version.asm>
   </properties>
   <build>

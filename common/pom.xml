@@ -35,6 +35,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
+    <checkstyle.skip>true</checkstyle.skip>
     <sortpom.skip>true</sortpom.skip>
     <propertiesFileName>jbossts-properties.xml</propertiesFileName>
   </properties>

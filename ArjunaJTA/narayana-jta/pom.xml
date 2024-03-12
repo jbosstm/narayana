@@ -16,6 +16,10 @@
   <name>Narayana: ArjunaJTA narayana-jta</name>
   <description>Narayana: ArjunaJTA narayana-jta (jta uber jar)</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
   <build>
     <plugins>
       <plugin>

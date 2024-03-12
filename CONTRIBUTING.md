@@ -101,8 +101,7 @@ We follow [Open source participation guidelines](https://www.redhat.com/en/resou
 
 ### Coding Guidelines
 
-We use the maven `checkstyle` and `sortpom` plugins which are skipped by default for older modules
-and enabled for newer ones.
+We use the maven `checkstyle` and `sortpom` plugins which are enabled by default and skipped in certain cases for older modules.
 
 For older modules where checkstyle is disabled, when editing a file you should either
 a) follow the style currently used in the file you have edited or,

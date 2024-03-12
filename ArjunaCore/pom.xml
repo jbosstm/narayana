@@ -18,6 +18,7 @@
   <name>Narayana: Arjunacore</name>
   <description>Narayana: Arjunacore All</description>
   <properties>
+    <checkstyle.skip>true</checkstyle.skip>
     <sortpom.skip>true</sortpom.skip>
   </properties>
 
