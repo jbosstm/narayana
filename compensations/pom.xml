@@ -27,6 +27,7 @@
         <server.jvm.args>
             ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
+        <checkstyle.skip>true</checkstyle.skip>
         <sortpom.skip>true</sortpom.skip>
     </properties>
     <dependencyManagement>

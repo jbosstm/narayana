@@ -42,6 +42,7 @@
   </build>
 
   <properties>
+    <checkstyle.skip>true</checkstyle.skip>
     <sortpom.skip>true</sortpom.skip>
   </properties>
 

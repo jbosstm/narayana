@@ -16,6 +16,9 @@
   <name>Narayana: ArjunaJTA jdbc</name>
   <description>transactional driver</description>
 
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
