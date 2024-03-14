@@ -85,11 +85,6 @@
       <classifier>participant</classifier>
       <type>war</type>
     </dependency>
-    <!-- This dependency should be removed in JBTM-3056 -->
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>xts-test-servlet</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>jbosstxbridge</artifactId>
