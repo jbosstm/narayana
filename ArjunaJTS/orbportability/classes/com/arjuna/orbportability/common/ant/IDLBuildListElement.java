@@ -10,6 +10,10 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+/**
+ * @deprecated this class should no longer be relied upon as it can be expected to be removed from distribution in a later release. The code is likely to move into the qa/ module of Narayana.
+ */
+@Deprecated
 public class IDLBuildListElement extends Task
 {
     protected String _source = null;

@@ -35,7 +35,9 @@ import org.w3c.dom.NodeList;
  * call this ant task and pass it a comma separated list of parameters which it then maps to the IDL compiler specific parameters.
  *
  * @author Richard A. Begg
+ * @deprecated this class should no longer be relied upon as it can be expected to be removed from distribution in a later release. The code is likely to move into the qa/ module of Narayana.
  */
+@Deprecated
 public class IDLCompiler extends Task
 {
     private final static String	NAME_ELEMENT = "name";
