@@ -89,13 +89,13 @@ function init_test_options {
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
+        export PERF_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -105,7 +105,7 @@ function init_test_options {
           [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=1 LRA_TESTS=0
+          export TOMCAT_TESTS=1 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -117,7 +117,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -129,7 +129,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -141,7 +141,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 JAC_ORB=0 JTA_AS_TESTS=1
-          export TOMCAT_TESTS=1 LRA_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          export TOMCAT_TESTS=1 LRA_TESTS=0 LRA_AS_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
         else
           export COMMENT_ON_PULL=""
@@ -154,7 +154,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -163,7 +163,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -172,7 +172,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
-          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
+          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -181,7 +181,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -190,7 +190,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=1
+          export TOMCAT_TESTS=0 LRA_TESTS=1 LRA_AS_TESTS=1
         else
           export COMMENT_ON_PULL=""
         fi
@@ -199,7 +199,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -217,6 +217,7 @@ function init_test_options {
     [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
     [ $RTS_AS_TESTS ] || RTS_AS_TESTS=0 # RTS tests
     [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
+    [ $LRA_AS_TESTS ] || LRA_AS_TESTS=0 #LRA tests
     [ $LRA_TESTS ] || LRA_TESTS=0 # LRA Test
     [ $TOMCAT_TESTS ] || TOMCAT_TESTS=0 # Narayana Tomcat tests
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
@@ -473,6 +474,15 @@ function jta_as_tests {
   cd ${WORKSPACE}
 }
 
+function lra_as_tests {
+  echo "#-1. LRA AS Tests"
+  cd $WILDFLY_CLONED_REPO
+  ./build.sh -f testsuite/integration/microprofile-tck/lra/pom.xml -fae -B -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "LRA AS Test failed"
+  ./build.sh -f microprofile/lra/pom.xml -fae -B -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  [ $? -eq 0 ] || fatal "LRA AS Test failed"
+  cd ${WORKSPACE}
+}
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
@@ -921,6 +931,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests "$@"
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests "$@"
 [ $JTA_AS_TESTS = 1 ] && jta_as_tests "$@"
+[ $LRA_AS_TESTS = 1 ] && lra_as_tests "$@"
 [ $COMPENSATIONS_TESTS = 1 ] && compensations_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
