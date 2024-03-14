@@ -187,7 +187,7 @@
     <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
     <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
-    <version.maven.jandex-plugin>3.0.5</version.maven.jandex-plugin>
+    <version.maven.jandex-plugin>3.1.7</version.maven.jandex-plugin>
 
     <!-- Needed forWildflyLRACoordinatorDeployment class -->
     <version.microprofile.lra>2.0</version.microprofile.lra>
