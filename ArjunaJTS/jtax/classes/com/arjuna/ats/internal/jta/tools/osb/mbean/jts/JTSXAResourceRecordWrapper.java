@@ -28,6 +28,7 @@ public class JTSXAResourceRecordWrapper extends OSEntryBean implements JTSXAReso
     private final XARecoveryResourceWrapper record;
     int heuristic;
     boolean committed;
+    boolean rollback;
     XidImple xidImple;
     OSEntryBean bean;
 
@@ -42,6 +43,7 @@ public class JTSXAResourceRecordWrapper extends OSEntryBean implements JTSXAReso
             try {
                 heuristic = copy.unpackInt();
                 committed = copy.unpackBoolean();
+                rollback = copy.unpackBoolean();
                 xidImple = new XidImple(XidImple.unpack(copy));
 
                 return super.restoreState(os);
