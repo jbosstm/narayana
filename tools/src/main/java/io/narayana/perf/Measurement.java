@@ -385,9 +385,11 @@ public class Measurement<T> implements Serializable {
         } catch (BrokenBarrierException e) {
             opts.incrementErrorCount(); // ? exactly how many errors were there?
             opts.setCancelled(true);
+            throw new RuntimeException(e);
         } catch (TimeoutException e) {
             opts.incrementErrorCount(); // ? exactly how many errors were there?
             opts.setCancelled(true);
+            throw new RuntimeException(e);
         }
 
         for (Future<Measurement<T>> t : tasks) {
