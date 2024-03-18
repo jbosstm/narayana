@@ -332,7 +332,12 @@
         </plugins>
       </build>
     </profile>
-
+    <profile>
+      <id>codeCoverage</id>
+      <properties>
+        <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}</server.jvm.args>
+      </properties>
+    </profile>
     <profile>
       <id>release</id>
       <build>
