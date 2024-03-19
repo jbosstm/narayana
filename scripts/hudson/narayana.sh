@@ -115,7 +115,7 @@ function init_test_options {
             fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
           fi
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
@@ -416,13 +416,9 @@ function build_as {
 
 function tests_as {
   # running WildFly testsuite if configured to be run by axis AS_TESTS
-  if [ $AS_TESTS_TRACE ]; then
-    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone.xml"
-    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone-full.xml"
-  fi
 
   cd $WILDFLY_CLONED_REPO
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./integration-tests.sh -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae "$@" clean verify
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS tests failed"
   cd $WORKSPACE
 }
@@ -438,6 +434,11 @@ function init_jboss_home {
   grep 'connection-timeout' "${CONF}"
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> "$JBOSS_HOME"/bin/standalone.conf
+
+  if [ $AS_TESTS_TRACE ]; then
+    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone.xml"
+    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone-full.xml"
+  fi
 }
 
 function xts_as_tests {
