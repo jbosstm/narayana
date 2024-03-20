@@ -1617,6 +1617,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_invalidObjStoreBrowser_type(String type, @Cause Exception e);
 
+	@Message(id = 12407, value = "Skipping handler for bean type: '{0}'", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	void info_osbSkipHandler(String type);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
