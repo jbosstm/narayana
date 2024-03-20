@@ -689,11 +689,6 @@
         <version>${version.org.jboss.resteasy}</version>
       </dependency>
       <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm-all</artifactId>
-        <version>${version.asm}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.openjdk-orb</groupId>
         <artifactId>openjdk-orb</artifactId>
         <version>${version.org.jboss.openjdk-orb}</version>
