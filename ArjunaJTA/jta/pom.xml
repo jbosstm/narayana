@@ -21,7 +21,6 @@
     <!-- java.net.preferIPv6Addresses=false is a workaround to (not) solve the bug in arquillian-extension-byteman -->
     <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
       -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=false</ipv6.server.jvm.args>
-    <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
   </properties>
 
   <dependencyManagement>
