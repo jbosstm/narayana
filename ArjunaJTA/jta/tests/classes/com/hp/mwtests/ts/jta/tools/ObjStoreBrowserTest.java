@@ -5,12 +5,12 @@
 package com.hp.mwtests.ts.jta.tools;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +18,13 @@ import java.util.Set;
 import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import org.jboss.tm.XAResourceWrapper;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import jakarta.transaction.HeuristicMixedException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -49,8 +56,13 @@ import com.hp.mwtests.ts.jta.common.DummyXA;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-class ExtendedFailureXAResource extends FailureXAResource {
+class ExtendedFailureXAResource extends FailureXAResource implements XAResourceWrapper {
 	private boolean forgotten;
+    private String productName;
+
+    public ExtendedFailureXAResource(FailLocation loc) {
+        super(loc);
+    }
 
 	@Override
 	public void commit(Xid id, boolean onePhase) throws XAException {
@@ -63,18 +75,34 @@ class ExtendedFailureXAResource extends FailureXAResource {
 		super.forget(xid);
 		forgotten = true;
 	}
+
+    @Override
+    public XAResource getResource() {
+        return null;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    @Override
+    public String getProductName() {
+        return productName;
+    }
+
+    @Override
+    public String getProductVersion() {
+        return null;
+    }
+
+    @Override
+    public String getJndiName() {
+        return null;
+    }
 }
 
 public class ObjStoreBrowserTest {
     private ObjStoreBrowser osb;
-
-	private ObjStoreBrowser createObjStoreBrowser() {
-		ObjStoreBrowser osb = new ObjStoreBrowser();
-
-		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
-
-		return osb;
-	}
 
 	@BeforeClass
 	public static void setUp() {
@@ -83,7 +111,8 @@ public class ObjStoreBrowserTest {
 	@Before
     public void beforeTest() {
         FailureXAResource.resetForgetCounts();
-        osb = createObjStoreBrowser();
+
+        osb = new ObjStoreBrowser();
 
         osb.start();
     }
@@ -110,9 +139,16 @@ public class ObjStoreBrowserTest {
     @Test
     public void testMBeanHeuristic () throws Exception
     {
-        FailureXAResource failureXAResource = new FailureXAResource(FailureXAResource.FailLocation.commit); // generates a heuristic on commit
+        // generates a heuristic on commit
+        ExtendedFailureXAResource failureXAResource =
+                new ExtendedFailureXAResource(FailureXAResource.FailLocation.commit);
+        String productName = "P";
 
-        getHeuristicMBean(osb, new TransactionImple(1000000000), failureXAResource);
+        failureXAResource.setProductName(productName);
+
+        XAResourceRecordBeanMBean mbean = getHeuristicMBean(osb, new TransactionImple(1000000000), failureXAResource);
+
+        assertEquals(productName, mbean.getEisProductName());
     }
 
     /**
@@ -341,25 +377,61 @@ public class ObjStoreBrowserTest {
     }
 
     private XAResourceRecordBeanMBean getHeuristicMBean(ObjStoreBrowser osb, TransactionImple tx, FailureXAResource failureXAResource) throws Exception {
-        generateHeuristic(tx, failureXAResource);
+        // use the wrapper plugin because we'd also like to test resource metadata
+        XAResourceRecordWrappingPlugin xarWrapperPlugin = new XAResourceRecordWrappingPlugin() {
+            String productName = "";
+            @Override
+            public void transcribeWrapperData(XAResourceRecord xaResourceRecord) {
+                final XAResource xaResource = (XAResource) xaResourceRecord.value();
 
-        osb.probe();
-        // there should be one MBean corresponding to the Transaction
-        JTAActionBean actionBean = getTransactionBean(osb, tx, true);
+                if (xaResource instanceof XAResourceWrapper) {
+                    XAResourceWrapper xaResourceWrapper = (XAResourceWrapper) xaResource;
+                    productName = xaResourceWrapper.getProductName();
 
-        assertNotNull(actionBean);
+                    xaResourceRecord.setProductName(xaResourceWrapper.getProductName());
+                    xaResourceRecord.setProductVersion(xaResourceWrapper.getProductVersion());
+                    xaResourceRecord.setJndiName(xaResourceWrapper.getJndiName());
+                }
+            }
 
-        // and the transaction should contain only one participant (namely the FailureXAResource that generated the heuristic):
-        Collection<LogRecordWrapper> participants = actionBean.getParticipants();
+            @Override
+            public Integer getEISName(XAResource xaResource) throws IOException, ObjectStoreException {
+                return 0;
+            }
 
-        assertEquals(1, participants.size());
-        assertNotNull(failureXAResource.getXid());
+            @Override
+            public String getEISName(Integer eisName) {
+                return productName;
+            }
+        };
 
-        LogRecordWrapper participant = participants.iterator().next();
+        JTAEnvironmentBean env = jtaPropertyManager.getJTAEnvironmentBean();
+        XAResourceRecordWrappingPlugin prevWrappingPlugin = env.getXAResourceRecordWrappingPlugin();
 
-        assertTrue(participant.isHeuristic());
-        assertTrue(participant instanceof XAResourceRecordBeanMBean);
+        try {
+            env.setXAResourceRecordWrappingPlugin(xarWrapperPlugin);
+            generateHeuristic(tx, failureXAResource);
+            osb.probe();
+            // there should be one MBean corresponding to the Transaction
+            JTAActionBean actionBean = getTransactionBean(osb, tx, true);
 
-        return (XAResourceRecordBeanMBean) participant;
+            assertNotNull(actionBean);
+
+            // and the transaction should contain only one participant
+            // (namely the FailureXAResource that generated the heuristic):
+            Collection<LogRecordWrapper> participants = actionBean.getParticipants();
+
+            assertEquals(1, participants.size());
+            assertNotNull(failureXAResource.getXid());
+
+            LogRecordWrapper participant = participants.iterator().next();
+
+            assertTrue(participant.isHeuristic());
+            assertTrue(participant instanceof XAResourceRecordBeanMBean);
+
+            return (XAResourceRecordBeanMBean) participant;
+        } finally {
+            env.setXAResourceRecordWrappingPlugin(prevWrappingPlugin);
+        }
     }
 }

@@ -67,6 +67,20 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                     "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
                     null
             ),
+            // JTAActionBean overrides ActionBean when the ArjunaJTA module is present, as opposed to just ArjunaCore
+            // on its own.
+            // These handlers are iterated over and added to the osbTypeMap map using typeName as the key so,
+            // to ensure that JTAActionBean is added to the map in JTA mode, please ensure that it appears
+            // last in this collection so that it overwrites the previous value. An alternative could be to make
+            // the beanClass field a comma separated list and the first one that is found to be known to the
+            // class loader would be used, or a completely different design for the instrumentation could be chosen
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.arjuna.AtomicAction",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
+                    null
+            ),
     };
 
     private static final OSBTypeHandler[] defaultJTSOsbTypes = {
@@ -277,8 +291,17 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         setExposeAllRecordsAsMBeans(arjPropertyManager.
             getObjectStoreEnvironmentBean().getExposeAllLogRecordsAsMBeans());
 
-        for (OSBTypeHandler osbType : defaultOsbTypes)
-            osbTypeMap.put(osbType.getTypeName(), osbType);
+        for (OSBTypeHandler osbType : defaultOsbTypes) {
+            try {
+                Class.forName(osbType.getBeanClass(), true, this.getClass().getClassLoader());
+                osbTypeMap.put(osbType.getTypeName(), osbType);
+            } catch (ClassNotFoundException ignore) {
+                // Some record types (currently only StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction)
+                // use different handlers depending upon whether ArjunaJTA is present. Ignore classes which
+                // aren't present and log an info message
+                tsLogger.i18NLogger.info_osbSkipHandler(osbType.getBeanClass());
+            }
+        }
 
         for (OSBTypeHandler osbType : defaultJTSOsbTypes)
             osbTypeMap.put(osbType.getTypeName(), osbType);
