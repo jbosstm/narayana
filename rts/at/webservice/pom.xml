@@ -51,12 +51,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>${version.asm}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
