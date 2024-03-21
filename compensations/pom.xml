@@ -186,9 +186,9 @@
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestLocal.java</include>
-                            </includes>
+                            <excludes>
+                                <exclude>**/*</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -222,10 +222,9 @@
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestRemote.java</include>
-                            </includes>
-                        </configuration>
+                            <excludes>
+                                <exclude>**/*</exclude>
+                            </excludes>                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -259,10 +258,9 @@
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestLocal.java</include>
-                            </includes>
-                        </configuration>
+                            <excludes>
+                                <exclude>**/*</exclude>
+                            </excludes>                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -296,10 +294,9 @@
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestRemote.java</include>
-                            </includes>
-                        </configuration>
+                            <excludes>
+                                <exclude>**/*</exclude>
+                            </excludes>                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -364,10 +361,9 @@
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
                             <skip>false</skip>
-                            <includes>
-                                <include>**/*TestWeld.java</include>
-                            </includes>
-                        </configuration>
+                            <excludes>
+                                <exclude>**/*</exclude>
+                            </excludes>                        </configuration>
                     </plugin>
                 </plugins>
             </build>
