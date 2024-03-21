@@ -23,9 +23,6 @@
     <module>integration</module>
     <module>bridge</module>
   </modules>
-  <properties>
-    <version.asm>3.3.1</version.asm>
-  </properties>
   <build>
     <plugins>
       <plugin>
