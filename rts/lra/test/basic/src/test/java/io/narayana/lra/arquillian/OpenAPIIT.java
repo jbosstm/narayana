@@ -47,7 +47,7 @@ public class OpenAPIIT extends TestBase {
         String output = response.readEntity(String.class);
         assertFalse("WildFly OpenAPI document has paths at wrong location",
                 output.contains("/lra-coordinator/lra-coordinator:"));
-        assertTrue("WildFly OpenAPI document does not have paths for expected location",
+        assertTrue("WildFly OpenAPI document does not have paths for expected location:\n" + output,
                 output.contains("/lra-coordinator:"));
         assertTrue("WildFly OpenAPI document does not have server URL",
                 output.contains("url: /lra-coordinator"));
