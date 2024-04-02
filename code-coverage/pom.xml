@@ -77,8 +77,6 @@
                         <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../txbridge/target/coverage-reports" includes="jacoco-ut.exec"/>
-
-                        <fileset dir="../compensations/target/coverage-reports" includes="jacoco-ut.exec"/>
                       </executiondata>
 
                       <structure name="JaCoCo">
@@ -267,8 +265,6 @@
                       <fileset dir="../XTS/localjunit/WSTX11-interop/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
                       <fileset dir="../txbridge/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <fileset dir="../compensations/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
                       <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
                         <param name="narayana.url" expression="${narayana.home.url}"/>
