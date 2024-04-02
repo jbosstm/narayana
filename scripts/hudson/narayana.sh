@@ -39,6 +39,14 @@ function is_ibm {
   [[ $jvendor == *"IBM Corporation"* ]]
 }
 
+# check the JDK version and disable the WildFly clone, build and test when its minimum JDK version is higher 
+# see https://issues.redhat.com/browse/WFLY-18967
+function wildfly_minimum_jdk {
+  if [ "$_jdk" -lt 17 ]; then
+    echo "WildFly must be built with JDK 17 or greater" 
+    export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 JTA_AS_TESTS=0 RTS_AS_TESTS=0 LRA_AS_TESTS=0 XTS_AS_TESTS=0 XTS_TRACE=0 txbridge=0 ARQ_PROF=no_arq 
+  fi
+}
 function get_pull_xargs {
   rval=0
   res=$(echo $1 | sed 's/\\r\\n/ /g')
@@ -207,6 +215,7 @@ function init_test_options {
         export COMMENT_ON_PULL=""
         comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
     fi
+    wildfly_minimum_jdk
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
     [ $AS_CLONE ] && [ -z "$WILDFLY_CLONED_REPO" ] || AS_CLONE=0 # git clone the AS repo when WILDFLY_CLONED_REPO is not provided
@@ -397,8 +406,7 @@ function build_as {
   if [ ! -d  ${WILDFLY_CLONED_REPO}/dist/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} ]; then
 
     # building WildFly
-    [ "$_jdk" -lt 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-    [ "$_jdk" -ge 17 ] && export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
+    export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
     [ $? -eq 0 ] || fatal "AS build failed"
 
@@ -555,7 +563,7 @@ function xts_tests {
   fi
 
   [ $? -eq 0 ] || fatal "XTS: SOME TESTS failed"
-  if [ $ran_crt = 1 ] && [[ ! "$@" =~ "-DskipTests" ]]; then
+  if [ $ran_crt = 1 ] && [[ ! "$@" =~ "-DskipTests" ]] && [ $XTS_AS_TESTS = 1 ]; then
     (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
     if [[ $? != 0 && $ISIBM != 0 && -z $CODE_COVERAGE_ARGS ]]; then
       fatal "Simplify CRASH RECOVERY logs failed"
