@@ -129,11 +129,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
       <scope>provided</scope>

@@ -224,11 +224,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <scope>provided</scope>
