@@ -430,34 +430,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
-     * Update registered MBeans based on the current set of Uids.
-     * @param allCurrUids any registered MBeans not in this collection will be deregistered
-     */
-    private void unregisterRemovedUids(Map<String, Collection<Uid>> allCurrUids) {
-
-        for (Map.Entry<String, List<UidWrapper>> e : registeredMBeans.entrySet()) {
-            String type = e.getKey();
-            List<UidWrapper> registeredBeansOfType = e.getValue();
-            Collection<Uid> currUidsOfType = allCurrUids.get(type);
-
-            if (currUidsOfType != null) {
-                Iterator<UidWrapper> iterator = registeredBeansOfType.iterator();
-
-                while (iterator.hasNext()) {
-                    UidWrapper w = iterator.next();
-
-                    if (!currUidsOfType.contains(w.getUid())) {
-                        w.unregister();
-                        iterator.remove();
-                    }
-                }
-            } else {
-                unregisterMBeans(registeredBeansOfType);
-            }
-        }
-    }
-
-    /**
      * See if any new MBeans need to be registered or if any existing MBeans no longer exist
      * as ObjectStore entries.
      *
@@ -466,11 +438,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     public synchronized void probe() throws MBeanException {
         Map<String, Collection<Uid>> currUidsForType = new HashMap<>();
 
+        // recreate every MBean so clear the cache first
+        unregisterMBeans();
+
         for (String type : getTypes())
             currUidsForType.put(type, getUids(type));
-
-        // if there are any beans in registeredMBeans that don't appear in new list and unregister them
-        unregisterRemovedUids(currUidsForType); //unregisterMBeans();
 
         for (Map.Entry<String, Collection<Uid>> e : currUidsForType.entrySet()) {
             String type = e.getKey();

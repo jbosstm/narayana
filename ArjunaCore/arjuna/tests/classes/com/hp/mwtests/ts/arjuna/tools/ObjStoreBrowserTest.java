@@ -23,8 +23,6 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
 import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
@@ -35,6 +33,8 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
+
+import java.util.Collection;
 
 /**
  * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
@@ -167,15 +167,8 @@ public class ObjStoreBrowserTest {
 		osb.start();
 		osb.probe();
 
-		// there should be one MBean corresponding to the AtomicAction A
-		UidWrapper w = osb.findUid(A.get_uid());
-		assertNotNull(w);
-		OSEntryBean ai = w.getMBean();
-		assertNotNull(ai);
-
-		// the MBean should wrap an ActionBean
-		assertTrue(ai instanceof ActionBean);
-		ActionBean actionBean = (ActionBean) ai;
+		// there should be one MBean corresponding to the AtomicAction A and the MBean should wrap an ActionBean
+		ActionBean actionBean = lookupActionBean(osb, A.get_uid());
 
 		// and there should be one MBean corresponding to the CrashRecord that got the heuristic:
 		int recCount = 0;
@@ -196,6 +189,16 @@ public class ObjStoreBrowserTest {
 
 		assertEquals(1, recCount);
 
+		// verify that the state on disk is no longer a heuristic
+		actionBean = lookupActionBean(osb, A.get_uid());
+		Collection<LogRecordWrapper> participants = actionBean.getParticipants();
+
+		// there should be only the heuristic participant remaining:
+		assertEquals(1, participants.size());
+		LogRecordWrapper wrapper = actionBean.getParticipants().iterator().next();
+		// and it should no longer be a heuristic
+		assertFalse(wrapper.isHeuristic());
+
 		if (!replay) {
 			actionBean.remove();
 		} else {
@@ -213,11 +216,19 @@ public class ObjStoreBrowserTest {
 		osb.probe();
 
 		// look up the MBean and verify that it no longer exists
-		w = osb.findUid(A.get_uid());
-		assertNull(w);
+		assertNull(osb.findUid(A.get_uid()));
 
-		osb.dump(new StringBuilder());
 		osb.stop();
+	}
+
+	private ActionBean lookupActionBean(ObjStoreBrowser osb, Uid uid) {
+		UidWrapper w = osb.findUid(uid);
+		assertNotNull(w);
+		OSEntryBean ai = w.getMBean();
+		assertNotNull(ai);
+		assertTrue(ai instanceof ActionBean);
+
+		return (ActionBean) ai;
 	}
 
 	// define an MBean interface for use in the next test
