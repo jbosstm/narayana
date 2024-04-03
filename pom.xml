@@ -198,7 +198,6 @@
 
     <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
-    <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
     <!-- Needed forWildflyLRACoordinatorDeployment class -->
     <version.org.jboss.resteasy>6.2.5.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.13</version.org.sonatype.plugins.nexus-staging-maven-plugin>
@@ -243,11 +242,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.jboss.byteman</groupId>
-          <artifactId>byteman-rulecheck-maven-plugin</artifactId>
-          <version>${version.org.jboss.byteman}</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
@@ -524,37 +518,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>byteman-rulecheck</id>
-      <activation>
-        <property>
-          <name>!skipTests</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman-rulecheck-maven-plugin</artifactId>
-            <version>${version.org.jboss.byteman}</version>
-            <executions>
-              <execution>
-                <id>rulecheck</id>
-                <goals>
-                  <goal>rulecheck</goal>
-                </goals>
-                <phase>test-compile</phase>
-                <configuration>
-                  <includes>
-                    <include>**/*.btm</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>release</id>
       <build>

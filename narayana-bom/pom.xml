@@ -55,7 +55,6 @@
     <version.org.eclipse.microprofile.reactive-streams-operators>3.0</version.org.eclipse.microprofile.reactive-streams-operators>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
-    <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
     <version.org.jboss.invocation>2.0.0.Final</version.org.jboss.invocation>
     <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
     <version.org.jboss.jboss-transaction-spi>8.0.0.Final</version.org.jboss.jboss-transaction-spi>
