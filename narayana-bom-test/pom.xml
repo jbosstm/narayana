@@ -43,7 +43,8 @@
     <version.org.apache.ant>1.10.12</version.org.apache.ant>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
-    <version.org.jboss.byteman>4.0.19</version.org.jboss.byteman>
+    <!-- remark: this property is duplicated in the top level pom -->
+    <version.org.jboss.byteman>4.0.22</version.org.jboss.byteman>
     <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
     <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
     <version.org.jboss.weld>5.0.1.Final</version.org.jboss.weld>
@@ -447,6 +448,26 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+        <version>${version.org.jboss.byteman}</version>
+        <executions>
+          <execution>
+            <id>rulecheck</id>
+            <goals>
+              <goal>rulecheck</goal>
+            </goals>
+            <phase>test-compile</phase>
+            <configuration>
+              <includes>
+                <include>**/*.btm</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
         <inherited>false</inherited>
@@ -464,4 +485,37 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>byteman-rulecheck</id>
+      <activation>
+        <property>
+          <name>!skipTests</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <executions>
+              <execution>
+                <id>rulecheck</id>
+                <goals>
+                  <goal>rulecheck</goal>
+                </goals>
+                <phase>test-compile</phase>
+                <configuration>
+                  <includes>
+                    <include>**/*.btm</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
