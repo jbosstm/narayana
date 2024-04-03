@@ -29,7 +29,6 @@
     <version.com.ibm>db2jcc4</version.com.ibm>
     <version.com.oracle>19.21.0.0</version.com.oracle>
     <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
-    <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
     <version.hamcrest>2.2</version.hamcrest>
     <version.httpcomponents>4.5.14</version.httpcomponents>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
@@ -169,13 +168,6 @@
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-test-servlet</artifactId>
         <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>${version.commons-httpclient}</version>
         <scope>test</scope>
       </dependency>
 
