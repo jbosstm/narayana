@@ -23,13 +23,8 @@ function which_java {
   fi
 
   if [[ "$_java" ]]; then
-    version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
-
-    if [[ $version = 17* ]]; then
-      echo 17
-    elif [[ $version = 11* ]]; then
-      echo 11
-    fi
+    version=$("$_java" -version 2>&1 | grep -oP 'version "?(1\.)?\K\d+' || true)
+    echo $version
   fi
 }
 
