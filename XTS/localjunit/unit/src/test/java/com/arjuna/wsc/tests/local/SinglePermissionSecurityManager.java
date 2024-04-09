@@ -10,6 +10,7 @@ import java.security.Permission;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
+@SuppressWarnings("removal")
 public final class SinglePermissionSecurityManager extends SecurityManager {
 
     private final String permissionName;
