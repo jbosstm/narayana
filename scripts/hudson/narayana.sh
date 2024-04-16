@@ -40,6 +40,8 @@ function wildfly_minimum_jdk {
   if [ "$_jdk" -lt 17 ]; then
     echo "WildFly must be built with JDK 17 or greater" 
     export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 JTA_AS_TESTS=0 RTS_AS_TESTS=0 LRA_AS_TESTS=0 XTS_AS_TESTS=0 XTS_TRACE=0 txbridge=0 ARQ_PROF=no_arq 
+    # without AS test results the code coverage does not work, so not running it
+    export CODE_COVERAGE=0
   fi
 }
 function get_pull_xargs {
