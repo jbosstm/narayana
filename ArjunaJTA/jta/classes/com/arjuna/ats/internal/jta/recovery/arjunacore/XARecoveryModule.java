@@ -229,6 +229,17 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			}
 		}
 
+		if (endState != ScanStates.BETWEEN_PASSES) {
+			for (NameScopedXAResource xaResource : resources) {
+				try {
+					xaResource.getXaResource().recover(XAResource.TMENDRSCAN);
+				} catch (Exception ex) {
+					this.setRecoveryProblems(true);
+					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
+				}
+			}
+        }
+
 		setScanState(endState);
 	}
 
@@ -698,10 +709,6 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			try
 			{
 				trans = xares.getXaResource().recover(XAResource.TMSTARTRSCAN);
-				// it should be possible to do a single call with combined flags
-				// .recover(XAResource.TMSTARTRSCAN | XAResource.TMENDRSCAN)
-				// but Agroal doesn't like that at present.
-				xares.getXaResource().recover(XAResource.TMENDRSCAN);
 
 				if (jtaLogger.logger.isDebugEnabled()) {
                     jtaLogger.logger.debug("Found "
@@ -733,6 +740,14 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			{
 				this.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
+
+				try
+				{
+					xares.getXaResource().recover(XAResource.TMENDRSCAN);
+				}
+				catch (Exception e1)
+				{
+				}
 
 				if (_xidScans != null)
 					_xidScans.remove(xares);
@@ -886,6 +901,17 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			{
 				this.setRecoveryProblems(true);
 	            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
+			}
+	
+			try
+			{
+				if (xares != null)
+					xares.getXaResource().recover(XAResource.TMENDRSCAN);
+			}
+			catch (XAException e)
+			{
+				this.setRecoveryProblems(true);
+	            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
 			}
 		}
 
