@@ -695,12 +695,11 @@ function qa_tests_once {
 
   cd $WORKSPACE/qa
   unset orb
-  codeCoverage=false;
+  [ $CODE_COVERAGE = 1 ] && codeCoverage=true || codeCoverage=false
 
   # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
-    [ $CODE_COVERAGE = 1 ] && codeCoverage=true
   done
 
   cp TaskImpl.properties.template TaskImpl.properties
