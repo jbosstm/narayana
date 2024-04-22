@@ -400,16 +400,21 @@ public class XARecoveryModuleUnitTest
             }
         });
 
+        int oldCount = recoverCalled;
+        // on the error free path
+        // we expect periodicWorkFirstPass to make two recover calls (TMSTARTRSCAN and
+        // TMENDRSCAN),
+        // and we expect periodicWorkSecondPass to make no recover calls
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 1);
+        assertEquals(recoverCalled, oldCount + 2);
         xarm.periodicWorkSecondPass();
-        assertEquals(recoverCalled, 2);
+        assertEquals(recoverCalled, oldCount + 2);
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 3);
+        assertEquals(recoverCalled, oldCount + 4);
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 5);
+        assertEquals(recoverCalled, oldCount + 6);
         xarm.periodicWorkSecondPass();
-        assertEquals(recoverCalled, 6);
+        assertEquals(recoverCalled, oldCount + 6);
     }
 
     @Test
@@ -441,7 +446,6 @@ public class XARecoveryModuleUnitTest
                 public String getJndiName() {
                     return "test";
                 }
-
                 int count = 0;
                 Xid xid = new XidImple(new Uid());
 
@@ -478,20 +482,17 @@ public class XARecoveryModuleUnitTest
                 @Override
                 public Xid[] recover(int i) throws XAException {
                     count++;
-                    if (count == 1 || count == 5) {
-                        return new Xid[]{xid};
+                    if (count == 1 || count == 3 || count == 5) {
+                        return new Xid[] { xid }; // TMSTARTRSCAN
                     } else if (count > 5) {
-                        return new Xid[0];
+                        return new Xid[0]; // TMSENDRSCAN when count == 6 so the recovery pass succeeds
                     } else {
-                        throw new XAException();
+                        throw new XAException(); // if count is 2 or 4 ie the TMSENDRSCAN call
                     }
                 }
 
                 @Override
                 public void rollback(Xid xid) throws XAException {
-                    if (count == 1) { // This comes from the first end scan
-                        throw new XAException(XAException.XA_RETRY);
-                    }
                     rolledback = true;
                 }
 
@@ -519,26 +520,31 @@ public class XARecoveryModuleUnitTest
         });
 
 
-        // The first two recovery cycles do nothing with the resource (because phase two is getting the exception)
-        // When count reaches 6 it sees that the xid has gone and presumes abort so calls rollback and hence assertTrue(rolledback) passes
-
-        // 1st pass: returns one xid (count is 1)
-        xarm.periodicWorkFirstPass();
-        // 2nd pass: throws an exception (count is 2)
-        xarm.periodicWorkSecondPass();
-        assertTrue(xarm.getContactedJndiNames().contains("test"));
-        assertFalse(rolledback);
-        // 1st pass: throws an exception (count is 3)
-        xarm.periodicWorkFirstPass();
-        // 2nd pass: throws an exception (count is 4)
-        xarm.periodicWorkSecondPass();
+        // The first two recovery cycles do nothing with the resource (because phase one
+        // is getting the exception)
+        // When count reaches 6 it sees that the xid has gone and presumes abort so
+        // calls rollback and hence
+        // assertTrue(rolledback) passes
+        // see the resource recover logic above for what it does depending upon the
+        // value of count
+        xarm.periodicWorkFirstPass(); // count is now 2 (and the TMENDRSCAN will have thrown an exception)
+        xarm.periodicWorkSecondPass(); // complete the cycle
+        // 'test' was cleaned from the list before the exception is thrown
         assertFalse(xarm.getContactedJndiNames().contains("test"));
-        assertFalse(rolledback);
-        // 1st pass: returns an empty list of xids (count is 5)
-        xarm.periodicWorkFirstPass();
-        // 2nd pass: returns an empty list of xids (count is 6)
-        xarm.periodicWorkSecondPass();
+        assertFalse(rolledback); // since recover threw an exception there is no rollback yet
+        xarm.periodicWorkFirstPass(); // count is now 4 (and the TMENDRSCAN will have thrown an
+                                      // exception)
+        xarm.periodicWorkSecondPass(); // complete the cycle
+        // 'test' was cleaned from the list before the exception is thrown
+        assertFalse(xarm.getContactedJndiNames().contains("test"));
+        assertFalse(rolledback); // since recover threw an exception there is no rollback yet
+        xarm.periodicWorkFirstPass(); // count is now 6. On the TMSTARTRSCAN it will have returned 1 xid
+                                      // and none on the TMSENDRSCAN
+        xarm.periodicWorkSecondPass(); // complete the cycle
         assertTrue(xarm.getContactedJndiNames().contains("test"));
+        // since there was a successful recovery cycle (ie no exceptions) which returned
+        // one xid which we
+        // don't know about so it should have rolled back as an orphan
         assertTrue(rolledback);
 
         jtaPropertyManager.getJTAEnvironmentBean().setOrphanSafetyInterval(orphanSafetyInterval);
