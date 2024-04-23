@@ -138,3 +138,7 @@ When the github Pull Request has passed all relevant CI checks and has been Appr
 
 Don't forget to include tests in your pull requests.
 Also don't forget the documentation (reference documentation for features, javadoc...).
+
+## Release
+
+The Narayana project applies the [Semantic Versioning Specification](https://semver.org/) (SemVer) 2.0.0 to mark its releases
