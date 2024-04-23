@@ -121,6 +121,11 @@ Commits should be atomic and semantic. Commits should be squashed before submitt
 To ensure Narayana is stable for everyone, all changes should go through Narayana continuous integration: when you raise a pull request one of the members of the team will schedule a CI run to test your PR.
 Note that when a CI test axis passes there is *no need* to disable further testing of the axis (the danger of doing this is that if further commits are added to the PR then the axis will not be retested).
 
+### Tests and documentation are not optional
+
+Don't forget to include tests in your pull requests.
+Also don't forget the documentation (reference documentation for features, javadoc...).
+
 ## Update the issue with the correct release information:
 
 When the github Pull Request has passed all relevant CI checks and has been Approved by a reviewer the code can be merged. If you don't have permission to do this then ping one of the team who will then merge it. Once merged the issue must be updated in the issue tracker (if you don't have permission then a team member will do this):
@@ -133,11 +138,6 @@ When the github Pull Request has passed all relevant CI checks and has been Appr
    The release coordinator will also move the status of the issue to `Closed` once it's included in a release.
 4. Sanity check that the other fields have been filled in correctly (although these are normally set when the issue is created):
 5. Please provide meaningful release notes so that potential users can see, at a glance, what new things can be expected from the release that contains the fix.
-
-### Tests and documentation are not optional
-
-Don't forget to include tests in your pull requests.
-Also don't forget the documentation (reference documentation for features, javadoc...).
 
 ## Release
 
