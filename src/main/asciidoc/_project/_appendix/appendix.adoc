@@ -1,0 +1,7 @@
+= Appendix
+
+include::object_store_implementations.adoc[]
+include::core_class_definitions.adoc[]
+include::idl_definitions.adoc[]
+include::rts_transaction_statuses.adoc[]
+include::QANotes5-1.adoc[]
