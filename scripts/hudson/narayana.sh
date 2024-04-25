@@ -525,7 +525,7 @@ function compensations_tests {
   [ $? -eq 0 ] || fatal "compensations build failed"
   ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "compensations build failed"
-  rm $JBOSS_HOME/standalone/deployments/restat-web-*.war
+  rm -f $JBOSS_HOME/standalone/deployments/restat-web-*.war
   [ $? -eq 0 ] || fatal "Could not remove .war file"
 }
 
