@@ -29,8 +29,12 @@ public class BeanPopulator
 {
     private static final ConcurrentMap<String, Object> beanInstances = new ConcurrentHashMap<String, Object>();
 
+    private static ConcurrentMap<String, Object> getBeanInstances() {
+        return beanInstances;
+    }
+
     public static <T> T getDefaultInstance(Class<T> beanClass) throws RuntimeException {
-        T instance = (T) beanInstances.get(beanClass.getName());
+        T instance = (T) getBeanInstances().get(beanClass.getName());
 
         if (instance != null)
            return instance;
@@ -39,7 +43,7 @@ public class BeanPopulator
     }
 
     public static <T> T getDefaultInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
-       T instance = (T) beanInstances.get(beanClass.getName());
+       T instance = (T) getBeanInstances().get(beanClass.getName());
 
         if (instance != null)
            return instance;
@@ -61,7 +65,7 @@ public class BeanPopulator
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
-        if(!beanInstances.containsKey(key)) {
+        if(!getBeanInstances().containsKey(key)) {
             T bean = null;
             try {
                 bean = beanClass.newInstance();
@@ -74,10 +78,10 @@ public class BeanPopulator
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
-            beanInstances.putIfAbsent(key, bean);
+            getBeanInstances().putIfAbsent(key, bean);
         }
 
-        return (T) beanInstances.get(key);
+        return (T) getBeanInstances().get(key);
     }
 
     /**
@@ -178,7 +182,7 @@ public class BeanPopulator
      * @return the previous instance associated with the specified name, or null if there was no mapping for the name.
      */
     public static Object setBeanInstanceIfAbsent(String name, Object beanInstance) {
-        return beanInstances.putIfAbsent(name, beanInstance);
+        return getBeanInstances().putIfAbsent(name, beanInstance);
     }
 
     public static String printBean(Object bean) {
@@ -192,7 +196,7 @@ public class BeanPopulator
      */
     public static String printState() {
         StringBuffer buffer = new StringBuffer();
-        for(Object bean : beanInstances.values()) {
+        for(Object bean : getBeanInstances().values()) {
             printBean(bean, buffer);
         }
         return buffer.toString();
