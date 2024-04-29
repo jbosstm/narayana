@@ -1,3 +1,13 @@
 = Arjuna Core
 
 include::{docdir}/project/core/overview.adoc[]
+
+include::{docdir}/project/core/using_txcore.adoc[]
+
+include::{docdir}/project/core/general_transaction_issues.adoc[]
+
+include::{docdir}/project/core/hints_and_tips.adoc[]
+
+include::{docdir}/project/core/constructing_a_transactional_objects_for_java_application.adoc[]
+
+include::{docdir}/project/core/failure_recovery.adoc[]
