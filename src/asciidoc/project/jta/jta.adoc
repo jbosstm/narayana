@@ -2,6 +2,38 @@
 
 == Administration
 
+include::{docdir}/project/jta/administration_introduction.adoc[]
+
+include::{docdir}/project/jta/starting_and_stopping_transaction_manager.adoc[]
+
+include::{docdir}/project/jta/objectstore_management.adoc[]
+
+include::{docdir}/project/jta/jbossjta_runtime_information.adoc[]
+
+include::{docdir}/project/jta/failure_recovery_administration.adoc[]
+
+include::{docdir}/project/jta/errors_and_exceptions.adoc[]
+
+include::{docdir}/project/jta/selecting_the_jta_implementation.adoc[]
+
 == Development
 
+include::{docdir}/project/jta/jdbc.adoc[]
+
+include::{docdir}/project/jta/examples.adoc[]
+
+include::{docdir}/project/jta/using_jbossta_in_application_servers.adoc[]
+
 == Installation
+
+include::{docdir}/project/jta/preparing_your_system.adoc[]
+
+include::{docdir}/project/jta/operating_system_services.adoc[]
+
+include::{docdir}/project/jta/logging.adoc[]
+
+include::{docdir}/project/jta/additional_jar_requirements.adoc[]
+
+include::{docdir}/project/jta/setting_properties.adoc[]
+
+include::{docdir}/project/jta/quick_start_to_jta.adoc[]
