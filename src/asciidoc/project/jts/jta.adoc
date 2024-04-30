@@ -1,0 +1,45 @@
+= JTS
+
+== Administration
+
+include::{docdir}/project/jts/administration_introduction.adoc[]
+
+include::{docdir}/project/jts/starting_and_stopping_transaction_manager.adoc[]
+
+include::{docdir}/project/jts/ots_java_ee_transaction_service_management.adoc[]
+
+include::{docdir}/project/jts/failure_recovery_administration.adoc[]
+
+include::{docdir}/project/jts/orb_specific_configurations.adoc[]
+
+include::{docdir}/project/jts/initializing_jbossts_applications.adoc[]
+
+== Development
+
+include::{docdir}/project/jts/overview.adoc[]
+
+include::{docdir}/project/jts/jbossts_basics.adoc[]
+
+include::{docdir}/project/jts/ots.adoc[]
+
+include::{docdir}/project/jts/constructing_an_ots_application.adoc[]
+
+include::{docdir}/project/jts/jbossts_interface.adoc[]
+
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+include::{docdir}/project/jts/
+
+== Development
+
+
+== Installation
