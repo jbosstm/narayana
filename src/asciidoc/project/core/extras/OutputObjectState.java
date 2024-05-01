@@ -8,4 +8,4 @@ class OutputObjectState extends OutputBuffer {
     public Uid stateUid();
 
     public String type();
-};
+}

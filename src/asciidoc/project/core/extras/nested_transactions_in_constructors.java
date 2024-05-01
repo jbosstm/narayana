@@ -2,20 +2,13 @@ AtomicAction A = new AtomicAction();
 Object obj1;
 Object obj2;
 
-obj1 =new
+// create new object
+obj1 = new Object();
+// existing object
+obj2 = new Object("old");
 
-Object();       // create new object
-
-obj2 =new
-
-Object("old");     // existing object
-
-A.
-
-begin(0);
-obj2.
-
-remember(obj1.get_uid());   // obj2 now contains reference to obj1
-        A.
-
-commit(true);            // obj2 saved but obj1 is not
+A.begin(0);
+// obj2 now contains reference to obj1
+obj2.remember(obj1.get_uid());
+// obj2 saved but obj1 is not
+A.commit(true);

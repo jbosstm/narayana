@@ -8,4 +8,4 @@ class InputObjectState extends InputBuffer {
     public Uid stateUid();
 
     public String type();
-};
+}

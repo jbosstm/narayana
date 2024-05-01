@@ -28,4 +28,4 @@ public class InputBuffer {
     public synchronized double unpackDouble() throws IOException;
 
     public synchronized String unpackString() throws IOException;
-};
+}

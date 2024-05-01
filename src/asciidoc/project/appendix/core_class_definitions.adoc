@@ -12,7 +12,7 @@ For clarity only the public and protected interfaces of the classes will be give
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/LockManager_class.java[]
+include::extras/LockManager_class.java[]
 ----
 ====
 
@@ -20,7 +20,7 @@ include::{sourcedir}/extras/LockManager_class.java[]
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/StateManager_class.java[]
+include::extras/StateManager_class.java[]
 ----
 ====
 
@@ -28,7 +28,7 @@ include::{sourcedir}/extras/StateManager_class.java[]
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/OutputObjectState_class.java[]
+include::extras/OutputObjectState_class.java[]
 ----
 ====
 
@@ -36,7 +36,7 @@ include::{sourcedir}/extras/OutputObjectState_class.java[]
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/OutputBuffer_class.java[]
+include::extras/OutputBuffer_class.java[]
 ----
 ====
 
@@ -44,7 +44,7 @@ include::{sourcedir}/extras/OutputBuffer_class.java[]
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/Uid_class.java[]
+include::extras/Uid_class.java[]
 ----
 ====
 
@@ -52,7 +52,7 @@ include::{sourcedir}/extras/Uid_class.java[]
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/AtomicAction_class.java[]
+include::extras/AtomicAction_class.java[]
 ----
 ====
 

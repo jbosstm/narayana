@@ -1,2 +1,1 @@
-int defaultTimeout =
-        arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
+int defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();

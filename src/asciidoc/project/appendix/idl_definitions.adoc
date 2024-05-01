@@ -11,7 +11,7 @@ You should always inspect the idl files prior to implementation to determine wha
 ====
 [source,C]
 ----
-include::{sourcedir}/extras/CosTransactions.idl[]
+include::extras/CosTransactions.idl[]
 ----
 ====
 
@@ -19,7 +19,7 @@ include::{sourcedir}/extras/CosTransactions.idl[]
 ====
 [source,C]
 ----
-include::{sourcedir}/extras/ArjunaOTS.idl[]
+include::extras/ArjunaOTS.idl[]
 ----
 ====
 

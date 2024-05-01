@@ -3,8 +3,6 @@ public Test(String s) {
     s2 = s;
 }
 
-;
-
 public class Test {
     private String s1;
     ...

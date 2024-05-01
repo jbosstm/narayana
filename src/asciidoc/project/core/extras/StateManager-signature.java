@@ -9,9 +9,10 @@ public abstract class StateManager {
 
     public boolean deactivate(boolean commit);
 
-    public Uid get_uid(); // object’s identifier.
+    // object’s identifier.
+    public Uid get_uid();
 
     public boolean restore_state(InputObjectState os);
 
     public boolean save_state(OutputObjectState os);
-};
+}

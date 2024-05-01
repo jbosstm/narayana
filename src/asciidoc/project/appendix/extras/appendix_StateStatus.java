@@ -24,50 +24,34 @@ public class StateType {
     public static final int OS_INVISIBLE;
 }
 
-public abstract class ObjectStore implements BaseStore, ParticipantStore,
-        RecoveryStore, TxLog {
+public abstract class ObjectStore implements BaseStore, ParticipantStore, RecoveryStore, TxLog {
     public ObjectStore(String osRoot);
 
     public static void printState(PrintStream strm, int res);
 
-    public synchronized boolean allObjUids(String s, InputObjectState buff)
-            throws ObjectStoreException;
+    public synchronized boolean allObjUids(String s, InputObjectState buff) throws ObjectStoreException;
 
-    public synchronized boolean allObjUids(String s, InputObjectState buff,
-                                           int m) throws ObjectStoreException;
+    public synchronized boolean allObjUids(String s, InputObjectState buff, int m) throws ObjectStoreException;
 
-    public synchronized boolean allTypes(InputObjectState buff)
-            throws ObjectStoreException;
+    public synchronized boolean allTypes(InputObjectState buff) throws ObjectStoreException;
 
-    public synchronized int currentState(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized int currentState(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean commit_state(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized boolean commit_state(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean hide_state(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized boolean hide_state(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean reveal_state(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized boolean reveal_state(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized InputObjectState read_committed(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized InputObjectState read_uncommitted(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized InputObjectState read_uncommitted(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean remove_committed(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized boolean remove_committed(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean remove_uncommitted(Uid u, String tn)
-            throws ObjectStoreException;
+    public synchronized boolean remove_uncommitted(Uid u, String tn) throws ObjectStoreException;
 
-    public synchronized boolean write_committed(Uid u, String tn,
-                                                OutputObjectState buff)
-            throws ObjectStoreException;
+    public synchronized boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException;
 
-    public synchronized boolean write_uncommitted(Uid u, String tn,
-                                                  OutputObjectState buff)
-            throws ObjectStoreException;
-};
+    public synchronized boolean write_uncommitted(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException;
+}

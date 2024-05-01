@@ -1,24 +1,14 @@
-try
-        {
-boolean success = false;
-AtomicAction A = new AtomicAction();
-OnePhase opRes = new OnePhase();  // used OnePhase interface
-       
-        System.out.
+try {
+    boolean success = false;
+    AtomicAction A = new AtomicAction();
+    // used OnePhase interface
+    OnePhase opRes = new OnePhase();
 
-println("Starting top-level action.");
+    System.out.println("Starting top-level action.");
 
-        A.
+    A.begin();
+    A.add(new LastResourceRecord(opRes));
+    A.add("other participants");
 
-begin();
-        A.
-
-add(new LastResourceRecord(opRes));
-        A.
-
-add( "other participants");
-       
-        A.
-
-commit();
-    }
+    A.commit();
+}

@@ -8,7 +8,6 @@ public class TxStats {
     /**
      * @return the number of nested (sub) transactions created so far.
      * <p>
-     * <p>
      * public static int numberOfNestedTransactions();
      * <p>
      * /**

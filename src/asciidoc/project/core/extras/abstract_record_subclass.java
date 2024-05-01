@@ -12,7 +12,7 @@ public class SimpleRecord extends AbstractRecord {
     }
 
     public String type() {
-        return “/StateManager / AbstractRecord / SimpleRecord”;
+        return "/StateManager / AbstractRecord / SimpleRecord";
     }
 
     public boolean restore_state(InputObjectState os, int i) {

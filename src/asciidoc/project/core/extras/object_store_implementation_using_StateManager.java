@@ -4,13 +4,13 @@ public class ObjectStatus {
     public static final int ACTIVE;
     public static final int ACTIVE_NEW;
     public static final int UNKNOWN_STATUS;
-};
+}
 
 public class ObjectType {
     public static final int RECOVERABLE;
     public static final int ANDPERSISTENT;
     public static final int NEITHER;
-};
+}
 
 public abstract class StateManager {
     protected StateManager();
@@ -43,9 +43,9 @@ public abstract class StateManager {
 
     protected final void modified();
     ...
-};
+}
 
 public class ObjectModel {
     public static final int SINGLE;
     public static final int MULTIPLE;
-};
+}

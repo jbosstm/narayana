@@ -1,5 +1,5 @@
-public int get(int index)  // assume -1 means error
-{
+// assume -1 means error
+public int get(int index) {
     AtomicAction A = new AtomicAction();
 
     A.begin();

@@ -17,16 +17,19 @@ public TransactionalQueue() {
     try {
         AtomicAction A = new AtomicAction();
 
-        A.begin(0); // Try to start atomic action
+        // Try to start atomic action
+        A.begin(0);
 
         // Try to set lock
 
         if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED) {
-            A.commit(true); // Commit
-        } else           // Lock refused so abort the atomic action
+            // Commit
+            A.commit(true);
+        } else
+            // Lock refused so abort the atomic action
             A.rollback();
     } catch (Exception e) {
-        System.err.println(“Object construction error: “+e);
+        System.err.println("Object construction error: "+e);
         System.exit(1);
     }
 }

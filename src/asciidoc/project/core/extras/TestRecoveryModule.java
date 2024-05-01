@@ -10,7 +10,8 @@ public class TestRecoveryModule {
     public static void main(String args[]) {
         try {
             AtomicAction tx = new AtomicAction();
-            tx.begin(); // Top level begin
+            // Top level begin
+            tx.begin();
 
             // enlist the participant
             tx.add(SimpleRecord.create());
@@ -25,9 +26,11 @@ public class TestRecoveryModule {
                     _crash = true;
             }
             if (_commit)
-                tx.commit(); // Top level commit
+                // Top level commit
+                tx.commit();
             else
-                tx.abort(); // Top level rollback
+                // Top level rollback
+                tx.abort();
         } catch (Exception e) {
             e.printStackTrace();
         }

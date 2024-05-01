@@ -8,13 +8,7 @@ public class SimpleRecordOSVPlugin implements StateViewerInterface {
      * @param node
      * @throws ObjectStoreException
      */
-    public void uidNodeExpanded(ObjectStore os,
-                                String type,
-                                ObjectStoreBrowserTreeManipulationInterface
-                                        manipulator,
-                                UidNode node,
-                                StatePanel infoPanel)
-            throws ObjectStoreException {
+    public void uidNodeExpanded(ObjectStore os, String type, ObjectStoreBrowserTreeManipulationInterface manipulator, UidNode node, StatePanel infoPanel) throws ObjectStoreException {
         // Do nothing
     }
 
@@ -28,16 +22,11 @@ public class SimpleRecordOSVPlugin implements StateViewerInterface {
      * @param statePanel
      * @throws ObjectStoreException
      */
-    public void entrySelected(ObjectStore os,
-                              String type,
-                              Uid uid,
-                              ObjectStoreViewEntry entry,
-                              StatePanel statePanel)
-            throws ObjectStoreException {
+    public void entrySelected(ObjectStore os, String type, Uid uid, ObjectStoreViewEntry entry, StatePanel statePanel) throws ObjectStoreException {
         SimpleRecord rec = new SimpleRecord();
 
         if (rec.restore_state(os.read_committed(uid, type), ObjectType.ANDPERSISTENT)) {
-            statePanel.setData( “Value”, rec.getValue());
+            statePanel.setData( "Value", rec.getValue());
         }
     }
 
@@ -47,6 +36,6 @@ public class SimpleRecordOSVPlugin implements StateViewerInterface {
      * @return
      */
     public String getType() {
-        return “/StateManager / AbstractRecord / SimpleRecord”;
+        return "/StateManager / AbstractRecord / SimpleRecord"";
     }
 }

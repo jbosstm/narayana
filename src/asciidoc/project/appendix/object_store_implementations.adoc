@@ -16,7 +16,7 @@ You can override the default object store implementation at runtime by setting t
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/appendix_StateStatus.java[]
+include::extras/appendix_StateStatus.java[]
 ----
 ====
 
@@ -57,7 +57,7 @@ The default name is `defaultStore`.
 ====
 [source,text]
 ----
-include::{sourcedir}/extras/default_layout.txt[]
+include::extras/default_layout.txt[]
 ----
 ====
 
@@ -106,7 +106,7 @@ When using the JDBC object store, the application must provide an implementation
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/jdbcaccess.java[]
+include::extras/jdbcaccess.java[]
 ----
 ====
 

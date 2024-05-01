@@ -28,4 +28,4 @@ public class OutputBuffer {
     public synchronized void packDouble(double d) throws IOException;
 
     public synchronized void packString(String s) throws IOException;
-};
+}

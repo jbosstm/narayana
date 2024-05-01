@@ -1,13 +1,13 @@
 public class LockMode {
     public static final int READ;
     public static final int WRITE;
-};
+}
 
 public class LockStatus {
     public static final int LOCKFREE;
     public static final int LOCKHELD;
     public static final int LOCKRETAINED;
-};
+}
 
 public class Lock extends StateManager {
     public Lock(int lockMode);
@@ -22,4 +22,4 @@ public class Lock extends StateManager {
 
     public String type();
     ...
-};
+}
