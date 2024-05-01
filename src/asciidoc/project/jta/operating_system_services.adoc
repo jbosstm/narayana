@@ -1,6 +1,6 @@
-=== Operating System Services
+= Operating System Services
 
-==== Microsoft Windows Server
+== Microsoft Windows Server
 
 Four scripts, located in the `Services\bin\windows` folder, install and uninstall the recovery manager and transaction server services.
 
@@ -27,16 +27,16 @@ Each of the scripts requires administrative privileges.
 
 After running any of the scripts, a status message indicates success or failure.
 
-==== Linux/UNIX
+== Linux / UNIX
 
-===== Installing Services in Linux/UNIX:
+=== Installing Services in Linux/UNIX:
 
 . Log into the system with `root` privileges.
 +
 The installer needs these privileges to create files in `/etc`.
 . Change to `JBOSS_HOME/services/installer` directory.
 +
-`JBOSS_HOME` refers to the directory where you extracted \{productName}.
+`JBOSS_HOME` refers to the directory where you extracted {productName}.
 . Set the `JAVA_HOME` variable, if necessary.
 +
 Set the `JAVA_HOME` variable to the base directory of the JVM the service will use.
@@ -78,7 +78,7 @@ S99transactionserverservice
 The start-up and shut-down scripts are installed for each run-level.
 Depending on your specific operating system, you may need to explicitly enable the services for automatic start-up.
 
-===== Uninstalling Services in Linux/UNIX
+=== Uninstalling Services in Linux/UNIX
 
 . Log into the system with `root` privileges.
 +

@@ -1,5 +1,5 @@
 Transaction txObj = TransactionManager.getTransaction();
-Transaction someOtherTxObj = ..
-..
+Transaction someOtherTxObj = ...
+...
 
 boolean isSame = txObj.equals(someOtherTxObj);      

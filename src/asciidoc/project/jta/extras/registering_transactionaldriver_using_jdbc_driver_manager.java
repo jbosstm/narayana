@@ -1,12 +1,11 @@
-Properties p = System.getProperties(); 
+Properties p = System.getProperties();
 
-switch (dbType)
-{
+switch (dbType) {
 case MYSQL:
-    p.put("jdbc.drivers", "com.mysql.jdbc.Driver"); 
+    p.put("jdbc.drivers", "com.mysql.jdbc.Driver");
     break;
 case PGSQL:
-    p.put("jdbc.drivers", "org.postgresql.Driver"); 
+    p.put("jdbc.drivers", "org.postgresql.Driver");
     break;
 }
 

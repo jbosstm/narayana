@@ -1,4 +1,4 @@
-=== \{productName} Runtime Information
+= {productName} Runtime Information
 
 Compile-time configuration information is available via class `com.arjuna.common.util.ConfigurationInfo`.
 Runtime configuration is embodied in the various `name EnvironmentBean` classes where name refers to the particular configuration category (see the configuration section of the user guide).

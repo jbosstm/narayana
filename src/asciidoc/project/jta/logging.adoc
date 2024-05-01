@@ -1,4 +1,4 @@
-=== Logging
+= Logging
 
 The recovery manager and the transaction server services produce log files which are located in the `services/logs/` directory.
 Two log files are created per service.

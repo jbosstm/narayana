@@ -1,11 +1,11 @@
-== Quick Start to JTA
+= Quick Start to JTA
 
-=== Introduction
+== Introduction
 
 This chapter will briefly cover the key features required to construct a JTA application.
 It is assumed that the reader is familiar with the concepts of the JTA.
 
-=== Package layout
+== Package layout
 
 The key Java packages (and corresponding jar files) for writing basic JTA applications are:
 
@@ -18,12 +18,12 @@ All of these packages appear in the lib directory of the {parentProduct} install
 In order to fully utilize all of the facilities available within {parentProduct}, it will be necessary to add some additional jar files to your classpath.
 See bin/setup-env.sh or bin\setup-env.bat for details.
 
-=== Setting properties
+== Setting properties
 
 {productName} has also been designed to be configurable at runtime through the use of various property attributes.
 These attributes can be provided at runtime on command line or specified through a properties file.
 
-==== Specifying the object store location
+=== Specifying the object store location
 
 {productName} requires an object store in order to persistently record the outcomes of transactions in the event of failures.
 In order to specify the location of the object store it is necessary to specify the location when the application is executed; for example:
@@ -38,40 +38,33 @@ The default location is a directory under the current execution directory.
 By default, all object states will be stored within the defaultStore subdirectory of the object store root, e.g., `/usr/local/Arjuna/TransactionService/ObjectStore/defaultStore`.
 However, this subdirectory can be changed by setting the `ObjectStoreEnvironmentBean.localOSRoot` property variable accordingly.
 
-=== Demarcating Transactions
+== Demarcating Transactions
 
 The Java Transaction API consists of three elements: a high-level application transaction demarcation interface, a high-level transaction manager interface intended for application server, and a standard Java mapping of the X/Open XA protocol intended for transactional resource manager.
 All of the JTA classes and interfaces occur within the `jakarta.transaction` package, and the corresponding {productName} implementations within the `com.arjuna.ats.jta package`.
 
-==== UserTransaction
+=== UserTransaction
 
 The UserTransaction interface provides applications with the ability to control transaction boundaries.
 
 In {productName}, `UserTransaction` can be obtained from the static `com.arjuna.ats.jta.UserTransaction.userTransaction()` method.
 When obtained the `UserTransaction` object can be used to control transactions
 
+.User Transaction Example
 ====
 [source,Java]
 ----
-//get UserTransaction
-UserTransaction utx = com.arjuna.ats.jta.UserTransaction.userTransaction();
-// start transaction work..
-utx.begin();
-
-// perform transactional work
-
-utx.commit();
-
+include::extras/userTransactionExample.java[]
 ----
 ====
 
-==== TransactionManager
+=== TransactionManager
 
 The TransactionManager interface allows the application server to control transaction boundaries on behalf of the application being managed.
 
 In {productName}, transaction manager implementations can be obtained from the static `com.arjuna.ats.jta.TransactionManager.transactionManager()` method.
 
-==== The Transaction interface
+=== The Transaction interface
 
 The Transaction interface allows operations to be performed on the transaction associated with the target object.
 Every top-level transaction is associated with one Transaction object when the transaction is created.
@@ -85,13 +78,13 @@ The Transaction object can be used to:
 A Transaction object can be obtained using the `TransactionManager` by invoking the method `getTransaction()` method.
 
 ====
-[source,Java]
+[source,java]
 ----
 Transaction txObj = TransactionManager.getTransaction();
 ----
 ====
 
-=== Local vs Distributed JTA implementations
+== Local vs Distributed JTA implementations
 
 In order to ensure interoperability between JTA applications, it is recommended to rely on the JTS/OTS specification to ensure transaction propagation among transaction managers.
 
@@ -105,7 +98,7 @@ In order to select the distributed JTA implementation it is necessary to perform
 * make sure the property `JTAEnvironmentBean.jtaTMImplementation` is set to `com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple`.
 * make sure the property `JTAEnvironmentBean.jtaUTImplementation` is set to `com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple`.
 
-=== JDBC and Transactions
+== JDBC and Transactions
 
 {parentProduct} JTS supports the construction of both local and distributed transactional applications which access databases using the JDBC APIs.
 JDBC supports two-phase commit of transactions, and is similar to the XA X/Open standard.
@@ -126,7 +119,7 @@ With the exception of close, all operations performed on the connection at the a
 {productName} will automatically register the JDBC driver connection with the transaction via an appropriate resource.
 When the transaction terminates, this resource will be responsible for either committing or rolling back any changes made to the underlying database via appropriate calls on the JDBC driver.
 
-=== Configurable options
+== Configurable options
 
 The following table shows some of the configuration features, with default values shown in italics.
 For more detailed information, the relevant section numbers are provided.
@@ -138,7 +131,7 @@ You need to prefix certain properties in this table with the string `com.arjuna.
 The prefix has been removed for formatting reasons, and has been replaced by ...
 ====
 
-[cols=",",options="header",]
+[cols="1,1",options="header"]
 |===
 |Configuration Name |Possible Values
 |`com.arjuna.ats.jta.supportSubtransactions` |`YES`/`NO`

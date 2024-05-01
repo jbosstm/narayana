@@ -1,4 +1,4 @@
-=== Failure Recovery Administration
+= Failure Recovery Administration
 
 The failure recovery subsystem of {productName} will ensure that results of a transaction are applied consistently to all resources affected by the transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity.
 In the case of machine (system) crash or network failure, the recovery will not take place until the system or network are restored, but the original application does not need to be restarted.
@@ -35,15 +35,15 @@ If the `-test` flag is used with the Recovery Manager then it will display a `Re
 ----
 ====
 
-==== Configuring the Recovery Manager
+== Configuring the Recovery Manager
 
 The `RecoveryManager` reads the properties defined in the `jbossts-properties.xml` file.
 
 A default version of `jbossts-properties.xml` is supplied with the distribution.
-This can be used without modification, except possibly the debug tracing fields, as shown in link:#recovery-manager-output[Output] .
+This can be used without modification, except possibly the debug tracing fields, as shown in <<_recovery_manager_output>>.
 
-[[recovery-manager-output]]
-===== Output
+[[_recovery_manager_output]]
+== Output
 
 It is likely that installations will want to have some form of output from the `RecoveryManager`, to provide a record of what recovery activity has taken place.
 `RecoveryManager` uses the logging mechanism provided by `jboss logging`, which provides a high level interface that hides differences that exist between existing logging APIs such Jakarta log4j or JDK logging API.
@@ -53,7 +53,6 @@ Please consult the jboss logging documentation for details.
 Each log message has an associated log Level, that gives the importance and urgency of a log message.
 The set of possible Log Levels, in order of least severity, and highest verbosity, is:
 
-[arabic]
 . `TRACE`
 . `DEBUG`
 . `INFO`
@@ -68,7 +67,7 @@ Setting the normal recovery messages to the `INFO` level allows the `RecoveryMan
 If nothing is going on, it just reports the entry into each module for each periodic pass.
 To disable `INFO` messages produced by the Recovery Manager, the logging level could be set to the higher level of `ERROR`, which means that the `RecoveryManager` will only produce `ERROR`, `WARNING`, or `FATAL` messages.
 
-==== Periodic Recovery
+== Periodic Recovery
 
 The `RecoveryManager` scans the `ObjectStore` and other locations of information, looking for transactions and resources that require, or may require recovery.
 The scans and recovery processing are performed by recovery modules.
@@ -123,7 +122,7 @@ The default Recovery Extension settings are:
 ----
 ====
 
-==== Expired Entry Removal
+== Expired Entry Removal
 
 The operation of the recovery subsystem cause some entries to be made in the `ObjectStore` that are not removed in normal progress.
 The `RecoveryManager` has a facility for scanning for these and removing items that are very old.

@@ -1,4 +1,4 @@
-=== ObjectStore Management
+= ObjectStore Management
 
 Within the transaction service installation, the object store is updated regularly whenever transactions are created, or when _Transactional Objects for Java_ is used.
 In a failure-free environment, the only object states which should reside within the object store are those representing objects created with the _Transactional Objects for Java_ API.

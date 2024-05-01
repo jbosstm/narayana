@@ -1,6 +1,6 @@
-=== Preparing Your System
+= Preparing Your System
 
-==== Pre-Installation Steps
+== Pre-Installation Steps
 
 Before installing the {productName} software, we recommend the following administrative steps be taken, assuming a default configuration for {productName}.
 

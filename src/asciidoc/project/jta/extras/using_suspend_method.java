@@ -1,3 +1,5 @@
 Transaction tobj = TransactionManager.suspend();
-..
-TransactionManager.resume(tobj);
+...
+TransactionManager.
+
+resume(tobj);

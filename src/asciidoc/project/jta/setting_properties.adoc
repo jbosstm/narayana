@@ -1,5 +1,5 @@
-[[chap-JBossJTA_Installation_Guide-Test_Chapter]]
-=== Setting Properties
+[[_chap_jbossjta_installation_guide_test_chapter]]
+= Setting Properties
 
 {productName} has been designed to be highly configurable at runtime through the use of various property attributes.
 Although these attributes can be provided at runtime on the command line, it may be more convenient to specify them through a single properties file or via `setter` methods on the beans.
