@@ -1,19 +1,17 @@
-public int get (int index)  // assume -1 means error
+public int get(int index)  // assume -1 means error
 {
-   AtomicAction A = new AtomicAction();
+    AtomicAction A = new AtomicAction();
 
-   A.begin();
+    A.begin();
 
-   // We only need a READ lock as the state is unchanged.
+    // We only need a READ lock as the state is unchanged.
 
-   if (setlock(new Lock(LockMode.READ), 0) == LockResult.GRANTED)
-   {
-      A.commit(true);
+    if (setlock(new Lock(LockMode.READ), 0) == LockResult.GRANTED) {
+        A.commit(true);
 
-             return elements[index];
-   }
-   else
-      A.rollback();
+        return elements[index];
+    } else
+        A.rollback();
 
-   return -1;
+    return -1;
 }

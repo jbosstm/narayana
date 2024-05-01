@@ -1,7 +1,7 @@
 <jar jarfile="osbv-simplerecord.jar">
-  <fileset dir="build" includes="*.class”/>
+    <fileset dir="build" includes="*.class”/>
   <manifest>
-    <section name="arjuna-tools-objectstorebrowser">
+    <section name=" arjuna-tools-objectstorebrowser">
       <attribute name="plugin-classname-1" value=" SimpleRecordOSVPlugin "/>
     </section>
   </manifest>

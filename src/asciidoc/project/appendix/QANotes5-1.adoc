@@ -1,10 +1,14 @@
-== QA Testsuite
+
+:sectnums!:
+
+[appendix]
+= QA Testsuite
 
 In the source git repository we maintain a testsuite for integration testing.
 
-=== JDBCResources 01 & 02
+== JDBCResources 01 & 02
 
-==== Overview
+=== Overview
 
 * Tests
 ** JDBC Support
@@ -19,7 +23,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** _pgsql_jndi
 ** _sybase_jndi
 
-==== JDBCResources 01 & 02 Summary
+=== JDBCResources 01 & 02 Summary
 
 * Building blocks:
 ** Interfaces: 1
@@ -32,7 +36,7 @@ In the source git repository we maintain a testsuite for integration testing.
 * Tests:
 ** Configurations: 32
 
-==== JDBCResources 01 & 02 Interfaces
+=== JDBCResources 01 & 02 Interfaces
 
 * InfoTable
 ** insert(in string name, in string value)
@@ -40,19 +44,19 @@ In the source git repository we maintain a testsuite for integration testing.
 ** select(in string name, out string value)
 ** delete(in string name)
 
-==== JDBCResources 01 & 02 Implementations
+=== JDBCResources 01 & 02 Implementations
 
 * JDBCInfoTableImpl01
 ** Creates a single JDBC connection for all operations
 * JDBCInfoTableImpl02
 ** Creates a JDBC connection per operation
 
-==== JDBCResources 01 & 02 Server
+=== JDBCResources 01 & 02 Server
 
 * Server01: 1 x JDBCInfoTableImpl01
 * Server02: 1 x JDBCInfoTableImpl02
 
-==== JDBCResources 01 & 02 Setups
+=== JDBCResources 01 & 02 Setups
 
 * Setup01
 ** Creates Table InfoTable (Name VARCHAR(64), Value VARCHAR(64))
@@ -61,7 +65,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Creates Table InfoTable (Name VARCHAR(64), Value VARCHAR(64))
 *** Inserts 10 entries ("Name_’X’", "Value_’X’") [Where X is 0 … 9]
 
-==== JDBCResources 01 & 02 Clients
+=== JDBCResources 01 & 02 Clients
 
 * Client01
 ** Obtains an InfoTable object
@@ -144,7 +148,7 @@ In the source git repository we maintain a testsuite for integration testing.
 *** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
 *** Within transaction, per update, which rolls back
 
-==== JDBCResources 01 & 02 Outcomes
+=== JDBCResources 01 & 02 Outcomes
 
 * Outcome01
 ** Verify existence and values of inserted entries
@@ -155,12 +159,12 @@ In the source git repository we maintain a testsuite for integration testing.
 * Outcome04
 ** Verify existence and values [reverse] of inserted entries, in two InfoTables
 
-==== JDBCResources 01 & 02 Cleanups
+=== JDBCResources 01 & 02 Cleanups
 
 * Cleanup01
 ** Drops Table "InfoTable"
 
-==== JDBCResources 01 & 02 Configurations
+=== JDBCResources 01 & 02 Configurations
 
 * Test001: 1 x Server01 + 1 x Client01
 * Test002: 1 x Server01 + 1 x Client02
@@ -195,9 +199,9 @@ In the source git repository we maintain a testsuite for integration testing.
 * Test031: 2 x Server02 + 1 x Client15 + Outcome03
 * Test032: 2 x Server02 + 1 x Client16 + Outcome03
 
-=== JDBCResources 03 & 04
+== JDBCResources 03 & 04
 
-==== Overview
+=== Overview
 
 * Tests
 ** JDBC Support – Conflict over resource
@@ -213,7 +217,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** _pgsql_jndi
 ** _sybase_jndi
 
-==== JDBCResources 03 & 04 Summary
+=== JDBCResources 03 & 04 Summary
 
 * Building blocks:
 ** Interfaces: 1
@@ -226,26 +230,26 @@ In the source git repository we maintain a testsuite for integration testing.
 * Tests:
 ** Configurations: 4
 
-==== JDBCResources 03 & 04 Interfaces
+=== JDBCResources 03 & 04 Interfaces
 
 * NumberTable
 ** get(in string name, out long value)
 ** set(in string name, in long value)
 ** increase(in string name)
 
-==== JDBCResources 03 & 04 Implementations
+=== JDBCResources 03 & 04 Implementations
 
 * JDBCNumberTableImpl01
 ** Creates a single JDBC connection for all operations
 * JDBCNumberTableImpl02
 ** Creates a JDBC connection per operation
 
-==== JDBCResources 03 & 04 Server
+=== JDBCResources 03 & 04 Server
 
 * Server01: 1 x JDBCNumberTableImpl01
 * Server02: 1 x JDBCNumberTableImpl02
 
-==== JDBCResources 03 & 04 Setups
+=== JDBCResources 03 & 04 Setups
 
 * Setup01
 ** Creates Table NumberTable
@@ -253,7 +257,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Inserts n entries
 *** Name_’X’", "0") [Where X is 0 … n - 1]
 
-==== JDBCResources 03 & 04 Clients
+=== JDBCResources 03 & 04 Clients
 
 * Client01
 ** Operation
@@ -269,32 +273,32 @@ In the source git repository we maintain a testsuite for integration testing.
 *** New values are the same, and equals old values plus one, or
 *** InvocationException thrown with Reason "ReasonCantSerializeAccess"
 
-==== JDBCResources 03 & 04 Outcomes
+=== JDBCResources 03 & 04 Outcomes
 
 * Outcome01
 ** Verify first n entries (0 … n - 1) have value n
 
-==== JDBCResources 03 & 04 Cleanups
+=== JDBCResources 03 & 04 Cleanups
 
 * Cleanup01
 ** Drops Table "NumberTable"
 
-==== JDBCResources 03 & 04 Configurations
+=== JDBCResources 03 & 04 Configurations
 
 * Test01: 1 x Server01 + 2 x Client01 + Outcome01
 * Test02: 2 x Server01 + 2 x Client01 + Outcome01
 * Test03: 1 x Server02 + 2 x Client01 + Outcome01
 * Test04: 2 x Server02 + 2 x Client01 + Outcome01
 
-=== CurrentTests
+== CurrentTests
 
-==== Overview
+=== Overview
 
 * Tests
 ** Test Current interface
 ** Close to "Unit Tests"
 
-==== CurrentTests01 Summary
+=== CurrentTests01 Summary
 
 * Building blocks:
 ** Interfaces: 0
@@ -306,13 +310,13 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Configurations: 34
 ** TestXX.java maps to Test0XX.conf
 
-==== CurrentTests Clients
+=== CurrentTests Clients
 
 * Tests 01 through 16: Complete transaction and then check that a further operation throws NoTransaction:
 * Test17
 
 .Tests 01 through 16
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,1", options="header"]
 |===
 |Op To Check | None | begin commit(true) | begin commit(false) | begin rollback
 
@@ -390,9 +394,9 @@ In the source git repository we maintain a testsuite for integration testing.
 * Test34
 ** Checks that get_status() when in transaction marked roll back only returns StatusMarkedRollback
 
-=== OTSServer
+== OTSServer
 
-==== Overview
+=== Overview
 
 * Tests
 ** Tests OTSServer (a TransactionFactory interface implementation)
@@ -401,7 +405,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Test013 to Test016 - Client13: x1, x2 with args 4 250 and x3, x4 with args 4 100
 ** Test017 to Test020 - Client13: x1, x2 with args 4 250 and x3, x4 with args 4 100
 
-==== OTSServer Summary
+=== OTSServer Summary
 
 * Building blocks:
 ** Interfaces: 0
@@ -412,7 +416,7 @@ In the source git repository we maintain a testsuite for integration testing.
 * Tests:
 ** Configurations: 20
 
-==== OTSServer Clients
+=== OTSServer Clients
 
 * Test01
 ** Creates a transaction via transactionFactory.create(0)
@@ -469,9 +473,9 @@ In the source git repository we maintain a testsuite for integration testing.
 *** Check each status is StatusActive
 *** Checks each commit(true), commit(false), rollback(), alternatively, does not throw an exception
 
-=== AITResources
+== AITResources
 
-==== Overview
+=== Overview
 
 * AIT
 ** Advanced(/Arjuna) Integrated(/Interface) Transactions
@@ -485,7 +489,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Context propagation
 ** Memory problems
 
-==== AITResources 01 & 02 Summary
+=== AITResources 01 & 02 Summary
 
 * Building blocks:
 ** Interfaces: 2 (Counter & PingPong)
@@ -498,7 +502,7 @@ In the source git repository we maintain a testsuite for integration testing.
 ** Memory: 14
 ** Configurations: 58
 
-==== AITResources Interfaces
+=== AITResources Interfaces
 
 * Counter
 ** get()
@@ -514,14 +518,14 @@ In the source git repository we maintain a testsuite for integration testing.
 ** get()
 ** getMemory()
 
-==== AITResources Implementations
+=== AITResources Implementations
 
 * AITCounterImpl01 - Operations create [nested] transactions (AtomicTransaction)
 * AITCounterImpl02 - Operations create [nested] transactions (OTS.current)
 * AITCounterImpl03 - Operations do not create transactions
 * AITPingPongImpl01 - Operations create [nested] transactions (AtomicTransaction)
 
-==== AITResources Server
+=== AITResources Server
 
 * Server01: 1 x AITCounterImpl01
 * Server02: 4 x AITCounterImpl01
@@ -534,7 +538,7 @@ In the source git repository we maintain a testsuite for integration testing.
 * Server09: 1 x AITCounterImpl03
 * Server10: 4 x AITCounterImpl03
 
-==== AITResources Clients
+=== AITResources Clients
 
 * Client01
 ** Performs 1000 increase(), no client transaction
@@ -580,14 +584,14 @@ In the source git repository we maintain a testsuite for integration testing.
 * Client17
 ** Memory check version of Client16
 
-==== AITResources Outcomes
+=== AITResources Outcomes
 
 * Outcome01
 * Checks if a counter has an "expected value"
 * Outcome02
 * Checks if two counters has an "expected value"
 
-==== AITResources Memory Tests
+=== AITResources Memory Tests
 
 * General form:
 ** Perform test pattern (reduced)
@@ -600,9 +604,9 @@ In the source git repository we maintain a testsuite for integration testing.
 *** Repeat: run GC, get memory until no further decreases
 ** Perform check
 
-=== CrashRecovery
+== CrashRecovery
 
-==== CrashRecovery Summary
+=== CrashRecovery Summary
 
 * CrashRecovery01
 ** Tests replay_completion (Implicit context propagation)
@@ -626,3 +630,5 @@ In the source git repository we maintain a testsuite for integration testing.
 * CrashRecovery10
 ** Tests automatic TO (AIT) resource initiated crash recovery (Explicit context propagation)
 ** Not supported by system, if passes caused by recovery manager initiated crash recovery ]
+
+:sectnums:

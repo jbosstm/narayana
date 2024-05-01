@@ -4,32 +4,32 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.*;
 
 public class TestRecoveryModule {
-	public static void main(String args[]) {
-		try {
-			AtomicAction tx = new AtomicAction();
-			tx.begin(); // Top level begin
+    protected static boolean _commit = true;
+    protected static boolean _crash = false;
 
-			// enlist the participant
-			tx.add(SimpleRecord.create());
+    public static void main(String args[]) {
+        try {
+            AtomicAction tx = new AtomicAction();
+            tx.begin(); // Top level begin
 
-			System.out.println("About to complete the transaction ");
-			for (int i = 0; i < args.length; i++) {
-				if ((args[i].compareTo("-commit") == 0))
-					_commit = true;
-				if ((args[i].compareTo("-rollback") == 0))
-					_commit = false;
-				if ((args[i].compareTo("-crash") == 0))
-					_crash = true;
-			}
-			if (_commit)
-				tx.commit(); // Top level commit
-			else
-				tx.abort(); // Top level rollback
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            // enlist the participant
+            tx.add(SimpleRecord.create());
 
-	protected static boolean _commit = true;
-	protected static boolean _crash = false;
+            System.out.println("About to complete the transaction ");
+            for (int i = 0; i < args.length; i++) {
+                if ((args[i].compareTo("-commit") == 0))
+                    _commit = true;
+                if ((args[i].compareTo("-rollback") == 0))
+                    _commit = false;
+                if ((args[i].compareTo("-crash") == 0))
+                    _crash = true;
+            }
+            if (_commit)
+                tx.commit(); // Top level commit
+            else
+                tx.abort(); // Top level rollback
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,79 +1,83 @@
-public class Array extends StateManager
-{
-    public Array ();
-    public Array (Uid objUid);
-    public void finalize ( super.terminate(); super.finalize(); };
+public static final int ARRAY_SIZE = 10;
 
-    /* Class specific operations. */
+;
 
-    public boolean set (int index, int value);
-    public int get (int index);
+/* Class specific operations. */
+        The save_state, restore_state
+and type
 
-    /* State management specific operations. */
+public boolea
 
-    public boolean save_state (OutputObjectState os, int ObjectType);
-    public boolean restore_state (InputObjectState os, int ObjectType);
-    public String type ();
+/* State management specific operations. */
+operations can
 
-    public static final int ARRAY_SIZE = 10;
+public St
+be defined
 
-    private int[] elements = new int[ARRAY_SIZE];
-    private int highestIndex;
+public bo
+as follows
+private int[] elements = new int[ARRAY_SIZE];
+private int highestIndex;
+
+public boolean set(int index, int value);
 };
-The save_state, restore_state and type operations can be defined as follows:
-    /* Ignore ObjectType parameter for simplicity */
 
-    public boolean save_state (OutputObjectState os, int ObjectType)
-    {
-        if (!super.save_state(os, ObjectType))
-            return false;
+public int get(int index);
 
-        try
-            {
-                packInt(highestIndex);
+public boolean save_state(OutputObjectState os, int ObjectType);n restore_state(InputObjectState os, int ObjectType);ring type();olean save_state(OutputObjectState os, int ObjectType) {
+    if (!super.save_state(os, ObjectType))
+        return false;
 
-                /*
-                 * Traverse array state that we wish to save. Only save active elements
-                 */
+    try {
+        packInt(highestIndex);
 
-                for (int i = 0; i <= highestIndex; i++)
-                    os.packInt(elements[i]);
+        /*
+         * Traverse array state that we wish to save. Only save active elements
+         */
 
-                return true;
-            }
-        catch (IOException e)
-            {
-                return false;
-            }
+        for (int i = 0; i <= highestIndex; i++)
+            os.packInt(elements[i]);
+
+        return true;
+    } catch (IOException e) {
+        return false;
     }
-public boolean restore_state (InputObjectState os, int ObjectType)
-{
+}:
+/* Ignore ObjectType parameter for simplicity */
+
+public boolean restore_state(InputObjectState os, int ObjectType) {
     if (!super.restore_state(os, ObjectType))
         return false;
 
-    try
-        {
-            int i = 0;
+    try {
+        int i = 0;
 
-            highestIndex = os.unpackInt();
+        highestIndex = os.unpackInt();
 
-            while (i < ARRAY_SIZE)
-                {
-                    if (i <= highestIndex)
-                        elements[i] =  os.unpackInt();
-                    else
-                        elements[i] = 0;
-                    i++;
-                }
-
-            return true;
+        while (i < ARRAY_SIZE) {
+            if (i <= highestIndex)
+                elements[i] = os.unpackInt();
+            else
+                elements[i] = 0;
+            i++;
         }
-    catch (IOException e)
-        {
-            return false;
-        }
+
+        return true;
+    } catch (IOException e) {
+        return false;
+    }
 }
-public String type ()
-{
+
+public String type() {
     return "/StateManager/Array";
+}
+
+public class Array extends StateManager {
+    public Array();
+
+    public Array(Uid objUid);
+
+        finalize(); super.
+
+public void finalize( super.terminate();
 }

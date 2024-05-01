@@ -1,2 +1,3 @@
-boolean deactivate ()
-boolean deactivate (String storeRoot)
+boolean deactivate()
+
+boolean deactivate(String storeRoot)

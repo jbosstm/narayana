@@ -1,13 +1,31 @@
-= Arjuna Core
+= Narayana Core
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
 
-include::{docdir}/project/core/overview.adoc[]
+:leveloffset: 1
+include::overview.adoc[]
+:leveloffset: 0
 
-include::{docdir}/project/core/using_txcore.adoc[]
+:leveloffset: 1
+include::using_txcore.adoc[]
+:leveloffset: 0
 
-include::{docdir}/project/core/general_transaction_issues.adoc[]
+:leveloffset: 1
+include::general_transaction_issues.adoc[]
+:leveloffset: 0
 
-include::{docdir}/project/core/hints_and_tips.adoc[]
+:leveloffset: 1
+include::hints_and_tips.adoc[]
+:leveloffset: 0
 
-include::{docdir}/project/core/constructing_a_transactional_objects_for_java_application.adoc[]
+:leveloffset: 1
+include::constructing_a_transactional_objects_for_java_application.adoc[]
+:leveloffset: 0
 
-include::{docdir}/project/core/failure_recovery.adoc[]
+:leveloffset: 1
+include::failure_recovery.adoc[]
+:leveloffset: 0

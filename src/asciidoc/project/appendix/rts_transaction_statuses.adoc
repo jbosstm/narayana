@@ -1,5 +1,8 @@
+:sectnums!:
+
+[appendix]
 [[_transaction_statuses]]
-== REST-AT Transaction Statuses
+= REST-AT Transaction Statuses
 
 Resources return the following status values in response to GET requests on the appropriate `transaction-coordinator` or `participant-resource` URI:
 
@@ -36,3 +39,5 @@ TransactionActive::
 the transaction is active, i.e., has not begun to terminate.
 TransactionStatusUnknown::
 the status of the transaction is unknown
+
+:sectnums:

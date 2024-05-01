@@ -1,6 +1,9 @@
-== Object store implementations
+:sectnums!:
 
-=== The ObjectStore
+[appendix]
+= Object store implementations
+
+== The ObjectStore
 
 This appendix examines the various ArjunaCore object store implementations and gives guidelines for creating other implementations and plugging into an application.
 
@@ -11,63 +14,21 @@ You can override the default object store implementation at runtime by setting t
 
 .Class `StateStatus`
 ====
-[source,Java]
+[source,java]
 ----
-
-/*
- * This is the base class from which all object store types are derived.
- * Note that because object store instances are stateless, to improve
- * efficiency we try to only create one instance of each type per process.
- * Therefore, the create and destroy methods are used instead of new
- * and delete. If an object store is accessed via create it *must* be
- * deleted using destroy. Of course it is still possible to make use of
- * new and delete directly and to create instances on the stack.
- */
-
-public class StateStatus {
-    public static final int OS_ORIGINAL;
-    public static final int OS_SHADOW;
-    public static final int OS_UNCOMMITTED;
-    public static final int OS_UNCOMMITTED_HIDDEN;
-    public static final int OS_UNKNOWN;
-}
-
-public class StateType {
-    public static final int OS_COMMITTED;
-    public static final int OS_COMMITTED_HIDDEN;
-    public static final int OS_HIDDEN;
-    public static final int OS_INVISIBLE;
-}
-
-public abstract class ObjectStore implements BaseStore, ParticipantStore, RecoveryStore, TxLog {
-    public ObjectStore (String osRoot);
-    public synchronized boolean allObjUids (String s, InputObjectState buff) throws ObjectStoreException;
-    public synchronized boolean allObjUids (String s, InputObjectState buff, int m) throws ObjectStoreException;
-
-    public synchronized boolean allTypes (InputObjectState buff) throws ObjectStoreException;
-    public synchronized int currentState(Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean commit_state (Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean hide_state (Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean reveal_state (Uid u, String tn) throws ObjectStoreException;
-    public synchronized InputObjectState read_committed (Uid u, String tn) throws ObjectStoreException;
-    public synchronized InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean remove_committed (Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException;
-    public synchronized boolean write_committed (Uid u, String tn, OutputObjectState buff) throws ObjectStoreException;
-    public synchronized boolean write_uncommitted (Uid u, String tn,OutputObjectState buff) throws ObjectStoreException;
-    public static void printState (PrintStream strm, int res);
-}
+include::{sourcedir}/extras/appendix_StateStatus.java[]
 ----
 ====
 
 {productName} programmers do not usually need to interact with any of the object store implementations directly, apart from possibly creating them in the first place.
 Even this is not necessary if the default store type is used, since {productName} creates stores as necessary.
-All stores manipulate instances of the class `ObjectState` .
-These instances are named using a `type` (via the object's `type()` operation) and a `Uid` .
+All stores manipulate instances of the class `ObjectState`.
+These instances are named using a `type` (via the object's `type()` operation) and a [path]_Uid_ .
 
-For atomic actions purposes, object states in the store can be principally in two distinct states: `OS_COMMITTED` or `OS_UNCOMMITTED` .
+For atomic actions purposes, object states in the store can be principally in two distinct states: `OS_COMMITTED` or `OS_UNCOMMITTED`.
 An object state starts in the `OS_COMMITTED` state, but when it is modified under the control of an atomic action, a new second object state may be written that is in the `OS_UNCOMMITTED` state.
-If the action commits, this second object state replaces the original and becomes `OS_COMMITTED` . If the action aborts, this second object state is discarded.
+If the action commits, this second object state replaces the original and becomes `OS_COMMITTED`.
+If the action aborts, this second object state is discarded.
 All of the implementations provided with this release handle these state transitions by making use of shadow copies of object states.
 However, any other implementation that maintains this abstraction is permissible.
 
@@ -96,24 +57,15 @@ The default name is `defaultStore`.
 ====
 [source,text]
 ----
-<ObjectStore root Directory from configure>     <filename>/JBossTS/ObjectStore/</filename>
-   <ObjectStore Type1>                          <filename>FragmentedStore/</filename>
-      <Default root>                            <filename>defaultStore/</filename>
-         <StateManager>                         <filename>StateManager</filename>
-            <LockManager>                       <filename>LockManager/</filename>
-               <User Types>
-      <Localised root 2>                        <filename>myStore/</filename>
-         <StateManager>                         <filename>StateManager/</filename>
-
-   <ObjectStore Type2>                          <filename>ActionStore/</filename>
-         <Default root>                         <filename>defaultStore/</filename>
+include::{sourcedir}/extras/default_layout.txt[]
 ----
 ====
 
 ==== The shadowing store
 
 The shadowing store is the original version of the object store, which was provided in prior releases.
-It is implemented by the class `ShadowingStore`. It is simple but slow.
+It is implemented by the class `ShadowingStore`.
+It is simple but slow.
 It uses pairs of files to represent objects.
 One file is the shadow version and the other is the committed version.
 Files are opened, locked, operated upon, unlocked, and closed on every interaction with the object store.
@@ -125,8 +77,8 @@ If you are overriding the object store implementation, the type of this object s
 
 Since transactional objects are concurrency-controlled through `LockManager`, you do not need to impose additional locking at the file level.
 The basic ShadowingStore implementation handles file-level locking.
-Therefore, the default object store implementation for {productName}, `ShadowNoFileLockStore`, relies upon user-level locking.
-This enables it to provide better performance than the `ShadowingStore` implementation.
+Therefore, the default object store implementation for {product}, [path]_ShadowNoFileLockStore_, relies upon user-level locking.
+This enables it to provide better performance than the [path]_ShadowingStore_ implementation.
 
 If you are overriding the object store implementation, the type of this object store is `ShadowNoFileLockStore`.
 
@@ -143,33 +95,32 @@ If you are overriding the object store implementation, the type of this object s
 
 The JDBCStore uses a JDBC database to save persistent object states.
 When used in conjunction with the Transactional Objects for Java API, nested transaction support is available.
-In the current implementation, all object states are stored as _Binary Large Objects (BLOBs)_ within the same table.
-The limitation on object state size imposed by using BLOBs is `64k` . If you try to store an object state which exceeds this limit, an error is generated and the state is not stored.
+In the current implementation, all object states are stored as [term]_Binary Large Objects (BLOBs)_ within the same table.
+The limitation on object state size imposed by using BLOBs is `64k`.
+If you try to store an object state which exceeds this limit, an error is generated and the state is not stored.
 The transaction is subsequently forced to roll back.
 
 When using the JDBC object store, the application must provide an implementation of the `JDBCAccess` interface, located in the `com.arjuna.ats.arjuna.objectstore` package:
 
 .Interface `JDBCAccess`
 ====
-[source,Java]
+[source,java]
 ----
-public interface JDBCAccess {
-    Connection getConnection() throws SQLException;
-    public void putConnection (Connection conn) throws SQLException;
-    public void initialise (Object[] objName);
-}
+include::{sourcedir}/extras/jdbcaccess.java[]
 ----
 ====
 
 The implementation of this class is responsible for providing the `Connection` which the JDBC ObjectStore uses to save and restore object states:
 
-getConnection::
+`getConnection`::
 Returns the Connection to use.
 This method is called whenever a connection is required, and the implementation should use whatever policy is necessary for determining what connection to return.
-This method need not return the same
-`Connection` instance more than once.
+This method need not return the same `Connection` instance more than once.
+
 putConnection::
-Returns one of the `Connections` acquired from `getConnection` . Connections are returned if any errors occur when using them.
+Returns one of the `Connections` acquired from `getConnection`.
+Connections are returned if any errors occur when using them.
+
 initialise::
 Used to pass additional arbitrary information to the implementation.
 
@@ -181,7 +132,7 @@ If overriding the object store implementation, the type of this object store is 
 
 A JDBC object store can be used for managing the transaction log.
 In this case, the transaction log implementation should be set to `JDBCActionStore` and the `JDBCAccess` implementation must be provided via the `ObjectStoreEnvironmentBean.jdbcTxDbAccessClassName` property variable.
-In this case, the default table name is `JBossTSTxTable`.
+In this case, the default table name is [path]_JBossTSTxTable_ .
 
 You can use the same `JDBCAccess` implementation for both the user object store and the transaction log.
 
@@ -193,31 +144,37 @@ The failure semantics associated with this object store are different from the n
 
 If overriding the object store implementation, the type of this object store is `CacheStore`.
 
+.Configuration Properties
 ObjectStoreEnvironmentBean.cacheStoreHash::
 sets the number of internal stores to hash the states over.
 The default value is 128.
+
 ObjectStoreEnvironmentBean.cacheStoreSize::
 the maximum size the cache can reach before a flush is triggered.
 The default is 10240 bytes.
+
 ObjectStoreEnvironmentBean.cacheStoreRemovedItems::
 the maximum number of removed items that the cache can contain before a flush is triggered.
 By default, calls to remove a state that is in the cache will simply remove the state from the cache, but leave a blank entry (rather than remove the entry immediately, which would affect the performance of the cache).
 When triggered, these entries are removed from the cache.
 The default value is twice the size of the hash.
+
 ObjectStoreEnvironmentBean.cacheStoreWorkItems::
 the maximum number of items that are allowed to build up in the cache before it is flushed.
 The default value is 100.
 `ObjectStoreEnvironmentBean.cacheStoreScanPeriod` sets the time in milliseconds for periodically flushing the cache.
 The default is 120 seconds.
+
 ObjectStoreEnvironmentBean.cacheStoreSync::
 determines whether flushes of the cache are sync-ed to disk.
-The default is `OFF`. To enable, set to `ON`.
+The default is `OFF`.
+To enable, set to `ON`.
 
 ==== LogStore
 
 This implementation is based on a traditional transaction log.
 All transaction states within the same process (VM instance) are written to the same log (file), which is an append-only entity.
-When transaction data would normally be deleted, at the end of the transaction, a `delete` record is added to the log instead.
+When transaction data would normally be deleted, at the end of the transaction, a [path]_delete_ record is added to the log instead.
 Therefore, the log just keeps growing.
 Periodically a thread runs to prune the log of entries that have been deleted.
 
@@ -228,3 +185,5 @@ During the normal execution of the transaction system, there may be an arbitrary
 These should be garbage collected by the system,(or the recovery sub-system, eventually.
 
 Check the Configuration Options table for how to configure the LogStore.
+
+:sectnums:

@@ -1,220 +1,59 @@
-== Core Class Definitions
+
+:sectnums!:
+
+[appendix]
+= Core Class Definitions
 
 This appendix contains an overview of those classes that the application programmer will typically use.
 The aim of this appendix is to provide a quick reference guide to these classes for use when writing applications in ArjunaCore.
 For clarity only the public and protected interfaces of the classes will be given.
 
-.Class `LockManager`
+.Class [class]``LockManager``
 ====
-[source,Java]
+[source,java]
 ----
-public class LockResult {
-    public static final int GRANTED;
-    public static final int REFUSED;
-    public static final int RELEASED;
-}
-
-public class ConflictType {
-    public static final int CONFLICT;
-    public static final int COMPATIBLE;
-    public static final int PRESENT;
-}
-
-public abstract class LockManager extends StateManager {
-    public static final int defaultRetry;
-    public static final int defaultTimeout;
-    public static final int waitTotalTimeout;
-
-    public final synchronized boolean releaselock (Uid lockUid);
-    public final synchronized int setlock (Lock toSet);
-    public final synchronized int setlock (Lock toSet, int retry);
-    public final synchronized int setlock (Lock toSet, int retry, int sleepTime);
-    public void print (PrintStream strm);
-    public String type ();
-    public boolean save_state (OutputObjectState os, int ObjectType);
-    public boolean restore_state (InputObjectState os, int ObjectType);
-
-    protected LockManager ();
-    protected LockManager (int ot);
-    protected LockManager (int ot, int objectModel);
-    protected LockManager (Uid storeUid);
-    protected LockManager (Uid storeUid, int ot);
-    protected LockManager (Uid storeUid, int ot, int objectModel);
-
-    protected void terminate ();
-}
-
+include::{sourcedir}/extras/LockManager_class.java[]
 ----
 ====
 
-.Class `StateManager`
+.Class [class]``StateManager``
 ====
-[source,Java]
+[source,java]
 ----
-public class ObjectStatus {
-    public static final int PASSIVE;
-    public static final int PASSIVE_NEW;
-    public static final int ACTIVE;
-    public static final int ACTIVE_NEW;
-}
-
-public class ObjectType {
-    public static final int RECOVERABLE;
-    public static final int ANDPERSISTENT;
-    public static final int NEITHER;
-}
-
-public abstract class StateManager {
-    public boolean restore_state (InputObjectState os, int ot);
-    public boolean save_state (OutputObjectState os, int ot);
-    public String type ();
-
-    public synchronized boolean activate ();
-    public synchronized boolean activate (String rootName);
-    public synchronized boolean deactivate ();
-    public synchronized boolean deactivate (String rootName);
-    public synchronized boolean deactivate (String rootName, boolean commit);
-
-    public synchronized int status ();
-    public final Uid get_uid ();
-    public void destroy ();
-    public void print (PrintStream strm);
-
-    protected void terminate ();
-
-    protected StateManager ();
-    protected StateManager (int ot);
-    protected StateManager (int ot, int objectModel);
-    protected StateManager (Uid objUid);
-    protected StateManager (Uid objUid, int ot);
-    protected StateManager (Uid objUid, int ot, int objectModel);
-    protected synchronized final void modified ();
-}
-
+include::{sourcedir}/extras/StateManager_class.java[]
 ----
 ====
 
-.Classes `OutputObjectState` and `InputObjectState`
+.Classes [class]``OutputObjectState``and [class]``InputObjectState``
 ====
-[source,Java]
+[source,java]
 ----
-class OutputObjectState extends OutputBuffer {
-    public OutputObjectState (Uid newUid, String typeName);
-
-    public boolean notempty ();
-    public int size ();
-    public Uid stateUid ();
-    public String type ();
-}
-
-class InputObjectState extends ObjectState {
-    public OutputObjectState (Uid newUid, String typeName, byte[] b);
-
-    public boolean notempty ();
-    public int size ();
-    public Uid stateUid ();
-    public String type ();
-}
+include::{sourcedir}/extras/OutputObjectState_class.java[]
 ----
 ====
 
-.Classes `OutputBuffer` and `InputBuffer`
+.Classes [class]``OutputBuffer``and [class]``InputBuffer``
 ====
-[source,Java]
+[source,java]
 ----
-public class OutputBuffer {
-    public  OutputBuffer ();
-
-    public final synchronized boolean valid ();
-    public synchronized byte[] buffer();
-    public synchronized int length ();
-
-    /* pack operations for standard Java types */
-
-    public synchronized void packByte (byte b) throws IOException;
-    public synchronized void packBytes (byte[] b) throws IOException;
-    public synchronized void packBoolean (boolean b) throws IOException;
-    public synchronized void packChar (char c) throws IOException;
-    public synchronized void packShort (short s) throws IOException;
-    public synchronized void packInt (int i) throws IOException;
-    public synchronized void packLong (long l) throws IOException;
-    public synchronized void packFloat (float f) throws IOException;
-    public synchronized void packDouble (double d) throws IOException;
-    public synchronized void packString (String s) throws IOException;
-}
-
-public class InputBuffer {
-    public  InputBuffer ();
-
-    public final synchronized boolean valid ();
-    public synchronized byte[] buffer();
-    public synchronized int length ();
-
-    /* unpack operations for standard Java types */
-
-    public synchronized byte unpackByte () throws IOException;
-    public synchronized byte[] unpackBytes () throws IOException;
-    public synchronized boolean unpackBoolean () throws IOException;
-    public synchronized char unpackChar () throws IOException;
-    public synchronized short unpackShort () throws IOException;
-    public synchronized int unpackInt () throws IOException;
-    public synchronized long unpackLong () throws IOException;
-    public synchronized float unpackFloat () throws IOException;
-    public synchronized double unpackDouble () throws IOException;
-    public synchronized String unpackString () throws IOException;
-}
+include::{sourcedir}/extras/OutputBuffer_class.java[]
 ----
 ====
 
-.Class `Uid`
+.Class [class]``Uid``
 ====
-[source,Java]
+[source,java]
 ----
-public class Uid implements Cloneable {
-    public Uid ();
-    public Uid (Uid copyFrom);
-    public Uid (String uidString);
-    public Uid (String uidString, boolean errorsOk);
-    public synchronized void pack (OutputBuffer packInto) throws IOException;
-    public synchronized void unpack (InputBuffer unpackFrom) throws IOException;
-
-    public void print (PrintStream strm);
-    public String toString ();
-    public Object clone () throws CloneNotSupportedException;
-    public synchronized void copy (Uid toCopy) throws UidException;
-    public boolean equals (Uid u);
-    public boolean notEquals (Uid u);
-    public boolean lessThan (Uid u);
-    public boolean greaterThan (Uid u);
-
-    public synchronized final boolean valid ();
-    public static synchronized Uid nullUid ();
-}
-
+include::{sourcedir}/extras/Uid_class.java[]
 ----
 ====
 
-.Class `AtomicAction`
+.Class [class]``AtomicAction``
 ====
-[source,Java]
+[source,java]
 ----
-public class AtomicAction {
-    public AtomicAction ();
-
-    public void begin () throws SystemException, SubtransactionsUnavailable, NoTransaction;
-    public void commit (boolean report_heuristics) throws SystemException, NoTransaction,
-        HeuristicMixed, HeuristicHazard,TransactionRolledBack;
-    public void rollback () throws SystemException, NoTransaction;
-    public Control control () throws SystemException, NoTransaction;
-    public Status get_status () throws SystemException;
-    /* Allow action commit to be supressed */
-    public void rollbackOnly () throws SystemException, NoTransaction;
-
-    public void registerResource (Resource r) throws SystemException, Inactive;
-    public void registerSubtransactionAwareResource (SubtransactionAwareResource sr)
-        throws SystemException, NotSubtransaction;
-    public void registerSynchronization (Synchronization s) throws SystemException, Inactive;
-}
-
+include::{sourcedir}/extras/AtomicAction_class.java[]
 ----
 ====
+
+:sectnums:

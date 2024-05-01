@@ -1,15 +1,17 @@
-public abstract class StateManager
-{
-    public boolean activate ();
-    public boolean deactivate (boolean commit);
+public abstract class StateManager {
+    protected StateManager();
 
-    public Uid get_uid (); // object’s identifier.
+    protected StateManager(Uid id);
+
+    public boolean activate();
 
     // methods to be provided by a derived class
 
-    public boolean restore_state (InputObjectState os);
-    public boolean save_state (OutputObjectState os);
+    public boolean deactivate(boolean commit);
 
-    protected StateManager ();
-    protected StateManager (Uid id);
+    public Uid get_uid(); // object’s identifier.
+
+    public boolean restore_state(InputObjectState os);
+
+    public boolean save_state(OutputObjectState os);
 };

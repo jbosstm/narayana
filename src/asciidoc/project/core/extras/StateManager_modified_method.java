@@ -1,1 +1,1 @@
-void modified ()
+void modified()

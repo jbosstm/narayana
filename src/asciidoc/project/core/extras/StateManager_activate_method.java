@@ -1,2 +1,3 @@
-boolean activate ()
-boolean activate (String storeRoot)
+boolean activate()
+
+boolean activate(String storeRoot)

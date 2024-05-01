@@ -1,15 +1,17 @@
-== Failure Recovery
+= Failure Recovery
 
 In this chapter we shall cover information on failure recovery that is specific to ArjunaCore, TXOJ, or using {productName} outside the scope of a supported application server.
 
-=== Embedding the Recovery Manager
+== Embedding the Recovery Manager
 
 In some situations it may be required to embed the `RecoveryManager` in the same process as the transaction service.
 In this case you can create an instance of the `RecoveryManager` through the manager method on `com.arjuna.ats.arjuna.recovery.RecoveryManager`.
 A `RecoveryManager` can be created in one of two modes, selected via the parameter to the manager method:
 
-* `INDIRECT_MANAGEMENT`: the manager runs periodically but can also be instructed to run when desired via the scan operation or through the RecoveryDriver class to be described below.
-* `DIRECT_MANAGEMENT`: the manager does not run periodically and must be driven directly via the scan operation or RecoveryDriver.
+* i.
+`INDIRECT_MANAGEMENT`: the manager runs periodically but can also be instructed to run when desired via the scan operation or through the RecoveryDriver class to be described below.
+* ii.
+`DIRECT_MANAGEMENT`: the manager does not run periodically and must be driven directly via the scan operation or RecoveryDriver.
 
 [WARNING]
 ====
@@ -17,15 +19,16 @@ By default, the recovery manager listens on the first available port on a given 
 If you wish to control the port number that it uses, you can specify this using the `com.arjuna.ats.arjuna.recovery.recoveryPort` attribute.
 ====
 
-==== Additional Recovery Module Classes
+=== Additional Recovery Module Classes
 
 {productName} provides a set of recovery modules that are responsible to manage recovery according to the nature of the participant and its position in a transactional tree.
 The provided classes over and above the ones covered elsewhere (that all implements the RecoveryModule interface) are:
 
 * `com.arjuna.ats.internal.txoj.recovery.TORecoveryModule`
-* Recovers Transactional Objects for Java.
++
+Recovers Transactional Objects for Java.
 
-=== Understanding Recovery Modules
+== Understanding Recovery Modules
 
 The failure recovery subsystem of {productName} will ensure that results of a transaction are applied consistently to all resources affected by the transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity.
 In the case of machine (system) crash or network failure, the recovery will not take place until the system or network are restored, but the original application does not need to be restarted – recovery responsibility is delegated to the Recovery Manager process (see below).
@@ -37,10 +40,10 @@ If the `ObjectStore` is destroyed or modified, recovery may not be possible.
 ====
 
 Until the recovery procedures are complete, resources affected by a transaction that was in progress at the time of the failure may be inaccessible.
-For database resources, this may be reported as tables or rows held by “in-doubt transactions”.
+For database resources, this may be reported as tables or rows held by "`in-doubt transactions`".
 For TransactionalObjects for Java resources, an attempt to activate the Transactional Object (as when trying to get a lock) will fail.
 
-==== The Recovery Manager
+=== The Recovery Manager
 
 The failure recovery subsystem of {productName} requires that the stand-alone Recovery Manager process be running for each `ObjectStore` (typically one for each node on the network that is running {productName} applications).
 The `RecoveryManager` file is located in the package `com.arjuna.ats.arjuna.recovery.RecoveryManager`.
@@ -52,7 +55,7 @@ To start the Recovery Manager issue the following command:
 java com.arjuna.ats.arjuna.recovery.RecoveryManager
 ----
 
-If the -test flag is used with the Recovery Manager then it will display a “Ready” message when initialised, i.e.:
+If the -test flag is used with the Recovery Manager then it will display a "`Ready`" message when initialised, i.e.,
 
 [source,shell]
 ----
@@ -60,7 +63,7 @@ java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 ----
 ====
 
-==== Configuring the Recovery Manager
+=== Configuring the Recovery Manager
 
 The `RecoveryManager` reads the properties defined in the arjuna.properties file and then also reads the property file `RecoveryManager.properties`, from the same directory as it found the arjuna properties file.
 An entry for a property in the `RecoveryManager` properties file will override an entry for the same property in the main TransactionService properties file.
@@ -69,7 +72,7 @@ Most of the entries are specific to the Recovery Manager.
 A default version of `RecoveryManager.properties` is supplied with the distribution – this can be used without modification, except possibly the debug tracing fields (see below, Output).
 The rest of this section discusses the issues relevant in setting the properties to other values (in the order of their appearance in the default version of the file).
 
-==== Periodic Recovery
+=== Periodic Recovery
 
 The `RecoveryManager` scans the `ObjectStore` and other locations of information, looking for transactions and resources that require, or may require recovery.
 The scans and recovery processing are performed by recovery modules, (instances of classes that implement the `com.arjuna.ats.arjuna.recovery.RecoveryModule` interface), each with responsibility for a particular category of transaction or resource.
@@ -106,24 +109,21 @@ The default Recovery Extension settings are:
 
 .Recovery Environment Bean XML
 ====
-[source,XML]
+[source,xml]
 ----
-<entry key="RecoveryEnvironmentBean.recoveryExtensions">
-  com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
-  com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
-</entry>
-
+include::extras/recoveryEnvironmentBean.xml[]
 ----
 ====
 
-==== Expired entry removal
+=== Expired entry removal
 
 The operation of the recovery subsystem will cause some entries to be made in the `ObjectStore` that will not be removed in normal progress.
 The RecoveryManager has a facility for scanning for these and removing items that are very old.
 Scans and removals are performed by implementations of the `com.arjuna.ats.arjuna.recovery.ExpiryScanner` interface.
 Implementations of this interface are loaded by giving the class names as the value of a property `RecoveryEnvironmentBean.expiryScanners`.
 The `RecoveryManager` calls the `scan()` method on each loaded Expiry Scanner implementation at an interval determined by the property `RecoveryEnvironmentBean.expiryScanInterval`”.
-This value is given in hours – default is 12. An expiryScanInterval value of zero will suppress any expiry scanning.
+This value is given in hours – default is 12.
+An expiryScanInterval value of zero will suppress any expiry scanning.
 If the value as supplied is positive, the first scan is performed when `RecoveryManager` starts; if the value is negative, the first scan is delayed until after the first interval (using the absolute value)
 
 The kinds of item that are scanned for expiry are:
@@ -137,80 +137,38 @@ The Expiry Scanner properties for these are:
 
 .Recovery Environment Bean XML
 ====
-[source,XML]
+[source,xml]
 ----
-<entry key="RecoveryEnvironmentBean.expiryScanners">
-  com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
-</entry>
-
+include::extras/recoveryEnvironmentBeanExpiryScanners.xml[]
 ----
 ====
 
 To illustrate the behavior of a recovery module, the following pseudo code describes the basic algorithm used for Atomic Action transactions and Transactional Objects for java.
 
-====
 .AtomicAction pseudo code
+====
 [source,text]
 ----
-First Pass:
-< create a collection containing all transactions currently in the log >
-
-Second Pass:
-while < there are transactions in the collection >
-do
- if < the intention list for the transaction still exists >
- then
-   < create new transaction cached item >
-   < obtain the status of the transaction >
-
-   if < the transaction is not in progress (ie phase 2 has finished ) >
-   then
-     < replay phase two of the commit protocol >
-   endif.
- endif.
-end while.
-
+include::extras/atomicaction.txt[]
 ----
+====
 
 .Transactional Object pseudo code
+====
 [source,text]
 ----
-First Pass:
-< Create a hash table for uncommitted transactional objects. >
-< Read in all transactional objects within the object store. >
-while < there are transactional objects >
-do
-   if < the transactional object has an Uncommited status in the object store >
-   then
-      < add the transactional Object o the hash table for uncommitted transactional objects>
-   end if.
-end while.
-
-Second Pass:
-while < there are transactions in the hash table for uncommitted transactional objects >
-do
-   if < the transaction is still in the Uncommitted state >
-   then
-      if < the transaction is not in the Transaction Cache >
-      then
-         < check the status of the transaction with the original application process >
-         if < the status is Rolled Back or the application process is inactive >
-            < rollback the transaction by removing the Uncommitted status from the Object Store >
-         endif.
-      endif.
-   endif.
-end while.
+include::extras/txoj.txt[]
 ----
 ====
 
-=== Writing a Recovery Module
+== Writing a Recovery Module
 
 In order to recover from failure, we have seen that the Recovery Manager contacts recovery modules by invoking periodically the methods `periodicWorkFirstPass` and `periodicWorkSecondPass`.
 Each Recovery Module is then able to manage recovery according the type of resources that need to be recovered.
 The {productName} product is shipped with a set of recovery modules (`TOReceveryModule`, `XARecoveryModule`…), but it is possible for a user to define its own recovery module that fit his application.
 The following basic example illustrates the steps needed to build such recovery module
 
-==== A basic scenario
+=== A basic scenario
 
 This basic example does not aim to present a complete process to recover from failure, but mainly to illustrate the way to implement a recovery module.
 
@@ -220,51 +178,13 @@ A set of arguments are provided:
 * to decide to commit or abort the transaction,
 * to decide generating a crash during the commitment process.
 
-The code of the main class that control the application is given below:
+The code of the main class that control the application is given below
 
 .TestRecoveryModule.java
 ====
-[source,Java]
+[source,java]
 ----
-package com.arjuna.demo.recoverymodule;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-
-public class TestRecoveryModule {
-	public static void main(String args[]) {
-		try {
-			AtomicAction tx = new AtomicAction();
-            // Top level begin
-			tx.begin();
-
-			// enlist the participant
-			tx.add(SimpleRecord.create());
-
-			System.out.println("About to complete the transaction ");
-			for (int i = 0; i < args.length; i++) {
-				if ((args[i].compareTo("-commit") == 0))
-					_commit = true;
-				if ((args[i].compareTo("-rollback") == 0))
-					_commit = false;
-				if ((args[i].compareTo("-crash") == 0))
-					_crash = true;
-			}
-			if (_commit)
-                // Top level commit
-				tx.commit();
-			else
-                // Top level rollback
-				tx.abort();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected static boolean _commit = true;
-	protected static boolean _crash = false;
-}
-
+include::extras/TestRecoveryModule.java[]
 ----
 ====
 
@@ -284,69 +204,9 @@ The location of the file given in variable filename can be changed
 
 .SimpleRecord.java
 ====
-[source,Java]
+[source,java]
 ----
-package com.arjuna.demo.recoverymodule;
-
-import com.arjuna.ats.arjuna.coordinator.*;
-import java.io.File;
-
-public class SimpleRecord extends AbstractRecord {
-	public String filename = "c:/tmp/RecordState";
-
-	public SimpleRecord() {
-		System.out.println("Creating new resource");
-	}
-
-	public static AbstractRecord create() {
-		return new SimpleRecord();
-	}
-
-	public int topLevelAbort() {
-		try {
-			File fd = new File(filename);
-			if (fd.exists()) {
-				if (fd.delete())
-					System.out.println("File Deleted");
-			}
-		} catch (Exception ex) {
-			// …
-		}
-		return TwoPhaseOutcome.FINISH_OK;
-	}
-
-	public int topLevelCommit() {
-		if (TestRecoveryModule._crash)
-			System.exit(0);
-		try {
-			java.io.FileOutputStream file = new java.io.FileOutputStream(
-					filename);
-			java.io.PrintStream pfile = new java.io.PrintStream(
-					file);
-			pfile.println("I'm Committed");
-			file.close();
-		} catch (java.io.IOException ex) {
-			// ...
-		}
-		return TwoPhaseOutcome.FINISH_OK;
-	}
-
-	public int topLevelPrepare() {
-		try {
-			java.io.FileOutputStream file = new java.io.FileOutputStream(
-					filename);
-			java.io.PrintStream pfile = new java.io.PrintStream(
-					file);
-			pfile.println("I'm prepared");
-			file.close();
-		} catch (java.io.IOException ex) {
-			// ...
-		}
-		return TwoPhaseOutcome.PREPARE_OK;
-	}
-	// …
-}
-
+include::extras/SimpleRecord.java[]
 ----
 ====
 
@@ -354,66 +214,9 @@ The role of the Recovery Module in such application consists to read the content
 
 .SimpleRecoveryModule.java
 ====
-[source,Java]
+[source,java]
 ----
-package com.arjuna.demo.recoverymodule;
-
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
-public class SimpleRecoveryModule implements RecoveryModule {
-	public String filename = "c:/tmp/RecordState";
-
-	public SimpleRecoveryModule() {
-		System.out
-				.println("The SimpleRecoveryModule is loaded");
-	}
-
-	public void periodicWorkFirstPass() {
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(
-					filename);
-			java.io.InputStreamReader input = new java.io.InputStreamReader(
-					file);
-			java.io.BufferedReader reader = new java.io.BufferedReader(
-					input);
-			String stringState = reader.readLine();
-			if (stringState.compareTo("I'm prepared") == 0)
-				System.out
-						.println("The transaction is in the prepared state");
-			file.close();
-		} catch (java.io.IOException ex) {
-			System.out.println("Nothing found on the Disk");
-		}
-	}
-
-	public void periodicWorkSecondPass() {
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(
-					filename);
-			java.io.InputStreamReader input = new java.io.InputStreamReader(
-					file);
-			java.io.BufferedReader reader = new java.io.BufferedReader(
-					input);
-			String stringState = reader.readLine();
-			if (stringState.compareTo("I'm prepared") == 0) {
-				System.out
-						.println("The record is still in the prepared state");
-				System.out.println("– Recovery is needed");
-			} else if (stringState
-					.compareTo("I'm Committed") == 0) {
-				System.out
-						.println("The transaction has completed and committed");
-			}
-			file.close();
-		} catch (java.io.IOException ex) {
-			System.out.println("Nothing found on the Disk");
-			System.out
-					.println("Either there was no transaction");
-			System.out.println("or it as been rolled back");
-		}
-	}
-}
-
+include::extras/SimpleRecoveryModule.java[]
 ----
 ====
 
@@ -422,12 +225,9 @@ To do so, we just need to add an entry in the config file for the extension:
 
 .Recovery Environment Bean Recovery Extensions XML
 ====
-[source,XML]
+[source,xml]
 ----
-<entry key="RecoveryEnvironmentBean.recoveryExtenstions">
-  com.arjuna.demo.recoverymodule.SimpleRecoveryModule
-</entry>
-
+include::extras/recoveryEnvironmentBeanRecoveryExtensions.xml[]
 ----
 ====
 
@@ -438,7 +238,7 @@ Once started, the Recovery Manager will automatically load the listed Recovery m
 The source of the code can be retrieved under the trailmap directory of the {productName} installation.
 ====
 
-==== Another scenario
+=== Another scenario
 
 As mentioned, the basic application presented above does not present the complete process to recover from failure, but it was just presented to describe how the build a recovery module.
 In case of the OTS protocol, let’s consider how a recovery module that manages recovery of OTS resources can be configured.

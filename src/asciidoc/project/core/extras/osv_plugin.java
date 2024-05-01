@@ -1,7 +1,7 @@
-public class SimpleRecordOSVPlugin implements StateViewerInterface
-{
+public class SimpleRecordOSVPlugin implements StateViewerInterface {
     /**
      * A uid node of the type this viewer is registered against has been expanded.
+     *
      * @param os
      * @param type
      * @param manipulator
@@ -10,12 +10,11 @@ public class SimpleRecordOSVPlugin implements StateViewerInterface
      */
     public void uidNodeExpanded(ObjectStore os,
                                 String type,
-                                ObjectStoreBrowserTreeManipulationInterface 
-                                manipulator,
+                                ObjectStoreBrowserTreeManipulationInterface
+                                        manipulator,
                                 UidNode node,
                                 StatePanel infoPanel)
-        throws ObjectStoreException
-    {
+            throws ObjectStoreException {
         // Do nothing
     }
 
@@ -33,23 +32,21 @@ public class SimpleRecordOSVPlugin implements StateViewerInterface
                               String type,
                               Uid uid,
                               ObjectStoreViewEntry entry,
-                              StatePanel statePanel) 
-        throws ObjectStoreException
-    {
+                              StatePanel statePanel)
+            throws ObjectStoreException {
         SimpleRecord rec = new SimpleRecord();
 
-        if ( rec.restore_state( os.read_committed(uid, type), ObjectType.ANDPERSISTENT ) )
-            {
-                statePanel.setData( “Value”, rec.getValue() );
-            }
+        if (rec.restore_state(os.read_committed(uid, type), ObjectType.ANDPERSISTENT)) {
+            statePanel.setData( “Value”, rec.getValue());
+        }
     }
 
     /**
      * Get the type this state viewer is intended to be registered against.
+     *
      * @return
      */
-    public String getType()
-    {
-        return “/StateManager/AbstractRecord/SimpleRecord”;
+    public String getType() {
+        return “/StateManager / AbstractRecord / SimpleRecord”;
     }
 }

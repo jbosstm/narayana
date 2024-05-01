@@ -1,9 +1,15 @@
-== Compensating transactions
+= Compensating transactions
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
 
-=== Overview
+== Overview
 
 Compensating transactions are acknowledged as a good fit for long-lived transactions.
-The idea comes out of (https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf[the Sagas paper&#44; Princeton University&#44; 1987]).
+The idea comes out of (https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf[the Sagas paper, Princeton University, 1987]).
 The concept of the original paper talks about a single node database but the concepts described can readily be applied to distributed transactions.
 
 Structurally, applications utilising Sagas may consist of several atomic transactions each working with a separate system and with corresponding compensation handlers to deal with failures.
@@ -24,12 +30,12 @@ Compensating transactions are currently implemented in Narayana in way of:
 * WS-BA transactions in XTS module
 * REST-JDI in plans https://issues.jboss.org/browse/JBTM-1488[JBTM-1488]
 
-=== Compensations Framework
+== Compensations Framework
 
 Narayana contains a compensations framework to assist users with developing transactional applications which require the use of compensating transactions.
 The compensating transaction behaviour can be expressed using either CDI annotations or via a programmatic API.
 
-==== CDI annotations
+=== CDI annotations
 
 Application developer annotates methods with the CDI annotations to define actions and undo operations which are managed by Transaction Manager.
 Narayana handles the state of the compensating transaction and drives undo operation if necessary.
@@ -54,7 +60,7 @@ After the restart Narayana needs to understand the state before the crash.
 That information is persisted in the transaction log store.
 Narayana loads the POJO state and passes it to handlers - to get proceed with confirmation or compensation.
 
-===== List of available CDI annotations
+==== List of available CDI annotations
 
 * `@Compensatable` - declaratively control compensation transaction boundaries on CDI managed beans.
 This is similar to what is known from Jakarta EE world, how https://javadoc.io/static/jakarta.platform/jakarta.jakartaee-api/10.0.0/jakarta/ejb/TransactionAttribute.html[@TransactionAttribute] drives the global transaction behaviour.
@@ -67,7 +73,7 @@ A similar effect could be achieved by setting parameter `cancelOn` of `@Compensa
 There is no timeout associated with compensatable units of work which implies that they must either run to completion or fail.
 * `org.jboss.narayana.compensations.api.CompensationManager` - compensation manager could be https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0.html#built_in_annotation_literals[@Injected] for being able to mark the context as `setCompensateOnly`.
 
-===== Programmatic API
+==== Programmatic API
 
 The compensation framework provides a declarative API to add compensatable work and let it processed by framework.
 The application programmer injects the interface `org.jboss.narayana.compensations.api.CompensatableAction` (`@Inject CompensatableAction`).
@@ -80,7 +86,7 @@ The programmer then declares the instant when `CompensatableAction` should be ex
 Execution means that work items will be executed one by one.
 All work items then belong under the same compensation and in the case of failure of one item others will be compensated (of a compensation handler was declared).
 
-==== Recovery
+=== Recovery
 
 Implementation of recovery for compensating transaction is not yet part of the Narayana codebase, see https://issues.jboss.org/browse/JBTM-1107[JBTM-1107] however the implementation is under the review.
 
@@ -98,14 +104,14 @@ Narayana manages serializing and deserializing but programmer has to implement a
 
 You can find more valuable information in the wiki article https://developer.jboss.org/wiki/XTSRecoveryInternals[XTS Recovery Internals].
 
-==== Limitation
+=== Limitation
 
 Currently, there is one limitation which is needed to be emphasized.
 If you are used to work with XTS AT transactions you probably take advantage of transaction bridge functionality - ability of smoothly join XTS transaction with app server container transaction under one transparent global transaction.
 This is not possible for compensating transaction.
 The lack of the bridge functionality for the compensating transactions is addressed under jira https://issues.jboss.org/browse/JBTM-1099[JBTM-1099].
 
-=== Resources
+== Resources
 
 This is our blog series which is valuable to check out
 
@@ -115,6 +121,6 @@ This is our blog series which is valuable to check out
 * http://jbossts.blogspot.com/2013/07/compensating-transactions-when-acid-is.html[Compensating Transactions: When ACID is too much (Part 4: Long Lived Transactions)]
 * http://jbossts.blogspot.com/2014/05/bringing-transactional-guarantees-to.html[Bringing Transactional Guarantees to MongoDB: Part 1]
 
-=== Notes
+== Notes
 
 * Compensations framework directly depends on Weld as a result of https://issues.jboss.org/browse/JBTM-2704[JBTM-2704]

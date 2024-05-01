@@ -1,8 +1,8 @@
-== Hints and tips
+= Hints and tips
 
-=== General
+== General
 
-==== Using transactions in constructors
+=== Using transactions in constructors
 
 Examples throughout this manual use transactions in the implementation of constructors for new persistent objects.
 This is deliberate because it guarantees correct propagation of the state of the object to the object store.
@@ -15,35 +15,22 @@ For example, if no transaction is active when the object is created, its state i
 
 .Nested Transactions In Constructors
 ====
-[source,Java]
+[source,java]
 ----
-AtomicAction A = new AtomicAction();
-Object obj1;
-Object obj2;
-
-// create new object
-obj1 = new Object();
-// existing object
-obj2 = new Object("old");
-
-A.begin(0);
-// obj2 now contains reference to obj1
-obj2.remember(obj1.get_uid());
-// obj2 saved but obj1 is not
-A.commit(true);
+include::extras/nested_transactions_in_constructors.java[]
 ----
 
-The two objects are created outside of the control of the top-level action `A`.
-`obj1` is a new object.
-`obj2` is an old existing object.
-When the `remember` operation of `obj2` is invoked, the object will be activated and the `Uid` of `obj1` remembered.
-Since this action commits, the persistent state of `obj2` may now contain the `Uid` of `obj1`.
-However, the state of `obj1` itself has not been saved since it has not been manipulated under the control of any action.
+The two objects are created outside of the control of the top-level action _A_ .
+_obj1_ is a new object.
+_obj2_ is an old existing object.
+When the `remember` operation of _obj2_ is invoked, the object will be activated and the `Uid` of _obj1_ remembered.
+Since this action commits, the persistent state of _obj2_ may now contain the `Uid` of _obj1_.
+However, the state of _obj1_ itself has not been saved since it has not been manipulated under the control of any action.
 In fact, unless it is modified under the control of an action later in the application, it will never be saved.
-If, however, the constructor had used an atomic action, the state of `obj1` would have automatically been saved at the time it was constructed and this inconsistency could not arise.
+If, however, the constructor had used an atomic action, the state of _obj1_ would have automatically been saved at the time it was constructed and this inconsistency could not arise.
 ====
 
-==== `save_state` and `restore_state` methods
+=== `save_state` and `restore_state` methods
 
 ArjunaCore may invoke the user-defined `save_state` operation of an object at any time during the lifetime of an object, including during the execution of the body of the object’s constructor.
 This is particularly a possibility if it uses atomic actions.
@@ -54,7 +41,7 @@ This would result in the attempt to execute an atomic transaction during the com
 This might violate the atomicity properties of the transaction being committed or aborted, and is thus discouraged.
 In order to support crash recovery for persistent objects, all `save_state` and `restore_state` methods of user objects must call `super.save_state` and `super.restore_state`.
 
-===== Packing objects
+==== Packing objects
 
 All of the basic types of Java (`int`, `long`, etc.) can be saved and restored from an `InputObjectState` or `OutputObjectState` instance by using the pack and unpack routines provided by `InputObjectState` and `OutputObjectState`.
 However, packing and unpacking objects should be handled differently.
@@ -64,22 +51,9 @@ For example:
 
 .Aliasing
 ====
-[source,Java]
+[source,java]
 ----
-public class Test {
-    public  Test (String s);
-
-    ...
-
-    private String s1;
-    private String s2;
-}
-
-public Test (String s) {
-    s1 = s;
-    s2 = s;
-}
-
+include::extras/aliasing.java[]
 ----
 
 Here, both `s1` and `s2` point at the same string.
@@ -102,12 +76,11 @@ Classes derived directly from `StateManager` must make use of its state manageme
 These interactions are normally undertaken by `LockManager`.
 From a programmer's point of view this amounts to making appropriate use of the operations `activate`, `deactivate`, and `modified`, since `StateManager` 's constructors are effectively identical to those of `LockManager`.
 
-.activate
+.`activate`
 ====
-[source,Java]
+[source,java]
 ----
-boolean activate ();
-boolean activate (String storeRoot);
+include::extras/StateManager_activate_method.java[]
 ----
 
 Activate loads an object from the object store.
@@ -118,12 +91,11 @@ The parameter represents the root name of the object store to search for the obj
 A value of null means use the default store.
 ====
 
-.deactivate
+.`deactivate`
 ====
-[source,Java]
+[source,java]
 ----
-boolean deactivate ();
-boolean deactivate (String storeRoot);
+include::extras/StateManager_deactivate_method.java[]
 ----
 
 The inverse of activate.
@@ -133,11 +105,11 @@ The parameter represents the root name of the object store into which the object
 A value of null means use the default store.
 ====
 
-.modified
+.`modified`
 ====
-[source,Java]
+[source,java]
 ----
-void modified ();
+include::extras/StateManager_modified_method.java[]
 ----
 
 Must be called prior to modifying the object in memory.

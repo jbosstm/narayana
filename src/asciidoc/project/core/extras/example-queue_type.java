@@ -1,4 +1,3 @@
-public String type ()
-{
+public String type() {
     return "/StateManager/LockManager/TransactionalQueue";
 }       

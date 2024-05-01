@@ -14,77 +14,29 @@ Since all of these requirements require common functionality they are all implem
 
 .`OutputBuffer`
 ====
-[source,Java]
+[source,java]
 ----
-public class OutputBuffer {
-    public OutputBuffer ();
-
-    public final synchronized boolean valid ();
-    public synchronized byte[] buffer();
-    public synchronized int length ();
-
-    /* pack operations for standard Java types */
-
-    public synchronized void packByte (byte b) throws IOException;
-    public synchronized void packBytes (byte[] b) throws IOException;
-    public synchronized void packBoolean (boolean b) throws IOException;
-    public synchronized void packChar (char c) throws IOException;
-    public synchronized void packShort (short s) throws IOException;
-    public synchronized void packInt (int i) throws IOException;
-    public synchronized void packLong (long l) throws IOException;
-    public synchronized void packFloat (float f) throws IOException;
-    public synchronized void packDouble (double d) throws IOException;
-    public synchronized void packString (String s) throws IOException;
-}
-
+include::extras/OutputBuffer.java[]
 ----
 ====
 
 .`InputBuffer`
 ====
-[source,Java]
+[source,java]
 ----
-public class InputBuffer {
-    public InputBuffer ();
-
-    public final synchronized boolean valid ();
-    public synchronized byte[] buffer();
-    public synchronized int length ();
-
-    /* unpack operations for standard Java types */
-
-    public synchronized byte unpackByte () throws IOException;
-    public synchronized byte[] unpackBytes () throws IOException;
-    public synchronized boolean unpackBoolean () throws IOException;
-    public synchronized char unpackChar () throws IOException;
-    public synchronized short unpackShort () throws IOException;
-    public synchronized int unpackInt () throws IOException;
-    public synchronized long unpackLong () throws IOException;
-    public synchronized float unpackFloat () throws IOException;
-    public synchronized double unpackDouble () throws IOException;
-    public synchronized String unpackString () throws IOException;
-}
-
+include::extras/InputBuffer.java[]
 ----
 ====
 
 The `InputBuffer` and `OutputBuffer` classes maintain an internal array into which instances of the standard Java types can be contiguously packed or unpacked, using the `pack` or `unpack` operations.
 This buffer is automatically resized as required should it have insufficient space.
-The instances are all stored in the buffer in a standard form called `network byte order` to make them machine independent.
+The instances are all stored in the buffer in a standard form called _network byte order_ to make them machine independent.
 
 .`OutputObjectState`
 ====
-[source,Java]
+[source,java]
 ----
-class OutputObjectState extends OutputBuffer {
-    public OutputObjectState (Uid newUid, String typeName);
-
-    public boolean notempty ();
-    public int size ();
-    public Uid stateUid ();
-    public String type ();
-}
-
+include::extras/OutputObjectState.java[]
 ----
 ====
 
@@ -92,22 +44,14 @@ class OutputObjectState extends OutputBuffer {
 ====
 [source,Java]
 ----
-class InputObjectState extends InputBuffer {
-    public OutputObjectState (Uid newUid, String typeName, byte[] b);
-
-    public boolean notempty ();
-    public int size ();
-    public Uid stateUid ();
-    public String type ();
-}
-
+include::extras/InputObjectState.java[]
 ----
 ====
 
 The `InputObjectState` and `OutputObjectState` classes provides all the functionality of `InputBuffer` and `OutputBuffer`, through inheritance, and add two additional instance variables that signify the Uid and type of the object for which the `InputObjectStat` or `OutputObjectState` instance is a compressed image.
 These are used when accessing the object store during storage and retrieval of the object state.
 
-==== The object store
+=== The object store
 
 The object store provided with ArjunaCore deliberately has a fairly restricted interface so that it can be implemented in a variety of ways.
 For example, object stores are implemented in shared memory, on the Unix file system (in several different forms), and as a remotely accessible store.
@@ -115,7 +59,8 @@ More complete information about the object stores available in ArjunaCore can be
 
 [NOTE]
 ====
-As with all ArjunaCore classes, the default object stores are pure Java implementations. to access the shared memory and other more complex object store implementations, you need to use native methods.
+As with all ArjunaCore classes, the default object stores are pure Java implementations.
+To access the shared memory and other more complex object store implementations, you need to use native methods.
 ====
 
 All of the object stores hold and retrieve instances of the class `InputObjectState` or `OutputObjectState`.
@@ -127,38 +72,23 @@ Normally all interaction with the object store is performed by ArjunaCore system
 
 .StateStatus
 ====
-[source,Java]
+[source,java]
 ----
-public StateStatus {
-    public static final int OS_COMMITTED;
-    public static final int OS_UNCOMMITTED;
-    public static final int OS_COMMITTED_HIDDEN;
-    public static final int OS_UNCOMMITTED_HIDDEN;
-    public static final int OS_UNKNOWN;
-}
-
+include::extras/StateStatus.java[]
 ----
 ====
 
 .ObjectStore
 ====
-[source,Java]
+[source,java]
 ----
-public abstract class ObjectStore {
-    /* The abstract interface */
-    public abstract boolean commit_state (Uid u, String name) throws ObjectStoreException;
-    public abstract InputObjectState read_committed (Uid u, String name) throws ObjectStoreException;
-    public abstract boolean write_uncommitted (Uid u, String name, OutputObjectState os) throws ObjectStoreException;
-
-    ...
-}
-
+include::extras/ObjectStore.java[]
 ----
 ====
 
 When a transactional object is committing, it must make certain state changes persistent, so it can recover in the event of a failure and either continue to commit, or rollback.
 When using `TXOJ`, ArjunaCore will take care of this automatically.
-To guarantee `ACID` properties, these state changes must be flushed to the persistence store implementation before the transaction can proceed to commit.
+To guarantee _ACID_ properties, these state changes must be flushed to the persistence store implementation before the transaction can proceed to commit.
 Otherwise, the application may assume that the transaction has committed when in fact the state changes may still reside within an operating system cache, and may be lost by a subsequent machine failure.
 By default, ArjunaCore ensures that such state changes are flushed.
 However, doing so can impose a significant performance penalty on the application.
@@ -166,12 +96,12 @@ However, doing so can impose a significant performance penalty on the applicatio
 // How / where do you do this?
 To prevent transactional object state flushes, set the `ObjectStoreEnvironmentBean.objectStoreSync` variable to `OFF`.
 
-==== Selecting an object store implementation
+=== Selecting an object store implementation
 
 ArjunaCore comes with support for several different object store implementations.
 The Appendix describes these implementations, how to select and configure a given implementation on a per-object basis using the `ObjectStoreEnvironmentBean.objectStoreType` property variable, and indicates how additional implementations can be provided.
 
-===== StateManager
+==== StateManager
 
 The ArjunaCore class `StateManager` manages the state of an object and provides all of the basic support mechanisms required by an object for state management purposes. `StateManager` is responsible for creating and registering appropriate resources concerned with the persistence and recovery of the transactional object.
 If a transaction is nested, then `StateManager` will also propagate these resources between child transactions and their parents at commit time.
@@ -185,8 +115,10 @@ Objects are assumed to be of three possible flavors.
 Recoverable::
 `StateManager` attempts to generate and maintain appropriate recovery information for the object.
 Such objects have lifetimes that do not exceed the application program that creates them.
+
 Recoverable and Persistent::
 The lifetime of the object is assumed to be greater than that of the creating or accessing application, so that in addition to maintaining recovery information, `StateManager` attempts to automatically load or unload any existing persistent state for the object by calling the `activate` or `deactivate` operation at appropriate times.
+
 Neither Recoverable nor Persistent::
 No recovery information is ever kept, nor is object activation or deactivation ever automatically attempted.
 ====
@@ -196,55 +128,9 @@ Thus, an object cannot gain (or lose) recovery capabilities at some arbitrary po
 
 .Object Store Implementation Using `StateManager`
 ====
-[source,Java]
+[source,java]
 ----
-public class ObjectStatus {
-    public static final int PASSIVE;
-    public static final int PASSIVE_NEW;
-    public static final int ACTIVE;
-    public static final int ACTIVE_NEW;
-    public static final int UNKNOWN_STATUS;
-}
-
-public class ObjectType {
-    public static final int RECOVERABLE;
-    public static final int ANDPERSISTENT;
-    public static final int NEITHER;
-}
-
-public abstract class StateManager {
-    public synchronized boolean activate ();
-    public synchronized boolean activate (String storeRoot);
-    public synchronized boolean deactivate ();
-    public synchronized boolean deactivate (String storeRoot, boolean commit);
-
-    public synchronized void destroy ();
-
-    public final Uid get_uid ();
-
-    public boolean restore_state (InputObjectState, int ObjectType);
-    public boolean save_state (OutputObjectState, int ObjectType);
-    public String type ();
-
-    ...
-
-    protected StateManager ();
-    protected StateManager (int ObjectType, int objectModel);
-    protected StateManager (Uid uid);
-    protected StateManager (Uid uid, int objectModel);
-
-    ...
-
-    protected final void modified ();
-
-    ...
-}
-
-public class ObjectModel {
-    public static final int SINGLE;
-    public static final int MULTIPLE;
-}
-
+include::extras/object_store_implementation_using_StateManager.java[]
 ----
 ====
 
@@ -256,25 +142,9 @@ For example, the `save_state` implementation for a class `Example` that had memb
 .Example implementation of `StateManager`
 [#example_methods_for_StateManager]
 ====
-[source,Java]
+[source,java]
 ----
-public boolean save_state ( OutputObjectState os, int ObjectType ) {
-    if (!super.save_state(os, ObjectType))
-        return false;
-
-    try
-        {
-            os.packInt(A);
-            os.packString(B);
-            os.packFloat(C);
-
-            return true;
-        }
-    catch (IOException e)
-        {
-            return false;
-        }
-}
+include::extras/example_methods_for_StateManager.java[]
 ----
 ====
 
@@ -299,7 +169,7 @@ It uses instances of the classes `InputObjectState` and `OutputObjectState` both
 An additional argument passed to the `save_state` and `restore_state` operations allows the programmer to determine the purpose for which any given invocation is being made.
 This allows different information to be saved for recovery and persistence purposes.
 
-===== Object models
+==== Object models
 
 ArjunaCore supports two models for objects, which affect how an objects state and concurrency control are implemented.
 
@@ -312,20 +182,20 @@ This copy resides within a single JVM, and all clients must address their invoca
 This model provides better performance, but represents a single point of failure, and in a multi-threaded environment may not protect the object from corruption if a single thread fails.
 
 .Single Object Model
-image::../images/appendix-single_object_model.png[Single Object Model,width=800,align="center"]
+image::../images/appendix-single_object_model.png[align="center"]
 
 Multiple::
 Logically, a single instance of the object exists, but copies of it are distributed across different JVMs.
 The performance of this model is worse than the SINGLE model, but it provides better failure isolation.
 
 .Multiple Object Model
-image::../images/appendix-multiple_object_model.png[Multiple Object Model,width=800,align="center"]
+image::../images/appendix-multiple_object_model.png[align="center"]
 
 The default model is SINGLE.
 The programmer can override this on a per-object basis by using the appropriate constructor.
 ====
 
-===== Summary
+==== Summary
 
 In summary, the ArjunaCore class `StateManager` manages the state of an object and provides all of the basic support mechanisms required by an object for state management purposes.
 Some operations must be defined by the class developer.
@@ -346,6 +216,7 @@ It is the programmer's responsibility to ensure that this is the case.
 Invoked whenever the state of an object needs to be restored to the one supplied.
 Once again the second parameter allows different interpretations of the supplied state.
 In order to support crash recovery for persistent objects it is necessary for all `restore_state` methods to call `super.restore_state`.
+
 `*String type ()*`::
 The ArjunaCore persistence mechanism requires a means of determining the type of an object as a string so that it can save or restore the state of the object into or from the object store.
 By convention this information indicates the position of the class in the hierarchy.
@@ -355,97 +226,21 @@ The `type` method is used to determine the location in the object store where th
 This can actually be any valid string.
 However, you should avoid using the hash character (#) as this is reserved for special directories that ArjunaCore requires.
 
-===== Example
+==== Example
 
 Consider the following basic `Array` class derived from the `StateManager` class.
 In this example, to illustrate saving and restoring of an object’s state, the `highestIndex` variable is used to keep track of the highest element of the array that has a non-zero value.
 
-.Array
+.`Array` Class
 [#array-example]
 ====
-[source,Java]
+[source,java]
 ----
-public class Array extends StateManager {
-    public Array ();
-    public Array (Uid objUid);
-    public void finalize () { super.terminate(); super.finalize(); }
-
-    /* Class specific operations. */
-
-    public boolean set (int index, int value);
-    public int get (int index);
-
-    /* State management specific operations. */
-
-    public boolean save_state (OutputObjectState os, int ObjectType);
-    public boolean restore_state (InputObjectState os, int ObjectType);
-    public String type ();
-
-    public static final int ARRAY_SIZE = 10;
-
-    private int[] elements = new int[ARRAY_SIZE];
-    private int highestIndex;
-}
-
-// The save_state, restore_state and type operations can be defined as follows:
-// (Ignore ObjectType parameter for simplicity)
-
-public boolean save_state (OutputObjectState os, int ObjectType) {
-    if (!super.save_state(os, ObjectType))
-        return false;
-
-    try
-        {
-            packInt(highestIndex);
-
-            /*
-             * Traverse array state that we wish to save. Only save active elements
-             */
-
-            for (int i = 0; i <= highestIndex; i++)
-                os.packInt(elements[i]);
-
-            return true;
-        }
-    catch (IOException e)
-        {
-            return false;
-        }
-}
-
-public boolean restore_state (InputObjectState os, int ObjectType) {
-    if (!super.restore_state(os, ObjectType))
-        return false;
-
-    try
-        {
-            int i = 0;
-
-            highestIndex = os.unpackInt();
-
-            while (i < ARRAY_SIZE)
-                {
-                    if (i <= highestIndex)
-                        elements[i] =  os.unpackInt();
-                    else
-                        elements[i] = 0;
-                    i++;
-                }
-
-            return true;
-        }
-    catch (IOException e)
-        {
-            return false;
-        }
-}
-public String type () {
-    return "/StateManager/Array";
-}
+include::extras/Array_class.java[]
 ----
 ====
 
-=== Lock management and concurrency control
+== Lock management and concurrency control
 
 Concurrency control information within ArjunaCore is maintained by locks.
 Locks which are required to be shared between objects in different processes may be held within a lock store, similar to the object store facility presented previously.
@@ -459,21 +254,15 @@ As with all ArjunaCore classes, the default lock stores are pure Java implementa
 To access the shared memory and other more complex lock store implementations it is necessary to use native methods.
 ====
 
+.`LockStore`
 ====
-.LockStore
-[source,Java]
+[source,java]
 ----
-public class LockStore {
-    public abstract InputObjectState read_state (Uid u, String tName) throws LockStoreException;
-
-    public abstract boolean remove_state (Uid u, String tname);
-    public abstract boolean write_committed (Uid u, String tName, OutputObjectState state);
-}
-
+include::extras/LockStore.java[]
 ----
 ====
 
-==== Selecting a lock store implementation
+=== Selecting a lock store implementation
 
 ArjunaCore comes with support for several different object store implementations.
 If the object model being used is SINGLE, then no lock store is required for maintaining locks, since the information about the object is not exported from it.
@@ -484,6 +273,7 @@ Currently, this can have one of the following values:
 BasicLockStore::
 This is an in-memory implementation which does not, by default, allow sharing of stored information between execution environments.
 The application programmer is responsible for sharing the store information.
+
 BasicPersistentLockStore::
 This is the default implementation, and stores locking information within the local file system.
 Therefore execution environments that share the same file store can share concurrency control information.
@@ -500,7 +290,7 @@ java –classpath $CLASSPATH;/var/tmp/LockStore myprogram
 
 If neither of these approaches is taken, then the default location will be at the same level as the `etc` directory of the installation.
 
-==== LockManager
+=== LockManager
 
 The concurrency controller is implemented by the class `LockManager`, which provides sensible default behavior, while allowing the programmer to override it if deemed necessary by the particular semantics of the class being programmed.
 The primary programmer interface to the concurrency controller is via the `setlock` operation.
@@ -519,45 +309,11 @@ Therefore, `LockManager` is directly responsible for activating and deactivating
 By driving the `StateManager` class, it is also responsible for registering `Resources` for persistent or recoverable state manipulation and object recovery.
 The application programmer simply sets appropriate locks, starts and ends transactions, and extends the `save_state` and `restore_state` methods of `StateManager`.
 
+.`LockResult`
 ====
-.LockResult
-[source,Java]
+[source,java]
 ----
- public class LockResult {
-    public static final int GRANTED;
-    public static final int REFUSED;
-    public static final int RELEASED;
-}
-
-public class ConflictType {
-    public static final int CONFLICT;
-    public static final int COMPATIBLE;
-    public static final int PRESENT;
-}
-
-public abstract class LockManager extends StateManager {
-    public static final int defaultTimeout;
-    public static final int defaultRetry;
-    public static final int waitTotalTimeout;
-
-    public synchronized int setlock (Lock l);
-    public synchronized int setlock (Lock l, int retry);
-    public synchronized int setlock (Lock l, int retry, int sleepTime);
-    public synchronized boolean releaselock (Uid uid);
-
-    /* abstract methods inherited from StateManager */
-
-    public boolean restore_state (InputObjectState os, int ObjectType);
-    public boolean save_state (OutputObjectState os, int ObjectType);
-    public String type ();
-
-    protected LockManager ();
-    protected LockManager (int ObjectType, int objectModel);
-    protected LockManager (Uid storeUid);
-    protected LockManager (Uid storeUid, int ObjectType, int objectModel);
-
-    ...
-}
+include::extras/LockResult.java[]
 ----
 ====
 
@@ -575,14 +331,9 @@ Below are examples of the use of the `setlock` operation.
 
 .`setlock` method usage
 ====
-[source,Java]
+[source,java]
 ----
-// Will attempt to set a write lock 11 times (10 retries) on the object before giving up.
-res = setlock(new Lock(WRITE), 10);
-// Will attempt to set a read lock 1 time (no retries) on the object before giving up.
-res = setlock(new Lock(READ), 0);
-// Will attempt to set a write lock 101 times (default of 100 retries) on the object before giving up.
-res = setlock(new Lock(WRITE);
+include::extras/setlock.java[]
 ----
 ====
 
@@ -590,7 +341,7 @@ The concurrency control mechanism is integrated into the atomic action mechanism
 This frees the programmer from the burden of explicitly freeing any acquired locks if they were acquired within atomic actions.
 However, if locks are acquired on an object outside of the scope of an atomic action, it is the programmer's responsibility to release the locks when required, using the corresponding `releaselock` operation.
 
-==== Locking policy
+=== Locking policy
 
 Unlike many other systems, locks in ArjunaCore are not special system types.
 Instead they are simply instances of other ArjunaCore objects (the class `Lock` which is also derived from `StateManager` so that locks may be made persistent if required and can also be named in a simple fashion).
@@ -598,33 +349,11 @@ Furthermore, `LockManager` deliberately has no knowledge of the semantics of the
 Such information is maintained by the actual `Lock` class instances which provide operations (the `conflictsWith` operation) by which `LockManager` can determine if two locks conflict or not.
 This separation is important in that it allows the programmer to derive new lock types from the basic `Lock` class and by providing appropriate definitions of the conflict operations enhanced levels of concurrency may be possible.
 
+.`LockMode`Class
 ====
-.LockMode class
-[source,Java]
+[source,java]
 ----
-public class LockMode {
-    public static final int READ;
-    public static final int WRITE;
-}
-
-public class LockStatus {
-    public static final int LOCKFREE;
-    public static final int LOCKHELD;
-    public static final int LOCKRETAINED;
-}
-
-public class Lock extends StateManager {
-    public Lock (int lockMode);
-
-    public boolean conflictsWith  (Lock otherLock);
-    public boolean modifiesObject ();
-
-    public boolean restore_state (InputObjectState os, int ObjectType);
-    public boolean save_state (OutputObjectState os, int ObjectType);
-    public String type ();
-
-    ...
-}
+include::extras/LockMode.java[]
 ----
 ====
 
@@ -632,7 +361,7 @@ The `Lock` class provides a `modifiesObject` operation which `LockManager` uses 
 This operation is provided so that locking modes other than simple read and write can be supported.
 The supplied `Lock` class supports the traditional multiple reader/single writer policy.
 
-==== Object constructor and finalizer
+=== Object constructor and finalizer
 
 Recall that ArjunaCore objects can be recoverable, recoverable and persistent, or neither.
 Additionally, each object possesses a unique internal name.
@@ -654,9 +383,11 @@ Otherwise, an in-memory (volatile) object store is used to store the state of th
 Constructors for new persistent objects should make use of atomic actions within themselves.
 This will ensure that the state of the object is automatically written to the object store either when the action in the constructor commits or, if an enclosing action exists, when the appropriate top-level action commits.
 Later examples in this chapter illustrate this point further.
+
 `*LockManager (Uid objUid)*`::
 This constructor allows access to an existing persistent object, whose internal name is given by the `objUid` parameter.
 Objects constructed using this operation will normally have their prior state (identified by `objUid`) loaded from an object store automatically by the system.
+
 `*LockManager (Uid objUid, int objectModel)*`::
 As above, this constructor allows access to an existing persistent object, whose internal name is given by the `objUid` parameter.
 Objects constructed using this operation will normally have their prior state (identified by `objUid` ) loaded from an object store automatically by the system.
