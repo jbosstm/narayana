@@ -1,22 +1,23 @@
-== Constructing an OTS application
+= Constructing an OTS application
 
-=== Important notes for {parentProduct}
+== Important notes for {parentProduct}
 
-==== Initialization
+=== Initialization
 
 {parentProduct} must be correctly initialized before you create any application object.
 To guarantee this, use the `initORB` and POA methods described in the _Orb Portability Guide_.
 Consult _the Orb Portability Guide_ if you need direct use of the `ORB_init` and `create_POA` methods provided by the underlying ORB.
 
-==== Implicit context propagation and interposition
+=== Implicit context propagation and interposition
 
 If you need implicit context propagation and interposition, initialize {parentProduct} correctly before you create any objects.
 You can only use implicit context propagation on an ORB which supports filters and interceptors, or the `CosTSPortability` interface.
 You can set `OTS_CONTEXT_PROP_MODE` to `CONTEXT` or `INTERPOSITION`, depending on which functionality you need.
 If you are using the {parentProduct} API, you need to use interposition.
 
-=== Writing applications using the raw OTS interfaces
+== Writing applications using the raw OTS interfaces
 
+.Steps to participate in an OTS transaction
 * Create `Resource` and `SubtransactionAwareResource` objects for each object which will participate within the transaction or sub-transaction.
 These resources manage the persistence, concurrency control, and recovery for the object.
 The OTS invokes these objects during the prepare, commit, or abort phase of the transaction or sub-transaction, and the Resources perform the work of the application.
@@ -31,26 +32,18 @@ You need to provide these implementations.
 The interfaces defined within the OTS specification are too low-level for most situations. {parentProduct} is designed to make use of raw _Common Object Services (COS)_ interfaces, but provides a higher-level API for building transactional applications and framework.
 This API automates much of the work involved with participating in an OTS transaction.
 
-=== Transaction context management
+== Transaction context management
 
 If you use implicit transaction propagation, ensure that appropriate objects support the `TransactionalObject` interface.
 Otherwise, you need to pass the transaction contexts as parameters to the relevant operations.
 
-==== A transaction originator: indirect and implicit
+=== A transaction originator: indirect and implicit
 
 .Indirect and implicit transaction originator
 ====
-[source,Java]
+[source,java]
 ----
-    ...
-    txn_crt.begin();
-    // should test the exceptions that might be raised
-    ...
-    // the client issues requests, some of which involve
-    // transactional objects;
-    BankAccount1.makeDeposit(deposit);
-    ...
-
+include::{sourcedir}/extras/indirect_and_implicit.java[]
 ----
 ====
 
@@ -62,31 +55,19 @@ The program commits the transaction associated with the client thread.
 The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
 
 ====
-[source,Java]
+[source,java]
 ----
-    ...
-    txn_crt.commit(false);
-    ...
+include::{sourcedir}/extras/indirect_and_implicit_close.java[]
 ----
 ====
 
-==== Transaction originator: direct and explicit
+=== Transaction originator: direct and explicit
 
 .Direct and explicit transaction originator
 ====
-[source,Java]
+[source,java]
 ----
-    ...
-    org.omg.CosTransactions.Control c;
-    org.omg.CosTransactions.Terminator t;
-    org.omg.CosTransactions.Coordinator co;
-    org.omg.CosTransactions.PropagationContext pgtx;
-
-    c = TFactory.create(0);
-    t = c.get_terminator();
-    pgtx = c.get_coordinator().get_txcontext();
-    ...
-
+include::{sourcedir}/extras/direct_and_explicit.java[]
 ----
 ====
 
@@ -99,10 +80,9 @@ The `Control` object reference is passed as an explicit parameter of the request
 It is declared in the OMG IDL of the interface.
 
 ====
-[source,Java]
+[source,java]
 ----
-    ...
-    transactional_object.do_operation(arg, pgtx);
+include::{sourcedir}/extras/direct_and_explicit_client_requests.java[]
 ----
 ====
 
@@ -110,14 +90,13 @@ The transaction originator uses the `Terminator` object to commit the transactio
 The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
 
 ====
-[source,Java]
+[source,java]
 ----
-    ...
-    t.commit(false);
+include::{sourcedir}/extras/direct_and_explicit_commit.java[]
 ----
 ====
 
-=== Implementing a transactional client
+== Implementing a transactional client
 
 The `commit` operation of `Current` or the `Terminator` interface takes the `boolean` `report_heuristics` parameter.
 If the `report_heuristics` argument is `false`, the commit operation can complete as soon as the `Coordinator` makes the decision to commit or roll back the transaction.
@@ -129,11 +108,11 @@ Using the `report_heuristics` option guarantees that the commit operation does n
 This guarantees that the application is informed of any non-atomic outcomes of the transaction, through one of the exceptions `HeuristicMixed` or `HeuristicHazard`.
 However, it increases the application-perceived elapsed time for the commit operation.
 
-=== Implementing a recoverable server
+== Implementing a recoverable server
 
 A Recoverable Server includes at least one transactional object and one resource object, each of which have distinct responsibilities.
 
-==== Transactional object
+=== Transactional object
 
 The transactional object implements the transactional object's operations and registers a `Resource` object with the `Coordinator`, so that the Recoverable Server's resources, including any necessary recovery, can commit.
 
@@ -148,11 +127,11 @@ The `hash_transaction` operations allow the transactional object to reduce the n
 All `Coordinators` for the same transaction return the same hash code.
 The `is_same_transaction` operation only needs to be called on `Coordinators` with the same hash code as the `Coordinator` of the current request.
 
-==== Resource object
+=== Resource object
 
 A `Resource` object participates in the completion of the transaction, updates the resources of the Recoverable Server in accordance with the transaction outcome, and ensures termination of the transaction, including across failures.
 
-==== Reliable servers
+=== Reliable servers
 
 A _Reliable Server_ is a special case of a Recoverable Server.
 A Reliable Server can use the same interface as a Recoverable Server to ensure application integrity for objects that do not have recoverable state.
@@ -160,52 +139,13 @@ In the case of a Reliable Server, the transactional object can register a `Resou
 It replies `VoteRollback` if it finds a problem.
 This approach allows the server to apply integrity constraints which apply to the transaction as a whole, rather than to individual requests to the server.
 
-==== Examples
+=== Examples
 
 .Reliable server
 ====
 [source,C]
 ----
-/*
-  BankAccount1 is an object with internal resources. It inherits from both the TransactionalObject and the Resource interfaces:
-*/
-interface BankAccount1:CosTransactions::TransactionalObject, CosTransactions::Resource {
-    ...
-    void makeDeposit (in float amt);
-    ...
-};
-/* The corresponding Java class is: */
-public class BankAccount1 {
-public void makeDeposit(float amt);
-    ...
-};
-/*
-  Upon entering, the context of the transaction is implicitly associated with the object’s thread. The pseudo object
-  supporting the Current interface is used to retrieve the Coordinator object associated with the transaction.
-*/
-void makeDeposit (float amt) {
-    org.omg.CosTransactions.Control c;
-    org.omg.CosTransactions.Coordinator co;
-    c = txn_crt.get_control();
-    co = c.get_coordinator();
-    ...
-/*
-  Before registering the resource the object should check whether it has already been registered for the same
-  transaction. This is done using the hash_transaction and is_same_transaction operations.  that this object registers
-  itself as a resource. This imposes the restriction that the object may only be involved in one transaction at a
-  time. This is not the recommended way for recoverable objects to participate within transactions, and is only used as an
-  example.  If more parallelism is required, separate resource objects should be registered for involvement in the same
-  transaction.
-*/
-    RecoveryCoordinator r;
-    r = co.register_resource(this);
 
-    // performs some transactional activity locally
-    balance = balance + f;
-    num_transactions++;
-    ...
-    // end of transactional operation
-};
 ----
 ====
 
@@ -213,32 +153,11 @@ void makeDeposit (float amt) {
 ====
 [source,Java]
 ----
-/*  A BankAccount2 is an object with external resources that inherits from the TransactionalObject interface: */
-interface BankAccount2: CosTransactions::TransactionalObject {
-    ...
-    void makeDeposit(in float amt);
-    ...
-};
-
-public class BankAccount2 {
-public void makeDeposit(float amt);
-    ...
-}
-/*
-Upon entering, the context of the transaction is implicitly associated with the object’s thread. The makeDeposit
-operation performs some transactional requests on external, recoverable servers. The objects res1 and res2 are
-recoverable objects. The current transaction context is implicitly propagated to these objects.
-*/
-void makeDeposit(float amt) {
-    balance = res1.get_balance(amt);
-    balance = balance + amt;
-    res1.set_balance(balance);
-    res2.increment_num_transactions();
-} // end of transactional operation
+include::{sourcedir}/extras/transactional_object.java[]
 ----
 ====
 
-=== Failure models
+== Failure models
 
 The Transaction Service provides atomic outcomes for transactions in the presence of application, system or communication failures.
 From the viewpoint of each user object role, two types of failure are relevant:
@@ -248,12 +167,13 @@ From the viewpoint of each user object role, two types of failure are relevant:
 
 The transaction originator and transactional server handle these failures in different ways.
 
-==== Transaction originator
+=== Transaction originator
 
 Local failure::
 If a Transaction originator fails before the originator issues `commit`, the transaction is rolled back.
 If the originator fails after issuing commit and before the outcome is reported, the transaction can either commit or roll back, depending on timing.
 In this case, the transaction completes without regard to the failure of the originator.
+
 External failure::
 Any external failure which affects the transaction before the originator issues `commit` causes the transaction to roll back.
 The standard exception `TransactionRolledBack` is raised in the originator when it issues `commit`.
@@ -271,20 +191,22 @@ An originator is only guaranteed to know the transaction outcome in one of two w
 * if its implementation includes a `Resource` object, so that it can participate in the two-phase commit procedure.
 * The originator and `Coordinator` must be located in the same failure domain.
 
-==== Transactional server
+=== Transactional server
 
 Local failure::
 If the Transactional Server fails, optional checks by a Transaction Service implementation may make the transaction to roll back.
 Without such checks, whether the transaction rolls back depends on whether the commit decision is already made, such as when an unchecked client invokes `commit` before receiving all replies from servers.
+
 External failure::
 Any external failure affecting the transaction during the execution of a Transactional Server causes the transaction to be rolled back.
 If the failure occurs while the transactional object’s method is executing, the failure has no effect on the execution of this method.
 The method may terminate normally, returning the reply to its client.
 Eventually the `TransactionRolledBack` exception is returned to a client issuing `commit`.
+
 Recoverable server::
 Behavior of a recoverable server when failures occur is determined by the two phase commit protocol between the `Coordinator` and the recoverable server’s `Resource` object.
 
-=== Summary
+== Summary
 
 When you develop OTS applications which use the raw OTS interfaces, be aware of the following items:
 

@@ -1,4 +1,4 @@
-=== Initializing {parentProduct} Applications
+= Initializing {parentProduct} Applications
 
 {parentProduct} most be initialized correctly before any application object is created.
 To guarantee this, use the `initORB` and `create_POA` methods described in the _Orb Portability Guide_.

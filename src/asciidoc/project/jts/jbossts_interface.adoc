@@ -1,13 +1,16 @@
-== {parentProduct} interfaces for extending the OTS
+= {parentProduct} interfaces for extending the OTS
 
 This chapter contains a description of the use of the {parentProduct} classes you can use to extend the OTS interfaces.
 These advanced interfaces are all written on top of the basic OTS engine described previously, and applications which use them run on other OTS implementations, only without the added functionality.
 
+.Features
 AtomicTransaction::
 Provides a more manageable interface to the OTS transaction than `CosTransactions::Current`. It automatically keeps track of transaction scope, and allows you to create nested top-level transactions in a more natural manner than the one provided by the OTS.
+
 Advanced subtransaction-Resource classes::
 Allow nested transactions to use a two-phase commit protocol.
 These Resources can also be ordered within {parentProduct}, enabling you to control the order in which `Resource` s are called during the commit or abort protocol.
+
 Implicit context propagation between client and server::
 Where available, {parentProduct} uses implicit context propagation between client and server.
 Otherwise, {parentProduct} provides an explicit interposition class, which simplifies the work involved in interposition.
@@ -20,7 +23,7 @@ TXOJ is fully described in the _ArjunaCore Development Guide_.
 the extensions to the `CosTransactions.idl` are located in the `com.arjuna.ArjunaOTS` package and the `ArjunaOTS.idl` file.
 ====
 
-=== Nested transactions
+== Nested transactions
 
 The OTS implementation of nested transactions is extremely limited, and can lead to the generation of inconsistent results.
 One example is a scenario in which a sub-transaction coordinator discovers part of the way through committing that a resources cannot commit.
@@ -36,11 +39,9 @@ However, if a resource is derived from `ArjunaOTS::ArjunaSubtranAwareResource`, 
 
 .ArjunaSubtranAwareResource
 ====
-[source,C]
+[source,java]
 ----
-interface ArjunaSubtranAwareResource : CosTransactions::SubtransactionAwareResource {
-    CosTransactions::Vote prepare_subtransaction ();
-}
+include::{sourcedir}/extras/ArjunaSubtranAwareResource.java[]
 ----
 ====
 
@@ -53,7 +54,7 @@ Based on the votes of all registered resources, {parentProduct} then calls eithe
 This scheme only works successfully if all resources registered within a given sub-transaction are instances of the `ArjunaSubtranAwareResource` interface, and that after a resource tells the coordinator it can prepare, it does not change its mind.
 ====
 
-=== Extended resources
+== Extended resources
 
 When resources are registered with a transaction, the transaction maintains them within a list, called the _intentions list_.
 At termination time, the transaction uses the intentions list to drive each resource appropriately, to commit or abort.
@@ -62,28 +63,13 @@ The {parentProduct} interface `ArjunaOTS::OTSAbstractRecord` gives you this leve
 
 .OTSAbstractRecord
 ====
-[source,C]
+[source,java]
 ----
-interface OTSAbstractRecord : ArjunaSubtranAwareResource {
-    readonly attribute long typeId;
-    readonly attribute string uid;
-
-    boolean propagateOnAbort ();
-    boolean propagateOnCommit ();
-
-    boolean saveRecord ();
-    void merge (in OTSAbstractRecord record);
-    void alter (in OTSAbstractRecord record);
-
-    boolean shouldAdd (in OTSAbstractRecord record);
-    boolean shouldAlter (in OTSAbstractRecord record);
-    boolean shouldMerge (in OTSAbstractRecord record);
-    boolean shouldReplace (in OTSAbstractRecord record);
-}
+include::{sourcedir}/extras/OTSAbstractRecord.java[]
 ----
 ====
 
-[width="100%",cols="35%,65%",]
+[cols="1,1"]
 |===
 |`typeId` |returns the record type of the instance. This is one of the values of the enumerated type `Record_type`.
 |`uid` |a stringified Uid for this record.
@@ -99,7 +85,6 @@ interface OTSAbstractRecord : ArjunaSubtranAwareResource {
 
 When inserting a new record into the transaction’s intentions list, {parentProduct} uses the following algorithm:
 
-[arabic]
 . if a record with the same type and uid has already been inserted, then the methods `shouldAdd`, and related methods, are invoked to determine whether this record should also be added.
 . If no such match occurs, then the record is inserted in the intentions list based on the `type` field, and ordered according to the uid.
 All of the records with the same type appear ordered in the intentions list.
@@ -107,7 +92,7 @@ All of the records with the same type appear ordered in the intentions list.
 `OTSAbstractRecord` is derived from `ArjunaSubtranAwareResource`.
 Therefore, all instances of `OTSAbstractRecord` inherit the benefits of this interface.
 
-=== AtomicTransaction
+== AtomicTransaction
 
 In terms of the OTS, `AtomicTransaction` is the preferred interface to the OTS protocol engine.
 It is equivalent to `CosTransactions::Current`, but with more emphasis on easing application development.
@@ -118,27 +103,14 @@ It is located in the `com.arjuna.ats.jts.extensions.ArjunaOTS` package.
 
 .AtomicTransaction
 ====
-[source,C]
+[source,java]
 ----
-public class AtomicTransaction {
-    public AtomicTransaction ();
-    public void begin () throws SystemException, SubtransactionsUnavailable, NoTransaction;
-    public void commit (boolean report_heuristics) throws SystemException, NoTransaction, HeuristicMixed, HeuristicHazard,TransactionRolledBack;
-    public void rollback () throws SystemException, NoTransaction;
-    public Control control () throws SystemException, NoTransaction;
-    public Status get_status () throws SystemException;
-    /* Allow action commit to be supressed */
-    public void rollbackOnly () throws SystemException, NoTransaction;
-
-    public void registerResource (Resource r) throws SystemException, Inactive;
-    public void registerSubtransactionAwareResource (SubtransactionAwareResource) throws SystemException, NotSubtransaction;
-    public void registerSynchronization(Synchronization s) throws SystemException, Inactive;
-}
+include::{sourcedir}/extras/AtomicTransaction.java[]
 ----
 ====
 
 .AtomicTransaction's Methods
-[width="100%",cols="35%,65%",]
+[cols="1,1"]
 |===
 |`begin` |Starts an action
 |`commit` |Commits an action
@@ -164,7 +136,7 @@ However, you gain two advantages by using `AtomicTransaction` or `TopLevelTransa
 When the transaction ends, the previous transaction associated with the thread, if any, becomes the thread’s current transaction.
 * Instances of `AtomicTransaction` track scope, and if such an instance goes out of scope before it is terminated, it is automatically aborted, along with its children.
 
-=== Context propagation issues
+== Context propagation issues
 
 When using TXOJ in a distributed manner, {parentProduct} requires you to use interposition between client and object.
 This requirement also exists if the application is local, but the transaction manager is remote.
@@ -184,15 +156,9 @@ The transaction is implicitly associated with the transactional object because i
 
 .ExplicitInterposition
 ====
-[source,C]
+[source,java]
 ----
-public class ExplicitInterposition {
-    public ExplicitInterposition ();
-
-    public void registerTransaction (Control control) throws InterpositionFailed, SystemException;
-
-    public void unregisterTransaction () throws InvalidTransaction, SystemException;
-}
+include::{sourcedir}/extras/ExplicitInterposition.java[]
 ----
 ====
 
@@ -202,24 +168,9 @@ For example, consider the class Example which is derived from LockManager and ha
 
 .ExplicitInterposition Example
 ====
-[source,C]
+[source,java]
 ----
-public boolean increment (Control control) {
-    ExplicitInterposition inter = new ExplicitInterposition();
-
-    try {
-        inter.registerTransaction(control);
-    } catch (Exception e) {
-        return false;
-    }
-
-    // do real work
-
-    // should catch exceptions!
-    inter.unregisterTransaction();
-
-    // return value dependant upon outcome
-}
+include::{sourcedir}/extras/ExplicitInterposition_example.java[]
 ----
 ====
 

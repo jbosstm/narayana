@@ -77,7 +77,7 @@ If you are overriding the object store implementation, the type of this object s
 
 Since transactional objects are concurrency-controlled through `LockManager`, you do not need to impose additional locking at the file level.
 The basic ShadowingStore implementation handles file-level locking.
-Therefore, the default object store implementation for {product}, [path]_ShadowNoFileLockStore_, relies upon user-level locking.
+Therefore, the default object store implementation for {productName}, [path]_ShadowNoFileLockStore_, relies upon user-level locking.
 This enables it to provide better performance than the [path]_ShadowingStore_ implementation.
 
 If you are overriding the object store implementation, the type of this object store is `ShadowNoFileLockStore`.

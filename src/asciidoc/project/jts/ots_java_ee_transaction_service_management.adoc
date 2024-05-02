@@ -1,6 +1,6 @@
-=== OTS and Jakarta EE Transaction Service Management
+= OTS and Jakarta EE Transaction Service Management
 
-==== Starting the run-time system
+== Starting the run-time system
 
 The {parentProduct} run-time support consists of run-time packages and the OTS transaction manager server.
 By default, {parentProduct} does not use a separate transaction manager server.
@@ -18,7 +18,7 @@ This method may be any of:
 You override the default registration mechanism by using the `OrbPortabilityEnvironmentBean.resolveService` environment variable, which takes the following values:
 
 .Possible values of `OrbPortabilityEnvironmentBean.resolveService`
-[cols=",",]
+[cols="1,1"]
 |===
 |CONFIGURATION_FILE |This is the default, and causes the system to use the `CosServices.cfg` file.
 |NAME_SERVICE |{parentProduct} attempts to use a name service to register the transaction factory. If this is not supported, an exception is thrown.
@@ -26,13 +26,13 @@ You override the default registration mechanism by using the `OrbPortabilityEnvi
 |RESOLVE_INITIAL_REFERENCES |{parentProduct} attempts to register the transaction service with the ORB's initial service references. If the ORB does not support this, an exception is thrown, and another option must be used.
 |===
 
-===== OTS configuration file
+=== OTS configuration file
 
 Similar to the `resolve_initial_references`, {parentProduct} supports an initial reference file where references for specific services can be stored and used at runtime.
 The file, `CosServices.cfg`, consists of two columns: the service name (in the case of the OTS server TransactionService), and the IOR, separated by a single space.
 `CosServices.cfg` is located at runtime by the following `OrbPortabilityEnvironmentBean` properties:
 
-[cols=",",]
+[cols="1,1"]
 |===
 |`initialReferencesRoot` |The directory where the file is located, defaulting to the current working directory.
 |`initialReferencesFile` |The name of the configuration file itself, `CosServices.cfg` by default.
@@ -44,14 +44,14 @@ Machines sharing the same transaction server should have access to this file, or
 
 .Example ORB reference file settings
 ====
-[source,shell]
+[source,xml]
 ----
-          OrbPortabilityEnvironmentBean.initialReferencesFile=myFile
-          OrbPortabilityEnvironmentBean.initialReferencesRoot=/tmp
+OrbPortabilityEnvironmentBean.initialReferencesFile=myFile
+OrbPortabilityEnvironmentBean.initialReferencesRoot=/tmp
 ----
 ====
 
-===== Name service
+=== Name service
 
 If your ORB supports a name service, and {parentProduct} is configured to use it, the transaction manager is registered with it automatically.
 There is no further work required.
@@ -63,13 +63,13 @@ This option is not used for JacORB
 ====
 
 // Shall we remove this?
-===== resolve_initial_references
+=== resolve_initial_references
 
 Currently, this option is only supported for JacORB.
 
-===== Resolution services supported per ORB
+=== Resolution services supported per ORB
 
-[cols=",",options="header",]
+[cols="1,1",options="header"]
 |===
 |Resolution Mechanism |ORB
 |OTS configuration file |All available ORBs
@@ -77,7 +77,7 @@ Currently, this option is only supported for JacORB.
 |resolve_initial_references |JacORB
 |===
 
-==== XA Specific management
+== XA Specific management
 
 Each XA Xid that {parentProduct} creates must have a unique node identifier encoded within it.
 {parentProduct} only recovers transactions and states that match a specified node identifier.
@@ -94,7 +94,7 @@ A value of ‘*’ forces {parentProduct} to recover, and possibly rollback, all
 Use this value with extreme caution.
 ====
 
-==== Selecting the JTA implementation
+== Selecting the JTA implementation
 
 Two variants of the JTA implementation are now provided and accessible through the same interface.
 These are:
@@ -102,6 +102,7 @@ These are:
 Purely local JTA::
 Only non-distributed JTA transactions can be executed.
 This is the only version available with the {productName} product.
+
 Remote, CORBA-based JTA::
 Distributed JTA transactions can be executed.
 This version is only available with the {parentProduct} product and requires a supported CORBA ORB.

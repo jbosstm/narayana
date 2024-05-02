@@ -1,4 +1,4 @@
-=== Failure Recovery Administration
+= Failure Recovery Administration
 
 The failure recovery subsystem of {productName} will ensure that results of a transaction are applied consistently to all resources affected by the transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity.
 In the case of machine (system) crash or network failure, the recovery will not take place until the system or network are restored, but the original application does not need to be restarted.
@@ -13,8 +13,8 @@ Until the recovery procedures are complete, resources affected by a transaction 
 For database resources, this may be reported as tables or rows held by “in-doubt transactions”.
 For _TransactionalObjects for Java_ resources, an attempt to activate the `Transactional Object` (as when trying to get a lock) will fail.
 
-[[recovery-manager]]
-==== The Recovery Manager
+[[_recovery_manager]]
+== The Recovery Manager
 
 The failure recovery subsystem of {productName} requires that the stand-alone Recovery Manager process be running for each `ObjectStore` (typically one for each node on the network that is running {productName} applications).
 The `RecoveryManager` file is located in the {productName} JAR file within the package `com.arjuna.ats.arjuna.recovery.RecoveryManager`.
@@ -34,15 +34,15 @@ java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 ----
 ====
 
-==== Configuring the Recovery Manager
+== Configuring the Recovery Manager
 
 The `RecoveryManager` reads the properties defined in the `jbossts-properties.xml` file.
 
 A default version of `jbossts-properties.xml` is supplied with the distribution.
 This can be used without modification, except possibly the debug tracing fields, as shown in link:#recovery-manager-output[Output] .
 
-[[recovery-manager-output]]
-==== Output
+[[_recovery_manager_output]]
+== Output
 
 It is likely that installations will want to have some form of output from the `RecoveryManager`, to provide a record of what recovery activity has taken place.
 `RecoveryManager` uses the logging mechanism provided by _jboss logging_, which provides a high level interface that hides differences that exist between existing logging APIs such Jakarta log4j or JDK logging API.
@@ -52,7 +52,6 @@ Please, consult the _jboss logging_ documentation for details.
 Each log message has an associated log Level, that gives the importance and urgency of a log message.
 The set of possible Log Levels, in order of least severity, and highest verbosity, is:
 
-[arabic]
 . `TRACE`
 . `DEBUG`
 . `INFO`
@@ -67,7 +66,7 @@ Setting the normal recovery messages to the `INFO` level allows the `RecoveryMan
 If nothing is going on, it just reports the entry into each module for each periodic pass.
 To disable `INFO` messages produced by the Recovery Manager, the logging level could be set to the higher level of `ERROR`, which means that the `RecoveryManager` will only produce `ERROR`, `WARNING`, or `FATAL` messages.
 
-==== Periodic Recovery
+== Periodic Recovery
 
 The `RecoveryManager` scans the `ObjectStore` and other locations of information, looking for transactions and resources that require, or may require recovery.
 The scans and recovery processing are performed by recovery modules.
@@ -110,19 +109,12 @@ The recovery modules are registered with the `RecoveryManager` using `RecoveryEn
 These will be invoked on each pass of the periodic recovery in the sort-order of the property names – it is thus possible to predict the ordering, but a failure in an application process might occur while a periodic recovery pass is in progress.
 The default Recovery Extension settings are:
 
-[source,XML]
+[source,xml]
 ----
-<entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
-  com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
-  com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
-  com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule
-  com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule
-  com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule
-</entry>
-
+include::{sourcedir}/extras/default_recovery_extension_settings.xml[]
 ----
 
-==== Expired Entry Removal
+== Expired Entry Removal
 
 The operation of the recovery subsystem cause some entries to be made in the `ObjectStore` that are not removed in normal progress.
 The `RecoveryManager` has a facility for scanning for these and removing items that are very old.
@@ -145,9 +137,7 @@ The default is 12, and 0 (zero) means never to expire.The expiry time should be 
 
 The Expiry Scanner properties for these are:
 
-[source,XML]
+[source,xml]
 ----
-<entry key="RecoveryEnvironmentBean.expiryScannerClassNames">
-    com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
-</entry>
+include::{sourcedir}/extras/expiry_scanner_properties.xml[]
 ----

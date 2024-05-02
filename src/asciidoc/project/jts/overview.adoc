@@ -1,6 +1,6 @@
-=== Transaction Processing Overview
+= Transaction Processing Overview
 
-==== Defining a transaction
+== Defining a transaction
 
 A transaction is a unit of work that encapsulates multiple database actions such that that either all the encapsulated actions fail or all succeed.
 
@@ -24,13 +24,17 @@ This guide assists you in writing transactional applications to protect your dat
 Transactions are used to guarantee the consistency of data in the presence of failures.
 Transactions fulfill the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
 
+.ACID Properties
 Atomicity::
 The transaction completes successfully (commits) or if it fails (aborts) all of its effects are undone (rolled back).
+
 Consistency::
 Transactions produce consistent results and preserve application specific invariants.
+
 Isolation::
 Intermediate states produced while a transaction is executing are not visible to others.
 Furthermore, transactions appear to execute serially, even if they are actually executed concurrently.
+
 Durability::
 The effects of a committed transaction are never lost (except by a catastrophic failure).
 
@@ -39,10 +43,10 @@ When a transaction is committed, all changes made within it are made durable (fo
 When a transaction is aborted, all of the changes are undone.
 Atomic actions can also be nested; the effects of a nested action are provisional upon the commit/abort of the outermost (top-level) atomic action.
 
-==== Commit protocol
+== Commit protocol
 
 A two-phase commit protocol guarantees that all of the transaction participants either commit or abort any changes made.
-link:#img-commit-protocol[This Two-Phase Commit image] illustrates the main aspects of the commit protocol.
+<<_img_commit_protocol>> illustrates the main aspects of the commit protocol.
 
 * During phase 1, the action coordinator, `C`, attempts to communicate with all of the action participants, `A` and `B`, to determine whether they will commit or abort.
 * An abort reply from any participant acts as a veto, causing the entire action to abort.
@@ -55,11 +59,11 @@ The coordinator also informs the participants if the action aborts.
 If the coordinator fails before delivery of this message, these resources remain blocked.
 However, if crashed machines eventually recover, crash recovery mechanisms can be employed to unblock the protocol and terminate the action.
 
-[#img-commit-protocol]
+[[_img_commit_protocol]]
 .Two-Phase Commit
-image::../images/jts-img-2phase.png[Two-Phase Commit]
+image::../images/jts-img-2phase.png[]
 
-==== Transactional proxies
+== Transactional proxies
 
 The action coordinator maintains a transaction context where resources taking part in the action need to be registered.
 Resources must obey the transaction commit protocol to guarantee ACID properties.
@@ -72,7 +76,7 @@ The proxy is registered with, and manipulated by, the action as though it were a
 The proxy must participate within the commit and abort protocols.
 Because the work of the proxy is performed as part of the action, it is guaranteed to be completed or undone despite failures of the action coordinator or action participants.
 
-==== Nested transactions
+== Nested transactions
 
 Given a system that provides transactions for certain operations, you can combine them to form another operation, which is also required to be a transaction.
 The resulting transaction’s effects are a combination of the effects of its constituent transactions.
@@ -97,7 +101,7 @@ Otherwise, they are nested within the scope of the client's transactions.
 Likewise, a client does not need to know whether an object is transactional.
 It can begin its own transaction.
 
-==== The Object Transaction Service (OTS)
+== The Object Transaction Service (OTS)
 
 The CORBA architecture, as defined by the OMG, is a standard which promotes the construction of interoperable applications that are based upon the concepts of distributed objects.
 The architecture principally contains the following components:
@@ -105,10 +109,12 @@ The architecture principally contains the following components:
 Object Request Broker (ORB)::
 Enables objects to transparently send and receive requests in a distributed, heterogeneous environment.
 This component is the core of the OMG reference model.
+
 Object Services::
 A collection of services that support functions for using and implementing objects.
 Such services are necessary for the construction of any distributed application.
 The Object Transaction Service (OTS) is the most relevant to {productName}.
+
 Common Facilities::
 Other useful services that applications may need, but which are not considered to be fundamental.
 Desktop management and help facilities fit this category.
@@ -143,7 +149,7 @@ A simple transactional object does not need to participate the commit protocol u
 The OTS is a protocol engine that guarantees obedience to transactional behavior.
 It does not directly support all of the transaction properties, but relies on some cooperating services:
 
-[width="100%",cols="46%,54%",]
+[cols="1,1"]
 |===
 |Persistence/Recovery Service |Supports properties of atomicity and durability.
 |Concurrency Control Service |Supports the isolation properties.

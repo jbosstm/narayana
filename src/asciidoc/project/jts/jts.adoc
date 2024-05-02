@@ -1,0 +1,89 @@
+= JTS
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+== Administration
+
+:leveloffset: 2
+include::introduction.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::starting_and_stopping_transaction_manager.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::ots_java_ee_transaction_service_management.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::failure_recovery_administration.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::orb_specific_configurations.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::initializing_jbossts_applications.adoc[]
+:leveloffset: 0
+
+== Development
+
+:leveloffset: 2
+include::overview.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::jbossts_basics.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::ots.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::constructing_an_ots_application.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::jbossts_interface.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::example.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::trailmap.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::failure_recovery.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::jta_and_jts.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::orb_specific_dev_configurations.adoc[]
+:leveloffset: 0
+
+== ORB Portability
+
+:leveloffset: 2
+include::orb_portability_introduction.adoc[]
+:leveloffset: 0
+
+:leveloffset: 2
+include::orb_portability_api.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::quick_start_to_jts_ots.adoc[]
+:leveloffset: 0

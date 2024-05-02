@@ -1,4 +1,4 @@
-=== Starting and Stopping the Transaction Manager
+= Starting and Stopping the Transaction Manager
 
 By default, the transaction manager starts up in an active state such that new transactions can be created immediately.
 If you wish to have more control over this it is possible to set the `CoordinatorEnvironmentBean.startDisabled` configuration option to `YES` and in which case no transactions can be created until the transaction manager is enabled via a call to method `TxControl.enable`).

@@ -1,6 +1,6 @@
-== {parentProduct} Basics
+= {parentProduct} Basics
 
-=== Introduction
+== Introduction
 
 {parentProduct} is based upon the original Arjuna system developed at the University of Newcastle between 1986 and 1995. Arjuna predates the OTS specification and includes many features not found in the OTS.
 {parentProduct} is a superset of the OTS.
@@ -25,7 +25,7 @@ Because of differences in ORB implementations, {parentProduct} uses a separate O
 Many of the examples used throughout this manual use this library.
 Refer to the ORB Portability Manual for more details.
 
-==== Raw OTS
+=== Raw OTS
 
 The OTS is only a protocol engine for driving registered resources through a two-phase commit protocol.
 You are responsible for building and registering the `Resource` objects which handle persistence and concurrency control, ensuring ACID properties for transactional application objects.
@@ -33,7 +33,7 @@ You need to register `Resources` at appropriate times, and ensure that a given `
 Programming at the raw OTS level is extremely basic.
 You as the programmer are responsible for almost everything to do with transactions, including managing persistence and concurrency control on behalf of every transactional object.
 
-==== Enhanced OTS functionality
+=== Enhanced OTS functionality
 
 The OTS implementation of nested transactions is extremely limited, and can lead to the generation of heuristic results.
 An example of such a result is when a sub-transaction coordinator discovers part of the way through committing that some resources cannot commit, but being unable to tell the committed resources to abort. {parentProduct} allows nested transactions to execute a full two-phase commit protocol, which removes the possibility that some resources will comment while others roll back.
@@ -41,7 +41,7 @@ An example of such a result is when a sub-transaction coordinator discovers part
 When resources are registered with a transaction, you have no control over the order in which these resources are invoked during the commit/abort protocol.
 For example, if previously registered resources are replaced with newly registered resources, resources registered with a subtransaction are merged with the subtraction's parent. {parentProduct} provides an additional Resource subtype which you this level of control.
 
-==== Advanced API
+=== Advanced API
 
 The OTS does not provide any `Resource` implementations.
 You are responsible for implementing these interfaces.
@@ -53,10 +53,10 @@ The architecture of the system is shown in Figure 2. The API interacts with the 
 These resources may also use the persistence and concurrency services.
 
 {parentProduct} exploits object-oriented techniques to provide you with a toolkit of Java classes which are inheritable by application classes, to obtain transactional properties.
-These classes form a hierarchy, illustrated in link:#jbossts-class-hierarchy[{parentProduct} class hierarchy].
+These classes form a hierarchy, illustrated in <<_jbossts_class_hierarchy>>.
 
+[[_jbossts_class_hierarchy]]
 .{parentProduct} class hierarchy
-[##jbossts-class-hierarchy]
 image::../images/jts-jbossts-class-hierarchy.png[{parentProduct} class hierarchy]
 
 Your main responsibilities are specifying the scope of transactions and setting appropriate locks within objects. {parentProduct} guarantees that transactional objects will be registered with, and be driven by, the appropriate transactions.
@@ -67,7 +67,7 @@ If a transaction is nested, resources are automatically propagated to the transa
 The design and implementation goal of {parentProduct} was to provide a programming system for constructing fault-tolerant distributed applications.
 Three system properties were considered highly important:
 
-[width="100%",cols="35%,65%",]
+[cols="1,1"]
 |===
 |Integration of Mechanisms |Fault-tolerant distributed systems require a variety of system functions for naming, locating and invoking operations upon objects, as well as for concurrency control, error detection and recovery from failures. These mechanisms are integrated in a way that is easy for you to use.
 |Flexibility |Mechanisms must be flexible, permitting implementation of application-specific enhancements, such as type-specific concurrency and recovery control, using system defaults.
@@ -82,7 +82,7 @@ The OTS specification is written with flexibility in mind, to cope with differen
 In addition, if the specification allows functionality to be implemented in a variety of different ways, {parentProduct} supports all possible implementations.
 
 .{parentProduct} implementation of OTS specifications
-[width="100%",cols="50%,50%",options="header",]
+[cols="1,1",options="header"]
 |===
 |OTS specification |{parentProduct} default implementation
 |If the transaction service chooses to restrict the availability of the transaction context, then it should raise the `Unavailable` exception. |{parentProduct} does not restrict the availability of the transaction context.
@@ -96,7 +96,7 @@ In addition, if the specification allows functionality to be implemented in a va
 |A transaction service implementation is not required to support interposition. |{parentProduct} supports various types of interposition.
 |===
 
-=== Thread class
+== Thread class
 
 {parentProduct} is fully multi-threaded and supports the OTS notion of allowing multiple threads to be active within a transaction, and for a thread to execute multiple transactions.
 A thread can only be active within a single transaction at a time, however.
@@ -105,23 +105,18 @@ If the thread needs to be associated with the transaction, use the `resume` meth
 
 However, if newly created threads need to automatically inherit the transaction context of their parent, then they should extend the `OTS_Thread` class.
 
+.Extending the [class]``OTS_Thread``class
 ====
-[source,Java]
+[source,java]
 ----
-public class OTS_Thread extends Thread {
-    public void terminate ();
-    public void run ();
-
-    protected OTS_Thread ();
-}
-
+include::{sourcedir}/extras/OTS_Thread.java[]
 ----
 ====
 
 Call the `run` method of `OTS_Thread` at the start of the application thread class's `run` method.
 Call `terminate` before you exit the body of the application thread’s `run` method.
 
-=== ORB portability issues
+== ORB portability issues
 
 Although the CORBA specification is a standard, it is written so that an ORB can be implemented in multiple ways.
 As such, writing portable client and server code can be difficult.

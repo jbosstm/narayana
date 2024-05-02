@@ -1,10 +1,9 @@
-=== ORB-specific Configurations
+= ORB-specific Configurations
 
-==== JacORB
+== JacORB
 
 For JacORB to function correctly it needs a valid `jacorb.properties` or `.jacorb_properties` file in one of the following places, in searched order:
 
-[arabic]
 . The classpath
 . The home directory of the user running the {parentProduct} Service.
 The home directory is retrieved using `System.getProperty(“user.home”);`
