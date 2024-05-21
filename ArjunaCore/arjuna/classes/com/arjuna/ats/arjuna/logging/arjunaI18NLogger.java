@@ -1621,6 +1621,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	void info_osbSkipHandler(String type);
 
+	@Message(id = 12408, value = "One-phase commit of action {0} received heuristic decision: {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_coordinator_BasicAction_71(Uid arg0, String arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

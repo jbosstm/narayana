@@ -33,6 +33,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.Header;
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 /**
@@ -2689,6 +2690,7 @@ public class BasicAction extends StateManager
          * them fails.
          */
         boolean keepGoing = true;
+        AbstractRecord prevLastResource = null;
         while(pendingList.size() > 0 && keepGoing) {
             AbstractRecord record = pendingList.getFront();
             /*
@@ -2696,8 +2698,33 @@ public class BasicAction extends StateManager
              * the pending list. Otherwise it is moved to another list or
              * dropped if readonly.
              */
-
+            boolean lastResource = record.typeIs() == RecordType.LASTRESOURCE;
+            if (lastResource && prevLastResource == null) {
+                // remember that we've processed a last resource so that if we have two such last resources
+                // we can detect and report heuristics caused by allowing multiple last resources
+                prevLastResource = record;
+            }
             int individualTwoPhaseOutcome = doPrepare(reportHeuristics, record);
+
+            if (individualTwoPhaseOutcome == TwoPhaseOutcome.ONE_PHASE_ERROR &&
+                    lastResource && // could probably infer lastResource being true because of the ONE_PHASE_ERROR
+                    record != prevLastResource) {
+                /*
+                 * Since prevLastResource, which is a last resource, committed (otherwise the decision would
+                 * have switched to rollback) and the current record did not (because record != prevLastResource
+                 * and the ONE_PHASE_ERROR) there is a mixed outcome.
+                 * 
+                 * The individual and overall outcome will be TwoPhaseOutcome.ONE_PHASE_ERROR so the
+                 * two phase participants will be told to rollback
+                 */
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_71(get_uid(),
+                        TwoPhaseOutcome.stringForm(individualTwoPhaseOutcome));
+
+                LastResourceRecord lrr = (LastResourceRecord) record; // the cast is safe because lastResource == true
+
+                // the resource should report the mixed outcome during rollback
+                lrr.setOutcome(TwoPhaseOutcome.HEURISTIC_MIXED);
+            }
 
             if(individualTwoPhaseOutcome != TwoPhaseOutcome.PREPARE_READONLY) {
                 overallTwoPhaseOutcome = individualTwoPhaseOutcome;

@@ -184,7 +184,11 @@ public class XAOnePhaseResource implements OnePhaseResource, ExceptionDeferrer
         catch (final XAException xae)
         {
             addDeferredThrowable(xae);
-            jtaLogger.i18NLogger.warn_resources_arjunacore_XAOnePhaseResource_rollbackexception(XAHelper.xidToString(xid), xae);
+            String xidString = XAHelper.xidToString(xid);
+            jtaLogger.i18NLogger.warn_resources_arjunacore_XAOnePhaseResource_rollbackexception(xidString, xae);
+            // the previous log message does not print the XA error code
+            jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(xidString, xaResource.toString(),
+                    XAHelper.printXAErrorCode(xae), xae);
         }
         catch (final Throwable ex)
         {
@@ -318,8 +322,15 @@ public class XAOnePhaseResource implements OnePhaseResource, ExceptionDeferrer
    @Override
    public void getDeferredThrowables(List<Throwable> list)
    {
-      if (deferredExceptions != null)
+      if (deferredExceptions != null) {
           list.addAll(deferredExceptions);
+          /*
+           * Now that the deferred exception is being reported clear the exception:
+           *   when multiple LR's are involved the commit can fail (called by BasicAction#prepare)
+           *   after which BasicAction#rollback will run and this LR will have rollback called upon it
+           */
+          deferredExceptions.clear();
+      }
    }
     
 }
