@@ -22,7 +22,17 @@ public class LastOnePhaseResource implements XAResource, Serializable, LastResou
     public static final int ROLLBACK = 2 ;
     
     private int status = INITIAL ;
-    
+    private int commitErrcode;
+    private int rollbackErrcode;
+
+    public LastOnePhaseResource(int commitErrcode, int rollbackErrcode) {
+        this.commitErrcode = commitErrcode;
+        this.rollbackErrcode = rollbackErrcode;
+    }
+
+    public LastOnePhaseResource() {
+    }
+
     public int prepare(final Xid xid)
         throws XAException
     {
@@ -36,12 +46,18 @@ public class LastOnePhaseResource implements XAResource, Serializable, LastResou
         {
             throw new XAException("commit called with onePhaseCommit false") ;
         }
+        if (commitErrcode != 0) { // 0 corresponds to XA_OK
+            throw new XAException(commitErrcode);
+        }
         status = COMMIT ;
     }
 
     public void rollback(final Xid xid)
         throws XAException
     {
+        if (rollbackErrcode != 0) { // 0 corresponds to XA_OK
+            throw new XAException(rollbackErrcode);
+        }
         status = ROLLBACK ;
     }
     

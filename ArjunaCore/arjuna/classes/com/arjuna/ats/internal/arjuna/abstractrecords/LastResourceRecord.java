@@ -96,7 +96,11 @@ public class LastResourceRecord extends AbstractRecord
 
         if (_lro != null)
         {
-            return _lro.rollback();
+            if (outcome == TwoPhaseOutcome.FINISH_OK) {
+                return _lro.rollback();
+            }
+
+            return outcome;
         }
         else
         {
@@ -239,6 +243,11 @@ public class LastResourceRecord extends AbstractRecord
     {
     }
 
+    public void setOutcome(int outcome) {
+        // cannot use setValue since value is overused (in this record it is used to return _lro, the OnePhaseResource)
+        this.outcome = outcome;
+    }
+
     public LastResourceRecord()
     {
         super();
@@ -257,6 +266,8 @@ public class LastResourceRecord extends AbstractRecord
             .isDisableMultipleLastResourcesWarning();
 
     private static boolean _issuedWarning = false;
+
+    private int outcome = TwoPhaseOutcome.FINISH_OK;
 
     /**
      * Static block writes warning messages to the log if either multiple last resources are enabled
