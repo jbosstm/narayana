@@ -601,6 +601,13 @@ public interface jtaI18NLogger {
     @Message(id = 16153, value = "Transaction is not allowed for invocation", format = MESSAGE_FORMAT)
     public String get_tx_never();
 
+	@Message(id = 16154, value = "Unable to add multiple one-phase resources in the same transaction because" +
+			" this could result in partial commits and rollbacks. To fix this, either enable XA transaction support" +
+			" in your resources, or use a separate transaction for each resource, or as a last resort enable" +
+			" CoreEnvironmentBean.isAllowMultipleLastResources.",
+			format = MESSAGE_FORMAT)
+	String warn_failed_to_enlist_one_phase_resource();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
