@@ -181,6 +181,10 @@ public interface jdbcI18NLogger {
 	@Message(id = 17042, value = "Could not resolve JNDI ''{0}'' of XADataSource from jndi properties ''{1}''", format = MESSAGE_FORMAT)
 	String get_cant_resolve_ds_jndi_lookup(String jndi, Hashtable jndiProperties);
 
+	@Message(id = 17043, value = "TransactionalDriver problem: {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_connection_problem(String message, @Cause Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

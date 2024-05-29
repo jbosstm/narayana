@@ -5,6 +5,7 @@
 package com.arjuna.wst11.stub;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.ws.api.addressing.MAP;
@@ -50,7 +51,7 @@ public class CompletionStub implements
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
+            WSTLogger.logger.warn(th.getMessage(), th);
             throw new SystemException() ;
         }
         finally
@@ -92,7 +93,7 @@ public class CompletionStub implements
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
+            WSTLogger.logger.warn(th.getMessage(), th);
             throw new SystemException() ;
         }
         finally

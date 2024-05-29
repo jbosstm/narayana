@@ -139,7 +139,7 @@ public class RESTRecord extends AbstractRecord implements Comparable {
                 log.infof("%s: for 10 seconds", f);
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.warn(e.getMessage(), e);
             }
         }
     }
@@ -473,7 +473,7 @@ public class RESTRecord extends AbstractRecord implements Comparable {
 
             return super.save_state(os, t);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn(e.getMessage(), e);
 
             return false;
         }

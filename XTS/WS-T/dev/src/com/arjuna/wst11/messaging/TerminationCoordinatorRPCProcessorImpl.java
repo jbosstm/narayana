@@ -101,7 +101,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
         }
         catch (SOAPException se)
         {
-            se.printStackTrace(System.err);
+            WSTLogger.logger.warn(se.getMessage(), se);
             throw new ProtocolException(se);
         }
     }
@@ -170,7 +170,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                 throw new SOAPFaultException(soapFault);
             }
         } catch (SOAPException se) {
-            se.printStackTrace(System.err);
+            WSTLogger.logger.warn(se.getMessage(), se);
             throw new ProtocolException(se);
         }
     }
@@ -241,7 +241,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                 throw new SOAPFaultException(soapFault);
             }
         } catch (SOAPException se) {
-            se.printStackTrace(System.err);
+            WSTLogger.logger.warn(se.getMessage(), se);
             throw new ProtocolException(se);
         }
     }

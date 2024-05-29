@@ -1403,7 +1403,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-			    e4.printStackTrace();
+				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(e4);
 			    
 				RollbackException rollbackException = new RollbackException(e4.toString());
                 if(_rollbackOnlyCallerStacktrace != null) {
@@ -1757,7 +1757,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(e);
 				}
 			}
 
@@ -1765,7 +1765,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(e);
 		}
 
 		return null;

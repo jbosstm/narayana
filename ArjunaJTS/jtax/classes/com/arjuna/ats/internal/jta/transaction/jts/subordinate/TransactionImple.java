@@ -164,7 +164,7 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                    ex.printStackTrace();
+                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
                     UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                     unexpectedConditionException.initCause(ex);
@@ -225,7 +225,7 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                    ex.printStackTrace();
+                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
                     UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                     unexpectedConditionException.initCause(ex);
@@ -289,7 +289,7 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        ex.printStackTrace();
+                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
                         throw new IllegalStateException(ex);
                 }
@@ -312,7 +312,7 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        ex.printStackTrace();
+                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
                         throw new IllegalStateException(ex);
                 }
@@ -328,7 +328,7 @@ public class TransactionImple extends
             }
             catch (final Exception ex)
             {
-                ex.printStackTrace();
+                    jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
                 UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                 unexpectedConditionException.initCause(ex);

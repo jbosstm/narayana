@@ -787,7 +787,7 @@ public class CurrentImple extends LocalObject implements
 		}
 		catch (NullPointerException npx)
 		{
-		    npx.printStackTrace();
+			jtsLogger.i18NLogger.warn_caughtexception(npx);
 			invalidControl = true;
 		}
 

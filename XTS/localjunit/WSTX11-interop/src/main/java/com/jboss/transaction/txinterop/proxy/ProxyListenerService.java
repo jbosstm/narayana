@@ -262,12 +262,12 @@ System.out.println("KEV: handled SOAP action " + trimAction(soapAction)) ;
         catch (Exception exception)
         {
             System.err.println("Proxy Listener Service: " + exception);
-            exception.printStackTrace() ;
+            log("Proxy Listener Service: ", exception);
         }
         catch (Error error)
         {
             System.err.println("Proxy Listener Service: " + error);
-            error.printStackTrace() ;
+            log("Proxy Listener Service: ", error);
         }
     }
     

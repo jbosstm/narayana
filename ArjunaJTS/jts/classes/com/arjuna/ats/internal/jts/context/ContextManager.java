@@ -127,7 +127,7 @@ public class ContextManager
 	    }
 	    catch (EmptyStackException e)
 	    {
-		e.printStackTrace();
+			jtsLogger.i18NLogger.warn_caughtexception(e);
 	    }
 	}
 

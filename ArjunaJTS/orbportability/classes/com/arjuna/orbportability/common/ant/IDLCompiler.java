@@ -18,7 +18,9 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.arjuna.orbportability.logging.opLogger;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.w3c.dom.Document;
@@ -394,7 +396,7 @@ public class IDLCompiler extends Task
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log(opLogger.i18NLogger.warn_unexpectedexception(e), e, Project.MSG_WARN);
             throw new BuildException("The following exception occurred while executing the IDL compiler: " + e);
         }
 
@@ -967,7 +969,7 @@ public class IDLCompiler extends Task
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log(opLogger.i18NLogger.warn_unexpectedexception(e), e, Project.MSG_WARN);
             }
         }
 

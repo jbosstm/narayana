@@ -322,6 +322,10 @@ public interface wstxI18NLogger {
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Durable2PC_one_phase_wrong_vote(String id, Durable2PCParticipant participant, String vote);
 
+	@Message(id = 44068, value = "Caught exception", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_unexpectedExcpetion(@Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

@@ -128,7 +128,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                 throw new SOAPFaultException(soapFault);
             }
             } catch (SOAPException se) {
-                se.printStackTrace(System.err);
+                WSTLogger.logger.warn(se.getMessage(), se);
                 throw new ProtocolException(se);
             }
         }
@@ -194,7 +194,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                 throw new SOAPFaultException(soapFault);
             }
         } catch (SOAPException se) {
-            se.printStackTrace(System.err);
+            WSTLogger.logger.warn(se.getMessage(), se);
             throw new ProtocolException(se);
         }
     }

@@ -123,7 +123,7 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 
                 super.createConnection();
             } catch (Exception e) {
-                e.printStackTrace();
+                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);;
 
                 SQLException sqlException = new SQLException(e.toString());
                 sqlException.initCause(e);

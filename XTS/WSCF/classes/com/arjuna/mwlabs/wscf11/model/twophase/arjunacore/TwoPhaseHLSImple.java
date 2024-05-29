@@ -7,6 +7,7 @@
 
 package com.arjuna.mwlabs.wscf11.model.twophase.arjunacore;
 
+import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf.model.twophase.api.*;
 import com.arjuna.mw.wscf.model.twophase.hls.TwoPhaseHLS;
 
@@ -176,7 +177,7 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 
                 return ctx;
             } catch (Exception ex) {
-                ex.printStackTrace();
+				wscfLogger.i18NLogger.warn_unexpectedException(ex);
                 throw new SystemException(ex.toString());
             }
         } else {

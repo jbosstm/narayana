@@ -142,7 +142,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
         }
         catch (Throwable throwable)
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.logger.warn(throwable.getMessage(), throwable);
         }
     }
 
@@ -222,7 +222,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
         }
         catch (Throwable throwable)
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.logger.warn(throwable.getMessage(), throwable);
         }
     }
 
@@ -300,7 +300,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
         }
         catch (Throwable throwable)
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.logger.warn(throwable.getMessage(), throwable);
         }
     }
 

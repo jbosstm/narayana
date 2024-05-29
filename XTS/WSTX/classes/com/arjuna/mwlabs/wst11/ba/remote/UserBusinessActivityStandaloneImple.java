@@ -65,7 +65,7 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
         {
             // TODO
 
-            ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
         }
     }
 
@@ -145,7 +145,7 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
     	}
     	catch (Exception ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new SystemException(ex.toString());
     	}
@@ -187,7 +187,7 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
     	}
     	catch (Exception ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new SystemException(ex.toString());
     	}
@@ -339,7 +339,7 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
     	}
     	catch (Exception ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
     	}
     }
 

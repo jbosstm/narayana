@@ -329,7 +329,7 @@ public class SoapFault extends Exception
     {
         final StringWriter writer = new StringWriter() ;
         final PrintWriter pw = new PrintWriter(writer) ;
-        th.printStackTrace(pw) ;
+        th.printStackTrace(pw) ; // called deliberately to generate a stacktrace so don't log it
         if (!pw.checkError())
         {
             pw.close() ;

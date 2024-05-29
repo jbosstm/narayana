@@ -330,7 +330,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
             }
             catch (final Throwable ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_objectstore_directory_location(ex);
             }
         }
         

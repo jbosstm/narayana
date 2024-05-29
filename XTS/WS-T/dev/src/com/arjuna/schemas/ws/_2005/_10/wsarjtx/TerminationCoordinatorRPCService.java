@@ -39,7 +39,7 @@ public class TerminationCoordinatorRPCService extends Service {
             url = new URL("wsdl/wsarjtx-termination-coordinator-rpc-binding.wsdl");
         } catch (MalformedURLException e) {
             System.err.println("Can not initialize the default wsdl from wsdl/wsarjtx-termination-coordinator-rpc-binding.wsdl");
-            // e.printStackTrace();
+            // WSTLogger.logger.warn(e.getMessage(), e);
         }
         WSDL_LOCATION = url;
     }

@@ -35,6 +35,8 @@ public class RecoveryManagerService implements WrapperListener
         }
         catch (Throwable e)
         {
+            // RecoveryManagerService is used for running as a service with various operating systems
+            // so log directly to the console
             e.printStackTrace(System.err);
             returnCode = Integer.valueOf(FAILED_TO_START_RETURN_CODE);
         }

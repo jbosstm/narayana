@@ -169,7 +169,10 @@ public interface jbossatxI18NLogger {
 	
 	@Message(id = 32041, value = "Unlock called from wrong thread.  Locking thread: {0}, current thread: {1}", format = MESSAGE_FORMAT)
 	public String get_cannot_store_transactionlocal(Thread lockingThread, Thread currentThread);
-	
+
+	@Message(id = 32042, value = "Unexpected error!", format = MESSAGE_FORMAT)
+	String get_jta_jca_unknown_ex(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

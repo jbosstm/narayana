@@ -9,6 +9,7 @@ package com.arjuna.ats.jts;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.common.util.ConfigurationInfo;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
@@ -45,7 +46,7 @@ public class TransactionServer
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+			jtsLogger.i18NLogger.warn_caughtexception(ex);
         }
     }
     

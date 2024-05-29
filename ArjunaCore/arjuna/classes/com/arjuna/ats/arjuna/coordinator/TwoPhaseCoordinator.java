@@ -502,7 +502,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 							stack.push(iterator.next());
 						}
 					} catch (Throwable t) {
-						t.printStackTrace();
+						// shouldn't happen - iterator.next() produced no element
+						tsLogger.i18NLogger.unexpected_exception(t);
 					}
 
 					/*

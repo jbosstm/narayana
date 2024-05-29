@@ -8,13 +8,15 @@ package org.jboss.narayana.compensations.internal;
 
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.InvocationContext;
+import org.jboss.logging.Logger;
+
 import java.lang.reflect.Method;
 
 /**
  * @author paul.robinson@redhat.com 25/04/2013
  */
 public abstract class ParticipantInterceptor {
-
+    private static final Logger LOGGER = Logger.getLogger(ParticipantInterceptor.class);
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
@@ -33,7 +35,7 @@ public abstract class ParticipantInterceptor {
             participantManager.completed();
 
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            LOGGER.warn(e.getMessage(), e);
             participantManager.exit();
             throw e;
         } catch (Exception e) {

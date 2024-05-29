@@ -285,6 +285,10 @@ public interface jtaxI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_cant_restore_state(InputObjectState os, int ot, @Cause() IOException ex);
 
+	@Message(id = 24068, value = "Caught exception:", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_jtax_transaction_jts_ex(@Cause() Exception e);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

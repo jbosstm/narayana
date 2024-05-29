@@ -109,7 +109,7 @@ public class XATerminator extends XATerminatorImple implements JBossXATerminator
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			jbossatxLogger.i18NLogger.get_jta_jca_unknown_ex(ex);
 
 			throw new WorkCompletedException(
                     jbossatxLogger.i18NLogger.get_jta_jca_unknown(),

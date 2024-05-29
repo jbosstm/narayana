@@ -473,7 +473,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                     }
                     else
                     {
-                        ex.printStackTrace();
+                        txojLogger.i18NLogger.warn_unexpected_ex(ex);
                         
                         return false;
                     }
@@ -481,8 +481,8 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                 catch (final Throwable ex)
                 {
                     System.err.println("InvocationHandler could not initialise object store for optimistic concurrency control.");
-                    
-                    ex.printStackTrace();
+
+                    txojLogger.i18NLogger.warn_unexpected_ex(ex);
                     
                     return false;
                 }

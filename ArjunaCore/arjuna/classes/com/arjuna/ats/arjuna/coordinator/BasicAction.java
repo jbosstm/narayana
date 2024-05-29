@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
@@ -2107,10 +2105,8 @@ public class BasicAction extends StateManager
                 if (p == TwoPhaseOutcome.PREPARE_OK) {
                     p = outcome;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                tsLogger.i18NLogger.unexpected_exception(e);
             }
         }
 

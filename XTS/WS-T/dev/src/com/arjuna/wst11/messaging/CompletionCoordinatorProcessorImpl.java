@@ -155,7 +155,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
         }
         catch (Throwable throwable)
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.logger.warn(throwable.getMessage(), throwable);
         }
     }
 
@@ -224,7 +224,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
         }
         catch (Throwable throwable)
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.logger.warn(throwable.getMessage(), throwable);
         }
     }
 }

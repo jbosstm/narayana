@@ -2087,7 +2087,7 @@ public class ArjunaTransactionImple extends
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtsLogger.i18NLogger.warn_caughtexception(e);
 
 				currentControl = null;
 			}

@@ -99,6 +99,10 @@ public interface wsasI18NLogger {
 	@Message(id = 41022, value = "HLS not found!", format = MESSAGE_FORMAT)
 	public String get_activity_HLSManager_1();
 
+	@Message(id = 41023, value = "ActivityHandleImple: could not get timeout.", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_activity_ActivityHandleImple(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

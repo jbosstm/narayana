@@ -170,13 +170,13 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	    }
 	    catch (TRANSACTION_REQUIRED ex)
 	    {
-		ex.printStackTrace();
+			jtsLogger.i18NLogger.warn_caughtexception(ex);
 		
 		throw ex;
 	    }
 	    catch (Exception e)
 	    {
-		e.printStackTrace();
+			jtsLogger.i18NLogger.warn_caughtexception(e);
 	    }
 	}
 	catch (BAD_PARAM ex)
@@ -184,7 +184,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	}
 	catch (Exception exp)
 	{
-	    exp.printStackTrace();
+		jtsLogger.i18NLogger.warn_caughtexception(exp);
 	}
     }
 

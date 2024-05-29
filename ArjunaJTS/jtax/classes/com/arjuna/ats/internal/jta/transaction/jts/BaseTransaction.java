@@ -107,7 +107,7 @@ public class BaseTransaction
 		}
 		catch (NullPointerException ex)
 		{
-			ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 
 			throw new IllegalStateException(
                     "BaseTransaction.commit - "

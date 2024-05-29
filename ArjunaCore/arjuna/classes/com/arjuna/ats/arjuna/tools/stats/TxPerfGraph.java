@@ -168,7 +168,7 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
 //        } catch (javax.management.InstanceNotFoundException e) {
 //            System.out.println("Transaction statistics MBean is not available.");
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // don't log it since this is a swing app
         }
     }
 

@@ -151,7 +151,7 @@ public class RecoveryEnablement implements RecoveryActivator
             }
             catch (UnknownHostException uhe)
             {
-                uhe.printStackTrace();
+                jtsLogger.i18NLogger.warn_caughtexception(uhe);
             }
 
         }

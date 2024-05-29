@@ -214,6 +214,10 @@ public interface txojI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_LockManager_14(@Cause() Throwable arg0);
 
+	@Message(id = 15053, value = "Unexpected exception:", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_unexpected_ex(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

@@ -64,7 +64,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 		{
 			// TODO
 
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 		}
         // this implementation cannot provide support for subordinate transactions
         _userSubordinateTransaction = null;
@@ -208,7 +208,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
         }
         catch (InvalidProtocolException ex)
         {
-            ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
             throw new SystemException(ex.toString());
         }
@@ -349,7 +349,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
         }
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
 			throw new SystemException(ex.toString());
 		}
@@ -362,7 +362,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 
 			if (id != null)
@@ -433,7 +433,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 
 			if (id != null)
@@ -449,7 +449,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 		}
 	}
 

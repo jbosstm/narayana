@@ -1559,7 +1559,7 @@ public interface arjunaI18NLogger {
     @Message(id = 12392, value = "AbstractRecord.create {0} failed to create record class {1}.",
            format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_coordinator_AbstractRecord_create_failure(Integer arg1, String arg2);
+    public void warn_coordinator_AbstractRecord_create_failure(Integer arg1, String arg2, @Cause Throwable exception);
 
 	@Message(id = 12393, value = "The Artemis journal was requested to be AIO version but this is not available on your machine",
 			format = MESSAGE_FORMAT)
@@ -1624,6 +1624,26 @@ public interface arjunaI18NLogger {
 	@Message(id = 12408, value = "One-phase commit of action {0} received heuristic decision: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_coordinator_BasicAction_71(Uid arg0, String arg1);
+
+	@Message(id = 12409, value = "Could not get back a valid pid.", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void get_utils_AndroidProcessId_1(@Cause Throwable e);
+
+	@Message(id = 12410, value = "StateManager::object store problem", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_StateManager_16(@Cause() Throwable arg0);
+
+	@Message(id = 12411, value = "StateManager::log store problem", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_LogStore_1(@Cause() Throwable arg0);
+
+	@Message(id = 12412, value = "Unable to locate object store directory", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_objectstore_directory_location(@Cause() Throwable arg0);
+
+	@Message(id = 12413, value = "Unexpected exception:", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void unexpected_exception(@Cause() Throwable arg0);
 
     /*
         Allocate new messages directly above this notice.

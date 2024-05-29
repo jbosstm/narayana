@@ -11,6 +11,7 @@ import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
+import org.jboss.logging.Logger;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
@@ -23,6 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author paul.robinson@redhat.com 22/03/2013
  */
 public class ParticipantImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
+
+    private static final Logger LOGGER = Logger.getLogger(ParticipantImpl.class);
 
     private static final Map<Object, AtomicInteger> PARTICIPANT_COUNTERS = new HashMap<>();
 
@@ -100,7 +103,7 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
                 Thread.currentThread().setContextClassLoader(origClassLoader);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn(e.getMessage(), e);
         }
 
         decrementParticipantsCounter();

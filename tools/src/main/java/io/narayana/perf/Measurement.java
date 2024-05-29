@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
@@ -17,6 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Config and result data for running a work load (@link{Measurement#measure})
  */
 public class Measurement<T> implements Serializable {
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(Measurement.class));
+
     String name;
 
     int numberOfMeasurements = 1; // if > 1 then an average of each run is taken (after removing outliers)
@@ -324,7 +328,7 @@ public class Measurement<T> implements Serializable {
                                 errorCount += res.getNumberOfErrors();
                             } catch (Exception e) {
                                 if (res.getException() == null)
-                                    e.printStackTrace();
+                                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                                 res.setException(e);
                                 errorCount += opts.getBatchSize();
                                 res.setCancelled(true);

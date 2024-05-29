@@ -9,6 +9,7 @@ package com.arjuna.ats.internal.jdbc;
 
 import com.arjuna.ats.jdbc.TransactionalDriver;
 
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import java.sql.Connection;
@@ -79,7 +80,7 @@ public class ConnectionManager {
                                 break;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            jdbcLogger.i18NLogger.warn_connection_problem(ex.getMessage(), ex);
                             SQLException sqlException = new SQLException(ex.getMessage());
                             sqlException.initCause(ex);
                             throw sqlException;
@@ -109,7 +110,7 @@ public class ConnectionManager {
                             try {
                                 _connections.wait();
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
                             }
                         } else {
                             break;

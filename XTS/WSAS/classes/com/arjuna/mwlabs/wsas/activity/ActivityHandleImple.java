@@ -7,6 +7,7 @@
 
 package com.arjuna.mwlabs.wsas.activity;
 
+import com.arjuna.mw.wsas.logging.wsasLogger;
 import com.arjuna.mwlabs.wsas.activity.ActivityImple;
 import java.nio.charset.StandardCharsets;
 
@@ -91,7 +92,7 @@ public class ActivityHandleImple implements ActivityHandle
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+		wsasLogger.i18NLogger.warn_activity_ActivityHandleImple(ex);
 	    
 	    return -1;
 	}

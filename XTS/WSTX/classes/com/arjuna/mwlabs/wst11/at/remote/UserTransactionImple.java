@@ -60,7 +60,7 @@ public class UserTransactionImple extends UserTransaction
 		{
 			// TODO
 
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 		}
         _userSubordinateTransaction = new UserSubordinateTransactionImple();
 	}
@@ -235,7 +235,7 @@ public class UserTransactionImple extends UserTransaction
         }
         catch (com.arjuna.wsc.InvalidProtocolException ex)
         {
-            ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
             throw new SystemException(ex.toString());
         }
@@ -376,7 +376,7 @@ public class UserTransactionImple extends UserTransaction
         }
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
 			throw new SystemException(ex.toString());
 		}
@@ -389,7 +389,7 @@ public class UserTransactionImple extends UserTransaction
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 
 			if (id != null)
@@ -460,7 +460,7 @@ public class UserTransactionImple extends UserTransaction
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 
 			if (id != null)
@@ -496,7 +496,7 @@ public class UserTransactionImple extends UserTransaction
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 		}
 	}
 

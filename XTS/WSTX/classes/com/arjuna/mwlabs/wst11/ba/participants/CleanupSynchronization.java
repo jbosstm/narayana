@@ -7,6 +7,7 @@
 
 package com.arjuna.mwlabs.wst11.ba.participants;
 
+import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst11.ba.RegistrarImple;
 
 import com.arjuna.mw.wscf.model.sagas.participants.*;
@@ -36,7 +37,7 @@ public class CleanupSynchronization implements Synchronization
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
 			throw new SystemException(ex.toString());
 		}

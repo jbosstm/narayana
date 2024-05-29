@@ -7,6 +7,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators;
 
+import com.arjuna.ats.jts.logging.jtsLogger;
+
 public class ORBRunner extends Thread
 {
 
@@ -25,7 +27,7 @@ public class ORBRunner extends Thread
         }
         catch (Throwable e)
         {
-            e.printStackTrace();
+            jtsLogger.i18NLogger.warn_caughtexception(e);
         }
     }
 }

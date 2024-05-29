@@ -83,7 +83,7 @@ public class TransactionManagerImple extends TransactionManager
 		catch (com.arjuna.wsc.CannotRegisterException ex)
 		{
             // cause could actually be no activity or already registered
-			ex.printStackTrace();
+			wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
 			throw new UnknownTransactionException();
 		}
@@ -190,7 +190,7 @@ public class TransactionManagerImple extends TransactionManager
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 		}
 	}

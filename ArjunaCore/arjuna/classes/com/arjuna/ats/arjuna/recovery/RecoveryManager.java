@@ -442,7 +442,7 @@ public class RecoveryManager
         }
         catch (Throwable e)
         {
-            e.printStackTrace();
+            tsLogger.i18NLogger.unexpected_exception(e);
         }
     }
 

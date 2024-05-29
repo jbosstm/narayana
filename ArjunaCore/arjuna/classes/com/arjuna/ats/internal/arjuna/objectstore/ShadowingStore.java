@@ -587,7 +587,7 @@ public class ShadowingStore extends FileSystemStore
                 {
                     closeAndUnlock(fd, null, ofile);
 
-                    e.printStackTrace();
+                    tsLogger.logger.warn(e);
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed to locate file "
@@ -597,7 +597,7 @@ public class ShadowingStore extends FileSystemStore
                 {
                     closeAndUnlock(fd, null, ofile);
 
-                    e.printStackTrace();
+                    tsLogger.logger.warn(e);
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed for "

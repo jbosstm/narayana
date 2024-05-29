@@ -39,6 +39,8 @@ public class TransactionServerService implements WrapperListener
         }
         catch (Throwable e)
         {
+            // TransactionServerService is used for running as a service under various operating systems
+            // so log directly to the console
             e.printStackTrace(System.err);
             returnCode = Integer.valueOf(FAILED_TO_START_RETURN_CODE);
         }

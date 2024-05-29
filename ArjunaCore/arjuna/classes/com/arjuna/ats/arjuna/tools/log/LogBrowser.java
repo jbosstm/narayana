@@ -187,7 +187,7 @@ class LogConsole
             }
             catch (final Exception ex)
             {
-                ex.printStackTrace();
+                ex.printStackTrace(); // command line interactive app so don't use a logger to report the failure
             }
         }
     }
