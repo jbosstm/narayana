@@ -468,7 +468,7 @@ public class CoordinatorControl
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex);
 
 			throw new SystemException(ex.toString());
 		}
@@ -493,7 +493,7 @@ public class CoordinatorControl
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex);
 
 			return null;
 		}

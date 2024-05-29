@@ -35,7 +35,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
                 _theConnection = _theDataSource.getXAConnection(_user, _passwd);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -105,7 +105,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
 
             return _theXAResource;
         } catch (Exception e) {
-            e.printStackTrace();
+            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -146,7 +146,7 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
 
             return _theConnection;
         } catch (Exception e) {
-            e.printStackTrace();
+            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);

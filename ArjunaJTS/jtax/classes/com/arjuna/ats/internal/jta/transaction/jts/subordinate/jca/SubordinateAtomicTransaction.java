@@ -12,6 +12,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jts.interposition.ServerControlWrapper;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 
@@ -65,7 +66,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 		}
 		
 		return null;

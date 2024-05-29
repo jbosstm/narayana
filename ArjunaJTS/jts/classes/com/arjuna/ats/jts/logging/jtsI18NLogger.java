@@ -979,6 +979,10 @@ public interface jtsI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_resources_extresrecord_failed_to_commit(Uid uid, @Cause() Throwable arg1);
 
+	@Message(id = 22267, value = "caught unexpected exception", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_caughtexception(@Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

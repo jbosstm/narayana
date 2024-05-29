@@ -121,7 +121,7 @@ public class PropagationContextManager implements
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            jbossatxLogger.i18NLogger.error_jta_PropagationContextManager_exception(e);
         }
 
         if (jbossatxLogger.logger.isTraceEnabled()) {

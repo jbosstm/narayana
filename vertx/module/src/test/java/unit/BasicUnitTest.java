@@ -9,6 +9,8 @@ import org.junit.Test;
 
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.Transactional;
@@ -26,7 +28,8 @@ import static org.junit.Assert.assertTrue;
  */
 
 public class BasicUnitTest
-{   
+{
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(BasicUnitTest.class));
     /**
      * This is out Transactional interface. We'll use this as the type for a
      * Container.
@@ -111,7 +114,7 @@ public class BasicUnitTest
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             
             success = false;
         }

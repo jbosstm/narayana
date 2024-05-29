@@ -140,10 +140,8 @@ public class ProtocolManager
                 }
             } catch (InstantiationException ie) {
                 wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, ie);
-                ie.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (IllegalAccessException iae) {
                 wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, iae);
-                iae.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 		}
 	}

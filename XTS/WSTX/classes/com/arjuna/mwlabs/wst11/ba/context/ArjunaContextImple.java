@@ -75,7 +75,7 @@ public class ArjunaContextImple implements SOAPContext
     	    }
     	    catch (SystemException ex)
     	    {
-    	        ex.printStackTrace();
+                wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
     	    }
 
     	    if ((currentCoordinator != null) && (hier != null))

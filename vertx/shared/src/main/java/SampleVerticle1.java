@@ -8,7 +8,11 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.shareddata.LocalMap;
 import org.jboss.stm.Container;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SampleVerticle1 extends AbstractVerticle {
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(SampleVerticle1.class));
 
   public void start()
   {
@@ -33,7 +37,7 @@ public class SampleVerticle1 extends AbstractVerticle {
       }
       catch (final Throwable ex)
       {
-	  ex.printStackTrace();
+	  LOGGER.log(Level.WARNING, ex.getMessage(), ex);
 
 	  shouldCommit = false;
       }

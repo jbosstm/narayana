@@ -7,6 +7,8 @@
 
 package com.arjuna.mw.wscf.utils;
 
+import com.arjuna.mw.wscf.logging.wscfLogger;
+
 import javax.xml.parsers.*;
 
 // TODO put back
@@ -87,7 +89,7 @@ public class DomUtil
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+		wscfLogger.i18NLogger.warn_unexpectedException(ex);
 	}
 	
 	return null;

@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import com.arjuna.ats.txoj.logging.txojLogger;
 import org.jboss.stm.InvalidAnnotationException;
 import org.jboss.stm.annotations.NotState;
 import org.jboss.stm.annotations.RestoreState;
@@ -102,7 +103,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
             }
             catch (final InvalidAnnotationException ex)
             {
-                ex.printStackTrace();  // TODO logging
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
                 
                 return false;
             }
@@ -186,7 +187,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
             }
             catch (final InvalidAnnotationException ex)
             {
-                ex.printStackTrace();  // TODO logging
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
                 
                 return false;
             }
@@ -216,7 +217,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
                     }
                     catch (final Throwable ex)
                     {
-                        ex.printStackTrace();
+                        txojLogger.i18NLogger.warn_unexpected_ex(ex);
                         
                         res = false;
                     }
@@ -248,7 +249,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             res = false;
         }
@@ -336,7 +337,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -377,7 +378,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -401,7 +402,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
             }
             catch (final Throwable ex)
             {
-                ex.printStackTrace();
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
             }
         }
         
@@ -424,7 +425,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
             }
             catch (final Throwable ex)
             {
-                ex.printStackTrace();
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
             }
         }
         
@@ -506,13 +507,13 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final IOException ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -549,15 +550,9 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
             else
                 return false;
         }
-        catch (final IOException ex)
-        {
-            ex.printStackTrace();
-
-            return false;
-        }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
 
             return false;
         }
@@ -588,7 +583,7 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }

@@ -455,7 +455,7 @@ public class LogStore extends FileSystemStore
                 }
                 catch (final Exception ex)
                 {
-                    ex.printStackTrace();
+                    tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                     return StateStatus.OS_UNKNOWN;
                 }
@@ -642,7 +642,7 @@ public class LogStore extends FileSystemStore
             }
             catch (final IOException ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                 return false;
             }
@@ -795,7 +795,7 @@ public class LogStore extends FileSystemStore
                 {
                     unlockAndClose(fd, ofile);
 
-                    e.printStackTrace();
+                    tsLogger.i18NLogger.warn_LogStore_1(e);
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed to locate file "
@@ -805,7 +805,7 @@ public class LogStore extends FileSystemStore
                 {
                     unlockAndClose(fd, ofile);
 
-                    e.printStackTrace();
+                    tsLogger.i18NLogger.warn_LogStore_1(e);
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed for "
@@ -820,7 +820,7 @@ public class LogStore extends FileSystemStore
                     }
                     catch (IOException ex)
                     {
-                        ex.printStackTrace();
+                        tsLogger.i18NLogger.warn_LogStore_1(ex);
                     }
                 }
             }
@@ -938,7 +938,7 @@ public class LogStore extends FileSystemStore
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            tsLogger.i18NLogger.warn_LogStore_1(ex);
 
             throw new ObjectStoreException(ex.toString(), ex);
         }
@@ -1091,7 +1091,7 @@ public class LogStore extends FileSystemStore
                         }
                         catch (final Exception ex)
                         {
-                            ex.printStackTrace();
+                            tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                             // TODO log
 
@@ -1116,7 +1116,7 @@ public class LogStore extends FileSystemStore
                     }
                     catch (final Exception ex)
                     {
-                        ex.printStackTrace();
+                        tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                         // TODO log
 
@@ -1147,13 +1147,13 @@ public class LogStore extends FileSystemStore
             }
             catch (final ObjectStoreException ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                 throw ex;
             }
             catch (final Exception ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                 throw new ObjectStoreException(ex.toString(), ex);
             }
@@ -1226,7 +1226,7 @@ public class LogStore extends FileSystemStore
                             }
                             catch (final Exception ex)
                             {
-                                ex.printStackTrace();
+                                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                                 throw new ObjectStoreException(ex.toString(), ex);
                             }
@@ -1307,13 +1307,13 @@ public class LogStore extends FileSystemStore
             }
             catch (final ObjectStoreException ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                 throw ex;
             }
             catch (final Exception ex)
             {
-                ex.printStackTrace();
+                tsLogger.i18NLogger.warn_LogStore_1(ex);
 
                 throw new ObjectStoreException(ex.toString(), ex);
             }

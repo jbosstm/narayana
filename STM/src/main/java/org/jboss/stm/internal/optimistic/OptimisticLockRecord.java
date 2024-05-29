@@ -232,7 +232,7 @@ class OptimisticLockRecord extends LockRecord
                 }
                 catch (final Exception ex)
                 {
-                    ex.printStackTrace();
+                    txojLogger.i18NLogger.warn_unexpected_ex(ex);
                 }
             }
         }

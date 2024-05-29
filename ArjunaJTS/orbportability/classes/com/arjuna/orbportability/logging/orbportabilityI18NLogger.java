@@ -152,6 +152,9 @@ public interface orbportabilityI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_orb_core_ORB_unsupportedorb();
 
+	@Message(id = 21032, value = "caught unexpected exception", format = MESSAGE_FORMAT)
+	String warn_unexpectedexception(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

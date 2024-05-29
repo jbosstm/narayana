@@ -24,7 +24,11 @@ import org.jboss.stm.Container;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ClientVerticle extends AbstractVerticle {
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(ClientVerticle.class));
     public static String LEADER = "LEADER_SLOT";
 
     public static void main(String[] args) {
@@ -65,7 +69,7 @@ public class ClientVerticle extends AbstractVerticle {
 	}
 	catch (final Throwable ex)
 	{
-	    ex.printStackTrace();
+        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
 
 	    shouldCommit = false;
 	}

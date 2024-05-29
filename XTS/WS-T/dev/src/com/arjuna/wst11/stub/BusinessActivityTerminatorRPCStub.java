@@ -9,6 +9,7 @@ package com.arjuna.wst11.stub;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
@@ -96,7 +97,7 @@ public class BusinessActivityTerminatorRPCStub implements BusinessActivityTermin
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
+            WSTLogger.logger.warn(th.getMessage(), th);
             throw new SystemException(th.getMessage()) ;
         }
     }
@@ -129,7 +130,7 @@ public class BusinessActivityTerminatorRPCStub implements BusinessActivityTermin
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
+            WSTLogger.logger.warn(th.getMessage(), th);
             throw new SystemException(th.getMessage()) ;
         }
     }

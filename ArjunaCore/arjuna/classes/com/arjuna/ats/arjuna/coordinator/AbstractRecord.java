@@ -459,9 +459,7 @@ public abstract class AbstractRecord extends StateManager
             Class rt = RecordType.typeToClass(type);
             String className = (rt == null) ? "null" : rt.getName();
 
-            tsLogger.i18NLogger.warn_coordinator_AbstractRecord_create_failure(type, className);
-
-            ex.printStackTrace();
+            tsLogger.i18NLogger.warn_coordinator_AbstractRecord_create_failure(type, className, ex);
 
             return null;
 	    }

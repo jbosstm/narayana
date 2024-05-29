@@ -270,7 +270,7 @@ public class StateManager
                         }
                         catch (ObjectStoreException e)
                         {
-                            e.printStackTrace();
+                            tsLogger.i18NLogger.warn_StateManager_16(e);
 
                             oldState = null;
                         }

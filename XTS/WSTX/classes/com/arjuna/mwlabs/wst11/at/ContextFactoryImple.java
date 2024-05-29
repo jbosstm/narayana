@@ -9,6 +9,8 @@ package com.arjuna.mwlabs.wst11.at;
 
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
 import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wsas.exceptions.WrongStateException;
+import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
@@ -64,7 +66,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
         }
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 		}
 	}
 
@@ -209,27 +211,15 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                     return coordinationContext;
                 }
 			}
-			catch (NoActivityException ex)
+			catch (NoActivityException | WrongStateException ex)
 			{
-				ex.printStackTrace();
-
-				throw new InvalidCreateParametersException();
-			}
-			catch (SystemException ex)
-			{
-				ex.printStackTrace();
-            }
-			catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-			{
-				ex.printStackTrace();
+                wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
 				throw new InvalidCreateParametersException();
 			}
 			catch (Exception ex)
 			{
-				// TODO handle properly
-
-				ex.printStackTrace();
+                wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 			}
 		}
 		else {

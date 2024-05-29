@@ -116,7 +116,7 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_3(order(), ex6);
 
-            ex6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -141,7 +141,7 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_4(order(), ex6);
 
-            ex6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -166,7 +166,7 @@ public class ParticipantRecord extends
 		catch (Exception e6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_5(order(), e6);
 
-            e6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(e6);
 
             return TwoPhaseOutcome.HEURISTIC_HAZARD;
         }
@@ -237,7 +237,7 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_6(order(), ex6);
 
-            ex6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -289,7 +289,7 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_7(order(), ex6);
 
-            ex6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -324,7 +324,7 @@ public class ParticipantRecord extends
 		catch (Exception e6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_8(order(), e6);
 
-            e6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(e6);
 
             return TwoPhaseOutcome.PREPARE_OK;
         }
@@ -350,7 +350,7 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_9(order(), ex6);
 
-            ex6.printStackTrace();
+			wscfLogger.i18NLogger.warn_unexpectedException(ex6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -408,8 +408,6 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_10(order(), ex6);
 
-            ex6.printStackTrace();
-
             return TwoPhaseOutcome.FINISH_ERROR;
         }
 	}
@@ -450,8 +448,6 @@ public class ParticipantRecord extends
 		}
 		catch (Exception e) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_12(order(), e);
-
-            e.printStackTrace();
         }
 
 		return false;
@@ -499,8 +495,6 @@ public class ParticipantRecord extends
 		}
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_13(order(), ex6);
-
-            ex6.printStackTrace();
         }
 
 		return result;

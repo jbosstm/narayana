@@ -12,6 +12,7 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class TxStoreLog
 {
@@ -34,7 +35,7 @@ public class TxStoreLog
 	}
 	catch (ObjectStoreException e)
 	{
-	    e.printStackTrace();
+	    jtsLogger.i18NLogger.warn_caughtexception(e);
 	}
 
 	return false;

@@ -7,6 +7,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
@@ -96,7 +97,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (final Exception ex)
 		{
-		    ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 		}
 
 		return ActionStatus.H_HAZARD;
@@ -120,7 +121,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (final Exception ex)
 		{
-		    ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 		}
 		
                 return ActionStatus.H_HAZARD;
@@ -170,7 +171,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (final Exception ex)
 		{
-		    ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 		}
 	}
 	
@@ -189,7 +190,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	    }
 	    catch (final Exception ex)
 	    {
-	        ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
 	    }
 	           
             return false;

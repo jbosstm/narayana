@@ -274,6 +274,10 @@ public interface wscfI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_model_twophase_arjunacore_SynchronizationRecord_2(@Cause() Throwable arg1);
 
+	@Message(id = 44068, value = "Caught exception", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_unexpectedException(@Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

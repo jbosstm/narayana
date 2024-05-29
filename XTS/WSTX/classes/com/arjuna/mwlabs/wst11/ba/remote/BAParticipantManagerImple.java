@@ -46,7 +46,7 @@ public class BAParticipantManagerImple implements BAParticipantManager
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+		wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 	}
     }
 

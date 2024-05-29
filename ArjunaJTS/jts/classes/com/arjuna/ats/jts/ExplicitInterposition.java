@@ -167,7 +167,7 @@ public class ExplicitInterposition
 						}
 						catch (Exception e)
 						{
-							e.printStackTrace();
+							jtsLogger.i18NLogger.warn_caughtexception(e);
 
 							ctx = null;
 
@@ -184,7 +184,7 @@ public class ExplicitInterposition
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtsLogger.i18NLogger.warn_caughtexception(e);
 
 				throw new InterpositionFailed(e.toString());
 			}
@@ -203,7 +203,7 @@ public class ExplicitInterposition
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtsLogger.i18NLogger.warn_caughtexception(e);
 
 				throw new InterpositionFailed(e.toString());
 			}

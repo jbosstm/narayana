@@ -9,6 +9,7 @@ package com.arjuna.mwlabs.wst11.ba.remote;
 
 import com.arjuna.mw.wst11.BusinessActivityManager;
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst11.ba.context.TxContextImple;
 import com.arjuna.mwlabs.wst.ba.remote.ContextManager;
 import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
@@ -77,7 +78,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	}
     	catch (Throwable ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new SystemException(ex.toString());
     	}
@@ -110,13 +111,13 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	}
     	catch (com.arjuna.wsc.CannotRegisterException ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new UnknownTransactionException();
     	}
     	catch (Throwable ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new SystemException(ex.toString());
     	}
@@ -165,7 +166,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
         }
     	catch (Exception ex)
     	{
-    	    ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 
     	    throw new SystemException(ex.toString());
     	}
@@ -178,7 +179,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	    }
     	    catch (Exception ex)
     	    {
-        		ex.printStackTrace();
+                wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
     	    }
     	}
     }

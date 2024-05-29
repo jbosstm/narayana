@@ -7,6 +7,7 @@
 
 package com.arjuna.mwlabs.wscf11.model.sagas.arjunacore;
 
+import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf.model.sagas.api.*;
 import com.arjuna.mw.wscf.model.sagas.hls.SagasHLS;
 
@@ -177,7 +178,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 
                 return ctx;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                wscfLogger.i18NLogger.warn_unexpectedException(ex);
                 throw new SystemException(ex.toString());
             }
         } else {

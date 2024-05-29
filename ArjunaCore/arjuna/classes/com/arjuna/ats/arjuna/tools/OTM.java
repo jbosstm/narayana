@@ -351,7 +351,7 @@ public class OTM extends JSplitPane
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    e.printStackTrace(); // this is a swing app so no need to use a logger
                     System.exit(0);
                 }
             }

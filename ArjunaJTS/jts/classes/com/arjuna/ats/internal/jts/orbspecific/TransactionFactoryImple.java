@@ -689,7 +689,7 @@ public class TransactionFactoryImple extends
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtsLogger.i18NLogger.warn_caughtexception(e);
 
 				throw new UNKNOWN();
 			}
@@ -745,7 +745,7 @@ public class TransactionFactoryImple extends
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtsLogger.i18NLogger.warn_caughtexception(e);
 
 				throw new UNKNOWN();
 			}

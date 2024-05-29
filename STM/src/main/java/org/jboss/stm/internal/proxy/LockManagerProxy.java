@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import com.arjuna.ats.txoj.logging.txojLogger;
 import org.jboss.stm.InvalidAnnotationException;
 import org.jboss.stm.annotations.NotState;
 import org.jboss.stm.annotations.RestoreState;
@@ -90,7 +91,7 @@ public class LockManagerProxy<T> extends LockManager
             }
             catch (final InvalidAnnotationException ex)
             {
-                ex.printStackTrace();  // TODO logging
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
                 
                 return false;
             }
@@ -187,7 +188,7 @@ public class LockManagerProxy<T> extends LockManager
             }
             catch (final InvalidAnnotationException ex)
             {
-                ex.printStackTrace();  // TODO logging
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
                 
                 return false;
             }
@@ -352,7 +353,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             success = false;
         }
@@ -513,7 +514,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             success = false;
         }
@@ -599,7 +600,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             success = false;
         }
@@ -751,7 +752,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             success = false;
         }
@@ -829,7 +830,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -870,7 +871,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -894,7 +895,7 @@ public class LockManagerProxy<T> extends LockManager
             }
             catch (final Throwable ex)
             {
-                ex.printStackTrace();
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
             }
         }
         
@@ -917,7 +918,7 @@ public class LockManagerProxy<T> extends LockManager
             }
             catch (final Throwable ex)
             {
-                ex.printStackTrace();
+                txojLogger.i18NLogger.warn_unexpected_ex(ex);
             }
         }
         
@@ -999,13 +1000,13 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final IOException ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -1044,13 +1045,13 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final IOException ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }
@@ -1081,7 +1082,7 @@ public class LockManagerProxy<T> extends LockManager
         }
         catch (final Exception ex)
         {
-            ex.printStackTrace();
+            txojLogger.i18NLogger.warn_unexpected_ex(ex);
             
             return false;
         }

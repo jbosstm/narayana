@@ -106,7 +106,7 @@ public class XATerminator extends XATerminatorImple implements JBossXATerminator
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			jbossatxLogger.i18NLogger.error_jta_PropagationContextManager_exception(ex);
 
 			throw new WorkCompletedException(
                     jbossatxLogger.i18NLogger.get_jts_jca_unknown(),

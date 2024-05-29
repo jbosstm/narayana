@@ -7,6 +7,7 @@
 
 package com.arjuna.mwlabs.wst11.ba;
 
+import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
@@ -63,7 +64,7 @@ public class ContextFactoryImple implements ContextFactory
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
         }
     }
 
@@ -208,29 +209,11 @@ public class ContextFactoryImple implements ContextFactory
                 return coordinationContext;
             }
 	    }
-	    catch (com.arjuna.mw.wsas.exceptions.NoActivityException ex)
-	    {
-		// TODO handle properly
-
-            ex.printStackTrace();
-	    }
-	    catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
-	    {
-		// TODO handle properly
-
-		ex.printStackTrace();
-	    }
-	    catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-	    {
-		// TODO handle properly
-
-		ex.printStackTrace();
-	    }
 	    catch (Exception ex)
 	    {
 		// TODO handle properly
 
-		ex.printStackTrace();
+            wstxLogger.i18NLogger.warn_unexpectedExcpetion(ex);
 	    }
 	}
 	else {

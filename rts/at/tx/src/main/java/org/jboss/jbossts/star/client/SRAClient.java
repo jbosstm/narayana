@@ -676,7 +676,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
             else
                 responseDataMap.put(sraId, compensatorData);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage(), e);
         }
     }*/
 

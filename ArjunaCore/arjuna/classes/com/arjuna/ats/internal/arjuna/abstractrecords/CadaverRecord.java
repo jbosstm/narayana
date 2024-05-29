@@ -219,7 +219,7 @@ public class CadaverRecord extends PersistenceRecord
 		}
 		catch (final ObjectStoreException e)
 		{
-		    e.printStackTrace();
+		    tsLogger.logger.warn(e);
 		}
 	    }
 	    else

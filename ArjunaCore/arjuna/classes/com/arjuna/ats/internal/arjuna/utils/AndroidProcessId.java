@@ -5,6 +5,7 @@
 package com.arjuna.ats.internal.arjuna.utils;
 
 import java.lang.reflect.Method;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Obtains a unique value to represent the process id via sockets and
@@ -44,7 +45,7 @@ public class AndroidProcessId implements com.arjuna.ats.arjuna.utils.Process
         }
         catch (final Throwable ex)
         {
-            ex.printStackTrace();
+            tsLogger.i18NLogger.get_utils_AndroidProcessId_1(ex);
             
             _thePort = -1;
         }
