@@ -396,6 +396,45 @@ public class TaskImpl implements Task
         } catch (Exception e) {
             Assert.fail(getTaskPrefix() + e.toString());
         }
+
+
+        // not supported on windows platforms
+        if (!System.getProperty("os.name", "Linux").contains("indows")) {
+            System.out.printf("%s Task pid was %d%n", getTaskPrefix(), process.toHandle().pid());
+            callNetstat();
+        }
+    }
+
+    private void callNetstat()
+    {
+        BufferedReader bufferedReader = null;
+        try {
+            ProcessBuilder builder = new ProcessBuilder("netstat", "-nlp", "--protocol=inet,inet6");
+            java.lang.Process process = builder.start();
+
+            // create an error stream reader to merge error output into the output file
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            TaskErrorReaderThread taskErrorReaderThread = new TaskErrorReaderThread(bufferedReader, out, "err: ");
+            taskErrorReaderThread.start();
+
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            TaskReaderThread taskReaderThread = new TaskReaderThread(taskName, bufferedReader, out, "out: ");
+            taskReaderThread.start();
+
+            taskReaderThread.checkIsFinishedCleanly();
+            System.out.printf("%sReached end of netstat output%n", getTaskPrefix());
+        } catch (Exception e) {
+            // if we fail here then the reaper task will clean up the thread
+            Assert.fail(getTaskPrefix() + e.toString());
+        } finally {
+            try {
+                if(bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException ioException) {
+                    // ignore
+                }
+        }
     }
 
     /**
