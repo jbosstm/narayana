@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
@@ -278,8 +280,13 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		else
 			throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
 	}
-
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
+			jakarta.transaction.SystemException
+	{
+		setRollbackOnly(null);
+	}
+
+	public void setRollbackOnly(String reason) throws java.lang.IllegalStateException,
 			jakarta.transaction.SystemException
 	{
 	    if (jtaLogger.logger.isTraceEnabled()) {
@@ -311,7 +318,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 	            // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
 	            if(_rollbackOnlyCallerStacktrace == null)
 	            {
-	                _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
+	                if (reason == null)
+	                    _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
+	                else
+	                    _rollbackOnlyCallerStacktrace = new Throwable(reason + ": setRollbackOnly called from:");
 	            }
 	        }
 	    }
@@ -633,23 +643,32 @@ public class TransactionImple implements jakarta.transaction.Transaction,
                         // The add will fail in the case of multiple last resources being disallowed
                         // see JBTM-362 and JBTM-363
                         AbstractRecord abstractRecord = createRecord(xaRes, params, xid);
+                        String reasonForEnlistFailure = null;
                         if(abstractRecord != null) {
                             xaRes.start(xid, xaStartNormal);
-                            if(_theTransaction.add(abstractRecord) == AddOutcome.AR_ADDED) {
+                            int addOutcome = _theTransaction.add(abstractRecord);
+                            if(addOutcome == AddOutcome.AR_ADDED) {
                                 _resources.put(xaRes, new TxInfo(xid));
                                 return true; // dive out, no need to set associatedWork = true;
                             } else {
                                 // we called start on the resource, but _theTransaction did not accept it.
                                 // we therefore have a mess which we must now clean up by ensuring the start is undone:
+                                if (addOutcome == AddOutcome.AR_DUPLICATE &&
+                                        abstractRecord.typeIs() == RecordType.LASTRESOURCE &&
+                                        !arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources()) {
+                                    // the other duplicate must be a LASTRESOURCE
+                                    reasonForEnlistFailure = jtaLogger.i18NLogger.warn_failed_to_enlist_one_phase_resource();
+									jtaLogger.logger.warn(reasonForEnlistFailure);
+                                }
+
                                 abstractRecord.topLevelAbort();
                             }
                         }
 
                         // if we get to here, something other than a failure of xaRes.start probably went wrong.
                         // so we don't loop and retry, we just give up.
-                        markRollbackOnly();
+                        markRollbackOnly(reasonForEnlistFailure);
                         return false;
-
 					}
 					catch (XAException e)
 					{
@@ -1627,11 +1646,15 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 	 * the application, so a failure here will only be masked.
 	 */
 
-	private final void markRollbackOnly()
+	private final void markRollbackOnly() {
+		markRollbackOnly(null);
+	}
+
+	private final void markRollbackOnly(String reason)
 	{
 		try
 		{
-			setRollbackOnly();
+			setRollbackOnly(reason);
 		}
 		catch (Exception ex)
 		{
