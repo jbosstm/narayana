@@ -726,6 +726,8 @@ EOT
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
     ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
+    POSTGRES_PARAMS="-Parq-tomcat -Dtomcat.user=arquillian -Dtomcat.pass=arquillian  -Dtest.db.type=external -Djdbc.driver.jar=${driver_local_file} -Djdbc.url="${db_jdbc_url}" -Djdbc.username=${db_username} -Djdbc.password=${db_password} -Ddatasource.classname=org.postgresql.xa.PGXADataSource -Djdbc.driver.class=org.postgresql.Driver -Djdbc.db.name=${db_name}"
+    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} clean install "$@" ${POSTGRES_PARAMS}
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
     rm -r ${CATALINA_HOME}
@@ -1051,7 +1053,6 @@ function generate_code_coverage_report {
 }
 
 ulimit -a
-ulimit -u unlimited
 ulimit -c unlimited
 ulimit -a
 
