@@ -337,10 +337,6 @@
                       <title>STM</title>
                       <packages>org.jboss.narayana.stm*</packages>
                     </group>
-                    <group>
-                      <title>Tomcat JTA</title>
-                      <packages>org.jboss.narayana.tomcat.jta</packages>
-                    </group>
                   </groups>
                   <additionalJOptions>
                     <additionalJOption>${jvm.args.modular}</additionalJOption>

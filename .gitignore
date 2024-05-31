@@ -19,10 +19,5 @@ qa/ext/netty.jar
 qa/TaskImpl.properties
 .DS_Store
 ObjectStore/
-apache-tomcat-*.zip
-apache-tomcat-*/
-tomcat/tomcat-deployment
-tomcat-deployment/
-narayana-tomcat/
 CosServices.cfg
 audit.log
