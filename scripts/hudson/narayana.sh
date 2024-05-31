@@ -94,23 +94,13 @@ function init_test_options {
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+        export PERF_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
-        else
-          export COMMENT_ON_PULL=""
-        fi
-    elif [[ $PROFILE == "TOMCAT" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!TOMCAT* ]]; then
-          comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
-          export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=1 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -122,7 +112,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -134,7 +124,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -146,7 +136,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 JAC_ORB=0 JTA_AS_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=1 LRA_AS_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          export LRA_TESTS=1 LRA_AS_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
         else
           export COMMENT_ON_PULL=""
@@ -159,7 +149,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -168,7 +158,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -177,7 +167,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
-          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export JTA_AS_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -186,7 +176,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -195,7 +185,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=1 LRA_AS_TESTS=1
+          export LRA_TESTS=1 LRA_AS_TESTS=1
         else
           export COMMENT_ON_PULL=""
         fi
@@ -204,7 +194,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -225,7 +215,6 @@ function init_test_options {
     [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
     [ $LRA_AS_TESTS ] || LRA_AS_TESTS=0 #LRA tests
     [ $LRA_TESTS ] || LRA_TESTS=0 # LRA Test
-    [ $TOMCAT_TESTS ] || TOMCAT_TESTS=0 # Narayana Tomcat tests
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
     [ $QA_TESTS ] || QA_TESTS=0 # QA test suite
@@ -587,45 +576,6 @@ function tx_bridge_tests {
   [ $? -eq 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
-function tomcat_tests {
-    echo "Initializing Narayana Tomcat tests"
-    cd ${WORKSPACE}
-    TOMCAT_VERSION=9.0.11
-    wget -nc https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.zip
-    rm -rf apache-tomcat-$TOMCAT_VERSION
-    unzip apache-tomcat-$TOMCAT_VERSION.zip
-    case "$(uname -s)" in
-    CYGWIN*)    export CATALINA_HOME=`cygpath -w $(pwd)/apache-tomcat-$TOMCAT_VERSION/`;;
-    *)          export CATALINA_HOME=$(pwd)/apache-tomcat-$TOMCAT_VERSION/
-    esac
-    chmod +x ${CATALINA_HOME}/bin/catalina.sh
-    sed -i 's/<\/tomcat-users>/<user username="arquillian" password="arquillian" roles="manager-script"\/>\n<\/tomcat-users>/' ${CATALINA_HOME}/conf/tomcat-users.xml
-    cat <<EOT >> ${CATALINA_HOME}/conf/logging.properties
-org.apache.tomcat.tomcat-jdbc.level = ALL
-org.h2.level = ALL
-org.postgresql.level = ALL
-javax.sql.level = ALL
-org.apache.tomcat.tomcat-dbcp.level = ALL
-com.arjuna.level = ALL
-EOT
-    rm -rf narayana-tomcat
-    git clone https://github.com/jbosstm/narayana-tomcat.git
-    echo "Executing Narayana Tomcat tests"
-    # When the version of Narayana in the jbosstm/narayana-tomcat pom.xml changes, the following line needs to be updated
-    NARAYANA_TOMCAT_NARAYANA_VERSION=5.9.11.Final
-    grep "<version.org.jboss.narayana>${NARAYANA_TOMCAT_NARAYANA_VERSION}</version.org.jboss.narayana>" narayana-tomcat/pom.xml
-    [ $? -eq 0 ] || fatal "The version of Narayana in the jbosstm fork is not the expected version to replace"
-    sed -i "" "s#<version.org.jboss.narayana>${NARAYANA_TOMCAT_NARAYANA_VERSION}</version.org.jboss.narayana>#<version.org.jboss.narayana>${NARAYANA_CURRENT_VERSION}</version.org.jboss.narayana>#g" narayana-tomcat/pom.xml
-    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 "$@" ${IPV6_OPTS} clean install "$@"
-    RESULT=$?
-    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
-    POSTGRES_PARAMS="-Parq-tomcat -Dtomcat.user=arquillian -Dtomcat.pass=arquillian  -Dtest.db.type=external -Djdbc.driver.jar=${driver_local_file} -Djdbc.url="${db_jdbc_url}" -Djdbc.username=${db_username} -Djdbc.password=${db_password} -Ddatasource.classname=org.postgresql.xa.PGXADataSource -Djdbc.driver.class=org.postgresql.Driver -Djdbc.db.name=${db_name}"
-    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} clean install "$@" ${POSTGRES_PARAMS}
-    RESULT=$?
-    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
-    rm -r ${CATALINA_HOME}
-}
-
 function set_qa_log_level {
 echo "creating file $WORKSPACE/qa/ext/etc/log4j.xml"
 mkdir -p $WORKSPACE/qa/ext/etc/
@@ -947,7 +897,6 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
 [ $LRA_TESTS = 1 ] && lra_tests "$@"
-[ $TOMCAT_TESTS = 1 ] && tomcat_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
 [ $CODE_COVERAGE = 1 ] && generate_code_coverage_report "$@"
