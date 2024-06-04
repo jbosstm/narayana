@@ -498,7 +498,7 @@ public class TaskImpl implements Task
                 process.exitValue();
                 break;
             } catch (IllegalThreadStateException e) {
-                System.out.printf("IllegalThreadStateException %n", Thread.currentThread().getId());
+                System.out.printf("%s IllegalThreadStateException %d%n", getTaskPrefix(), Thread.currentThread().getId());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
