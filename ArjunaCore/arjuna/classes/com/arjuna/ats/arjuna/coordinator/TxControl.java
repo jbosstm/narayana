@@ -219,7 +219,7 @@ public class TxControl
 	private static TransactionStatusManager transactionStatusManager = null;
 
 	static String xaNodeName = arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier();
-	static byte[] xaNodeNameBytes = (xaNodeName == null ? null : xaNodeName.getBytes(StandardCharsets.UTF_8));
+	static byte[] xaNodeNameBytes = arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifierBytes();
 
 	static int _defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
 
