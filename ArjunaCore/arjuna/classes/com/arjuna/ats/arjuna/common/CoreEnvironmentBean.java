@@ -29,6 +29,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.nodeIdentifier")
     private volatile String nodeIdentifier = null;
+    private volatile byte[] nodeIdentifierBytes;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort")
     private volatile int socketProcessIdPort = 0;
@@ -105,6 +106,25 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         }
 
     	this.nodeIdentifier = nodeIdentifier;
+        this.nodeIdentifierBytes = nodeIdentifier.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] getNodeIdentifierBytes() {
+        return this.nodeIdentifierBytes;
+    }
+
+    public void setNodeIdentifier(byte[] bytes) throws CoreEnvironmentBeanException
+    {
+        String name = new String(bytes, StandardCharsets.UTF_8);
+
+        if (bytes.length > NODE_NAME_SIZE)
+        {
+            tsLogger.i18NLogger.fatal_nodename_too_long(name, NODE_NAME_SIZE);
+            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(name, NODE_NAME_SIZE));
+        }
+
+        this.nodeIdentifierBytes = bytes;
+        this.nodeIdentifier = name;
     }
 
     /**

@@ -164,6 +164,16 @@ public class XATxConverter
 		return new String(Arrays.copyOfRange(globalTransactionId, offset, globalTransactionId.length), StandardCharsets.UTF_8);
 	}
 
+	public static byte[] getNodeNameBytes(XID xid) {
+		Xid xidImple = new XidImple(xid);
+		byte[] globalTransactionId = xidImple.getGlobalTransactionId();
+
+		// the node name follows the Uid with no separator, so the only
+		// way to tell where it starts is to figure out how long the Uid is.
+		int offset = Uid.UID_SIZE;
+		return Arrays.copyOfRange(globalTransactionId, offset, globalTransactionId.length);
+	}
+
 	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
 		if (theXid == null || !FormatConstants.isNarayanaFormatId(theXid.formatID)) {
 			return;
