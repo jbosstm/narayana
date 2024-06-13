@@ -176,6 +176,8 @@
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
+    <skipMavenDeployMojo>false</skipMavenDeployMojo>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
     <!-- Sortpom is enabled by default, but it could be disabled in sub-modules setting sortpom.skip = true -->
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
@@ -291,7 +293,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <configuration>
-            <skip>true</skip>
+            <skip>${skipMavenDeployMojo}</skip>
           </configuration>
         </plugin>
         <plugin>
@@ -303,7 +305,17 @@
             <serverId>jboss-releases-repository</serverId>
             <nexusUrl>https://repository.jboss.org/nexus/</nexusUrl>
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            <skipNexusStagingDeployMojo>${skipNexusStagingDeployMojo}</skipNexusStagingDeployMojo>
           </configuration>
+          <executions>
+            <execution>
+              <id>nexus-deploy</id>
+              <goals>
+                <goal>deploy</goal>
+              </goals>
+              <phase>deploy</phase>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
