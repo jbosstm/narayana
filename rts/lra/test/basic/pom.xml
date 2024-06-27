@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>lra-test</artifactId>
-    <version>7.0.2.Final-SNAPSHOT</version>
+    <version>7.0.2.Final</version>
   </parent>
 
   <artifactId>lra-test-basic</artifactId>
