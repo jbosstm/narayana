@@ -111,7 +111,7 @@ then
   fi
   set -e
   
-  read -p "Please check for Jira blockers (https://issues.redhat.com/issues/?jql=project%20%3D%20JBTM%20AND%20priority%20%3D%20Blocker%20AND%20resolution%20%3D%20Unresolved%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC) and failed CI jobs before continuing. Continue? y/n " NOBLOCKERS
+  read -p "Please check for Jira Blocker issues with Fix.Version set to {version}.next which are not yet resolved(https://issues.redhat.com/issues/?jql=project%20%3D%20JBTM%20AND%20priority%20%3D%20Blocker%20AND%20resolution%20%3D%20Unresolved%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC) and failed CI jobs before continuing. Continue? y/n " NOBLOCKERS
   if [[ $NOBLOCKERS == n* ]]
   then
     exit
@@ -127,13 +127,6 @@ then
 else
   echo "This script is only interactive at the very end now, press enter to continue"
   read
-fi
-
-#The release script should fail if it can't create the PR branches
-read -p "Please check it is possible to create the PR branch against WildFly (i.e. there shouldn't be an existing one) and check there are no conflicts. Continue? y/n " PRBRANCHOK
-if [[ $PRBRANCHOK == n* ]]
-then
-  exit
 fi
 
 cd ~/tmp/narayana/$CURRENT/sources/documentation/
@@ -171,6 +164,7 @@ then
   echo 1>&2 Could not install narayana
   exit
 fi
+# It is important in the deploy step that if you are deploying to nexus you provide a reference to your settings file as the ./build.sh overrides the default settings file discovery of Maven. Please see https://github.com/jbosstm/narayana/wiki/Narayana-Release-Process for details of the settings.xml requirements
 ./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community -DskipNexusStagingDeployMojo=false
 if [[ $? != 0 ]]
 then
@@ -179,7 +173,7 @@ then
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
 # build-release-pkgs.xml needs to be updated, update the website manually
-echo " narayana.io needs updating, please update the narayana.io repository (javadoc to unzip into api, project and product documentation and then upload to narayana.io"
+echo " narayana.io needs updating, please update the narayana.io repository (see https://github.com/jbosstm/narayana.io/blob/develop/README.md)"
 
 read -p "Please update narayana.io before continuing. Continue? y/n " NARAYANAIO
 if [[ $NARAYANAIO == n* ]]
@@ -196,4 +190,5 @@ read -p "Please open a PR to lra-coordinator-quarkus when the artifact is availa
     exit
   fi
 
-"echo "Please visit Narayana CI and check the quickstarts are working with the release and obtain performance numbers for the blog post"
+echo "Please raise a Jira and pull request to update WildFly to the released version of Narayana"
+echo "Please visit Narayana CI and check the quickstarts are working with the release and obtain performance numbers for the blog post"
