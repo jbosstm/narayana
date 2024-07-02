@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -186,23 +187,52 @@ public class PeriodicRecovery extends Thread
    }
 
     /**
-     * make all scanning operations suspend.
+     * Make all scanning operations suspend.
+     * <p>
+     * This switches the recovery operation mode to <code>SUSPENDED</code>.
+     * Any attempt to start a new scan either by ad hoc threads or by the periodic
+     * recovery thread will suspend its thread until the mode changes.
+     * If a scan is in progress when this method is called it will complete its scan
+     * without suspending.
+     * <p>
+     * Note that this method is also influenced by
+     * {@link RecoveryEnvironmentBean#isWaitForWorkLeftToDo()}.
+     * In case {@link RecoveryEnvironmentBean#setWaitForWorkLeftToDo(boolean)} was
+     * initialised to true, it is important that, before invoking this method, all
+     * transactions will either be terminated by the Transaction Reaper or they
+     * have prepared and a log has been written, otherwise the suspend call may
+     * never return.
      *
-     * This switches the recovery operation mode to SUSPENDED. Any attempt to start a new scan either by an ad hoc
-     * threads or by the periodic recovery thread will suspend its thread until the mode changes. If a scan is in
-     * progress when this method is called it will complete its scan without suspending.
-     *
-     * @param async false if the calling thread should wait for any in-progress scan to complete before returning
-     * @return the previous mode before attempting the suspend
+     * @param async false if the calling thread should wait for any in-progress scan to
+     * complete before returning. In case {@link RecoveryEnvironmentBean#isWaitForWorkLeftToDo()}
+     * is true, this parameter is overridden.
+     * @return the previous mode before attempting the suspension
      */
-
    public Mode suspendScan (boolean async)
    {
        synchronized (_stateLock)
        {
-           // only switch and kick everyone if we are currently ENABLED
            Mode currentMode = getMode();
 
+           if (currentMode == Mode.ENABLED && _waitForWorkLeftToDo) {
+
+               doScanningWait();
+               doWork();
+
+               /*
+                * Now, it is finally possible to start checking if there are transactions that
+                * are still in need of recovery (or resolution, in case of heuristics).
+                */
+               while (_workLeftToDo) {
+                   try {
+                       _stateLock.wait();
+                   } catch (InterruptedException e) {
+                       // we can ignore this exception
+                   }
+               }
+           }
+
+           // only switch and kick everyone if we are currently ENABLED
            if (currentMode == Mode.ENABLED) {
                if (tsLogger.logger.isDebugEnabled()) {
                    tsLogger.logger.debug("PeriodicRecovery: Mode <== SUSPENDED");
@@ -210,7 +240,8 @@ public class PeriodicRecovery extends Thread
                setMode(Mode.SUSPENDED);
                _stateLock.notifyAll();
            }
-           if (!async) {
+
+           if (!async && _waitForWorkLeftToDo) {
                // synchronous, so we keep waiting until the currently active scan stops
                while (getStatus() == Status.SCANNING) {
                    try {
@@ -515,6 +546,12 @@ public class PeriodicRecovery extends Thread
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: adding module " + module.getClass().getName());
         }
+
+        // TODO Delete this as soon as JBTM-3983 has been implemented
+        if (module.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule")) {
+            tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
+        }
+
         _recoveryModules.add(module);
     }
 
@@ -694,8 +731,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait until some other thread stops scanning
      *
-     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
-     * _currentStatus is SCANNING
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
      */
     private void doScanningWait()
     {
@@ -718,6 +754,9 @@ public class PeriodicRecovery extends Thread
     private void doWorkInternal()
     {
         // n.b. we only get here if status is SCANNING
+
+         // Let's assume that we want to block the suspension of the Recovery Manager.
+        _workLeftToDo = true;
 
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("Periodic recovery first pass at "+_theTimestamper.format(new Date()));
@@ -779,6 +818,7 @@ public class PeriodicRecovery extends Thread
         }
 
         modules = copyOfModules.elements();
+        boolean workLeftToDo = false;
 
         while (modules.hasMoreElements())
         {
@@ -786,7 +826,10 @@ public class PeriodicRecovery extends Thread
 
             ClassLoader cl = switchClassLoader(m);
             try {
-            m.periodicWorkSecondPass();
+                m.periodicWorkSecondPass();
+
+                // Checks if there is still work to do after periodicWorkSecondPass()
+                workLeftToDo = workLeftToDo || m.hasWorkLeftToDo();
             } finally {
                 restoreClassLoader(cl);
             }
@@ -795,6 +838,8 @@ public class PeriodicRecovery extends Thread
                 tsLogger.logger.debugf("Recovery module '%s' second pass processed", m);
             }
         }
+
+        this._workLeftToDo = workLeftToDo;
 
         // n.b. the caller is responsible for clearing the active scan
     }
@@ -859,6 +904,13 @@ public class PeriodicRecovery extends Thread
     private void loadModules ()
     {
         _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
+
+        // TODO Delete this as soon as JBTM-3983 has been implemented
+        if (!_recoveryModules.isEmpty() &&
+                _recoveryModules.stream().anyMatch(
+                        x -> !x.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"))) {
+            tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
+        }
     }
 
     /**
@@ -870,6 +922,7 @@ public class PeriodicRecovery extends Thread
         setMode(Mode.ENABLED);
 
         _periodicRecoveryInitilizationOffset = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryInitilizationOffset();
+        _waitForWorkLeftToDo = recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForWorkLeftToDo();
     }
 
    // this refers to the modules specified in the recovery manager
@@ -936,6 +989,16 @@ public class PeriodicRecovery extends Thread
      * the worker service which handles requests via the listener socket
      */
     private WorkerService _workerService = null;
+
+    /**
+     * flag to signal that there are transactions to recover;
+     * this flag could ONLY be set to false during the
+     * periodic recovery cycle (i.e. doWorkInternal()).
+     */
+    private volatile boolean _workLeftToDo = true;
+
+    // Variable to cache RecoveryEnvironmentBean.isWaitForWorkLeftToDo()
+    private boolean _waitForWorkLeftToDo;
 
    /*
     * Read the system properties to set the configurable options

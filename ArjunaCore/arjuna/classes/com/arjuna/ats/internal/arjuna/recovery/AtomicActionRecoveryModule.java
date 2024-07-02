@@ -27,8 +27,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
  * It is responsible for recovering failed AtomicAction transactions.
 */
 
-public class AtomicActionRecoveryModule implements RecoveryModule
-{
+public class AtomicActionRecoveryModule implements RecoveryModule {
    public AtomicActionRecoveryModule()
    {
        if (tsLogger.logger.isDebugEnabled()) {
@@ -50,6 +49,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    {
       // Transaction type
       boolean AtomicActions = false ;
+      // Does not block the suspension of the Recovery Manager by default
+      this.hasWorkLeftToDo = false;
 
       // uids per transaction type
       InputObjectState aa_uids = new InputObjectState() ;
@@ -98,11 +99,14 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
     }
 
-   private void doRecoverTransaction( Uid recoverUid )
+   private RecoverAtomicAction doRecoverTransaction(Uid recoverUid )
    {
       boolean commitThisTransaction = true ;
 
-      // Retrieve the transaction status from its original process.
+      /*
+       * Retrieve the transaction status from its original process.
+       * Note: this can be the status of the transaction from the object store
+       */
       int theStatus = _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
 
       boolean inFlight = isTransactionInMidFlight( theStatus ) ;
@@ -115,12 +119,12 @@ public class AtomicActionRecoveryModule implements RecoveryModule
                   " in flight is " + inFlight);
       }
 
+      RecoverAtomicAction rcvAtomicAction = null;
       if ( ! inFlight )
       {
          try
          {
-            RecoverAtomicAction rcvAtomicAction =
-               new RecoverAtomicAction( recoverUid, theStatus ) ;
+            rcvAtomicAction = new RecoverAtomicAction( recoverUid, theStatus ) ;
 
             rcvAtomicAction.replayPhase2() ;
          }
@@ -128,6 +132,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
              tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_2(recoverUid, ex);
          }
       }
+
+       return rcvAtomicAction;
    }
 
    private boolean isTransactionInMidFlight( int status )
@@ -223,16 +229,36 @@ public class AtomicActionRecoveryModule implements RecoveryModule
                 try {
                     if (_recoveryStore.currentState(currentUid,
                             _transactionType) != StateStatus.OS_UNKNOWN) {
-                        doRecoverTransaction(currentUid);
+                        RecoverAtomicAction rcvAtomicAction = doRecoverTransaction(currentUid);
+
+                        /*
+                         * hasFailedParticipants() relies on reportHeuristics being set to true
+                         * during replay_completion in RecoverAtomicAction
+                         */
+                        if (rcvAtomicAction.hasFailedParticipants() || rcvAtomicAction.hasPreparedParticipants()) {
+                            this.hasWorkLeftToDo = true;
+                        } else if (rcvAtomicAction.hasHeuristicParticipants()) {
+                            tsLogger.logger.tracef(
+                                    "AtomicActionRecoveryModule.processTransactionsStatus heuristic action {0} " +
+                                            "was ignored during the assessment of leftover work.", currentUid);
+                        }
                     }
                 } catch (ObjectStoreException ex) {
                     tsLogger.i18NLogger
                             .warn_recovery_AtomicActionRecoveryModule_3(
                                     currentUid, ex);
+
+                    // There might still be work to do if currentState throws an ObjectStoreException
+                    this.hasWorkLeftToDo = true;
                 }
             }
         }
    }
+
+    @Override
+    public boolean hasWorkLeftToDo() {
+        return this.hasWorkLeftToDo;
+    }
 
    // 'type' within the Object Store for AtomicActions.
    private String _transactionType = new AtomicAction().type() ;
@@ -247,5 +273,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    // This object manages the interface to all TransactionStatusManagers
    // processes(JVMs) on this system/node.
    private TransactionStatusConnectionManager _transactionStatusConnectionMgr ;
+
+   private boolean hasWorkLeftToDo;
 
 }

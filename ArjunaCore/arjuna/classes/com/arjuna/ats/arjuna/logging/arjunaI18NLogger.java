@@ -1650,6 +1650,14 @@ public interface arjunaI18NLogger {
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_nodename_shortened(String xaNodeName, Integer nameLength);
+
+	// TODO Delete this as soon as JBTM-3983 has been implemented
+	@Message(id = 12415, value = "You have enabled a feature that has not yet been fully assessed for compliance " +
+			"across all Recovery Modules provided by Narayana. For more details, " +
+			"please refer to https://issues.redhat.com/browse/JBTM-3893.", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_feature_not_supported_across_all_recovery_modules();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

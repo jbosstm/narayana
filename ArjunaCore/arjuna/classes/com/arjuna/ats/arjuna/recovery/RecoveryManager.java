@@ -224,6 +224,10 @@ public class RecoveryManager
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
      * preserve data integrity.
+     * <p>
+     * Note that this method is also influenced by
+     * {@link com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean#setWaitForWorkLeftToDo}.
+     * For more details, see {@link PeriodicRecovery#suspendScan(boolean)}
      *
      * @param async false means wait for the recovery manager to finish any scans before returning.
      * @throws IllegalStateException if the recovery manager has been shutdown.

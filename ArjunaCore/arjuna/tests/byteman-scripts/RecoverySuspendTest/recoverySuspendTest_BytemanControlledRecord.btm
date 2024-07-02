@@ -1,0 +1,84 @@
+########################################################################
+#
+# Byteman script used to make BytemanControlledRecord fail
+# topLevelCommit until AtomicActionRecoveryModule acknowledges that
+# it needs to block the suspension of PeriodicRecovery.
+# The end goal of this script is to simulate a transaction that fails
+# while PeriodicRecovery is trying to recover it. This scenario makes
+# sure that PeriodicRecovery waits to suspend until all transactions
+# have recovered
+#
+########################################################################
+
+########################################################################
+# Rule to set waitForWorkLeftToDoFlag when
+# PeriodicRecovery._waitForWorkLeftToDo is read in
+# PeriodicRecovery.suspendScan(boolean)
+########################################################################
+
+RULE setwaitForWorkLeftToDoFlag
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AFTER READ _waitForWorkLeftToDo
+IF $this._waitForWorkLeftToDo
+DO debug("[PeriodicRecovery] Setting waitForWorkLeftToDoFlag to true"),
+   flag("waitForWorkLeftToDoFlag")
+ENDRULE
+
+########################################################################
+# Rule to clear greenFlag when invoking 
+# BytemanControlledRecord.resetGreenFlag()
+########################################################################
+
+RULE resetGreenFlag
+CLASS com.hp.mwtests.ts.arjuna.resources.BytemanControlledRecord
+METHOD resetGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledRecord] clearing greenFlag"),
+   clear("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to set greenFlag when
+# AtomicActionRecoveryModule.hasWorkLeftToDo returns true
+########################################################################
+
+RULE setGreenFlag
+CLASS com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+METHOD hasWorkLeftToDo
+AT EXIT
+BIND returnValue:boolean = $!
+IF returnValue && flagged("waitForWorkLeftToDoFlag")
+DO debug("[AtomicActionRecoveryModule] Setting greenFlag to true"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to artificially set greenFlag
+########################################################################
+
+RULE artificiallySetGreenFlag
+CLASS com.hp.mwtests.ts.arjuna.resources.BytemanControlledRecord
+METHOD setGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledRecord] artificially setting greenFlag"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to fail
+# BytemanControlledRecord.topLevelCommit()
+# until greenFlag gets set
+########################################################################
+
+RULE FailTopLevelCommit
+CLASS com.hp.mwtests.ts.arjuna.resources.BytemanControlledRecord
+METHOD topLevelCommit
+AT EXIT
+IF NOT flagged("greenFlag")
+DO debug("[BytemanControlledRecord.topLevelCommit] returning " +
+      com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome.stringForm(com.hp.mwtests.ts.arjuna.resources.BytemanControlledRecord._commitReturn)),
+   return com.hp.mwtests.ts.arjuna.resources.BytemanControlledRecord._commitReturn
+ENDRULE
