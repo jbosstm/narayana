@@ -47,7 +47,6 @@
     </description>
   <!-- the fully qualified name of the host to use for rsync'ing artefacts (such as zips and website) during the build -->
   <property name="rsync.host" value="${rsync.host}"/>
-  <property name="awestruct.executable" value="awestruct"/>
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm"/>
   <!-- The tag as it appears under svnbase -->
@@ -93,9 +92,6 @@
     <mkdir dir="${workdir}/downloads/idl"/>
     <copy todir="${workdir}/downloads/src">
       <fileset dir="${workdir}" includes="narayana-*-${tag}-src.zip"/>
-    </copy>
-    <copy todir="${workdir}/downloads/binary">
-      <fileset dir="${workdir}/sources/narayana/narayana-full/target/" includes="narayana-full-${tag}-bin.zip"/>
     </copy>
     <copy todir="${workdir}/downloads/idl">
       <fileset dir="${workdir}/sources/narayana/ArjunaJTS/idl/src/main/idl/arjuna">
