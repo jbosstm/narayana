@@ -34,4 +34,13 @@ public interface RecoveryModule
      */
 
     public void periodicWorkSecondPass ();
+
+    /**
+     * Called by the RecoveryManager after the completion of the second pass.
+     *
+     * @return true if there is work left to do, false otherwise
+     */
+    default boolean hasWorkLeftToDo() {
+        return false;
+    }
 }

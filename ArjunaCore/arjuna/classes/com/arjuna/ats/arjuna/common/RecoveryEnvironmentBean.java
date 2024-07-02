@@ -39,6 +39,8 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     private volatile int expiryScanInterval = 12; // hours
     private volatile int transactionStatusManagerExpiryTime = 12; // hours
 
+    private volatile boolean waitForWorkLeftToDo = false;
+
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.expiryScanner")
     private volatile List<String> expiryScannerClassNames = new ArrayList<String>();
     private volatile List<ExpiryScanner> expiryScanners = null;
@@ -596,5 +598,34 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setTimeoutSocket(boolean timeoutSocket)
     {
         this.timeoutSocket = timeoutSocket;
+    }
+
+    /**
+     * <p>This method gives information about the behaviour of
+     * {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} when suspending.
+     * <p>The current list of Narayana-provided RecoveryModules that support this feature is:
+     * <ul>
+     *    <li>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</li>
+     * </ul>
+     * 
+     * @return true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should wait that all
+     * {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover all their
+     * transactions before shutting down; false otherwise.
+     */
+    public boolean isWaitForWorkLeftToDo()
+    {
+        return waitForWorkLeftToDo;
+    }
+
+    /**
+     * Configure the suspension of {@link com.arjuna.ats.arjuna.recovery.RecoveryManager}
+     * 
+     * @param waitForWorkLeftToDo true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should
+     * wait that all {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover
+     * all their transactions before shutting down; false otherwise.
+     */
+    public void setWaitForWorkLeftToDo(boolean waitForWorkLeftToDo)
+    {
+        this.waitForWorkLeftToDo = waitForWorkLeftToDo;
     }
 }

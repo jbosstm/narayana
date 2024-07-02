@@ -41,14 +41,24 @@ public class RecoverAtomicAction extends AtomicAction
 		(_theStatus == ActionStatus.H_MIXED) ||
 		(_theStatus == ActionStatus.H_HAZARD) )
 	   {
-	       super.phase2Commit( _reportHeuristics ) ;
+         /*
+          * reportHeuristics must be set to true; otherwise, the methods
+          * hasFailedParticipants() and hasHeuristicParticipants()
+          * in this class will return the same list of participants.
+          */
+	       super.phase2Commit( true ) ;
 	   }
 	   else if ( (_theStatus == ActionStatus.ABORTED) ||
 		     (_theStatus == ActionStatus.H_ROLLBACK) ||
 		     (_theStatus == ActionStatus.ABORTING) ||
 		     (_theStatus == ActionStatus.ABORT_ONLY) )
 	   {
-	       super.phase2Abort( _reportHeuristics ) ;
+         /*
+          * reportHeuristics must be set to true; otherwise, the methods
+          * hasFailedParticipants() and hasHeuristicParticipants()
+          * in this class will return the same list of participants.
+          */
+	       super.phase2Abort( true ) ;
 	   }
 	   else {
            tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_2(ActionStatus.stringForm(_theStatus));
@@ -75,7 +85,22 @@ public class RecoverAtomicAction extends AtomicAction
            }
        }
    }
-   
+
+   public boolean hasPreparedParticipants()
+   {
+       return preparedList != null && preparedList.size() > 0;
+   }
+
+   public boolean hasFailedParticipants()
+   {
+       return failedList != null && failedList.size() > 0;
+   }
+
+   public boolean hasHeuristicParticipants()
+   {
+       return heuristicList != null && heuristicList.size() > 0;
+   }
+
    // Current transaction status 
    // (retrieved from the TransactionStatusManager)
    private int _theStatus ;
@@ -83,8 +108,5 @@ public class RecoverAtomicAction extends AtomicAction
    // Flag to indicate that this transaction has been re-activated
    // successfully.
    private boolean _activated = false ;
-
-   // whether heuristic reporting on phase 2 commit is enabled.
-   private boolean _reportHeuristics = true ;
 
 }

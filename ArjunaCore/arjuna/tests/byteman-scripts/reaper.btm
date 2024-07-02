@@ -322,7 +322,7 @@ ENDRULE
 RULE ReaperTestCase3 unlatch reaper and reaper worker
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
 METHOD shutdown
-AT CALL wait
+AT INVOKE waitForAllTxnsToTerminate
 BIND NOTHING
 IF TRUE
 DO debug("removing latches on reaper and reaper worker"),
