@@ -16,6 +16,8 @@ import io.narayana.lra.logging.LRALogger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.ws.rs.core.Link;
+import jakarta.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
@@ -171,7 +174,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             if (AnnotationResolver.isAnnotationPresent(Leave.class, method)) {
                 // leave the LRA
                 Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(
-                        resourceInfo.getResourceClass(), containerRequestContext.getUriInfo(), timeout);
+                        resourceInfo.getResourceClass(), createUriPrefix(containerRequestContext), timeout);
                 String compensatorId = terminateURIs.get("Link");
 
                 if (compensatorId == null) {
@@ -376,9 +379,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
 
         if (!endAnnotation) { // don't enlist for methods marked with Compensate, Complete or Leave
-            URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
-
-            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), containerRequestContext.getUriInfo(), timeout);
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(),
+                createUriPrefix(containerRequestContext), timeout);
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? DEFAULT_TIMEOUT_MILLIS : Long.parseLong(timeLimitStr);
 
@@ -388,7 +390,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             if (terminateURIs.containsKey("Link") || participant != null) {
                 try {
                     if (participant != null) {
-                        participant.augmentTerminationURIs(terminateURIs, baseUri);
+                        participant.augmentTerminationURIs(terminateURIs, containerRequestContext.getUriInfo().getBaseUri());
                     }
 
                     String compensatorLink = buildCompensatorURI(
@@ -449,6 +451,22 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         containerRequestContext.setProperty(CURRENT_LRA_PROP, lraId);
         Current.addActiveLRACache(lraId);
+    }
+
+    private String createUriPrefix(ContainerRequestContext containerRequestContext) {
+        return ConfigProvider.getConfig().getOptionalValue("narayana.lra.base-uri", String.class)
+            .orElseGet(() -> {
+                UriInfo uriInfo = containerRequestContext.getUriInfo();
+
+                /*
+                 * Calculate which path to prepend to the LRA participant methods. If there is more than one matching URI
+                 * then the second matched URI comes from either the class level Path annotation or from a sub-resource locator.
+                 * In both cases the second matched URI can be used as a prefix for the LRA participant URIs:
+                 */
+                List<String> matchedURIs = uriInfo.getMatchedURIs();
+                int matchedURI = (matchedURIs.size() > 1 ? 1 : 0);
+                return uriInfo.getBaseUri() + matchedURIs.get(matchedURI);
+            });
     }
 
     @Override

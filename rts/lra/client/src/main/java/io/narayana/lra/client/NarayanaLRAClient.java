@@ -458,19 +458,9 @@ public class NarayanaLRAClient implements Closeable {
      * @param uriInfo  the uri that triggered this join request.
      * @return map of URI
      */
-    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, UriInfo uriInfo, Long timeout) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, String uriPrefix, Long timeout) {
         Map<String, String> paths = new HashMap<>();
         final boolean[] asyncTermination = {false};
-        URI baseUri = uriInfo.getBaseUri();
-
-        /*
-         * Calculate which path to prepend to the LRA participant methods. If there is more than one matching URI
-         * then the second matched URI comes from either the class level Path annotation or from a sub-resource locator.
-         * In both cases the second matched URI can be used as a prefix for the LRA participant URIs:
-         */
-        List<String> matchedURIs = uriInfo.getMatchedURIs();
-        int matchedURI = (matchedURIs.size() > 1 ? 1 : 0);
-        final String uriPrefix = baseUri + matchedURIs.get(matchedURI);
 
         String timeoutValue = timeout != null ? Long.toString(timeout) : "0";
 
