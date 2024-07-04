@@ -13,10 +13,11 @@ import java.io.Serializable;
  * * It is serializable
  * * It will return XAER_RMFAIL out of rollback during recovery
  */
-public class RMFAILOutofRollbackResource implements XAResource, Serializable {
+public class RMFAILOutOfFirstRollbackResource implements XAResource, Serializable {
     private XidImple xid;
+    private static boolean called = false;
 
-    public RMFAILOutofRollbackResource(XidImple xid) {
+    public RMFAILOutOfFirstRollbackResource(XidImple xid) {
         this.xid = xid;
     }
 
@@ -27,7 +28,11 @@ public class RMFAILOutofRollbackResource implements XAResource, Serializable {
 
     @Override
     public void rollback(Xid xid) throws XAException {
-        throw new XAException(XAException.XAER_RMFAIL);
+        if (!called) {
+            called = true;
+            throw new XAException(XAException.XAER_RMFAIL);
+        }
+        throw new XAException(XAException.XAER_NOTA);
     }
 
     @Override
