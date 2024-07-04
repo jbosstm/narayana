@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class XAResourceRecoveryTest {
@@ -76,13 +77,14 @@ public class XAResourceRecoveryTest {
     }
 
     @Test
-    public void testRMFAILOutOfRollback() throws Exception {
+    public void testRMFAILAndNOTAOutOfRollback() throws Exception {
+        // This is set up to get an entry in the object store that will be found by bottom up recovery. It is important
         // This is set up to get an entry in the object store that will be found by bottom up recovery. It is important
         // to do it this way because for the test we want the XARecoveryModule to find a "failed" resource - which is
         // different to just scanning the XAResource
         Uid uid = new Uid();
         XidImple xidImple = new XidImple(uid);
-        XAResource xaResource = new RMFAILOutofRollbackResource(xidImple); // Note that this is serializable and will be deleted after recover is failed once
+        XAResource xaResource = new RMFAILOutOfFirstRollbackResource(xidImple); // Note that this is serializable and will be deleted after recover is failed once
         XAResourceRecord xares = new XAResourceRecord(new TransactionImple(), xaResource, xidImple, null);
         OutputObjectState os = new OutputObjectState();
         assertTrue(xares.saveState(os));
@@ -101,8 +103,10 @@ public class XAResourceRecoveryTest {
         recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryModules(Arrays.asList(new RecoveryModule[]{xaRecoveryModule}));
 
         assertNotNull("Could not find recovery state before recovery fails", StoreManager.getParticipantStore().read_committed(uid, XAResourceRecord.typeName()));
-        RecoveryManager.manager().scan();
+        RecoveryManager.manager().scan(); // First pass should be XAER_RMFAIL
         assertNotNull("Could not find recovery state after recovery fails", StoreManager.getParticipantStore().read_committed(uid, XAResourceRecord.typeName()));
+        RecoveryManager.manager().scan(); // Second pass should be XAER_NOTA
+        assertNull("Found recovery state after receiving XAER_NOTA", StoreManager.getParticipantStore().read_committed(uid, XAResourceRecord.typeName()));
     }
 
     /**
