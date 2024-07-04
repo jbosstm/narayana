@@ -397,27 +397,25 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBTIMEOUT:
 							destroyState();
 							break;
-						case XAException.XAER_NOTA:
-							if (_phaseTwoStarted) {
-								// rolled back previously and recovery completed
-								destroyState();
-								break;
-							}
-						case XAException.XAER_RMFAIL:
-							if (_prepared) {
-								// We do not want to delete the state on disk because that would prevent the recovery
-								// manager from reattempting recovery and XAER_RMFAIL out of xa_rollback is transient
-								// failure
-								destroyState = false;
-							}
-							break;
-						default:
-							destroyState();
-
-							if (_prepared)
-								throw new org.omg.CosTransactions.HeuristicHazard();
-							else
-								throw new UNKNOWN();
+                        case XAException.XAER_NOTA:
+                            if (_phaseTwoStarted) {
+                                // rolled back previously and recovery completed
+                                destroyState();
+                                break;
+                            }
+                            destroyState();
+                            if (_prepared)
+                                throw new org.omg.CosTransactions.HeuristicHazard();
+                            else
+                                throw new UNKNOWN();
+                        case XAException.XAER_RMFAIL:
+                            if (_prepared) {
+                                // We do not want to delete the state on disk because that would prevent the recovery
+                                // manager from reattempting recovery and XAER_RMFAIL out of xa_rollback is transient
+                                // failure
+                                destroyState = false;
+                            }
+                            break;
 						}
 					}
 				}
