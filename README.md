@@ -26,7 +26,7 @@ To build this project you will need a JDK (Java Development Kit) with a minimum 
 
 The commands to do this will vary depending upon which operating system you are building on.
 
-Building Naryana
+Building Narayana
 ----------------
 To build Narayana you should call:
 
