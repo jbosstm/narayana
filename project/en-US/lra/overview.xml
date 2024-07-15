@@ -7,7 +7,7 @@
     <title>Overview</title>
 
     <para>
-    This guide describes the Naryana implementation, or Naryana LRA for short, of the MicroProfile LRA specification
+    This guide describes the Narayana implementation, or Narayana LRA for short, of the MicroProfile LRA specification
     <ulink url="https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc"></ulink>
     The specification introduces annotations and APIs for services to coordinate long running activities
     whilst still maintaining loose coupling and doing so in such a way as to guarantee a globally
