@@ -15,6 +15,18 @@
   <name>LRA tests: Basic</name>
   <description>LRA basic integration tests</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <properties>
     <!-- This configuration allows WildFly to be ran with various extra subsystems, including an OpenAPI subsystem -->
     <config.to.replace>standalone-microprofile.xml</config.to.replace>
