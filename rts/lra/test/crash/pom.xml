@@ -16,6 +16,18 @@
   <name>LRA crash tests</name>
   <description>LRA integration tests using unmanaged containers to simulate crash scenarios</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
