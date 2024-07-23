@@ -7,7 +7,6 @@
 # 3 arguments: `./narayana-release-process.sh CURRENT NEXT`
 #     e.g. pom.xml talks about version 5.7.3.Final-SNAPSHOT, CURRENT is 5.7.3.Final and NEXT is 5.7.4.Final
 
-command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
 if [ $# -ne 2 ]; then
   echo 1>&2 "$0: usage: CURRENT NEXT"
   exit 2
@@ -16,26 +15,11 @@ else
   NEXT=$2
 fi
 
-if [[ $(uname) == CYGWIN* ]]
-then
-  docker-machine env --shell bash
-  if [[ $? != 0 ]]; then
-    exit
-  fi
-  eval "$(docker-machine env --shell bash)"
-  read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT docker needs this" ELEV
-  if [[ $ELEV == n* ]]
-  then
-    exit
-  fi
-fi
 read -p "You will need: VPN, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
   exit
 fi
-#do not sync for the moment, TODO update script with new website sync commands 
-RSYNC_ENABLED="false"
 read -p "Have you configured ~/.m2/settings.xml with repository 'jboss-releases-repository' and correct username/password?" M2OK
 if [[ $M2OK == n* ]]
 then
@@ -78,8 +62,11 @@ then
     exit
   fi
   set -e
-  echo "Checking if there were any failed jobs, this may be interactive so please stand by"
-  JIRA_HOST=issues.redhat.com JENKINS_JOBS=60,60-AS_TESTS  ./scripts/release/pre_release.py
+  read -p "Until JBTM-3891 is resolved, please review with project team to ensure that it is safe to release. Please check for failed CI jobs before continuing. Continue? y/n " NOBLOCKERS
+  if [[ $NOBLOCKERS == n* ]]
+  then
+    exit
+  fi
   echo "Executing pre-release script, this may be interactive so please stand by"
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
   echo "This script is only interactive at the very end now, press enter to continue"
@@ -121,14 +108,6 @@ then
   echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
-git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-if [[ $? != 0 ]]
-then
-  echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
-  exit
-fi
 cd -
 
-
-# not sure why we need to look at CI at this point so commenting it out
-# xdg-open https://ci-jenkins-csb-narayana.apps.ocp-c1.prod.psi.redhat.com/ &
+echo "Please visit Narayana CI and check the quickstarts are working with the release and obtain performance numbers"
