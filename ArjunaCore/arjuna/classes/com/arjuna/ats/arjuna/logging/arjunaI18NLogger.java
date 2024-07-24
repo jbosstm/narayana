@@ -1645,6 +1645,11 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void unexpected_exception(@Cause() Throwable arg0);
 
+	@Message(id = 12414,
+			value = "The node identifier {0} was too long and was shortened by encoding the byte array in Base64 to give {1}",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_nodename_shortened(String xaNodeName, Integer nameLength);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
