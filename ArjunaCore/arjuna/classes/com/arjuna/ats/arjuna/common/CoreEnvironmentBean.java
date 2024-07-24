@@ -6,6 +6,8 @@ package com.arjuna.ats.arjuna.common;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -128,10 +130,13 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
      * <p>
      * This config setting has the side effect of setting the node identifier String (by encoding the passed
      * in bytes with the UTF_8 character set) and if the length of the resulting String is greater than
-     * {@link #NODE_NAME_SIZE} then a CoreEnvironmentBeanException is thrown.
+     * {@link #NODE_NAME_SIZE} then that String is shortened to the correct length using a Base64 encoder and
+     * then truncating the result to fit within the allowable maximum length. Note that the Base64 encoder may
+     * produce difficult to read node identifiers.
      *
      * @param nodeIdentifierBytes the bytes for node identifier.
-     * @throws CoreEnvironmentBeanException if node identifier is null or too long.
+     * @throws CoreEnvironmentBeanException if the node identifier byte array is either null or greater
+     * than {@value TxControl#NODE_NAME_SIZE}.
      */
     public void setNodeIdentifier(byte[] nodeIdentifierBytes) throws CoreEnvironmentBeanException
     {
@@ -147,10 +152,18 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         }
 
         String newName = new String(nodeIdentifierBytes, StandardCharsets.UTF_8);
+
         if (newName.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE)
         {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE);
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE));
+            //Encode the byte array in Base64
+            //encoding the array might result in a longer array
+            byte[] base64Result = Base64.getEncoder().encode(nodeIdentifierBytes);
+            //truncate the array
+            byte[] slice = Arrays.copyOfRange(base64Result, 0, 28);
+
+            newName = new String(slice, StandardCharsets.UTF_8);
+
+            tsLogger.i18NLogger.warn_nodename_shortened(newName, NODE_NAME_SIZE);
         }
 
         this.nodeIdentifier = newName;
