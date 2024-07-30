@@ -22,20 +22,16 @@ public class ActionManager {
         return _theManager;
     }
 
-    @Deprecated
-    // This method will be removed at the next major release
     public void put(BasicAction act) {
-        putIntoBasicActionMap(act);
+        BasicAction._allActions.put(act.get_uid(), act);
     }
 
     public BasicAction get(Uid id) {
-        return BasicAction.getAllActions().get(id);
+        return BasicAction._allActions.get(id);
     }
 
-    @Deprecated
-    // This method will be removed at the next major release
     public void remove(Uid id) {
-        removeFromBasicActionMap(id);
+        BasicAction._allActions.remove(id);
     }
 
     /**
@@ -56,51 +52,13 @@ public class ActionManager {
      * @return the number of in-flight transactions currently in the system
      */
     public int getNumberOfInflightTransactions() {
-        return (int) BasicAction.getAllActions().entrySet()
+        return (int) BasicAction._allActions.entrySet()
                 .parallelStream()
                 .filter(entry -> entry.getValue().status() == ActionStatus.RUNNING)
                 .count();
     }
 
     private ActionManager() {
-    }
-
-    /**
-     * Workaround to put BasicAction into BasicAction._allActions,
-     * which is a private static field.
-     * @param txn is the BasicAction to put back into _allActions
-     */
-    @Deprecated
-    // This will be removed as soon as the dependent method gets deprecated
-    private static void putIntoBasicActionMap(BasicAction txn) {
-        try {
-            Field allActions = BasicAction.class.getDeclaredField("_allActions");
-            allActions.setAccessible(true);
-            ((Map<Uid, BasicAction>) allActions.get(null)).put(txn.get_uid(), txn);
-        } catch (NoSuchFieldException NSFEx) {
-            throw new RuntimeException("_allActions doesn't exist");
-        } catch (IllegalAccessException IAEx) {
-            throw new RuntimeException("problems getting _allActions with reflection");
-        }
-    }
-
-    /**
-     * Workaround to remove BasicAction from BasicAction._allActions,
-     * which is a private static field.
-     * @param uid is the BasicAction's uid to remove from _allActions
-     */
-    @Deprecated
-    // This will be removed as soon as the dependent method gets deprecated
-    private static void removeFromBasicActionMap(Uid uid) {
-        try {
-            Field allActions = BasicAction.class.getDeclaredField("_allActions");
-            allActions.setAccessible(true);
-            ((Map<Uid, BasicAction>) allActions.get(null)).remove(uid);
-        } catch (NoSuchFieldException NSFEx) {
-            throw new RuntimeException("_allActions doesn't exist");
-        } catch (IllegalAccessException IAEx) {
-            throw new RuntimeException("problems getting _allActions with reflection");
-        }
     }
 
     private static final ActionManager _theManager = new ActionManager();

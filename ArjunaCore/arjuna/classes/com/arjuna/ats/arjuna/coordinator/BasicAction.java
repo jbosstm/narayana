@@ -1286,12 +1286,6 @@ public class BasicAction extends StateManager
         return TxControl.maintainHeuristics;
     }
 
-    public static Map<Uid, BasicAction> getAllActions() {
-        // Defence copy of _allActions: other users cannot modify the original Map
-        // Note: elements of the map are NOT defensively copied
-        return new HashMap<>(_allActions);
-    }
-
     /**
      * Overloads <code>StateManager.destroy</code> to prevent destroy being
      * called on a BasicAction. Could be a *very* bad idea!!
@@ -3895,7 +3889,7 @@ public class BasicAction extends StateManager
             ((ExceptionDeferrer) record.value()).getDeferredThrowables(throwables);
     }
 
-    private static Map<Uid, BasicAction> _allActions = new ConcurrentHashMap<>();
+    static Map<Uid, BasicAction> _allActions = new ConcurrentHashMap<>();
 
     /* These (genuine) lists hold the abstract records */
 
