@@ -17,42 +17,38 @@ import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TxStatsUnitTest
-{
+public class TxStatsUnitTest {
     @Before
     public void before() {
         Assertions.assertTrue(TxStats.enabled());
     }
 
     @Test
-    public void test() throws Exception
-    {
+    public void test() throws Exception {
         arjPropertyManager.getCoordinatorEnvironmentBean().setEnableStatistics(true);
-        
-        for (int i = 0; i < 100; i++)
-        {
+
+        for (int i = 0; i < 100; i++) {
             AtomicAction A = new AtomicAction();
             AtomicAction B = new AtomicAction();
-            
+
             A.begin();
             B.begin();
 
             Assertions.assertEquals(2, TxStats.getInstance().getNumberOfInflightTransactions());
-            
+
             B.commit();
             A.commit();
 
             Assertions.assertEquals(0, TxStats.getInstance().getNumberOfInflightTransactions());
         }
-        
-        for (int i = 0; i < 100; i++)
-        {
+
+        for (int i = 0; i < 100; i++) {
             AtomicAction A = new AtomicAction();
-            
+
             A.begin();
 
             Assertions.assertEquals(1, TxStats.getInstance().getNumberOfInflightTransactions());
-            
+
             A.abort();
 
             Assertions.assertEquals(0, TxStats.getInstance().getNumberOfInflightTransactions());
@@ -66,9 +62,9 @@ public class TxStatsUnitTest
         Assertions.assertEquals(0, TxStats.getInstance().getNumberOfResourceRollbacks());
         Assertions.assertEquals(0, TxStats.getInstance().getNumberOfTimedOutTransactions());
         Assertions.assertEquals(300, TxStats.getInstance().getNumberOfTransactions());
-        
+
         PrintWriter pw = new PrintWriter(new StringWriter());
-        
+
         TxStats.getInstance().printStatus(pw);
 
         for (int i = 0; i < 100; i++) {
@@ -103,8 +99,7 @@ public class TxStatsUnitTest
         Assertions.assertEquals(200, TxStats.getInstance().getNumberOfApplicationRollbacks());
         Assertions.assertEquals(400, TxStats.getInstance().getNumberOfTransactions());
 
-        for (int i = 0; i < 100; i++)
-        {
+        for (int i = 0; i < 100; i++) {
             AtomicAction A = new AtomicAction();
 
             A.begin();
@@ -124,8 +119,7 @@ public class TxStatsUnitTest
         Assertions.assertEquals(300, TxStats.getInstance().getNumberOfApplicationRollbacks());
         Assertions.assertEquals(500, TxStats.getInstance().getNumberOfTransactions());
 
-        for (int i = 0; i < 100; i++)
-        {
+        for (int i = 0; i < 100; i++) {
             AtomicAction A = new AtomicAction();
 
             A.begin();
@@ -157,7 +151,7 @@ public class TxStatsUnitTest
     }
 
     private static class StatsResource extends BasicRecord {
-        
+
         @Override
         public int topLevelPrepare() {
             // TxStats.getNumberOfInflightTransactions() shouldn't count pending transactions 
