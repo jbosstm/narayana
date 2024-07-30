@@ -4,8 +4,8 @@
  */
 package com.arjuna.ats.arjuna.coordinator;
 
+import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.arjuna.ats.arjuna.common.Uid;
 
@@ -22,16 +22,20 @@ public class ActionManager {
         return _theManager;
     }
 
+    @Deprecated
+    // This method will be removed at the next major release
     public void put(BasicAction act) {
-        _allActions.put(act.get_uid(), act);
+        putIntoBasicActionMap(act);
     }
 
     public BasicAction get(Uid id) {
-        return _allActions.get(id);
+        return BasicAction.getAllActions().get(id);
     }
 
+    @Deprecated
+    // This method will be removed at the next major release
     public void remove(Uid id) {
-        _allActions.remove(id);
+        removeFromBasicActionMap(id);
     }
 
     /**
@@ -52,7 +56,7 @@ public class ActionManager {
      * @return the number of in-flight transactions currently in the system
      */
     public int getNumberOfInflightTransactions() {
-        return (int) _allActions.entrySet()
+        return (int) BasicAction.getAllActions().entrySet()
                 .parallelStream()
                 .filter(entry -> entry.getValue().status() == ActionStatus.RUNNING)
                 .count();
@@ -61,7 +65,43 @@ public class ActionManager {
     private ActionManager() {
     }
 
-    private static final ActionManager _theManager = new ActionManager();
+    /**
+     * Workaround to put BasicAction into BasicAction._allActions,
+     * which is a private static field.
+     * @param txn is the BasicAction to put back into _allActions
+     */
+    @Deprecated
+    // This will be removed as soon as the dependent method gets deprecated
+    private static void putIntoBasicActionMap(BasicAction txn) {
+        try {
+            Field allActions = BasicAction.class.getDeclaredField("_allActions");
+            allActions.setAccessible(true);
+            ((Map<Uid, BasicAction>) allActions.get(null)).put(txn.get_uid(), txn);
+        } catch (NoSuchFieldException NSFEx) {
+            throw new RuntimeException("_allActions doesn't exist");
+        } catch (IllegalAccessException IAEx) {
+            throw new RuntimeException("problems getting _allActions with reflection");
+        }
+    }
 
-    private final Map<Uid, BasicAction> _allActions = new ConcurrentHashMap<>();
+    /**
+     * Workaround to remove BasicAction from BasicAction._allActions,
+     * which is a private static field.
+     * @param uid is the BasicAction's uid to remove from _allActions
+     */
+    @Deprecated
+    // This will be removed as soon as the dependent method gets deprecated
+    private static void removeFromBasicActionMap(Uid uid) {
+        try {
+            Field allActions = BasicAction.class.getDeclaredField("_allActions");
+            allActions.setAccessible(true);
+            ((Map<Uid, BasicAction>) allActions.get(null)).remove(uid);
+        } catch (NoSuchFieldException NSFEx) {
+            throw new RuntimeException("_allActions doesn't exist");
+        } catch (IllegalAccessException IAEx) {
+            throw new RuntimeException("problems getting _allActions with reflection");
+        }
+    }
+
+    private static final ActionManager _theManager = new ActionManager();
 }

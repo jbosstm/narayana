@@ -9,12 +9,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -1284,6 +1286,12 @@ public class BasicAction extends StateManager
         return TxControl.maintainHeuristics;
     }
 
+    public static Map<Uid, BasicAction> getAllActions() {
+        // Defence copy of _allActions: other users cannot modify the original Map
+        // Note: elements of the map are NOT defensively copied
+        return new HashMap<>(_allActions);
+    }
+
     /**
      * Overloads <code>StateManager.destroy</code> to prevent destroy being
      * called on a BasicAction. Could be a *very* bad idea!!
@@ -1420,7 +1428,7 @@ public class BasicAction extends StateManager
                         }
                     }
 
-                    ActionManager.manager().put(this);
+                    BasicAction._allActions.put(this.get_uid(), this);
 
                     if(finalizeBasicActions) {
                         finalizerObject = new BasicActionFinalizer(this);
@@ -1515,7 +1523,7 @@ public class BasicAction extends StateManager
                 {
                     onePhaseCommit(reportHeuristics, true);
 
-                    ActionManager.manager().remove(get_uid());
+                    BasicAction._allActions.remove(get_uid());
                 }
                 else
                 {
@@ -1551,7 +1559,7 @@ public class BasicAction extends StateManager
             }
             else
             {
-                ActionManager.manager().remove(get_uid());
+                BasicAction._allActions.remove(get_uid());
 
                 actionStatus = ActionStatus.COMMITTED;
 
@@ -1713,7 +1721,7 @@ public class BasicAction extends StateManager
                 forgetHeuristics();
             }
 
-            ActionManager.manager().remove(get_uid());
+            BasicAction._allActions.remove(get_uid());
 
             actionStatus = ActionStatus.ABORTED;
 
@@ -1966,7 +1974,7 @@ public class BasicAction extends StateManager
 
                 updateState();
 
-                ActionManager.manager().remove(get_uid());
+                BasicAction._allActions.remove(get_uid());
 
                 criticalEnd();
 
@@ -2046,7 +2054,7 @@ public class BasicAction extends StateManager
             updateState(); // we may end up saving more than the heuristic list
             // here!
 
-            ActionManager.manager().remove(get_uid());
+            BasicAction._allActions.remove(get_uid());
 
             criticalEnd();
 
@@ -2222,7 +2230,7 @@ public class BasicAction extends StateManager
             {
                 onePhaseCommit(reportHeuristics, false);
 
-                ActionManager.manager().remove(get_uid());
+                BasicAction._allActions.remove(get_uid());
 
                 return actionStatus == ActionStatus.ABORTED
                         ? TwoPhaseOutcome.ONE_PHASE_ERROR : TwoPhaseOutcome.PREPARE_ONE_PHASE_COMMITTED;
@@ -2568,7 +2576,7 @@ public class BasicAction extends StateManager
 
         forgetHeuristics();
 
-        ActionManager.manager().remove(get_uid());
+        BasicAction._allActions.remove(get_uid());
 
         criticalEnd();
 
@@ -3886,6 +3894,8 @@ public class BasicAction extends StateManager
         else if (record.value() instanceof ExceptionDeferrer)
             ((ExceptionDeferrer) record.value()).getDeferredThrowables(throwables);
     }
+
+    private static Map<Uid, BasicAction> _allActions = new ConcurrentHashMap<>();
 
     /* These (genuine) lists hold the abstract records */
 
