@@ -146,22 +146,22 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         }
 
         if (nodeIdentifierBytes.length > TxControl.NODE_NAME_SIZE) {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, TxControl.NODE_NAME_SIZE);
+            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, nodeIdentifierBytes.length);
             throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.
-                    get_fatal_nodename_too_long(nodeIdentifier, TxControl.NODE_NAME_SIZE));
+                    get_fatal_nodename_too_long(nodeIdentifier, nodeIdentifierBytes.length));
         }
 
         String newName = new String(nodeIdentifierBytes, StandardCharsets.UTF_8);
 
-        if (newName.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE)
+        if (newName.length() > NODE_NAME_SIZE)
         {
             //Encode the byte array in Base64
             //encoding the array might result in a longer array
             byte[] base64Result = Base64.getEncoder().encode(nodeIdentifierBytes);
             //truncate the array
-            byte[] slice = Arrays.copyOfRange(base64Result, 0, 28);
+            nodeIdentifierBytes = Arrays.copyOfRange(base64Result, 0, 28);
 
-            newName = new String(slice, StandardCharsets.UTF_8);
+            newName = new String(nodeIdentifierBytes, StandardCharsets.UTF_8);
 
             tsLogger.i18NLogger.warn_nodename_shortened(newName, NODE_NAME_SIZE);
         }
