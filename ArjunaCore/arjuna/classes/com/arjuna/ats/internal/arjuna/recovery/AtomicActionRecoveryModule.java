@@ -16,7 +16,7 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
-import com.arjuna.ats.arjuna.recovery.SuspendBlockingRecoveryModule;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -27,8 +27,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
  * It is responsible for recovering failed AtomicAction transactions.
 */
 
-public class AtomicActionRecoveryModule implements SuspendBlockingRecoveryModule
-{
+public class AtomicActionRecoveryModule implements RecoveryModule {
    public AtomicActionRecoveryModule()
    {
        if (tsLogger.logger.isDebugEnabled()) {
@@ -232,9 +231,7 @@ public class AtomicActionRecoveryModule implements SuspendBlockingRecoveryModule
                      * If the current AtomicAction has been recovered,
                      * its StateStatus should be OS_UNKNOWN.
                      * If that is not the case, it means that the current
-                     * AtomicAction still needs to be recovered and this
-                     * SuspendBlockingRecoveryModule implementation should
-                     * block the suspension of the Recovery Manager
+                     * AtomicAction still needs to be recovered
                      */
                     if (_recoveryStore.currentState(currentUid,
                             _transactionType) != StateStatus.OS_UNKNOWN) {

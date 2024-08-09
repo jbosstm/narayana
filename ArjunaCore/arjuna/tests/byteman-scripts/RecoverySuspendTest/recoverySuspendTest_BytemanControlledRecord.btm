@@ -12,14 +12,14 @@
 
 ########################################################################
 # Rule to set waitForRecoveryFlag when invoking
-# RecoveryEnvironmentBean.isWaitForFinalRecovery() in
+# RecoveryEnvironmentBean.isWaitForRecovery() in
 # PeriodicRecovery.suspendScan(boolean)
 #########################################################################
 
 RULE setWaitForRecoveryFlag
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan
-AFTER INVOKE isWaitForFinalRecovery
+AFTER INVOKE isWaitForRecovery
 BIND returnValue:boolean = $!
 IF returnValue
 DO debug("[PeriodicRecovery] Setting waitForRecoveryFlag to true"),

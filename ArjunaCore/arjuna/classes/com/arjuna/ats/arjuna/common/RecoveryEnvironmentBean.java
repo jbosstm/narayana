@@ -601,29 +601,26 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     }
 
     /**
-     * Returns information about the behaviour of the Recovery Manager when suspending.
-     * Note that this functionality requires that the transaction system and the transaction reaper
-     * are disabled in advance.
+     * This method gives information about the behaviour of
+     * {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} when suspending.
      * 
-     * @return true if the recovery manager should wait that all RecoveryModules implementing
-     * SuspendBlockingRecoveryModule recover all their transactions before shutting down;
+     * @return true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should wait that all
+     * {@link RecoveryModule} implementations recover all their transactions before shutting down;
      * false otherwise.
      */
-    public boolean isWaitForFinalRecovery()
+    public boolean isWaitForRecovery()
     {
         return waitForRecovery;
     }
 
     /**
-     * Configure the suspension behaviour of the Recovery Manager.
-     * Note that this functionality requires that the transaction system and the transaction reaper
-     * are disabled in advance.
+     * Configure the suspension of {@link com.arjuna.ats.arjuna.recovery.RecoveryManager}
      * 
-     * @param waitForRecovery true if the recovery manager should wait that all RecoveryModules implementing
-     * SuspendBlockingRecoveryModule recover all their transactions before shutting down;
-     * false otherwise.
+     * @param waitForRecovery true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should
+     * wait that all {@link RecoveryModule} implementations recover all their transactions before
+     * shutting down; false otherwise.
      */
-    public void setWaitForFinalRecovery(boolean waitForRecovery)
+    public void setWaitForRecovery(boolean waitForRecovery)
     {
         this.waitForRecovery = waitForRecovery;
     }

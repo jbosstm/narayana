@@ -55,7 +55,7 @@ public class RecoverySuspendTest {
         recoveryConfig.setRecoveryBackoffPeriod(recoveryBackoffPeriod);
         recoveryConfig.setPeriodicRecoveryPeriod(periodicRecoveryPeriod);
         // don't sign off until the store is empty
-        recoveryConfig.setWaitForFinalRecovery(true);
+        recoveryConfig.setWaitForRecovery(true);
 
         // the test set of modules
         recoveryConfig.setRecoveryModuleClassNames(Arrays.asList(modules));
@@ -120,7 +120,7 @@ public class RecoverySuspendTest {
         // Makes sure that the transaction reaper completed all transactions
         TransactionReaper.transactionReaper().waitForAllTxnsToTerminate();
 
-        // Synchronization is not needed (i.e. async = true) as isWaitForFinalRecovery() == true
+        // Synchronization is not needed (i.e. async = true) as isWaitForRecovery() == true
         _manager.suspend(true);
 
         // BytemanControlledRecord.getCommitCallCounter() should be 1 as:
@@ -149,7 +149,7 @@ public class RecoverySuspendTest {
         // Makes sure that the transaction reaper completed all transactions
         TransactionReaper.transactionReaper().waitForAllTxnsToTerminate();
 
-        // Synchronization is not needed (i.e. async = true) as isWaitForFinalRecovery() == true
+        // Synchronization is not needed (i.e. async = true) as isWaitForRecovery() == true
         _manager.suspend(true);
 
         // BytemanControlledRecord.getCommitCallCounter() should be 3 as:
