@@ -1645,6 +1645,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void unexpected_exception(@Cause() Throwable arg0);
 
+	@Message(id = 12414, value = "AtomicActionRecoveryModule.processTransactionsStatus heuristic action {0} was ignored during the assessment of leftover work.", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void heuristic_atomic_action_silenced(Uid arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -99,7 +100,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
 
     }
 
-   private void doRecoverTransaction( Uid recoverUid )
+   private int doRecoverTransaction( Uid recoverUid )
    {
       boolean commitThisTransaction = true ;
 
@@ -129,6 +130,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
              tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_2(recoverUid, ex);
          }
       }
+
+       return _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
    }
 
    private boolean isTransactionInMidFlight( int status )
@@ -165,6 +168,23 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
       }
 
       return inFlight ;
+   }
+
+   private boolean isTransactionHeuristic( int status )
+   {
+       boolean heuristic = false ;
+
+       switch ( status )
+       {
+           case ActionStatus.H_COMMIT   :
+           case ActionStatus.H_MIXED    :
+           case ActionStatus.H_HAZARD   :
+           case ActionStatus.H_ROLLBACK :
+               heuristic = true ;
+               break ;
+       }
+
+       return heuristic ;
    }
 
    private Vector processTransactions( InputObjectState uids )
@@ -222,9 +242,11 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
                 Uid currentUid = (Uid) transactionUidEnum.nextElement();
 
                 try {
+                    int transactionActionStatusAfterRecover = ActionStatus.INVALID;
+
                     if (_recoveryStore.currentState(currentUid,
                             _transactionType) != StateStatus.OS_UNKNOWN) {
-                        doRecoverTransaction(currentUid);
+                        transactionActionStatusAfterRecover = doRecoverTransaction(currentUid);
                     }
 
                     /*
@@ -233,9 +255,13 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
                      * If that is not the case, it means that the current
                      * AtomicAction still needs to be recovered
                      */
-                    if (_recoveryStore.currentState(currentUid,
-                            _transactionType) != StateStatus.OS_UNKNOWN) {
-                        this.hasWork = true;
+                    if (_recoveryStore.currentState(currentUid,_transactionType) != StateStatus.OS_UNKNOWN) {
+                        if (isTransactionHeuristic(transactionActionStatusAfterRecover) &&
+                                !recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForHeuristicsDuringRecovery()) {
+                            tsLogger.i18NLogger.heuristic_atomic_action_silenced(currentUid);
+                        } else {
+                            this.hasWork = true;
+                        }
                     }
 
                 } catch (ObjectStoreException ex) {

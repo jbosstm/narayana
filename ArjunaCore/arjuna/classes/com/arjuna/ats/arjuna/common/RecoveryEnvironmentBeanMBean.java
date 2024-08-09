@@ -40,4 +40,6 @@ public interface RecoveryEnvironmentBeanMBean
     boolean isTimeoutSocket();
 
     boolean isWaitForRecovery();
+
+    boolean isWaitForHeuristicsDuringRecovery();
 }
