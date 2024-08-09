@@ -38,4 +38,6 @@ public interface RecoveryEnvironmentBeanMBean
     List<String> getRecoveryActivatorClassNames();
 
     boolean isTimeoutSocket();
+
+    boolean isWaitForRecovery();
 }

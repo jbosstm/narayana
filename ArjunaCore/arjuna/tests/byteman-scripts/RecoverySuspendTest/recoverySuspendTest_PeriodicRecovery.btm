@@ -1,0 +1,19 @@
+########################################################################
+#
+# Byteman script to inject code in the PeriodicRecovery class.
+#
+########################################################################
+
+########################################################################
+# Rule to fail PeriodicRecovery.suspendScan(boolean) when
+# PeriodicRecovery._blockSuspension is set to true after doWork
+# gets invoked
+#########################################################################
+
+RULE failSuspendScan
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AFTER INVOKE doWork
+IF $this._blockSuspension
+DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] _blockSuspension was true while it should have been false")
+ENDRULE

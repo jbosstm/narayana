@@ -34,4 +34,18 @@ public interface RecoveryModule
      */
 
     public void periodicWorkSecondPass ();
+
+    /**
+     * <p>This method determines whether there is work left to do at the end of the
+     * second pass (i.e. {@link RecoveryModule#periodicWorkSecondPass()})
+     * <p>Note: This method should be invoked only at the end of the recovery cycle,
+     * i.e. at the end of {@link RecoveryModule#periodicWorkSecondPass()}.
+     * Any invocation that happens before this point does not guarantee to return
+     * the correct value
+     *
+     * @return true if there is work left to do, false otherwise
+     */
+    default boolean hasWork() {
+        return false;
+    }
 }

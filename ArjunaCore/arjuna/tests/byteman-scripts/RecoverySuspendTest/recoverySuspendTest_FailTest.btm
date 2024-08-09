@@ -1,0 +1,46 @@
+########################################################################
+#
+# Byteman script to inject failures in the PeriodicRecovery class.
+#
+########################################################################
+
+########################################################################
+# Rule to start the recoveryCycles counter
+########################################################################
+
+RULE startCounting
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AFTER INVOKE doWork
+IF $this._blockSuspension
+DO debug("[PeriodicRecovery] allowing byteman to start counting recovery cycles..."),
+   flag("startCounting")
+ENDRULE
+
+########################################################################
+# Rule to increase the recoveryCycles counter
+########################################################################
+
+RULE increaseCounter
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD doWorkInternal
+AT ENTRY
+IF flagged("startCounting")
+DO debug("[PeriodicRecovery] incrementing the 'recoveryCycles' counter..."),
+   incrementCounter("recoveryCycles")
+ENDRULE
+
+########################################################################
+# Rule to fail RecoverySuspendTest when there is more than one recovery
+# cycle after the BytemanControllerRecord fails during recovery.
+########################################################################
+
+RULE failIfTooManyRecoveryCycles
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AT EXIT
+IF readCounter("recoveryCycles") > 1
+DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] too many recovery cycles (i.e. " +
+    readCounter("recoveryCycles") + "), " +
+    "the Recovery Manager should have been suspended already.")
+ENDRULE
