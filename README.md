@@ -2,15 +2,14 @@
 
 [![Version](https://img.shields.io/maven-central/v/org.jboss.narayana/narayana-all?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/org.jboss.narayana/narayana-all)
 
-Narayana
-========
+# Narayana
 
 Website: https://narayana.io
 
 Twitter: https://twitter.com/narayana_io, using twitter handle [#narayanaio](https://twitter.com/search?q=%23narayanaio)
 
-Getting help
-------------
+## Getting help
+
 If you need help with using Narayana, please visit our forums at:
 https://groups.google.com/g/narayana-users
 or ask a question on our zulip channel (https://narayana.zulipchat.com/#).
@@ -20,14 +19,18 @@ If you would like to contribute a pull request to help the project out the file 
 If you have a performance optimization that you would like to suggest to us, please read our document over here:
 https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana
 
-Requirements
-------------
+### Support Guarantees
+
+Although there are no formal guarantees to support this software the team and, we hope, the broader community will make every effort to resolve queries, fix bugs and add agreed upon features as quickly as resources allow. Community fixes and enhancements can only be expected to be considered for merging onto the main branch.
+
+## Requirements
+
 To build this project you will need a JDK (Java Development Kit) with a minimum version of 11 and a Maven with a minimum version specified in the [maven wrapper properties file](.mvn/wrapper/maven-wrapper.properties)
 
 The commands to do this will vary depending upon which operating system you are building on.
 
-Building Narayana
-----------------
+## Building Narayana
+
 To build Narayana you should call:
 
 	./build.[sh|bat] <maven_goals, default is install>
@@ -57,8 +60,7 @@ If you just need the facilities provided by ArjunaCore:
 
 	./ArjunaCore/arjunacore/target/arjunacore-<VERSION>.jar
 	
-Building specific components
-----------------------------
+## Building specific components
 
 If you would like to build an individual module (say arjuna) with its dependencies you would type:
 
@@ -78,8 +80,8 @@ STM: `./build.[sh|bat] -am -pl :stm`
 
 LRA: `./build.[sh|bat] -am -f rts/lra`
 
-Narayana (BOM) Bill Of Materials
------------------------
+## Narayana (BOM) Bill Of Materials
+
 maven BOM dependency used to encapsulate all the dependencies required by Narayana.
 
     <dependencyManagement>
@@ -94,8 +96,7 @@ maven BOM dependency used to encapsulate all the dependencies required by Naraya
      </dependencies>
    </dependencyManagement>
 
-Testing Narayana
----------------
+## Testing Narayana
 
 There are three types of tests in the Narayana repository.
 
@@ -116,13 +117,11 @@ There are three types of tests in the Narayana repository.
       ant -f run-tests.xml ci-tests
 
 
-Code Coverage Testing
----------------------
+## Code Coverage Testing
 
       ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
 
-Checkstyle
-----------
+## Checkstyle
 
 Narayana expect usage of the style of code defined by WildFly checkstyle (maven artifact 
 [org.wildfly.checkstyle:wildfly-checkstyle-config](https://github.com/wildfly/wildfly-checkstyle-config)).
@@ -147,8 +146,8 @@ To get your developer life easier use the checkstyle plugins for your IDE
 The WildFly provides a formatter complying with the checkstyle rules. If interested check the IDE configs
 at project [wildfly-core](https://github.com/wildfly/wildfly-core/tree/main/ide-configs).
 
-Now The Gory Details.
----------------------
+## Now The Gory Details.
+
 Each module contains a set of maven build scripts, which chiefly just inherits and selectively overrides the parent
  pom.xml  Understanding this approach requires some knowledge of maven's inheritance.
 
