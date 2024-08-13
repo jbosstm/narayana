@@ -107,7 +107,7 @@ public class LRAAsyncIT extends TestBase {
 
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            fail("Error in testChainOfInvocations method");
+            fail("Error in testChainOfInvocations method: " + e.getMessage());
         }
     }
 
@@ -142,7 +142,7 @@ public class LRAAsyncIT extends TestBase {
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-                fail("Error in testNoCurrent method");
+                fail("Error in testNoCurrent method: " + e.getMessage());
             }
     }
 

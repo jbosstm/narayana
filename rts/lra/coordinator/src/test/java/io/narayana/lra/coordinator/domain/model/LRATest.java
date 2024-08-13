@@ -442,7 +442,7 @@ public class LRATest {
         try {
             service.getLRA(lraId);
         } catch (NotFoundException e) {
-            fail("testReplay: LRA should still have been completing");
+            fail("testReplay: LRA should still have been completing: " + e.getMessage());
         }
 
         // the LRA should still be finishing (ie there should be a log record)
