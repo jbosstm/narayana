@@ -378,7 +378,7 @@ public class LRAService {
                 // return any previously registered data
                 compensatorData.setLength(0);
 
-                if (participant.getPreviousCompensatorData() != null) {
+                if (participant != null && participant.getPreviousCompensatorData() != null) {
                     compensatorData.append(participant.getPreviousCompensatorData());
                 }
             } else {
