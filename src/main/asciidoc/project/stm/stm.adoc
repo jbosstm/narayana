@@ -1,4 +1,10 @@
 = STM
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
 
 In this chapter we shall look at the Software Transactional Memory (STM) implementation that ships as part of Narayana.
 Software Transactional Memory (STM) has been around in research environments since the late 1990's and has relatively recently started to appear in products and various programming languages.

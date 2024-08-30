@@ -7,21 +7,11 @@
 :sourcedir: .
 
 :leveloffset: 1
+
 include::overview.adoc[]
-:leveloffset: 0
-
-:leveloffset: 1
 include::jaxrs.adoc[]
-:leveloffset: 0
-
-:leveloffset: 1
 include::non-jaxrs.adoc[]
-:leveloffset: 0
-
-:leveloffset: 1
 include::examples.adoc[]
-:leveloffset: 0
-
-:leveloffset: 1
 include::integration.adoc[]
+
 :leveloffset: 0

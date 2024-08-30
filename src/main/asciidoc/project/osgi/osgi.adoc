@@ -1,4 +1,10 @@
 = OSGi
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
 
 :leveloffset: 1
 include::integration_with_karaf.adoc[]
