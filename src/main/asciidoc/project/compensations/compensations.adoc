@@ -1,10 +1,4 @@
 = Compensating transactions
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
 
 == Overview
 

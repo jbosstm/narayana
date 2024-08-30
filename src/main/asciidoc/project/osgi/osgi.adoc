@@ -1,0 +1,5 @@
+= OSGi
+
+:leveloffset: 1
+include::integration_with_karaf.adoc[]
+:leveloffset: 0
