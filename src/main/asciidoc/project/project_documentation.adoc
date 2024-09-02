@@ -1,0 +1,49 @@
+
+:leveloffset: 1
+include::project/book_info.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/preface.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/core/core.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/jta/jta.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/jts/jts.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/xts/xts.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/lra/lra.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/rts/rts.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/stm/stm.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/compensations/compensations.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/osgi/osgi.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::project/appendix/appendix.adoc[]
+:leveloffset: 0
+
