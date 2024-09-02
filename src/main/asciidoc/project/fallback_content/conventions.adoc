@@ -81,17 +81,17 @@ Italics denotes text you do not input literally or displayed text that changes d
 For example: 
 
 ____
-To connect to a remote machine using ssh, type `ssh `username`@`domain.name`` at a shell prompt.
-If the remote machine is _example.com_ and your username on that machine is john, type ``ssh john@example.com``. 
+To connect to a remote machine using ssh, type `ssh username@domain.name` at a shell prompt.
+If the remote machine is _example.com_ and your username on that machine is john, type `ssh john@example.com`.
 
-The `mount -o remount `file-system`` command remounts the named file system.
-For example, to remount the [path]_/home_ file system, the command is ``mount -o remount /home``. 
+The `mount -o remount file-system` command remounts the named file system.
+For example, to remount the `_/home_ file system`, the command is `mount -o remount /home`. 
 
-To see the version of a currently installed package, use the `rpm -q `package`` command.
+To see the version of a currently installed package, use the `rpm -q package` command.
 It will return a result as follows: `package-version-release`. 
 ____
 
-Note the words in bold italics above &mdash;username, domain.name, file-system, package, version and release.
+Note the words in bold italics above -username, domain.name, file-system, package, version and release.
 Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system. 
 
 Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term.
