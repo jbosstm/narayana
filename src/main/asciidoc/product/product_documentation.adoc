@@ -1,0 +1,28 @@
+
+:leveloffset: 1
+include::product/book_info.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/preface.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/transactions_overview/transactions_overview.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/failure_recovery/failure_recovery.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/development_guide/development_guide.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/xts_guide/xts_guide.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::product/txbridge_guide/txbridge_guide.adoc[]
+:leveloffset: 0
