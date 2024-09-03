@@ -1,11 +1,5 @@
 
 = We Need Feedback!
-(((feedback,contact information for this manual)))
 
 Please feel free to raise any issues you find with this document in our https://issues.jboss.org/browse/JBTM[issue tracking system]
 
-ifdef::backend-docbook[]
-[index]
-== Index
-// Generated automatically by the DocBook toolchain.
-endif::backend-docbook[]
