@@ -6,14 +6,12 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +2
+
 include::architecture_of_the_recovery_manager.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::how_narayana_manages_the_ots_recovery_protocol.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::configuration_options.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2

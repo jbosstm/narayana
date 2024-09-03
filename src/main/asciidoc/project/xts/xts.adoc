@@ -6,14 +6,11 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +1
 include::introduction.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::transactions_overview.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::protocols_overview.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2

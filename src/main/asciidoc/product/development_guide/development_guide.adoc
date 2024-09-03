@@ -6,30 +6,20 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +2
+
 include::transactions.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::the_resource_manager.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::general_transaction_issues.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::tools.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::configuration_options.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::important_log_messages.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::troubleshooting.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2

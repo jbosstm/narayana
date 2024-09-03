@@ -6,6 +6,8 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +2
+
 include::integration_with_karaf.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2

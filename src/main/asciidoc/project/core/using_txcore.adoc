@@ -1,13 +1,13 @@
-== Using ArjunaCore
+= Using ArjunaCore
 
 This section describes _ArjunaCore_ and _Transactional Objects for Java_ (TXOJ) in more detail, and shows how to use ArjunaCore to construct transactional applications.
 
 [NOTE]
 In previous releases ArjunaCore was often referred to as TxCore.
 
-=== State management
+== State management
 
-==== Object states
+=== Object states
 
 ArjunaCore needs to be able to remember the state of an object for several purposes, including recovery (the state represents some past state of the object), and for persistence (the state represents the final state of an object at application termination).
 Since all of these requirements require common functionality they are all implemented using the same mechanism - the classes Input/OutputObjectState and Input/OutputBuffer.
@@ -51,7 +51,7 @@ include::extras/InputObjectState.java[]
 The `InputObjectState` and `OutputObjectState` classes provides all the functionality of `InputBuffer` and `OutputBuffer`, through inheritance, and add two additional instance variables that signify the Uid and type of the object for which the `InputObjectStat` or `OutputObjectState` instance is a compressed image.
 These are used when accessing the object store during storage and retrieval of the object state.
 
-=== The object store
+== The object store
 
 The object store provided with ArjunaCore deliberately has a fairly restricted interface so that it can be implemented in a variety of ways.
 For example, object stores are implemented in shared memory, on the Unix file system (in several different forms), and as a remotely accessible store.
@@ -96,12 +96,12 @@ However, doing so can impose a significant performance penalty on the applicatio
 // How / where do you do this?
 To prevent transactional object state flushes, set the `ObjectStoreEnvironmentBean.objectStoreSync` variable to `OFF`.
 
-=== Selecting an object store implementation
+== Selecting an object store implementation
 
 ArjunaCore comes with support for several different object store implementations.
 The Appendix describes these implementations, how to select and configure a given implementation on a per-object basis using the `ObjectStoreEnvironmentBean.objectStoreType` property variable, and indicates how additional implementations can be provided.
 
-==== StateManager
+=== StateManager
 
 The ArjunaCore class `StateManager` manages the state of an object and provides all of the basic support mechanisms required by an object for state management purposes. `StateManager` is responsible for creating and registering appropriate resources concerned with the persistence and recovery of the transactional object.
 If a transaction is nested, then `StateManager` will also propagate these resources between child transactions and their parents at commit time.
@@ -169,7 +169,7 @@ It uses instances of the classes `InputObjectState` and `OutputObjectState` both
 An additional argument passed to the `save_state` and `restore_state` operations allows the programmer to determine the purpose for which any given invocation is being made.
 This allows different information to be saved for recovery and persistence purposes.
 
-==== Object models
+=== Object models
 
 ArjunaCore supports two models for objects, which affect how an objects state and concurrency control are implemented.
 
@@ -195,7 +195,7 @@ The default model is SINGLE.
 The programmer can override this on a per-object basis by using the appropriate constructor.
 ====
 
-==== Summary
+=== Summary
 
 In summary, the ArjunaCore class `StateManager` manages the state of an object and provides all of the basic support mechanisms required by an object for state management purposes.
 Some operations must be defined by the class developer.
@@ -226,7 +226,7 @@ The `type` method is used to determine the location in the object store where th
 This can actually be any valid string.
 However, you should avoid using the hash character (#) as this is reserved for special directories that ArjunaCore requires.
 
-==== Example
+=== Example
 
 Consider the following basic `Array` class derived from the `StateManager` class.
 In this example, to illustrate saving and restoring of an object’s state, the `highestIndex` variable is used to keep track of the highest element of the array that has a non-zero value.

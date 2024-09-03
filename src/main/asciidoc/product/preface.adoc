@@ -4,12 +4,12 @@
 [preface]
 = Preface
 
-:leveloffset: 1
-include::fallback_content/conventions.adoc[]
-:leveloffset: 0
+:leveloffset: +2
 
-:leveloffset: 1
+include::fallback_content/conventions.adoc[]
+
 include::fallback_content/feedback.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2
 
 :sectnums:

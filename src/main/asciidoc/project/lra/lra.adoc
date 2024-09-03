@@ -6,7 +6,7 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +2
 
 include::overview.adoc[]
 include::jaxrs.adoc[]
@@ -14,4 +14,4 @@ include::non-jaxrs.adoc[]
 include::examples.adoc[]
 include::integration.adoc[]
 
-:leveloffset: 0
+:leveloffset: -2

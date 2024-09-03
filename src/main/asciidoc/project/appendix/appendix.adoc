@@ -6,22 +6,16 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: +2
+
 include::object_store_implementations.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::core_class_definitions.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::idl_definitions.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::rts_transaction_statuses.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
 include::QANotes5-1.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2

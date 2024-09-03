@@ -11,3 +11,4 @@ An attribute of the @LRA annotation determines how the LRA is started and/or end
 
 A service may join the context by, in the case of a JAX-RS resource, providing REST endpoints (via annotations) that the implementation should invoke when the LRA is later closed or cancelled.
 The specification is transactional in the sense that all the endpoints involved in the interaction are informed about the decision to close or cancel the context regardless of system failures. 
+

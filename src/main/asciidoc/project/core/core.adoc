@@ -6,26 +6,26 @@
 :experimental:
 :sourcedir: .
 
-:leveloffset: 1
+:leveloffset: 2
 include::overview.adoc[]
 :leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: 2
 include::using_txcore.adoc[]
 :leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: 2
 include::general_transaction_issues.adoc[]
 :leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: 2
 include::hints_and_tips.adoc[]
 :leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: 2
 include::constructing_a_transactional_objects_for_java_application.adoc[]
 :leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: 2
 include::failure_recovery.adoc[]
 :leveloffset: 0

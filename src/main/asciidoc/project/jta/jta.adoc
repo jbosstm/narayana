@@ -8,70 +8,52 @@
 
 == Administration
 
-:leveloffset: 2
+:leveloffset: +2
+
 include::introduction.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::starting_and_stopping_transaction_manager.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::objectstore_management.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::jbossjta_runtime_information.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::failure_recovery_administration.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::errors_and_exceptions.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::selecting_the_jta_implementation.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2
 
 == Development
 
-:leveloffset: 2
+:leveloffset: +2
+
 include::jdbc.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::examples.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::using_jbossta_in_application_servers.adoc[]
-:leveloffset: 0
+
+:leveloffset: -2
 
 == Installation
 
-:leveloffset: 2
+:leveloffset: +2
+
 include::preparing_your_system.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::operating_system_services.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::logging.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::additional_jar_requirements.adoc[]
-:leveloffset: 0
 
-:leveloffset: 2
 include::setting_properties.adoc[]
-:leveloffset: 0
 
-:leveloffset: 1
+:leveloffset: -1
+
 include::quick_start_to_jta.adoc[]
-:leveloffset: 0
+
+:leveloffset: -1
