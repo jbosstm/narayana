@@ -1,0 +1,35 @@
+= XTS Guide
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+:leveloffset: 1
+include::introduction.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::getting_started.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::xts_api.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::stand_alone_coordination.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::participant_crash_recovery.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::web_service_transaction_management.adoc[]
+:leveloffset: 0
+
+:leveloffset: 1
+include::quickstarts_overview.adoc[]
+:leveloffset: 0
