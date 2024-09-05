@@ -1,4 +1,4 @@
-= Functionality of Narayana supported within Red Hat JBoss EAP
+= Narayana Project Documentation
 
 :leveloffset: 1
 include::{projectSourceDir}/author_group.adoc[]
