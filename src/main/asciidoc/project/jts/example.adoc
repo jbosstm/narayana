@@ -118,7 +118,6 @@ The interposed coordinator is automatically registered with the root coordinator
 * The `commit` invocation in the client process calls the root coordinator.
 The root coordinator calls the interposed coordinator, which in turn calls the `commit_one_phase` method for the resource.
 
-
 .Sequence Diagram
 image::../images/jts-sequence-diagram.png[]
 

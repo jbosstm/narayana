@@ -9,4 +9,4 @@ include::{projectSourceDir}/fallback_content/conventions.adoc[]
 include::{projectSourceDir}/fallback_content/feedback.adoc[]
 :leveloffset: -1
 
-:sectnums:
+:sectnums

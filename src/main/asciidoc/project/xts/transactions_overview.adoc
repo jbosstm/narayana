@@ -20,7 +20,6 @@ The main components involved in using and defining transactional Web Services us
 .Components Involved in an XTS Transaction
 image::../images/xts-fig-web-services-transaction.png[align="center"]
 
-
 == The Coordinator
 
 Every transaction is associated with a coordinator, which is responsible for governing the outcome of the transaction.

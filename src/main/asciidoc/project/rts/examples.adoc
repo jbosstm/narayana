@@ -67,4 +67,4 @@ For full details of this interface please refer to the javadoc for `org.jboss.na
 The accessibility of the `ParticipantsManagerFactory` from your application depends upon whether the container contains the RTS subsystem.
 Versions of the wildfly application server from `8.0.0.Alpha3` onwards contain this subsystem so your manifest should declare a dependency on it by adding the line "Dependencies: org.jboss.narayana.rts" to the `MANIFEST.MF` file in your archive.
 For other containers you should register the dependency programatically.
-The quickstarts contain examples of how to do this for the embedded Resteasy and Jersey JAX-RS containers (look for classes called JaxrsServer in the quickstart source for `rts/at/service/service2 and rts/at/recovery/recovery2`). 
+The quickstarts contain examples of how to do this for the embedded Resteasy and Jersey JAX-RS containers (look for classes called JaxrsServer in the quickstart source for `rts/at/service/service2 and rts/at/recovery/recovery2`).

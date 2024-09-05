@@ -49,7 +49,6 @@ So, the service WSDL defines a single port declaring a `CreateCoordinationContex
 This operation takes an input specfying the details of the transaction to be created, including the type of coordination required, timeout, and other relevant information.
 It returns an output containing the details of the newly-created transaction context: the transaction identifier, coordination type, and registration service URL.
 
-
 [source,xml]
 ----
 include::{projectSourceDir}/xts/extras/example-wsc-interfaces.xml[]

@@ -291,7 +291,6 @@ Interposition is required to use the {parentProduct} Advanced API.
 [source,java]
 ----
 
-
 ----
 ====
 

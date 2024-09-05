@@ -1,7 +1,6 @@
 #include <idl/CosTransactions.idl>
 #pragma javaPackage ""
 
-
 module Demo {
     exception DemoException {};
 

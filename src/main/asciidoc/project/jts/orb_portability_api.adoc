@@ -67,7 +67,6 @@ After destroy is called this reference may be null.
 See below.
 If the OA has already been initialised then the attribute object will not be added, and false will be returned.
 
-
 === ORB and OA Initialisation
 
 It is possible to register application-specific code with the ORB portability library which can be executed either before or after the ORB or OA are initialised.

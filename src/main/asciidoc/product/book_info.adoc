@@ -5,7 +5,6 @@
 include::{productSourceDir}/author_group.adoc[]
 :leveloffset: 0
 
-
 xref:fallback_content/legal_notice.adoc[Legal Notice]
 
 == Abstract
@@ -14,6 +13,5 @@ The Transactions Overview Guide contains information on how to use {productName}
 to develop applications that use transaction technology to manage business processes.
 This document covers functionality that is available within both the Narayana community version and
 is also available within the Red Hat JBoss EAP product.
-
 
 

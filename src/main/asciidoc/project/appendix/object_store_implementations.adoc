@@ -18,7 +18,6 @@ You can override the default object store implementation at runtime by setting t
 include::{projectSourceDir}/appendix/extras/appendix_StateStatus.java[]
 ----
 
-
 {productName} programmers do not usually need to interact with any of the object store implementations directly, apart from possibly creating them in the first place.
 Even this is not necessary if the default store type is used, since {productName} creates stores as necessary.
 All stores manipulate instances of the class `ObjectState`.
@@ -104,7 +103,6 @@ When using the JDBC object store, the application must provide an implementation
 ----
 include::{projectSourceDir}/appendix/extras/jdbcaccess.java[]
 ----
-
 
 The implementation of this class is responsible for providing the `Connection` which the JDBC ObjectStore uses to save and restore object states:
 

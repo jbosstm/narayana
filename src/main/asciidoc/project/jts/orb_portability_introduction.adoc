@@ -14,4 +14,4 @@ Note, instead of talking about the POA, this manual will consider the Object Ada
 
 Because the {productName} must be able to run on a number of different ORBs, we have developed an ORB portability interface which allows entire applications to be moved between ORBs with little or no modifications.
 This portability interface is available to the application programmer in the form of several Java classes.
-Note, the classes to be described in this document are located in the `com.arjuna.orbportability` package. 
+Note, the classes to be described in this document are located in the `com.arjuna.orbportability` package.

@@ -100,7 +100,7 @@ We therefore recommend that the service writer explicitly set the context on out
         builder.header(LRA_HTTP_CONTEXT_HEADER, lraId); // lraId must be valid
 
         Response response = builder.put(Entity.text("bodyText"));
-            
+
         // more business logic
 
         return Response.ok().entity(lraId.toASCIIString()).build();

@@ -33,7 +33,6 @@ A limit of `QUEUE_SIZE` elements has been imposed for this example.
 include::{projectSourceDir}/core/extras/example_queue_class.java[]
 ----
 
-
 == Constructors and finalizers
 
 Using an existing persistent object requires the use of a special constructor that takes the Uid of the persistent object, as shown in <<example_transactionalqueue>>.

@@ -14,4 +14,3 @@ include::{projectSourceDir}/compensations/compensations.adoc[]
 include::{projectSourceDir}/osgi/osgi.adoc[]
 include::{projectSourceDir}/appendix/appendix.adoc[]
 :leveloffset: -1
-

@@ -20,7 +20,6 @@ In XTS, participant does this communication, as shown in <<fig_participant_backe
 .Transactions, Participants, and Back-End Transaction Control
 image::../images/xts-guide-fig-participant-backend-control.png[align="center"]
 
-
 ==== Atomic Transaction
 
 [WARNING]
