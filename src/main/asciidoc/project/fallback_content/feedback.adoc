@@ -1,4 +1,3 @@
-
 = We Need Feedback!
 
 Please feel free to raise any issues you find with this document in our https://issues.jboss.org/browse/JBTM[issue tracking system]

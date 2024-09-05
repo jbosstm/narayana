@@ -5,6 +5,7 @@
 :icons: {icons}
 
 :leveloffset: +1
+
 include::{projectSourceDir}/rts/overview.adoc[]
 include::{projectSourceDir}/rts/transaction_model.adoc[]
 include::{projectSourceDir}/rts/client_responsibilities.adoc[]
@@ -12,4 +13,5 @@ include::{projectSourceDir}/rts/service_responsibilities.adoc[]
 include::{projectSourceDir}/rts/container_integration.adoc[]
 include::{projectSourceDir}/rts/examples.adoc[]
 include::{projectSourceDir}/rts/integrating_with_other_transaction_models.adoc[]
+
 :leveloffset: -1

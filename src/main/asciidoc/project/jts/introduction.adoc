@@ -9,6 +9,7 @@ Apart from ensuring that the run-time system is executing normally, there is lit
 Refer to Refer to <<jts_important_points_for_administrators>> for some specific concerns:
 
 [[jts_important_points_for_administrators]]
+.Important Points for Administrators
 * The present implementation of the {productName} system provides no security or protection for data.
 The objects stored in the {productName} object store are (typically) owned by the user who ran the application that created them.
 The Object Store and Object Manager facilities make no attempt to enforce even the limited form of protection that Unix/Windows provides.

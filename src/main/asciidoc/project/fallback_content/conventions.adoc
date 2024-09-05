@@ -1,5 +1,8 @@
-
 = Document Conventions
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
 
 This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
 
@@ -19,15 +22,17 @@ Used to highlight system input, including shell commands, file names and paths.
 Also used to highlight keycaps and key combinations.
 For example:
 
-[quote]
+====
 To see the contents of the file _my_next_bestselling_novel_ in your current working directory, enter the `cat my_next_bestselling_novel` command at the shell prompt and press `Enter` to execute the command.
+====
 
 The above includes a file name, a shell command and a keycap, all presented in mono-spaced bold and all distinguishable thanks to context.
 
 Key combinations can be distinguished from keycaps by the hyphen connecting each part of a key combination.
 For example:
 
-____
+[source,shell]
+----
 Press `Enter` to execute the command.
 
 Press
@@ -44,7 +49,7 @@ Press
 //   <keycap>F1</keycap>
 // </keycombo>
  to return to your X-Windows session.
-____
+----
 
 The first paragraph highlights the particular keycap to press.
 The second highlights two key combinations (each a set of three keycaps with each set pressed simultaneously).
@@ -52,16 +57,17 @@ The second highlights two key combinations (each a set of three keycaps with eac
 If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in ``mono-spaced bold``.
 For example:
 
-[quote]
+====
 File-related classes include `filesystem` for file systems, `file` for files, and `dir` for directories.
 Each class has its own associated set of permissions.
+====
 
 `Proportional Bold`
 
 This denotes words or phrases encountered on a system, including application names; dialog box text; labeled buttons; check-box and radio button labels; menu titles and sub-menu titles.
 For example:
 
-____
+====
 Choose `Preferences > Mouse` from the main menu bar to launch `Mouse Preferences`.
 In the `Buttons tab`, click the `Left-handed mouse` check box and click `Close` to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
 
@@ -70,7 +76,7 @@ Next, choose `Find` from the `Character Map` menu bar, type the name of the char
 The character you sought will be highlighted in the `Character Table`.
 Double-click this highlighted character to place it in the `Text to copy` field and then click the `Copy` button.
 Now switch back to your document and choose `Paste` from the `gedit` menu bar.
-____
+====
 
 The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in proportional bold and all distinguishable by context.
 
@@ -80,16 +86,16 @@ Whether mono-spaced bold or proportional bold, the addition of italics indicates
 Italics denotes text you do not input literally or displayed text that changes depending on circumstance.
 For example:
 
-____
+====
 To connect to a remote machine using ssh, type `ssh username@domain.name` at a shell prompt.
 If the remote machine is _example.com_ and your username on that machine is john, type `ssh john@example.com`.
 
 The `mount -o remount file-system` command remounts the named file system.
-For example, to remount the `_/home_ file system`, the command is `mount -o remount /home`.
+For example, to remount the `/home file system`, the command is `mount -o remount /home`.
 
 To see the version of a currently installed package, use the `rpm -q package` command.
 It will return a result as follows: `package-version-release`.
-____
+====
 
 Note the words in bold italics above -username, domain.name, file-system, package, version and release.
 Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
@@ -97,8 +103,9 @@ Each word is a placeholder, either for text you enter when issuing a command or 
 Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term.
 For example:
 
-[quote]
-Publican is a _DocBook_ publishing system.
+====
+Publican is a _Asciidoc_ publishing system.
+====
 
 == Pull-quote Conventions
 
@@ -119,19 +126,16 @@ package org.jboss.book.jca.ex1;
 
 import javax.naming.InitialContext;
 
-public class ExClient
-{
-   public static void main(String args[])
-       throws Exception
-   {
-      InitialContext iniCtx = new InitialContext();
-      Object         ref    = iniCtx.lookup("EchoBean");
-      EchoHome       home   = (EchoHome) ref;
-      Echo           echo   = home.create();
+public class ExClient {
+   public static void main(String args[]) throws Exception {
+       InitialContext iniCtx = new InitialContext();
+       Object         ref    = iniCtx.lookup("EchoBean");
+       EchoHome       home   = (EchoHome) ref;
+       Echo           echo   = home.create();
 
-      System.out.println("Created Echo");
+       System.out.println("Created Echo");
 
-      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+       System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
    }
 }
 ----

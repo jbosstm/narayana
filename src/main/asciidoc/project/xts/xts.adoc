@@ -5,7 +5,9 @@
 :icons: {icons}
 
 :leveloffset: +1
+
 include::{projectSourceDir}/xts/introduction.adoc[]
 include::{projectSourceDir}/xts/transactions_overview.adoc[]
 include::{projectSourceDir}/xts/protocols_overview.adoc[]
+
 :leveloffset: -1
