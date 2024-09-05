@@ -1,9 +1,9 @@
 = Introduction
 
 Apart from ensuring that the run-time system is executing normally, there is little continuous administration needed for the {productName} software.
-Refer to <<important_points_for_administrators>> for some specific concerns.
+Refer to <<jta_important_points_for_administrators>> for some specific concerns.
 
-[#important_points_for_administrators]
+[[jta_important_points_for_administrators]]
 * The present implementation of the {productName} system provides no security or protection for data.
 The objects stored in the {productName} object store are (typically) owned by the user who ran the application that created them.
 The Object Store and Object Manager facilities make no attempt to enforce even the limited form of protection that Unix/Windows provides.

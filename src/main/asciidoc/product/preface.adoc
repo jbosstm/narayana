@@ -1,14 +1,11 @@
 
 :sectnums!:
 
-= Preface
+== Preface
 
 :leveloffset: +1
-
 include::{productSourceDir}/fallback_content/conventions.adoc[]
-
 include::{productSourceDir}/fallback_content/feedback.adoc[]
-
 :leveloffset: -1
 
 :sectnums:

@@ -1,9 +1,7 @@
 
 = Functionality of Narayana supported within Red Hat JBoss EAP
 
-:leveloffset: 1
 include::{productSourceDir}/author_group.adoc[]
-:leveloffset: 0
 
 xref:fallback_content/legal_notice.adoc[Legal Notice]
 
