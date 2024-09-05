@@ -55,6 +55,7 @@ XTS provides the infrastructure for coordinating services during a business proc
 By organizing processes as transactions, business partners can collaborate on complex business interactions in a reliable manner, insuring the integrity of their data - usually represented by multiple changes to a database – but without the usual overheads and drawbacks of directly exposing traditional transaction-processing engines directly onto the web.
 <<example_application>> demonstrates how an application may manage service-based processes as transactions:
 
+[[example_application]]
 .An Evening On the Town
 The application in question allows a user to plan a social evening.
 This application is responsible for reserving a table at a restaurant, and reserving tickets to a show.

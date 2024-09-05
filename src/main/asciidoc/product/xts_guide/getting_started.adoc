@@ -30,7 +30,7 @@ Windows:
 XTS integrates WS-AT transactions with JTA.
 To invoke a web service inside a WS-AT transaction, simply start a new JTA transaction and invoke the web service.
 By default, XTS will create a WS-AT context and pass it with your request.
-See our quickstarts for an example: <<ref_wsatmultiservice>> and <<ref_wsatmultihop>>
+See our quickstarts for an example: xref:quickstarts_overview.adoc#ref_wsatmultiservice[WS-AT Multi-Service] and xref:quickstarts_overview.adoc#ref_wsatmultihop[WS-AT Multi-Hop]
 
 [[ref_createwsatservice]]
 === Creating Transactional Web Services
@@ -38,7 +38,7 @@ See our quickstarts for an example: <<ref_wsatmultiservice>> and <<ref_wsatmulti
 Similarly to the client-side, the service-side is also integrated with JTA.
 To make your web service WS-AT compliant, annotate your web service class or method with the EJB 3 `jakarta.ejb.TransactionAttribute` annotation or the JTA `jakarta.transaction.Transactional annotation`.
 XTS will automatically translate WS-AT context, received with the request, to JTA.
-See our quickstarts for an example: <<ref_wsatmultiservice>> and <<ref_wsatmultihop>>
+See our quickstarts for an example: xref:quickstarts_overview.adoc#ref_wsatmultiservice[WS-AT Multi-Service] and xref:quickstarts_overview.adoc#ref_wsatmultihop[WS-AT Multi-Hop]
 
 === Using Raw XTS API
 
@@ -70,7 +70,7 @@ The transaction can be committed by calling the `commit` method, and rolled back
 
 More complex transaction management, such as suspension and resumption of transactions, is supported by the `TransactionManagerFactory` and `TransactionManager` classes.
 
-Full details of the WS-AT APIs are provided in <<sec_xts_api>>.
+Full details of the WS-AT APIs are provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
 
 [[ref_wsatrawcreatingtransactionalwebservices]]
 ==== Creating Transactional Web Services
@@ -90,7 +90,7 @@ The use of participants allows the transactional control management aspects of t
 The creation of participants is not trivial, since they ultimately reflect the state of a Web service's back-end processing facilities, an aspect normally associated with an enterprise's own IT infrastructure.
 Implementations must use one of the following interfaces: `com.arjuna.wst11.Durable2PCParticipant`, `com.arjuna.wst11.Volatile2PCParticipant`.
 
-A full description of XTS's participant features is provided in <<sec_xts_api>>.
+A full description of XTS's participant features is provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
 
 == Working With WS-BA
 
@@ -113,19 +113,19 @@ If any of the Web Services invoked by the client register for the `BusinessActiv
 
 More complex business activity management, such as suspension and resumption of business activities, is supported by the `BusinessActivityManagerFactory` and `BusinessActivityManager` classes.
 
-Full details of the WS-BA APIs are provided in <<sec_xts_api>>.
+Full details of the WS-BA APIs are provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
 
 === Creating Transactional Web Services
 
 The theory behind creating WS-BA web services is similar to the WS-AT Raw API <<ref_wsatrawcreatingtransactionalwebservices>>.
 However, different participant classes are used: `com.arjuna.wst11.BusinessAgreementWithParticipantCompletionParticipant` , or `com.arjuna.wst11.BusinessAgreementWithCoordinatorCompletionParticipant`.
 
-A full description of XTS's participant features is provided in <<sec_xts_api>>.
+A full description of XTS's participant features is provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
 
 === New Compensating Transactions API
 
 There is a new Compensating Transactions API available to work with WS-BA applications.
-Please consult our quickstarts how to use it: <<ref_compensationsnontransactionalresource>> and <<ref_compensationstravelagent>>
+Please consult our quickstarts how to use it: xref:quickstarts_overview.adoc#ref_compensationsnontransactionalresource[non-transactional resource with compensating transactions API] and xref:quickstarts_overview.adoc#ref_compensationstravelagent[travel agent with compensating transactions API]
 
 [[ref_transactioncontextpropagation]]
 == Configuration of The Transaction Context Propagation
@@ -145,20 +145,20 @@ The default context propagation policy can also be overridden on a per Web Servi
 This allows the developer to easily state which Web Service clients must and must-not propagate the transaction context.
 This is done through the standard JAX-WS WebServiceFeature facility.
 A JAX-WS `WebServiceFeature` allows meta-information to be added to a port that describe cross-cutting behaviour, such as logging, security or compression.
-In our case we use the <<ref_jtaoverwsatfeature>> and <<ref_wstxfeature>> features.
+In our case we use the xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] and xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] features.
 
-<<ref_jtaoverwsatfeature>> states that any JTA, WS-AT, or WS-BA transactions should be distributed via calls on this client.
+xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] states that any JTA, WS-AT, or WS-BA transactions should be distributed via calls on this client.
 This feature is recommended to use, if you have a JTA transactions which should be propagated.
 
-<<ref_wstxfeature>> states that any WS-AT or WS-BA transaction should be distributed via calls on this client.
+xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] states that any WS-AT or WS-BA transaction should be distributed via calls on this client.
 You should use this feature, if you use Raw XTS or WS-BA APIs.
 
 Calls to the service will fail if the Web service does not support WS-AT or WS-BA (in this case, XTS sets `MustUnderstand=true` on the `CoordinationContext` SOAP header as the developer has explicitly stated that it is required).
 
 The developer may also state that the transaction must-not be distributed over calls to this Web service.
-This is done by setting the <<ref_jtaoverwsatfeature>> or <<ref_wstxfeature>> feature to disabled.
+This is done by setting the xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] or xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] feature to disabled.
 
-The use of <<ref_jtaoverwsatfeature>> and <<ref_wstxfeature>> overrides whatever default context propagation is set to in the `standalone-xts.xml`.
+The use of xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] and xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] overrides whatever default context propagation is set to in the `standalone-xts.xml`.
 
 == Summary
 

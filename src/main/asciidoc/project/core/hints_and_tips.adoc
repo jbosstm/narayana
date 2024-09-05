@@ -17,7 +17,7 @@ For example, if no transaction is active when the object is created, its state i
 ====
 [source,java]
 ----
-include::extras/nested_transactions_in_constructors.java[]
+include::{projectSourceDir}/core/extras/nested_transactions_in_constructors.java[]
 ----
 
 The two objects are created outside of the control of the top-level action _A_ .
@@ -53,7 +53,7 @@ For example:
 ====
 [source,java]
 ----
-include::extras/aliasing.java[]
+include::{projectSourceDir}/core/extras/aliasing.java[]
 ----
 
 Here, both `s1` and `s2` point at the same string.
@@ -80,7 +80,7 @@ From a programmer's point of view this amounts to making appropriate use of the 
 ====
 [source,java]
 ----
-include::extras/StateManager_activate_method.java[]
+include::{projectSourceDir}/core/extras/StateManager_activate_method.java[]
 ----
 
 Activate loads an object from the object store.
@@ -95,7 +95,7 @@ A value of null means use the default store.
 ====
 [source,java]
 ----
-include::extras/StateManager_deactivate_method.java[]
+include::{projectSourceDir}/core/extras/StateManager_deactivate_method.java[]
 ----
 
 The inverse of activate.
@@ -109,7 +109,7 @@ A value of null means use the default store.
 ====
 [source,java]
 ----
-include::extras/StateManager_modified_method.java[]
+include::{projectSourceDir}/core/extras/StateManager_modified_method.java[]
 ----
 
 Must be called prior to modifying the object in memory.

@@ -163,13 +163,13 @@ where domain is `jboss.jta` and key-property-list is a comma separated list of k
 |===
 
 .Transaction record
-[example]
+[source,xml]
 ----
 jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39
 ----
 
 .A participant record within a transaction
-[example]
+[source,xml]
 ----
 jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39,puid= 0_ffff7f000001_-3a612f5d_53f63052_3c
 ----

@@ -66,15 +66,14 @@ States are read using the `read_committed` operation and written by the `write_c
 == Recovery and persistence
 
 At the root of the class hierarchy is the class `StateManager`. `StateManager` is responsible for object activation and deactivation, as well as object recovery.
-Refer to <<_statemanager_signature>> for the simplified signature of the class.
+Refer to <<statemanager_signature>> for the simplified signature of the class.
 
+[[statemanager_signature]]
 .Simplified signature of the `StateManager` class
-====
 [source,java]
 ----
-include::extras/StateManager-signature.java[]
+include::{projectSourceDir}/core/extras/StateManager-signature.java[]
 ----
-====
 
 Objects are assumed to be of three possible flavors.
 
@@ -96,12 +95,10 @@ For example, for a spreadsheet it may not be necessary to save all entries if so
 The `save_state` implementation for a class `Example` that has integer member variables called A, B and C might be implemented as:
 
 .`save_state` Implementation
-====
 [source,java]
 ----
-include::extras/example-save_state.java[]
+include::{projectSourceDir}/core/extras/example-save_state.java[]
 ----
-====
 
 [NOTE]
 ====
@@ -147,7 +144,7 @@ This ensures that the two-phase property can be correctly maintained.
 
 [source,java]
 ----
-include::extras/LockManager_class.java[]
+include::{projectSourceDir}/core/extras/LockManager_class.java[]
 ----
 
 The `LockManager` class is primarily responsible for managing requests to set a lock on an object or to release a lock as appropriate.
@@ -157,12 +154,10 @@ This may in turn cause recovery information to be saved if the object is recover
 In a similar fashion, successful lock acquisition causes `activate` to be invoked.
 
 .This example class shows how to try to obtain a write lock on an object.
-====
 [source,java]
 ----
-include::extras/Example_extends_LockManager.java[]
+include::{projectSourceDir}/core/extras/Example_extends_LockManager.java[]
 ----
-====
 
 == The transactional protocol engine
 
@@ -178,7 +173,7 @@ Therefore, all ArjunaCore classes are also thread-safe.
 ====
 [source,java]
 ----
-include::extras/activation_termination_commitment.java[]
+include::{projectSourceDir}/core/extras/activation_termination_commitment.java[]
 ----
 (i) Creation of bindings to persistent objects::
 This could involve the creation of stub objects and a call to remote objects.
@@ -240,12 +235,10 @@ Assume that `Example` is a user-defined persistent class suitably derived from t
 Therefore, the body of `op1` should contain a call to the `setlock` operation of the concurrency controller.
 
 .Simple Concurrency Control
-====
 [source,java]
 ----
-include::extras/simple_concurrency_control.java[]
+include::{projectSourceDir}/core/extras/simple_concurrency_control.java[]
 ----
-====
 
 === Steps followed by the operation `setlock`
 

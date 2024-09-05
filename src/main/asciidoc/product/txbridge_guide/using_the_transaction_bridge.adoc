@@ -34,7 +34,7 @@ To use the inbound bridge, register the JAX-WS handler into the handler chain of
 .Registering the `handler` for Inbound Bridging
 [source,xml]
 ----
-include::{sourcedir}/extras/inboundbridging.xml[]
+include::{productSourceDir}/txbridge_guide/extras/inboundbridging.xml[]
 ----
 
 The web service may then operate as though running in the scope of a JTA transaction, as indeed it is.
@@ -54,7 +54,7 @@ To use the outbound bridge, register the JAX-WS handler into the handler chain o
 .Registering the `handler` for Outbound Bridging
 [source,xml]
 ----
-include::{sourcedir}/extras/outboundbridging.xml[]
+include::{productSourceDir}/txbridge_guide/extras/outboundbridging.xml[]
 ----
 
 The web service client may then make calls to web service implementations that expect to be invoked in the scope of a WS-AT transaction.
@@ -118,7 +118,7 @@ To enable full logging for the transaction bridge, which may be useful for debug
 .Configuring Transaction Bridge Logging
 [source,xml]
 ----
-include::{sourcedir}/extras/txbridgelogging.xml[]
+include::{productSourceDir}/txbridge_guide/extras/txbridgelogging.xml[]
 ----
 
 Note that the transaction bridge is a thin layer on top of the XTS and JTA/JTS components of {productName}, and that it also interacts with other parts of the application server.
@@ -128,7 +128,7 @@ The {productName} logging system is discussed in detail in the accompanying docu
 .Configuring verbose logging
 [source,xml]
 ----
-include::{sourcedir}/extras/verboselogging.xml[]
+include::{productSourceDir}/txbridge_guide/extras/verboselogging.xml[]
 ----
 
 Note also that deployment ordering issues can result in {productName} components, including the transaction bridge, becoming active before the logging system is fully configured.

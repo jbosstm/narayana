@@ -127,8 +127,10 @@ For example, Synchronization participants do not need the ability to recover in 
 
 == Optimizations to the Protocol
 
-There are several variants to the standard two-phase commit protocol that are worth knowing about, because they can have an impact on performance and failure recovery. <<_two_phase_variants>> gives more information about each one.
+There are several variants to the standard two-phase commit protocol that are worth knowing about, because they can have an impact on performance and failure recovery.
+<<xts_two_phase_variants>> gives more information about each one.
 
+[[xts_two_phase_variants]]
 .Variants to the Two-Phase Commit Protocol
 [cols=",",options="header",]
 |===

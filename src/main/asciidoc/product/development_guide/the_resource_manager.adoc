@@ -1,6 +1,6 @@
 = The Resource Manager
 
-== The `XAResource` interface 
+== The `XAResource` interface
 
 Some transaction specifications and systems define a generic resource which can be used to register arbitrary resources with a transaction, the JTA is much more XA-specific.
 Interface `javax.transaction.xa.XAResource` is a Java mapping of the XA interface.
@@ -28,7 +28,7 @@ Each `Rmid` is represented by a separate `XAResource` object.
 For example, it is legal for two different threads to perform the `start` and `end` operations on the same `XAResource` object.
 
 
-=== Extended `XAResource`control 
+=== Extended `XAResource`control
 
 By default, whenever an `XAResource` object is registered with a JTA-compliant transaction service, there is no way to manipulate the order in which it is invoked during the two-phase commit protocol, with respect to other `XAResource` objects.
 {productName}, however, provides support for controlling the order via the two interfaces `com.arjuna.ats.jta.resources.StartXAResource` and `com.arjuna.ats.jta.resources.EndXAResource`.
@@ -153,7 +153,7 @@ This is illustrated in <<resource_sharing_example>> .
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/resource_sharing_example.java[]
+include::{productSourceDir}/development_guide/extras/resource_sharing_example.java[]
 ----
 
 A transactional resource _r1_.
@@ -198,4 +198,4 @@ Dynamic registration is not supported in `XAResource`. There are two reasons thi
 
 * In the Java component-based application server environment, connections to the resource manager are acquired dynamically when the application explicitly requests a connection.
 These resources are enlisted with the transaction manager on an as-needed basis.
-* If a resource manager needs to dynamically register its work to the global transaction, you can implement this at the resource adapter level via a private interface between the resource adapter and the underlying resource manager. 
+* If a resource manager needs to dynamically register its work to the global transaction, you can implement this at the resource adapter level via a private interface between the resource adapter and the underlying resource manager.

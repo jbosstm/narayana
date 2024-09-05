@@ -208,12 +208,10 @@ You need to pass each interface as an explicit parameter in invocations of opera
 If you use the factory, and need to set the current context for a thread to the context which its control object returns, use the `resume` method of interface `Current`.
 
 .Interfaces `Terminator`, `Coordinator`, and `Control`
-====
 [source,C]
 ----
-include::{sourcedir}/extras/terminator_coordinator_control.java[]
+include::{projectSourceDir}/jts/extras/terminator_coordinator_control.java[]
 ----
-====
 
 When the factory creates a transaction, you can specify a timeout value in seconds.
 If the transaction times out, it is subject to possible roll-back.
@@ -224,12 +222,10 @@ Implicit context management provides simplified transaction management functiona
 Transactions created using `Current` do not alter a thread’s current transaction context.
 
 .Interface `Current`
-====
 [source,C]
 ----
-include::{sourcedir}/extras/Current.java[]
+include::{projectSourceDir}/jts/extras/Current.java[]
 ----
-====
 
 === Nested transactions
 
@@ -303,22 +299,18 @@ The next example rewrites the same program to use indirect context management an
 This example is considerably simpler, because the application only needs to start and either commit or abort actions.
 
 .Indirect context management and implicit propagation
-====
 [source,java]
 ----
-include::{sourcedir}/extras/simple_transactional_client_2.java[]
+include::{projectSourceDir}/jts/extras/simple_transactional_client_2.java[]
 ----
-====
 
 The last example illustrates the flexibility of OTS by using both direct and indirect context management in conjunction with explicit and implicit transaction propagation.
 
 .Direct and direct context management with explicitly and implicit propagation
-====
 [source,java]
 ----
-include::{sourcedir}/extras/simple_transactional_client_3.java[]
+include::{projectSourceDir}/jts/extras/simple_transactional_client_3.java[]
 ----
-====
 
 == Transaction controls
 
@@ -335,7 +327,7 @@ Obtain the `Control` object for a transaction when it is created either by using
 Obtain a `Control` for the transaction associated with the current thread using the `get_control` or `suspend` methods defined by the `Current` interface.
 
 [[_control_jbossts_specifics]]
-==== {parentProduct} specifics
+=== {parentProduct} specifics
 
 The transaction creator must be able to use its `Control`, but the OTS implementation decides whether other threads can use `Control`.
 {parentProduct} places no restrictions the users of the `Control`.
@@ -502,7 +494,7 @@ image::../images/jts-top_level_transaction_current.png[]
 image::../images/jts-subtransaction_current.png[]
 
 [[_current_jbossts_specific]]
-==== {parentProduct} specifics
+=== {parentProduct} specifics
 
 Ideally, you should Obtain `Current` by using the life-cycle service factory finder.
 However, very few ORBs support this. {parentProduct} provides method `get_current` of `Current` for this purpose.
@@ -531,12 +523,10 @@ The `setCheckedAction` method overrides the `CheckedAction` implementation assoc
 The Transaction Service uses a two-phase commit protocol to complete a top-level transaction with each registered resource.
 
 .Completing a top-level transaction
-====
 [source,java]
 ----
-include::{sourcedir}/extras/completing_top_level_transaction.java[]
+include::{projectSourceDir}/jts/extras/completing_top_level_transaction.java[]
 ----
-====
 
 The `Resource` interface defines the operations invoked by the transaction service.
 Each `Resource` object is implicitly associated with a single top-level transaction.
@@ -602,12 +592,10 @@ The resource can forget all knowledge of the transaction.
 Recoverable objects that need to participate within a nested transaction may support the `SubtransactionAwareResource` interface, a specialization of the `Resource` interface.
 
 .Interface `SubtransactionAwareResource`
-====
 [source,C]
 ----
-include::{sourcedir}/extras/SubtransactionAwareResource.java[]
+include::{projectSourceDir}/jts/extras/SubtransactionAwareResource.java[]
 ----
-====
 
 A recoverable object is only informed of the completion of a nested transaction if it registers a `SubtransactionAwareResource`.
 Register the object with either the `register_resource` of the `Coordinator` interface, or the `register_subtran_aware` method of the `Current` interface.
@@ -657,12 +645,10 @@ If you try to associate a `Synchronization` to a nested transaction, an exceptio
 Each object supporting the `Synchronization` interface is associated with a single top-level transaction.
 
 .`Synchronizations`
-====
 [source,C]
 ----
-include::{sourcedir}/extras/synchronization.java[]
+include::{projectSourceDir}/jts/extras/synchronization.java[]
 ----
-====
 
 The method `before_completion` is called before the two-phase commit protocol starts, and `after_completion` is called after the protocol completes.
 The final status of the transaction is given as a parameter to `after_completion`. If `before_completion` raises an exception, the transaction rolls back.
@@ -848,7 +834,7 @@ The Transaction Service must also apply a `resume` check, so that the transactio
 |`resume` check |Before a client or object associates a transaction context with its thread of control, a check is made to ensure that this transaction context was previously associated with the execution environment of the thread. This association would exist if the thread either created the transaction or received it in a transactional operation.
 |===
 
-==== {parentProduct} specifics
+=== {parentProduct} specifics
 
 Where support from the ORB is available, {parentProduct} supports X/Open checked transaction behavior.
 However, unless the `OTS_CHECKED_TRANSACTIONS` property variable is set to `YES`, checked transactions are disabled.
@@ -868,12 +854,10 @@ You can choose to block the thread which is terminating the transaction until al
 Each transaction has an instance of this class associated with it, and you can implement the class on a per-transaction basis.
 
 .`CheckedAction` implementation
-====
 [source,java]
 ----
-include::{sourcedir}/extras/CheckedAction-implementation.java[]
+include::{projectSourceDir}/jts/extras/CheckedAction-implementation.java[]
 ----
-====
 
 When a thread attempts to terminate the transaction and there active threads exist within it, the system invokes the `check` method on the transaction’s `CheckedAction` object.
 The parameters to the check method are:

@@ -2,5 +2,5 @@
 
 Primary support is for JAX-RS based services to participate in transactional Long Running Actions (LRAs).
 Full details are available in the MP-LRA specification document https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc.
-Also look in the examples section <<lra_examples>> below and in the MP-LRA TCK. 
+Also look in the xref:examples.adoc#lra_examples[examples section] below and in the MP-LRA TCK.
 

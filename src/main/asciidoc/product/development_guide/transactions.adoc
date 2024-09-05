@@ -129,7 +129,7 @@ if `resume` is invoked when the calling thread is already associated with anothe
 .Using the `suspend`method
 [source,java]
 ----
-include::{sourcedir}/extras/using_suspend_method.java[]
+include::{productSourceDir}/development_guide/extras/using_suspend_method.java[]
 ----
 
 [NOTE]
@@ -209,7 +209,7 @@ The `equals` method returns `true` if the target object and the parameter object
 .Method `equals`
 [source,java]
 ----
-include::{sourcedir}/extras/Transaction_Equality.java[]
+include::{productSourceDir}/development_guide/extras/Transaction_Equality.java[]
 ----
 
 == TransactionSynchronizationRegistry
@@ -222,7 +222,7 @@ Here we focus on implementation specific behavior.
 ====
 [source,java]
 ----
-include::{sourcedir}/extras/TransactionSynchronizationRegistry_standalone.java[]
+include::{productSourceDir}/development_guide/extras/TransactionSynchronizationRegistry_standalone.java[]
 ----
 
 This is a stateless object and hence is cheap to instantiate.

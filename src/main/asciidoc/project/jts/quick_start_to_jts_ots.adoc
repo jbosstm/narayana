@@ -49,7 +49,7 @@ For example:
 .Initialize ORB
 [source,java]
 ----
-include::{sourcedir}/extras/initORB.java[]
+include::{projectSourceDir}/jts/extras/initORB.java[]
 ----
 
 The `ORBInterface` class has operations `orb()` and `boa()`/`poa()`/`rootPoa()` for returning references to the orb and boa/child POA/root POA respectively after initialization has been performed.
@@ -61,7 +61,7 @@ In addition, it is necessary to use shutdownOA and shutdownORB (in that order) p
 .Shutdown ORB
 [source,java]
 ----
-include::{sourcedir}/extras/shutdownORB.java[]
+include::{projectSourceDir}/jts/extras/shutdownORB.java[]
 ----
 
 No further CORBA objects should be used once shutdown has been called.
@@ -166,4 +166,4 @@ If `OrbPortabilityEnvironmentBean.resolveService` is specified when the transact
 == Recovery manager
 
 You will need to start the recovery manager subsystem to ensure that transactions are recovered despite failures.
-In order to do this, you should run the `start-recovery-manager` script in `<ats_root>/bin`. 
+In order to do this, you should run the `start-recovery-manager` script in `<ats_root>/bin`.

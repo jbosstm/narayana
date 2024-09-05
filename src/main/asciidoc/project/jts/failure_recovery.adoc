@@ -20,13 +20,13 @@ Contents of each file are below.
 .RecoverManager-properties.xml
 [source,xml]
 ----
-include::{sourcedir}/extras/RecoveryManager-properties.xml[]
+include::{projectSourceDir}/jts/extras/RecoveryManager-properties.xml[]
 ----
 
 .orportability-properties.xml
 [source,xml]
 ----
-include::{sourcedir}/extras/orportability-properties.xml[]
+include::{projectSourceDir}/jts/extras/orportability-properties.xml[]
 ----
 
 These entries cause instances of the named classes to be loaded.
@@ -93,7 +93,7 @@ See the javadocs and the example `com.arjuna.ats.internal.jdbc.recovery.BasicXAR
 .XAConnectionRecovery implementation
 [source,java]
 ----
-include::{sourcedir}/extras/XAConnectionRecovery.java[]
+include::{projectSourceDir}/jts/extras/XAConnectionRecovery.java[]
 ----
 
 .Multiple recovery domains and resource-initiated recovery
@@ -175,7 +175,7 @@ It is expressed in hours, with `240` being the default, and `0` meaning never to
 .ExpiryScanner properties
 [source,xml]
 ----
-include::{sourcedir}/extras/ExpiryScanner-properties.xml[]
+include::{projectSourceDir}/jts/extras/ExpiryScanner-properties.xml[]
 ----
 
 There are two `ExpiryScannner`'s for the assumed complete transactions, because there are different types in the ActionStore.
@@ -201,4 +201,4 @@ When a transaction successfully commits, the transaction log is removed from the
 The log is no longer required, since all registered Resources have responded successfully to the two-phase commit sequence.
 However, if a `Resource` calls `replay_completion` on the `RecoveryCoordinator` after the transaction it represents commits, the status returned is `StatusRolledback`.
 The transaction system does not keep a record of committed transactions, and assumes that in the absence of a transaction log, the transaction must have rolled back.
-This is in line with the `presumed abort protocol` used by the OTS. 
+This is in line with the `presumed abort protocol` used by the OTS.

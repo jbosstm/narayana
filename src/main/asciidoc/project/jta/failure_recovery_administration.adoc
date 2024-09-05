@@ -15,7 +15,7 @@ For database resources, this may be reported as tables or rows held by “in-dou
 For _TransactionalObjects for Java_ resources, an attempt to activate the `Transactional Object` (as when trying to get a lock) will fail.
 
 [[recovery-manager]]
-==== The Recovery Manager
+== The Recovery Manager
 
 The failure recovery subsystem of {productName} requires that the stand-alone Recovery Manager process be running for each `ObjectStore` (typically one for each node on the network that is running {productName} applications).
 The `RecoveryManager` file is located in the arjunacore JAR file within the package `com.arjuna.ats.arjuna.recovery.RecoveryManager`.
@@ -40,9 +40,9 @@ If the `-test` flag is used with the Recovery Manager then it will display a `Re
 The `RecoveryManager` reads the properties defined in the `jbossts-properties.xml` file.
 
 A default version of `jbossts-properties.xml` is supplied with the distribution.
-This can be used without modification, except possibly the debug tracing fields, as shown in <<_recovery_manager_output>>.
+This can be used without modification, except possibly the debug tracing fields, as shown in <<jta_recovery_manager_output>>.
 
-[[_recovery_manager_output]]
+[[jta_recovery_manager_output]]
 == Output
 
 It is likely that installations will want to have some form of output from the `RecoveryManager`, to provide a record of what recovery activity has taken place.

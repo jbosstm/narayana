@@ -13,40 +13,32 @@ ArjunaCore needs to be able to remember the state of an object for several purpo
 Since all of these requirements require common functionality they are all implemented using the same mechanism - the classes Input/OutputObjectState and Input/OutputBuffer.
 
 .`OutputBuffer`
-====
 [source,java]
 ----
-include::extras/OutputBuffer.java[]
+include::{projectSourceDir}/core/extras/OutputBuffer.java[]
 ----
-====
 
 .`InputBuffer`
-====
 [source,java]
 ----
-include::extras/InputBuffer.java[]
+include::{projectSourceDir}/core/extras/InputBuffer.java[]
 ----
-====
 
 The `InputBuffer` and `OutputBuffer` classes maintain an internal array into which instances of the standard Java types can be contiguously packed or unpacked, using the `pack` or `unpack` operations.
 This buffer is automatically resized as required should it have insufficient space.
 The instances are all stored in the buffer in a standard form called _network byte order_ to make them machine independent.
 
 .`OutputObjectState`
-====
 [source,java]
 ----
-include::extras/OutputObjectState.java[]
+include::{projectSourceDir}/core/extras/OutputObjectState.java[]
 ----
-====
 
 .InputObjectState
-====
-[source,Java]
+[source,java]
 ----
-include::extras/InputObjectState.java[]
+include::{projectSourceDir}/core/extras/InputObjectState.java[]
 ----
-====
 
 The `InputObjectState` and `OutputObjectState` classes provides all the functionality of `InputBuffer` and `OutputBuffer`, through inheritance, and add two additional instance variables that signify the Uid and type of the object for which the `InputObjectStat` or `OutputObjectState` instance is a compressed image.
 These are used when accessing the object store during storage and retrieval of the object state.
@@ -71,20 +63,16 @@ These shadows replace the original only when the `commit_state` operation is inv
 Normally all interaction with the object store is performed by ArjunaCore system components as appropriate thus the existence of any shadow versions of objects in the store are hidden from the programmer.
 
 .StateStatus
-====
 [source,java]
 ----
-include::extras/StateStatus.java[]
+include::{projectSourceDir}/core/extras/StateStatus.java[]
 ----
-====
 
 .ObjectStore
-====
 [source,java]
 ----
-include::extras/ObjectStore.java[]
+include::{projectSourceDir}/core/extras/ObjectStore.java[]
 ----
-====
 
 When a transactional object is committing, it must make certain state changes persistent, so it can recover in the event of a failure and either continue to commit, or rollback.
 When using `TXOJ`, ArjunaCore will take care of this automatically.
@@ -127,12 +115,10 @@ This object property is selected at object construction time and cannot be chang
 Thus, an object cannot gain (or lose) recovery capabilities at some arbitrary point during its lifetime.
 
 .Object Store Implementation Using `StateManager`
-====
 [source,java]
 ----
-include::extras/object_store_implementation_using_StateManager.java[]
+include::{projectSourceDir}/core/extras/object_store_implementation_using_StateManager.java[]
 ----
-====
 
 If an object is recoverable or persistent, `StateManager` will invoke the operations `save_state` (while performing deactivation), `restore_state` (while performing activation), and `type` at various points during the execution of the application.
 These operations must be implemented by the programmer since `StateManager` does not have access to a runtime description of the layout of an arbitrary Java object in memory and thus cannot implement a default policy for converting the in memory version of the object to its passive form.
@@ -141,12 +127,10 @@ For example, the `save_state` implementation for a class `Example` that had memb
 
 .Example implementation of `StateManager`
 [#example_methods_for_StateManager]
-====
 [source,java]
 ----
-include::extras/example_methods_for_StateManager.java[]
+include::{projectSourceDir}/core/extras/example_methods_for_StateManager.java[]
 ----
-====
 
 In order to support crash recovery for persistent objects, all `save_state` and `restore_state` methods of user objects must call `super.save_state` and `super.restore_state`.
 
@@ -232,13 +216,11 @@ Consider the following basic `Array` class derived from the `StateManager` class
 In this example, to illustrate saving and restoring of an object’s state, the `highestIndex` variable is used to keep track of the highest element of the array that has a non-zero value.
 
 .`Array` Class
-[#array-example]
-====
+[[array-example]]
 [source,java]
 ----
-include::extras/Array_class.java[]
+include::{projectSourceDir}/core/extras/Array_class.java[]
 ----
-====
 
 == Lock management and concurrency control
 
@@ -255,12 +237,10 @@ To access the shared memory and other more complex lock store implementations it
 ====
 
 .`LockStore`
-====
 [source,java]
 ----
-include::extras/LockStore.java[]
+include::{projectSourceDir}/core/extras/LockStore.java[]
 ----
-====
 
 === Selecting a lock store implementation
 
@@ -310,12 +290,10 @@ By driving the `StateManager` class, it is also responsible for registering `Res
 The application programmer simply sets appropriate locks, starts and ends transactions, and extends the `save_state` and `restore_state` methods of `StateManager`.
 
 .`LockResult`
-====
 [source,java]
 ----
-include::extras/LockResult.java[]
+include::{projectSourceDir}/core/extras/LockResult.java[]
 ----
-====
 
 The `setlock` operation must be parametrized with the type of lock required (READ or WRITE), and the number of retries to acquire the lock before giving up.
 If a lock conflict occurs, one of the following scenarios will take place:
@@ -330,12 +308,10 @@ It is the responsibility of the programmer to ensure that the remainder of the c
 Below are examples of the use of the `setlock` operation.
 
 .`setlock` method usage
-====
 [source,java]
 ----
-include::extras/setlock.java[]
+include::{projectSourceDir}/core/extras/setlock.java[]
 ----
-====
 
 The concurrency control mechanism is integrated into the atomic action mechanism, thus ensuring that as locks are granted on an object appropriate information is registered with the currently running atomic action to ensure that the locks are released at the correct time.
 This frees the programmer from the burden of explicitly freeing any acquired locks if they were acquired within atomic actions.
@@ -350,12 +326,10 @@ Such information is maintained by the actual `Lock` class instances which provid
 This separation is important in that it allows the programmer to derive new lock types from the basic `Lock` class and by providing appropriate definitions of the conflict operations enhanced levels of concurrency may be possible.
 
 .`LockMode`Class
-====
 [source,java]
 ----
-include::extras/LockMode.java[]
+include::{projectSourceDir}/core/extras/LockMode.java[]
 ----
-====
 
 The `Lock` class provides a `modifiesObject` operation which `LockManager` uses to determine if granting this locking request requires a call on modified.
 This operation is provided so that locking modes other than simple read and write can be supported.

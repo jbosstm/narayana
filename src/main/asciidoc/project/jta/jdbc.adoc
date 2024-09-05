@@ -32,18 +32,16 @@ If the database is not transactional, ACID properties cannot be guaranteed.
 === Loading drivers
 
 .Instantiating and using the driver within an application
-====
 [source,java]
 ----
-include::extras/instantiating_transactionaldriver.java[]
+include::{projectSourceDir}/jta/extras/instantiating_transactionaldriver.java[]
 ----
-====
 
 .Registering the drivers with the JDBC driver manager using the Java system properties
 ====
 [source,java]
 ----
-include::extras/registering_transactionaldriver_using_jdbc_driver_manager.java[]
+include::{projectSourceDir}/jta/extras/registering_transactionaldriver_using_jdbc_driver_manager.java[]
 ----
 
 The jdbc.drivers property contains a colon-separated list of driver class names, which the JDBC driver manager loads when it is initialized.
@@ -57,7 +55,7 @@ It is also possible to explicitly create an instance of the JDBC driver.
 
 [source,java]
 ----
-include::extras/class.forName.java[]
+include::{projectSourceDir}/jta/extras/class.forName.java[]
 ----
 ====
 
@@ -102,7 +100,7 @@ Details of how to do this can be found in the JDBC tutorial available at the Jav
 ====
 [source,java]
 ----
-include::extras/storing_datasource_in_jndi.java[]
+include::{projectSourceDir}/jta/extras/storing_datasource_in_jndi.java[]
 ----
 
 The `Context.INITIAL_CONTEXT_FACTORY` property is the JNDI way of specifying the type of JNDI implementation to use.
@@ -111,7 +109,7 @@ The application must pass an appropriate connection URL to the JDBC driver:
 
 [source,java]
 ----
-include::extras/passing_connection_url_to_jdbc.java[]
+include::{projectSourceDir}/jta/extras/passing_connection_url_to_jdbc.java[]
 ----
 
 The JNDI URL must be pre-pended with `jdbc:arjuna:` in order for the `TransactionalDriver` to recognize that the `DataSource` must participate within transactions and be driven accordingly.
@@ -137,7 +135,7 @@ The application code must specify which dynamic class the TransactionalDriver sh
 
 [source,java]
 ----
-include::extras/instantiating_dynamic_class.java[]
+include::{projectSourceDir}/jta/extras/instantiating_dynamic_class.java[]
 ----
 ====
 
@@ -164,12 +162,10 @@ When the transaction terminates, this resource either commits or rolls back any 
 Once created, the driver and any connection can be used in the same way as any other JDBC driver or connection.
 
 .Creating and using a connection
-====
 [source,java]
 ----
-include::extras/creating_and_using_a_connection.java[]
+include::{projectSourceDir}/jta/extras/creating_and_using_a_connection.java[]
 ----
-====
 
 === Connection pooling
 

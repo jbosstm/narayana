@@ -1,25 +1,15 @@
 = RTS
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
+:toc: {toc}
+:icons: {icons}
 
-:leveloffset: +2
-
-include::overview.adoc[]
-
-include::transaction_model.adoc[]
-
-include::client_responsibilities.adoc[]
-
-include::service_responsibilities.adoc[]
-
-include::container_integration.adoc[]
-
-include::examples.adoc[]
-
-include::integrating_with_other_transaction_models.adoc[]
-
-:leveloffset: -2
+:leveloffset: +1
+include::{projectSourceDir}/rts/overview.adoc[]
+include::{projectSourceDir}/rts/transaction_model.adoc[]
+include::{projectSourceDir}/rts/client_responsibilities.adoc[]
+include::{projectSourceDir}/rts/service_responsibilities.adoc[]
+include::{projectSourceDir}/rts/container_integration.adoc[]
+include::{projectSourceDir}/rts/examples.adoc[]
+include::{projectSourceDir}/rts/integrating_with_other_transaction_models.adoc[]
+:leveloffset: -1

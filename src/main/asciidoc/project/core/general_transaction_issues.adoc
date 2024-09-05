@@ -23,7 +23,7 @@ Since this operation expects instances of `AbstractRecord`, you must create an i
 .Class `com.arjuna.ats.arjuna.LastResourceRecord`
 [source,Java]
 ----
-include::extras/LastResourceRecord.java[]
+include::{projectSourceDir}/core/extras/LastResourceRecord.java[]
 ----
 ====
 
@@ -94,20 +94,19 @@ Exercise caution when writing the `save_state` and `restore_state` operations to
 This restriction arises due to the fact that ArjunaCore may invoke `restore_state` as part of its commit processing resulting in the attempt to execute an atomic action during the commit or abort phase of another action.
 This might violate the atomicity properties of the action being committed or aborted and is thus discouraged.
 
-.
 ====
-If we consider the <<_array_example>> given previously, the `set` and `get` operations could be implemented as shown below.
+If we consider the xref:using_txcore.adoc#array-example[`Array` class] given previously, the `set` and `get` operations could be implemented as shown below.
 
 This is a simplification of the code, ignoring error conditions and exceptions.
 
 [source,java]
 ----
-include::extras/array_set_method.java[]
+include::{projectSourceDir}/core/extras/array_set_method.java[]
 ----
 
 [source,java]
 ----
-include::extras/array_get_method.java[]
+include::{projectSourceDir}/core/extras/array_get_method.java[]
 ----
 ====
 

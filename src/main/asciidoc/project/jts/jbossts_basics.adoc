@@ -106,12 +106,10 @@ If the thread needs to be associated with the transaction, use the `resume` meth
 However, if newly created threads need to automatically inherit the transaction context of their parent, then they should extend the `OTS_Thread` class.
 
 .Extending the [class]``OTS_Thread``class
-====
 [source,java]
 ----
-include::{sourcedir}/extras/OTS_Thread.java[]
+include::{projectSourceDir}/jts/extras/OTS_Thread.java[]
 ----
-====
 
 Call the `run` method of `OTS_Thread` at the start of the application thread class's `run` method.
 Call `terminate` before you exit the body of the application thread’s `run` method.

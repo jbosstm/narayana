@@ -151,7 +151,7 @@ Essentially the participant is resigning from the transaction.
 .Example Implementation of 2PC Participant's `prepare`method
 [source,java]
 ----
-include::{sourcedir}/extras/example-prepare-method.java[]
+include::{productSourceDir}/xts_guide/extras/example-prepare-method.java[]
 ----
 
 === TXContext

@@ -108,12 +108,10 @@ These will be invoked on each pass of the periodic recovery in the sort-order of
 The default Recovery Extension settings are:
 
 .Recovery Environment Bean XML
-====
 [source,xml]
 ----
-include::extras/recoveryEnvironmentBean.xml[]
+include::{projectSourceDir}/core/extras/recoveryEnvironmentBean.xml[]
 ----
-====
 
 === Expired entry removal
 
@@ -136,30 +134,24 @@ The expiry time should be greater than the lifetime of any single {productName}-
 The Expiry Scanner properties for these are:
 
 .Recovery Environment Bean XML
-====
 [source,xml]
 ----
-include::extras/recoveryEnvironmentBeanExpiryScanners.xml[]
+include::{projectSourceDir}/core/extras/recoveryEnvironmentBeanExpiryScanners.xml[]
 ----
-====
 
 To illustrate the behavior of a recovery module, the following pseudo code describes the basic algorithm used for Atomic Action transactions and Transactional Objects for java.
 
 .AtomicAction pseudo code
-====
 [source,text]
 ----
-include::extras/atomicaction.txt[]
+include::{projectSourceDir}/core/extras/atomicaction.txt[]
 ----
-====
 
 .Transactional Object pseudo code
-====
 [source,text]
 ----
-include::extras/txoj.txt[]
+include::{projectSourceDir}/core/extras/txoj.txt[]
 ----
-====
 
 == Writing a Recovery Module
 
@@ -181,12 +173,10 @@ A set of arguments are provided:
 The code of the main class that control the application is given below
 
 .TestRecoveryModule.java
-====
 [source,java]
 ----
-include::extras/TestRecoveryModule.java[]
+include::{projectSourceDir}/core/extras/TestRecoveryModule.java[]
 ----
-====
 
 The registered participant has the following behavior:
 
@@ -203,33 +193,27 @@ The location of the file given in variable filename can be changed
 ====
 
 .SimpleRecord.java
-====
 [source,java]
 ----
-include::extras/SimpleRecord.java[]
+include::{projectSourceDir}/core/extras/SimpleRecord.java[]
 ----
-====
 
 The role of the Recovery Module in such application consists to read the content of the file used to store the status of the participant, to determine that status and print a message indicating if a recovery action is needed or not.
 
 .SimpleRecoveryModule.java
-====
 [source,java]
 ----
-include::extras/SimpleRecoveryModule.java[]
+include::{projectSourceDir}/core/extras/SimpleRecoveryModule.java[]
 ----
-====
 
 The recovery module should now be deployed in order to be called by the Recovery Manager.
 To do so, we just need to add an entry in the config file for the extension:
 
 .Recovery Environment Bean Recovery Extensions XML
-====
 [source,xml]
 ----
-include::extras/recoveryEnvironmentBeanRecoveryExtensions.xml[]
+include::{projectSourceDir}/core/extras/recoveryEnvironmentBeanRecoveryExtensions.xml[]
 ----
-====
 
 Once started, the Recovery Manager will automatically load the listed Recovery modules.
 

@@ -13,12 +13,11 @@ Each of the implementations implements the `ObjectStoreAPI` interface, which def
 You can override the default object store implementation at runtime by setting the `com.arjuna.ats.arjuna.objectstore.objectStoreType` property variable to one of the types described below.
 
 .Class `StateStatus`
-====
 [source,java]
 ----
-include::extras/appendix_StateStatus.java[]
+include::{projectSourceDir}/appendix/extras/appendix_StateStatus.java[]
 ----
-====
+
 
 {productName} programmers do not usually need to interact with any of the object store implementations directly, apart from possibly creating them in the first place.
 Even this is not necessary if the default store type is used, since {productName} creates stores as necessary.
@@ -54,12 +53,10 @@ This directory name is automatically prepended to any store-specific root inform
 The localized root name is specified when the store is created.
 The default name is `defaultStore`.
 
-====
 [source,text]
 ----
-include::extras/default_layout.txt[]
+include::{projectSourceDir}/appendix/extras/default_layout.txt[]
 ----
-====
 
 ==== The shadowing store
 
@@ -103,12 +100,11 @@ The transaction is subsequently forced to roll back.
 When using the JDBC object store, the application must provide an implementation of the `JDBCAccess` interface, located in the `com.arjuna.ats.arjuna.objectstore` package:
 
 .Interface `JDBCAccess`
-====
 [source,java]
 ----
-include::extras/jdbcaccess.java[]
+include::{projectSourceDir}/appendix/extras/jdbcaccess.java[]
 ----
-====
+
 
 The implementation of this class is responsible for providing the `Connection` which the JDBC ObjectStore uses to save and restore object states:
 

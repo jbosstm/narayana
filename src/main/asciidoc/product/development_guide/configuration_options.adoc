@@ -9,7 +9,7 @@ Typical usage is of the form:
 
 [source,java]
 ----
-include::{sourcedir}/extras/defaultTimeout.java[]
+include::{productSourceDir}/development_guide/extras/defaultTimeout.java[]
 ----
 
 These beans are singletons, instantiated upon first access, using the following algorithm.
@@ -48,12 +48,10 @@ In the case of properties that take multiple values, they are white-space-delimi
 +
 
 .Example recovery modules of Recovery Environment Bean
-====
 [source,xml]
 ----
-include::{sourcedir}/extras/EnvironmentBeans.xml[]
+include::{productSourceDir}/development_guide/extras/EnvironmentBeans.xml[]
 ----
-====
 
 . After the file is loaded, it is cached and is not re-read until the JVM is restarted.
 Changes to the properties file require a restart in order to take effect.
@@ -92,7 +90,7 @@ For ArjunaCore these are:
 * `com.arjuna.ats.arjuna.common.CoreEnvironmentBean`
 * `com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean`
 
-== {productName} JTA Configuration options 
+== {productName} JTA Configuration options
 
 The canonical reference for configuration options is the javadoc of the various EnvironmentBean classes.
 For {productName} JTA, these classes are the ones provided by ArjunaCore, as well as:
@@ -100,7 +98,7 @@ For {productName} JTA, these classes are the ones provided by ArjunaCore, as wel
 * `com.arjuna.ats.jdbc.common.JDBCEnvironmentBean`
 * `com.arjuna.ats.jta.common.JTAEnvironmentBean`
 
-== {productName} JTS Options 
+== {productName} JTS Options
 
 The canonical reference for configuration options is the javadoc of the various `EnvironmentBean` classes.
 For {productName} JTS these are the ones provided by ArjunaCore, as well as:
@@ -108,7 +106,7 @@ For {productName} JTS these are the ones provided by ArjunaCore, as well as:
 * `com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean`
 * `com.arjuna.ats.jts.common.JTSEnvironmentBean`
 
-== {productName} WS-AT/WS-BA Options 
+== {productName} WS-AT/WS-BA Options
 
 For {productName} WebService transaction protocols these are the ones provided by ArjunaCore, as well as:
 

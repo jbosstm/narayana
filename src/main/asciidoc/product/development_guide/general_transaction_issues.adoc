@@ -24,7 +24,7 @@ Each transaction has an instance of this class associated with it, and applicati
 .Class `CheckedAction`
 [source,java]
 ----
-include::{sourcedir}/extras/CheckedAction.java[]
+include::{productSourceDir}/development_guide/extras/CheckedAction.java[]
 ----
 
 When a thread attempts to terminate the transaction and there are active threads within it, the system will invoke the `check` method on the transaction's _CheckedAction_ object.
@@ -58,7 +58,7 @@ This information can be obtained during the execution of a transactional applica
 .Class `TxStats`
 [source,java]
 ----
-include::{sourcedir}/extras/TxStats.java[]
+include::{productSourceDir}/development_guide/extras/TxStats.java[]
 ----
 
 The class `ActionManager` gives further information about specific active transactions through the classes `getTimeAdded`, which returns the time (in milliseconds) when the transaction was created, and `inflightTransactions`, which returns the list of currently active transactions.

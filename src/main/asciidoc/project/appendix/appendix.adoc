@@ -1,21 +1,13 @@
 = Appendixes
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
+:toc: {toc}
+:icons: {icons}
 
-:leveloffset: +2
-
-include::object_store_implementations.adoc[]
-
-include::core_class_definitions.adoc[]
-
-include::idl_definitions.adoc[]
-
-include::rts_transaction_statuses.adoc[]
-
-include::QANotes5-1.adoc[]
-
-:leveloffset: -2
+:leveloffset: +1
+include::{projectSourceDir}/appendix/object_store_implementations.adoc[]
+include::{projectSourceDir}/appendix/core_class_definitions.adoc[]
+include::{projectSourceDir}/appendix/idl_definitions.adoc[]
+include::{projectSourceDir}/appendix/rts_transaction_statuses.adoc[]
+include::{projectSourceDir}/appendix/QANotes5-1.adoc[]
+:leveloffset: -1

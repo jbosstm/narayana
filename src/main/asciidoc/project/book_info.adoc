@@ -1,19 +1,14 @@
-
 = Functionality of Narayana supported within Red Hat JBoss EAP
 
 :leveloffset: 1
-include::author_group.adoc[]
+include::{projectSourceDir}/author_group.adoc[]
 :leveloffset: 0
-
 
 xref:fallback_content/legal_notice.adoc[Legal Notice]
 
-*Abstract*
+== Abstract
 
-The Transactions Overview Guide contains information on how to use {productName};
-to develop applications that use transaction technology to manage business processes.
-This document covers functionality that is available within both the Narayana community version and 
-is also available within the Red Hat JBoss EAP product.
+The Narayana Project Documentation contains information on how to use Narayana to develop applications that use transaction technology to manage business processes.
 
 
 

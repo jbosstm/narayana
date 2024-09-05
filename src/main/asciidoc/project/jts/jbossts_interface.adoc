@@ -38,12 +38,10 @@ The `prepare` phase generates consensus on the commit outcome, and the `commit` 
 However, if a resource is derived from `ArjunaOTS::ArjunaSubtranAwareResource`, it is driven by a two-phase commit protocol whenever a nested transaction commits.
 
 .ArjunaSubtranAwareResource
-====
 [source,java]
 ----
-include::{sourcedir}/extras/ArjunaSubtranAwareResource.java[]
+include::{projectSourceDir}/jts/extras/ArjunaSubtranAwareResource.java[]
 ----
-====
 
 During the first phase of the commit protocol the `prepare_subtransaction` method is called, and the resource behaves as though it were being driven by a top-level transaction, making any state changes provisional upon the second phase of the protocol.
 Any changes to persistent state must still be provisional upon the second phase of the top-level transaction, as well.
@@ -62,12 +60,10 @@ However, you have no control over the order in which resources are called, or wh
 The {parentProduct} interface `ArjunaOTS::OTSAbstractRecord` gives you this level of control.
 
 .OTSAbstractRecord
-====
 [source,java]
 ----
-include::{sourcedir}/extras/OTSAbstractRecord.java[]
+include::{projectSourceDir}/jts/extras/OTSAbstractRecord.java[]
 ----
-====
 
 [cols="1,1"]
 |===
@@ -102,12 +98,10 @@ When building applications using {parentProduct}, use `AtomicTransaction` for th
 It is located in the `com.arjuna.ats.jts.extensions.ArjunaOTS` package.
 
 .AtomicTransaction
-====
 [source,java]
 ----
-include::{sourcedir}/extras/AtomicTransaction.java[]
+include::{projectSourceDir}/jts/extras/AtomicTransaction.java[]
 ----
-====
 
 .AtomicTransaction's Methods
 [cols="1,1"]
@@ -155,24 +149,20 @@ If the transaction is created locally to the client, do not use the explicit int
 The transaction is implicitly associated with the transactional object because it resides within the same process.
 
 .ExplicitInterposition
-====
 [source,java]
 ----
-include::{sourcedir}/extras/ExplicitInterposition.java[]
+include::{projectSourceDir}/jts/extras/ExplicitInterposition.java[]
 ----
-====
 
 A transaction context can be propagated between client and server in two ways: either as a reference to the client’s transaction Control, or explicitly sent by the client.
 Therefore, there are two ways in which the interposed transaction hierarchy can be created and registered.
 For example, consider the class Example which is derived from LockManager and has a method increment:
 
 .ExplicitInterposition Example
-====
 [source,java]
 ----
-include::{sourcedir}/extras/ExplicitInterposition_example.java[]
+include::{projectSourceDir}/jts/extras/ExplicitInterposition_example.java[]
 ----
-====
 
 if the `Control` passed to the `register` operation of `ExplicitInterposition` is `null`, no exception is thrown.
 The system assumes that the client did not send a transaction context to the server.

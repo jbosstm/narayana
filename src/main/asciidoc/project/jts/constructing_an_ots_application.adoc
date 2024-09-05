@@ -40,12 +40,10 @@ Otherwise, you need to pass the transaction contexts as parameters to the releva
 === A transaction originator: indirect and implicit
 
 .Indirect and implicit transaction originator
-====
 [source,java]
 ----
-include::{sourcedir}/extras/indirect_and_implicit.java[]
+include::{projectSourceDir}/jts/extras/indirect_and_implicit.java[]
 ----
-====
 
 A transaction originator uses indirect context management and implicit transaction propagation.
 `txn_crt` is a pseudo object supporting the `Current` interface.
@@ -54,22 +52,18 @@ The client uses the `begin` operation to start the transaction, which becomes im
 The program commits the transaction associated with the client thread.
 The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
 
-====
 [source,java]
 ----
-include::{sourcedir}/extras/indirect_and_implicit_close.java[]
+include::{projectSourceDir}/jts/extras/indirect_and_implicit_close.java[]
 ----
-====
 
 === Transaction originator: direct and explicit
 
 .Direct and explicit transaction originator
-====
 [source,java]
 ----
-include::{sourcedir}/extras/direct_and_explicit.java[]
+include::{projectSourceDir}/jts/extras/direct_and_explicit.java[]
 ----
-====
 
 This transaction originator uses direct context management and explicit transaction propagation.
 The client uses a factory object supporting the `CosTransactions::TransactionFactory` interface to create a new transaction, and uses the returned `Control` object to retrieve the `Terminator` and `Coordinator` objects.
@@ -79,22 +73,18 @@ This example uses explicit propagation of the context.
 The `Control` object reference is passed as an explicit parameter of the request.
 It is declared in the OMG IDL of the interface.
 
-====
 [source,java]
 ----
-include::{sourcedir}/extras/direct_and_explicit_client_requests.java[]
+include::{projectSourceDir}/jts/extras/direct_and_explicit_client_requests.java[]
 ----
-====
 
 The transaction originator uses the `Terminator` object to commit the transaction.
 The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
 
-====
 [source,java]
 ----
-include::{sourcedir}/extras/direct_and_explicit_commit.java[]
+include::{projectSourceDir}/jts/extras/direct_and_explicit_commit.java[]
 ----
-====
 
 == Implementing a transactional client
 
@@ -150,12 +140,10 @@ This approach allows the server to apply integrity constraints which apply to th
 ====
 
 .Transactional object
-====
-[source,Java]
+[source,java]
 ----
-include::{sourcedir}/extras/transactional_object.java[]
+include::{projectSourceDir}/jts/extras/transactional_object.java[]
 ----
-====
 
 == Failure models
 

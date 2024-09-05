@@ -52,7 +52,7 @@ It returns an output containing the details of the newly-created transaction con
 
 [source,xml]
 ----
-include::extras/example-wsc-interfaces.xml[]
+include::{projectSourceDir}/xts/extras/example-wsc-interfaces.xml[]
 ----
 
 === Registration
@@ -67,10 +67,11 @@ Thus, the service WSDL exposes a single port declaring a `Register` operation.
 This operation takes an input specifying the details of the participant which is to be registered, including the participant protocol type.
 It returns a corresponding output response.
 
+[[example_wsc_registration]]
 .Registration ServiceWSDL Interface
 [source,xml]
 ----
-include::extras/example-wsc-registration.xml[]
+include::{projectSourceDir}/xts/extras/example-wsc-registration.xml[]
 ----
 
 Once a participant is registered with a coordinator through the registration service, it receives coordination messages from the coordinator.
@@ -152,7 +153,7 @@ The WS-Transaction specification proposes two distinct models, where each suppor
 
 The following discussion presents the interactions between the client, web service and the transaction coordinator in great detail for expository purposes only.
 Most of this activity happens automatically behind the scenes.
-The actual APIs used to initiate and complete a transaction and to register a participant and drive it through the commit or abort process are described in <<sec_xts_api>>.
+The actual APIs used to initiate and complete a transaction and to register a participant and drive it through the commit or abort process are described in the XTS API.
 
 ==== Atomic Transactions
 
@@ -273,9 +274,10 @@ In this latter case, the coordinator asks each non-exited participant to compens
 For instance, the participant might credit a bank account which it previously debited.
 If all participants exit or complete without failure, the coordinator notifies each completed participant that the activity has been closed.
 
-Underpinning all of this are three fundamental assumptions, detailed in <<wsba_assumptions>> .
+Underpinning all of this are three fundamental assumptions, detailed in the <<wsba_assumptions>>.
 
-Assumptions of WS-BA
+[[wsba_assumptions]]
+.Assumptions of WS-BA
 
 * All state transitions are reliably recorded, including application state and coordination metadata (the record of sent and received messages).
 * All request messages are acknowledged, so that problems are detected as early as possible.

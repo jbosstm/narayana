@@ -12,12 +12,10 @@ If this unique name has not been passed in a previous call to `getInstance` you 
 Two invocations of getInstance made with the same unique name, within the same JVM, will return the same ORB instance.
 
 ._ORB.java_
-====
 [source,java]
 ----
-include::{sourcedir}/extras/ORB.java[]
+include::{projectSourceDir}/jts/extras/ORB.java[]
 ----
-====
 
 We shall now describe the various methods of the ORB class.
 
@@ -47,12 +45,10 @@ From the `RootOA` you can obtain a reference to the `RootOA` for a given ORB by 
 To create a `ChildOA` instance use the createPOA method on the `RootOA`.
 
 ._OA.java_
-====
 [source,java]
 ----
-include::{sourcedir}/extras/OA.java[]
+include::{projectSourceDir}/jts/extras/OA.java[]
 ----
-====
 
 We shall now describe the various methods of the OA class.
 
@@ -78,12 +74,10 @@ It is possible to register application-specific code with the ORB portability li
 Application programs can inherit from either `com.arjuna.orbportability.orb.Attribute` or `com.arjuna.orbportability.oa.Attribute` and pass these instances to the addAttribute method of the ORB/OA classes respectively:
 
 ._Attribute.java_
-====
 [source,java]
 ----
-include::{sourcedir}/extras/Attribute.java[]
+include::{projectSourceDir}/jts/extras/Attribute.java[]
 ----
-====
 
 By default, the `postORBInit/postOAInit` methods return true, which means that any instances of derived classes will be invoked after either the ORB or OA have been initialised.
 By redefining this to return false, a particular instance will be invoked before either the ORB or OA have been initialised.
@@ -97,12 +91,10 @@ The pre/post interfaces which are to be registered have a single work method, ta
 When the ORB and OA are being shut down (using `shutdown/destroy` ), each registered class will have its work method invoked.
 
 ._Shutdown.java_
-====
 [source,java]
 ----
-include::{sourcedir}/extras/Shutdown.java[]
+include::{projectSourceDir}/jts/extras/Shutdown.java[]
 ----
-====
 
 === Specifying the ORB to use
 
@@ -165,12 +157,10 @@ ORB Portability provides the Services class in order to provide a more manageabl
 The implementation of this class takes care of any ORB specific locations mechanisms, and provides a single interface to a range of different object location implementations.
 
 ._Services.java_
-====
 [source,java]
 ----
-include::{sourcedir}/extras/Services.java[]
+include::{projectSourceDir}/jts/extras/Services.java[]
 ----
-====
 
 There are currently several different object location and binding mechanisms supported by Services (not all of which are supported by all ORBs, in which case a suitable exception will be thrown):
 

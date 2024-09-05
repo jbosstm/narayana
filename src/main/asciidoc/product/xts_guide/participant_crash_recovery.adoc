@@ -112,7 +112,7 @@ An alternative is to implement the <<example_persistableatparticipant>>.
 .`PersistableATParticipant` Interface
 [source,java]
 ----
-include::{sourcedir}/extras/example-PersistableATParticipant.java[]
+include::{productSourceDir}/xts_guide/extras/example-PersistableATParticipant.java[]
 ----
 
 If a participant implements the `Serializable` interface, the XTS participant services implementation uses the serialization API to create a version of the participant which can be appended to the participant log entry.
@@ -130,7 +130,7 @@ Registration is performed using class `XTSATRecoveryManager` defined in package 
 .Registering for Recovery
 [source,java]
 ----
-include::{sourcedir}/extras/example-register-for-recovery.java[]
+include::{productSourceDir}/xts_guide/extras/example-register-for-recovery.java[]
 ----
 
 The Web service must provide an implementation of interface `XTSBARecoveryModule` in package `org.jboss.jbossts.xts.recovery.participant.ba`, as an argument to the `register` and `unregister` calls.
@@ -139,7 +139,7 @@ This instance identifies saved participant recovery records and recreates new, r
 .`XTSBARecoveryModule` Interface
 [source,java]
 ----
-include::{sourcedir}/extras/example-XTSATRecoveryModule.java[]
+include::{productSourceDir}/xts_guide/extras/example-XTSATRecoveryModule.java[]
 ----
 
 If a participant's recovery state was saved using serialization, the recovery module's `deserialize` method is called to recreate the participant.
@@ -202,7 +202,7 @@ An alternative is to implement the <<example_persistablebaparticipant>>.
 .`PersistableBAParticipant`Interface
 [source,java]
 ----
-include::{sourcedir}/extras/example-PersistableBAParticipant.java[]
+include::{productSourceDir}/xts_guide/extras/example-PersistableBAParticipant.java[]
 ----
 
 If a participant implements the `Serializable` interface, the XTS participant services implementation uses the serialization API to create a version of the participant which can be appended to the participant log entry.
@@ -221,7 +221,7 @@ Registration is performed using the `XTSBARecoveryManager`, defined in the `org.
 .`XTSBARecoveryManager` Class
 [source,java]
 ----
-include::{sourcedir}/extras/example-XTSBARecoveryManager.java[]
+include::{productSourceDir}/xts_guide/extras/example-XTSBARecoveryManager.java[]
 ----
 
 The Web service must provide an implementation of the `XTSBARecoveryModule` in the `org.jboss.jbossts.xts.recovery.participant.ba`, as an argument to the `register` and `unregister` calls.
@@ -230,7 +230,7 @@ This instance identifies saved participant recovery records and recreates new, r
 .`XTSBARecoveryModule`Interface
 [source,java]
 ----
-include::{sourcedir}/extras/example-XTSBARecoveryModule.java[]
+include::{productSourceDir}/xts_guide/extras/example-XTSBARecoveryModule.java[]
 ----
 
 If a participant's recovery state was saved using serialization, one of the recovery module's `deserialize` methods is called, so that it can recreate the participant.
@@ -267,7 +267,7 @@ Conversely, if a recovery record cannot be written because of a fault or a crash
 .`ConfirmCompletedParticipant` Interface
 [source,java]
 ----
-include::{sourcedir}/extras/example-ConfirmCompletedParticipant.java[]
+include::{productSourceDir}/xts_guide/extras/example-ConfirmCompletedParticipant.java[]
 ----
 
 When the participant is ready to complete, it should prepare its persistent changes by temporarily locking access to the relevant state in the local store and writing the changed data to disk, retaining both the old and new versions of the service state.

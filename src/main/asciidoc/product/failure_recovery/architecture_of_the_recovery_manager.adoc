@@ -137,7 +137,7 @@ However, if you wish to have an asynchronous interaction pattern, then the Recov
 .RecoveryScan interface
 [source,java]
 ----
-include::{sourcedir}/extras/recoveryScanInterface.java[]
+include::{productSourceDir}/failure_recovery/extras/recoveryScanInterface.java[]
 ----
 
 An instance of an object supporting this interface can be passed to the scan operation and its completed method will be called when recovery finishes.
@@ -186,7 +186,7 @@ As stated before each recovery module is used to recover a different type of tra
 .`RecoveryModule` interface
 [source,java]
 ----
-include::{sourcedir}/extras/recoveryModuleInterface.java[]
+include::{productSourceDir}/failure_recovery/extras/recoveryModuleInterface.java[]
 ----
 
 === {productName} Recovery Module Classes
@@ -326,7 +326,7 @@ Any errors will be reported during recovery.
 .`XAResourceRecovery` interface
 [source,java]
 ----
-include::{sourcedir}/extras/XAResourceRecoveryInterface.java[]
+include::{productSourceDir}/failure_recovery/extras/XAResourceRecoveryInterface.java[]
 ----
 
 Each method should return the following information:
@@ -356,7 +356,7 @@ As an alternative, starting with {productName} 4.4, users may provide an impleme
 .`XAResourceRecoveryHelper`
 [source,java]
 ----
-include::{sourcedir}/extras/XAResourceRecoveryHelper.java[]
+include::{productSourceDir}/failure_recovery/extras/XAResourceRecoveryHelper.java[]
 ----
 
 During each recovery sweep the `getXAResources` method will be called and recovery attempted on each element of the array.
@@ -405,7 +405,7 @@ For example:
 .XML datasource
 [source,xml]
 ----
-include::./extras/xmlDatasource.xml[]
+include::{productSourceDir}/failure_recovery/extras/xmlDatasource.xml[]
 ----
 ====
 
@@ -424,7 +424,7 @@ For example:
 .JNDI datasource
 [source,xml]
 ----
-include::./extras/jndiDatasource.xml[]
+include::{productSourceDir}/failure_recovery/extras/jndiDatasource.xml[]
 ----
 
 Because these classes are `XAResourceRecovery` instances they are passed any necessary initialization information via the initialise operation.

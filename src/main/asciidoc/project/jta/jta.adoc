@@ -1,59 +1,36 @@
 = JTA
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
+:toc: {toc}
+:icons: {icons}
 
 == Administration
 
 :leveloffset: +2
-
-include::introduction.adoc[]
-
-include::starting_and_stopping_transaction_manager.adoc[]
-
-include::objectstore_management.adoc[]
-
-include::jbossjta_runtime_information.adoc[]
-
-include::failure_recovery_administration.adoc[]
-
-include::errors_and_exceptions.adoc[]
-
-include::selecting_the_jta_implementation.adoc[]
-
+include::{projectSourceDir}/jta/introduction.adoc[]
+include::{projectSourceDir}/jta/starting_and_stopping_transaction_manager.adoc[]
+include::{projectSourceDir}/jta/objectstore_management.adoc[]
+include::{projectSourceDir}/jta/jbossjta_runtime_information.adoc[]
+include::{projectSourceDir}/jta/failure_recovery_administration.adoc[]
+include::{projectSourceDir}/jta/errors_and_exceptions.adoc[]
+include::{projectSourceDir}/jta/selecting_the_jta_implementation.adoc[]
 :leveloffset: -2
 
 == Development
 
 :leveloffset: +2
-
-include::jdbc.adoc[]
-
-include::examples.adoc[]
-
-include::using_jbossta_in_application_servers.adoc[]
-
+include::{projectSourceDir}/jta/jdbc.adoc[]
+include::{projectSourceDir}/jta/examples.adoc[]
+include::{projectSourceDir}/jta/using_jbossta_in_application_servers.adoc[]
 :leveloffset: -2
 
 == Installation
 
 :leveloffset: +2
-
-include::preparing_your_system.adoc[]
-
-include::operating_system_services.adoc[]
-
-include::logging.adoc[]
-
-include::additional_jar_requirements.adoc[]
-
-include::setting_properties.adoc[]
-
-:leveloffset: -1
-
-include::quick_start_to_jta.adoc[]
-
-:leveloffset: -1
+include::{projectSourceDir}/jta/preparing_your_system.adoc[]
+include::{projectSourceDir}/jta/operating_system_services.adoc[]
+include::{projectSourceDir}/jta/logging.adoc[]
+include::{projectSourceDir}/jta/additional_jar_requirements.adoc[]
+include::{projectSourceDir}/jta/setting_properties.adoc[]
+include::{projectSourceDir}/jta/quick_start_to_jta.adoc[]
+:leveloffset: -2

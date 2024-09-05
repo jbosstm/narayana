@@ -13,12 +13,10 @@ For the purposes of this worked example, a single method implements the `DemoInt
 This method is used in the DemoClient program.
 
 .idl interface
-====
 [source,java]
 ----
-include::{sourcedir}/extras/example-idl-interface.java[]
+include::{projectSourceDir}/jts/extras/example-idl-interface.java[]
 ----
-====
 
 === Example implementation of the interface
 
@@ -33,12 +31,10 @@ Only a single unit of work is included within the scope of the transaction.
 Therefore, the `prepare` or `commit` methods should never be invoked, but the `commit_one_phase` method should be invoked.
 
 .DemoResource
-====
 [source,java]
 ----
-include::{sourcedir}/extras/example-DemoResource.java[]
+include::{projectSourceDir}/jts/extras/example-DemoResource.java[]
 ----
-====
 
 ==== Transactional implementation
 
@@ -53,12 +49,10 @@ Line 20 uses the `Coordinator` to register a `DemoResource` object as a particip
 When the transaction terminates, the resource receives requests to commit or rollback the updates performed as part of the transaction.
 
 .Transactional implementation
-====
 [source,java]
 ----
-include::{sourcedir}/extras/transactional-implementation.java[]
+include::{projectSourceDir}/jts/extras/transactional-implementation.java[]
 ----
-====
 
 ==== Server implementation
 
@@ -80,12 +74,10 @@ If this registration is successful, line 23 outputs a `sanity check` message.
 Finally, line 25 places the server process into a state where it can begin to accept requests from client processes.
 
 .DemoServer
-====
 [source,java]
 ----
-include::{sourcedir}/extras/DemoServer.java[]
+include::{projectSourceDir}/jts/extras/DemoServer.java[]
 ----
-====
 
 After the server compiles, you can use the command line options defined below to start a server process.
 By specifying the usage of a filter on the command line, you can override settings in the _TransactionService.properties_ file.
@@ -109,12 +101,10 @@ This is shown in line 21.
 Once we have a reference to this servant object, we can start a transaction (line 23), perform a unit of work (line 25) and commit the transaction (line 27).
 
 .DemoClient
-====
 [source,java]
 ----
-include::{sourcedir}/extras/DemoClient.java[]
+include::{projectSourceDir}/jts/extras/DemoClient.java[]
 ----
-====
 
 ==== Sequence diagram
 

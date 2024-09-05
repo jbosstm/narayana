@@ -2,16 +2,15 @@
 
 == JDBC example
 
-This simplified example assumes that you are using the transactional JDBC driver provided with \{parentProduct}.
+This simplified example assumes that you are using the transactional JDBC driver provided with {parentProduct}.
 For details about how to configure and use this driver see the previous Chapter.
 // Previous Chpater link?
 
-====
 [source,java]
 ----
-include::extras/jdbc_example.java[]
+include::{projectSourceDir}/jta/extras/jdbc_example.java[]
 ----
-====
+
 
 == Failure recovery example with BasicXARecovery
 
@@ -42,7 +41,7 @@ Some error-handling code is missing from this example, to make it more readable.
 ====
 [source,java]
 ----
-include::extras/failure_recovery_example.java[]
+include::{projectSourceDir}/jta/extras/failure_recovery_example.java[]
 ----
 
 You can use the class `com.arjuna.ats.internal.jdbc.recovery.JDBC2RecoveryConnection` to create a new connection to the database using the same parameters used to create the initial connection.

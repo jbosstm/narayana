@@ -36,9 +36,7 @@ You can coordinate transactions from a coordinator which is not located within t
 To ensure the transaction context is propagated via JRMP invocations to the server, the transaction propagation context factory needs to be explicitly set for the JRMP invoker proxy.
 This is done as follows:
 
-====
-[source,Java]
+[source,java]
 ----
 JRMPInvokerProxy.setTPCFactory(new com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager());
 ----
-====

@@ -1,17 +1,16 @@
 = Failure Recovery
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
+:toc: {toc}
+:icons: {icons}
 :experimental:
-:sourcedir: .
 
-:leveloffset: +2
+:leveloffset: +1
 
-include::architecture_of_the_recovery_manager.adoc[]
+include::{productSourceDir}/failure_recovery/architecture_of_the_recovery_manager.adoc[]
 
-include::how_narayana_manages_the_ots_recovery_protocol.adoc[]
+include::{productSourceDir}/failure_recovery/how_narayana_manages_the_ots_recovery_protocol.adoc[]
 
-include::configuration_options.adoc[]
+include::{productSourceDir}/failure_recovery/configuration_options.adoc[]
 
-:leveloffset: -2
+:leveloffset: -1

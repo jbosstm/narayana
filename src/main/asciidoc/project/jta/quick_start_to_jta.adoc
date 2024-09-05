@@ -51,12 +51,10 @@ In {productName}, `UserTransaction` can be obtained from the static `com.arjuna.
 When obtained the `UserTransaction` object can be used to control transactions
 
 .User Transaction Example
-====
-[source,Java]
+[source,java]
 ----
-include::extras/userTransactionExample.java[]
+include::{projectSourceDir}/jta/extras/userTransactionExample.java[]
 ----
-====
 
 === TransactionManager
 
@@ -77,12 +75,10 @@ The Transaction object can be used to:
 
 A Transaction object can be obtained using the `TransactionManager` by invoking the method `getTransaction()` method.
 
-====
 [source,java]
 ----
 Transaction txObj = TransactionManager.getTransaction();
 ----
-====
 
 == Local vs Distributed JTA implementations
 

@@ -39,9 +39,9 @@ java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 The `RecoveryManager` reads the properties defined in the `jbossts-properties.xml` file.
 
 A default version of `jbossts-properties.xml` is supplied with the distribution.
-This can be used without modification, except possibly the debug tracing fields, as shown in link:#recovery-manager-output[Output] .
+This can be used without modification, except possibly the debug tracing fields, as shown in <<jts_recovery_manager_output>>.
 
-[[_recovery_manager_output]]
+[[jts_recovery_manager_output]]
 == Output
 
 It is likely that installations will want to have some form of output from the `RecoveryManager`, to provide a record of what recovery activity has taken place.
@@ -111,7 +111,7 @@ The default Recovery Extension settings are:
 
 [source,xml]
 ----
-include::{sourcedir}/extras/default_recovery_extension_settings.xml[]
+include::{projectSourceDir}/jts/extras/default_recovery_extension_settings.xml[]
 ----
 
 == Expired Entry Removal
@@ -139,5 +139,5 @@ The Expiry Scanner properties for these are:
 
 [source,xml]
 ----
-include::{sourcedir}/extras/expiry_scanner_properties.xml[]
+include::{projectSourceDir}/jts/extras/expiry_scanner_properties.xml[]
 ----

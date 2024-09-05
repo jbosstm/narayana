@@ -1,13 +1,9 @@
 = OSGi
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
+:toc: {toc}
+:icons: {icons}
 
-:leveloffset: +2
-
-include::integration_with_karaf.adoc[]
-
-:leveloffset: -2
+:leveloffset: +1
+include::{projectSourceDir}/osgi/integration_with_karaf.adoc[]
+:leveloffset: -1

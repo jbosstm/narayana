@@ -27,7 +27,7 @@ This can be done by changing the 'url' property of the 'xts-environment' element
 .Example `standalone-xts.xml` configuration settings
 [source,xml]
 ----
-include::{sourcedir}/extras/example-xts-subsystem.xml[]
+include::{productSourceDir}/xts_guide/extras/example-xts-subsystem.xml[]
 ----
 
 The XTS module (`_modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`) in the (appServer) includes a configuration file, `xts-properties.xml`, in the root of the jar.
@@ -39,7 +39,7 @@ The changes will take affect on next boot of the (appServer).
 .Example _xts-properties.xml_configuration settings
 [source,xml]
 ----
-include::{sourcedir}/extras/example-xts-properties.xml[]
+include::{productSourceDir}/xts_guide/extras/example-xts-properties.xml[]
 ----
 
 You can also specify the individual elements of the URL using the properties `coordinator.scheme`, `coordinator.address`, and so forth.

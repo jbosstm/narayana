@@ -28,24 +28,22 @@ In this example implementation, an array represents the queue.
 A limit of `QUEUE_SIZE` elements has been imposed for this example.
 
 .Java interface definition of class `queue`
-====
 [source,java]
 ----
-include::extras/example_queue_class.java[]
+include::{projectSourceDir}/core/extras/example_queue_class.java[]
 ----
-====
+
 
 == Constructors and finalizers
 
-Using an existing persistent object requires the use of a special constructor that takes the Uid of the persistent object, as shown in <<_example_transactionalqueue>> .
+Using an existing persistent object requires the use of a special constructor that takes the Uid of the persistent object, as shown in <<example_transactionalqueue>>.
 
+[[example_transactionalqueue]]
 .Class `TransactionalQueue`
-====
 [source,java]
 ----
-include::extras/example-TransactionalQueue.java[]
+include::{projectSourceDir}/core/extras/example-TransactionalQueue.java[]
 ----
-====
 
 The use of an atomic action within the constructor for a new object follows the guidelines outlined earlier and ensures that the object’s state will be written to the object store when the appropriate top level atomic action commits (which will either be the action A or some enclosing action active when the TransactionalQueue was constructed).
 The use of atomic actions in a constructor is simple: an action must first be declared and its begin operation invoked; the operation must then set an appropriate lock on the object (in this case a WRITE lock must be acquired), then the main body of the constructor is executed.
@@ -55,7 +53,7 @@ The finalizer of the `queue` class is only required to call the `terminate` and 
 
 [source,java]
 ----
-include::extras/example_queue_destructor.java[]
+include::{projectSourceDir}/core/extras/example_queue_destructor.java[]
 ----
 
 == Required methods
@@ -63,20 +61,16 @@ include::extras/example_queue_destructor.java[]
 === `save_state`, `restore_state`, and `type`
 
 .Method `save_state`
-====
 [source,java]
 ----
-include::extras/example-queue_save_state.java[]
+include::{projectSourceDir}/core/extras/example-queue_save_state.java[]
 ----
-====
 
 .Method `restore_state`
-====
 [source,java]
 ----
-include::extras/example-queue_restore_state.java[]
+include::{projectSourceDir}/core/extras/example-queue_restore_state.java[]
 ----
-====
 
 .Method `type`
 ====
@@ -84,7 +78,7 @@ Because the Queue class is derived from the LockManager class, the operation typ
 
 [source,java]
 ----
-include::extras/example-queue_type.java[]
+include::{projectSourceDir}/core/extras/example-queue_type.java[]
 ----
 ====
 
@@ -94,22 +88,18 @@ If the operations of the `queue` class are to be coded as atomic actions, then t
 The `dequeue` operation is similarly structured, but is not implemented here.
 
 .Method `enqueue`
-====
 [source,java]
 ----
-include::extras/example-queue_enqueue.java[]
+include::{projectSourceDir}/core/extras/example-queue_enqueue.java[]
 ----
-====
 
 === `queueSize` method
 
 .Method `queueSize`
-====
 [source,java]
 ----
-include::extras/example-queue_queueSize.java[]
+include::{projectSourceDir}/core/extras/example-queue_queueSize.java[]
 ----
-====
 
 === `inspectValue` and `setValue` methods
 
@@ -120,12 +110,10 @@ The `setValue` method is not implemented here, but is similar in structure to <<
 
 [#example_queue_inspectvalue]
 .Method `inspectValue`
-====
 [source,java]
 ----
-include::extras/example-queue_inspectValue.java[]
+include::{projectSourceDir}/core/extras/example-queue_inspectValue.java[]
 ----
-====
 
 == The client
 
@@ -134,12 +122,10 @@ Before invoking operations on the object, the client must first bind to the obje
 In the local case this simply requires the client to create an instance of the object.
 
 .Binding to the Object
-====
 [source,java]
 ----
-include::extras/example-queue_main.java[]
+include::{projectSourceDir}/core/extras/example-queue_main.java[]
 ----
-====
 
 == Comments
 

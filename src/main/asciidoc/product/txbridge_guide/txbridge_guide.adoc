@@ -2,20 +2,20 @@
 = TXBridge Guide
 :doctype: book
 :sectnums:
-:toc: left
-:icons: font
+:toc: {toc}
+:icons: {icons}
 :experimental:
-:sourcedir: .
 
-:leveloffset: +2
-include::introduction.adoc[]
+:leveloffset: +1
 
-include::transaction_bridge_architecture.adoc[]
+include::{productSourceDir}/txbridge_guide/introduction.adoc[]
 
-include::using_the_transaction_bridge.adoc[]
+include::{productSourceDir}/txbridge_guide/transaction_bridge_architecture.adoc[]
 
-include::known_limitations.adoc[]
+include::{productSourceDir}/txbridge_guide/using_the_transaction_bridge.adoc[]
 
-include::design_notes.adoc[]
+include::{productSourceDir}/txbridge_guide/known_limitations.adoc[]
 
-:leveloffset: -2
+include::{productSourceDir}/txbridge_guide/design_notes.adoc[]
+
+:leveloffset: -1
