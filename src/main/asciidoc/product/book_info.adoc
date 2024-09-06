@@ -7,7 +7,7 @@ include::{productSourceDir}/author_group.adoc[]
 
 xref:fallback_content/legal_notice.adoc[Legal Notice]
 
-== Abstract
+== Introduction
 
 The Transactions Overview Guide contains information on how to use {productName};
 to develop applications that use transaction technology to manage business processes.
