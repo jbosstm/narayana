@@ -1,5 +1,5 @@
-$MAVEN_VERSION="3.3.9";
-$MAVEN_URL="https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip";
+$MAVEN_VERSION="3.9.9";
+$MAVEN_URL="https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip";
 
 
 function Expand-ZIPFile($file, $destination){
@@ -26,7 +26,7 @@ function Check-Maven-Version($mavenPath){
     }
     [Environment]::SetEnvironmentVariable("M2_HOME",$null); #in case there is M2_HOME set we will get wrong results when running mvn -version
 
-    $result = iex "$mavenPath\bin\mvn.bat -version" | Select-String ("Apache Maven " + $MAVEN_VERSION);    
+    $result = iex "$mavenPath\bin\mvn.bat -version" | Select-String ("Apache Maven " + $MAVEN_VERSION);
     return ,-Not([string]::IsNullOrEmpty($result));
 
 
@@ -50,8 +50,8 @@ if (-Not ($rightMavenVersion) -and (Test-Path $mavenPath)){
 
 if (-Not(Test-Path $mavenPath)){
     if (-Not (Test-Path $target)){
-        Download-Maven -destination $target;    
-    }    
+        Download-Maven -destination $target;
+    }
     Expand-ZIPFile -file $target -destination $toolsPath;
     Move-Item "$toolsPath\apache*" "$toolsPath\maven"
     Remove-Item $target;
