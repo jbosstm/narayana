@@ -1,3 +1,4 @@
+
 = Introduction
 
 Since the release of {parentProduct} 4.1, the Web Services Transaction product has been merged into {parentProduct}. {parentProduct} is thus a single product that is compliant with all of the major distributed transaction standards and specifications.

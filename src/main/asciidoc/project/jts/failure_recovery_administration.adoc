@@ -1,3 +1,4 @@
+
 = Failure Recovery Administration
 
 The failure recovery subsystem of {productName} will ensure that results of a transaction are applied consistently to all resources affected by the transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity.

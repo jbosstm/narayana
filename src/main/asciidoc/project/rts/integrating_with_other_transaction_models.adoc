@@ -1,3 +1,4 @@
+
 = Interoperating With Other Transaction Models
 
 Narayana in general supports a number of different transaction models other than the one described in this book.

@@ -1,3 +1,4 @@
+
 = Constructing a Transactional Objects for Java application
 
 == Development Phases of a ArjunaCore Application

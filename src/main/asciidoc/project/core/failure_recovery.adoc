@@ -1,3 +1,4 @@
+
 = Failure Recovery
 
 In this chapter we shall cover information on failure recovery that is specific to ArjunaCore, TXOJ, or using {productName} outside the scope of a supported application server.

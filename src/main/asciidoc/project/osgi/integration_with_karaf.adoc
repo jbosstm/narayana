@@ -1,3 +1,4 @@
+
 [[chap_integrate_with_karaf]]
 = Integrate with Karaf
 

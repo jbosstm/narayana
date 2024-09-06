@@ -1,3 +1,4 @@
+
 = Examples
 
 The quickstarts contained in the release bundles or in the quickstart repo (`https://github.com/jbosstm/quickstart`) contain examples of all the features provided by RESTAT.

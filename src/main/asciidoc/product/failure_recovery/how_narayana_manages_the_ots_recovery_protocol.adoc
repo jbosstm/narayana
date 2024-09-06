@@ -1,3 +1,4 @@
+
 = How {productName} manages the OTS Recovery Protocol
 
 == Recovery Protocol in OTS - Overview

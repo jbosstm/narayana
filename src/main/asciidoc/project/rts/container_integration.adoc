@@ -1,3 +1,4 @@
+
 = Container Integration
 
 The RESTAT protocol described here is implemented as a JAX-RS service, deploys as a Servlet 3.0 application and depends on the Narayana TM as the back-end transaction engine.

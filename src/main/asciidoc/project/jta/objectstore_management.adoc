@@ -1,3 +1,4 @@
+
 = ObjectStore Management
 
 Within the transaction service installation, the object store is updated regularly whenever transactions are created, or when _Transactional Objects for Java_ is used.

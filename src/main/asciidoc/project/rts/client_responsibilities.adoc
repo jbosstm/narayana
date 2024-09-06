@@ -1,3 +1,4 @@
+
 [[client_responsibilities]]
 = Client Responsibilities
 

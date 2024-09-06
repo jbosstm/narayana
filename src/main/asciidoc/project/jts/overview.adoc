@@ -1,3 +1,4 @@
+
 = Transaction Processing Overview
 
 == Defining a transaction

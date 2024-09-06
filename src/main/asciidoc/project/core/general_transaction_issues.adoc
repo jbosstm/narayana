@@ -1,3 +1,4 @@
+
 = Advanced transaction issues with ArjunaCore
 
 Atomic actions (transactions) can be used by both application programmers and class developers.

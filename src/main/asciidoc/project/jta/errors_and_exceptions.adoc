@@ -1,3 +1,4 @@
+
 = Errors and Exceptions
 
 This section covers the types and causes of errors and exceptions which may be thrown or reported during a transactional application.

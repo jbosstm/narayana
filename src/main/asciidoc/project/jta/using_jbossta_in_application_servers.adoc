@@ -1,4 +1,5 @@
-= Using &PRODUCT;in application servers
+
+= Using {productName} in application servers
 
 {appServer} is discussed here.
 Refer to the documentation for your application server for differences.

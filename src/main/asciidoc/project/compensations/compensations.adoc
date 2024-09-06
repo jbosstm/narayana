@@ -1,3 +1,4 @@
+
 = Compensating transactions
 :doctype: book
 :sectnums:

@@ -1,3 +1,4 @@
+
 = Starting and Stopping the Transaction Manager
 
 By default, the transaction manager starts up in an active state such that new transactions can be created immediately.

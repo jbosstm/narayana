@@ -1,3 +1,4 @@
+
 = {productName} Runtime Information
 
 Compile-time configuration information is available via class `com.arjuna.common.util.ConfigurationInfo`.

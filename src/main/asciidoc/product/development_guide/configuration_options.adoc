@@ -1,3 +1,4 @@
+
 = Configuration options
 
 == Loading a configuration

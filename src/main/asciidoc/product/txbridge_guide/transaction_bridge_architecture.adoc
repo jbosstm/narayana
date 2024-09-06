@@ -1,3 +1,4 @@
+
 = Transaction `Bridge` Architecture
 
 == Overview

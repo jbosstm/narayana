@@ -1,3 +1,4 @@
+
 = Web Service Transaction Service (XTS) Management
 
 The basic building blocks of a transactional Web Services application include the application itself, the Web services that the application consumes, the Transaction Manager, and the transaction participants which support those Web services.

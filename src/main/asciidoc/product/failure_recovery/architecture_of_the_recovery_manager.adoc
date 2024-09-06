@@ -1,3 +1,4 @@
+
 = Architecture of the Recovery Manager
 
 == Crash Recovery Overview

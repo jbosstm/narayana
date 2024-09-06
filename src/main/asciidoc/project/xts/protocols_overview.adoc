@@ -1,3 +1,4 @@
+
 = Overview of Protocols Used by XTS
 
 This section discusses fundamental concepts associated with the WS-Coordination, WS-Atomic Transaction and WS-Business Activity protocols, as defined in each protocol's specification.

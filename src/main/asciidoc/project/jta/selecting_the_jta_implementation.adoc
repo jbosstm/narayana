@@ -1,3 +1,4 @@
+
 = Selecting the JTA implementation
 
 Two variants of the JTA implementation are accessible through the same interface.

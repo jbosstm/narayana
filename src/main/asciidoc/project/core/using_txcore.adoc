@@ -1,3 +1,4 @@
+
 = Using ArjunaCore
 
 This section describes _ArjunaCore_ and _Transactional Objects for Java_ (TXOJ) in more detail, and shows how to use ArjunaCore to construct transactional applications.

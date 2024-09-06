@@ -1,3 +1,4 @@
+
 = The Resource Manager
 
 == The `XAResource` interface

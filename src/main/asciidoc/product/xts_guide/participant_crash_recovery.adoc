@@ -1,3 +1,4 @@
+
 = Participant Crash Recovery
 
 A key requirement of a transaction service is to be resilient to a system crash by a host running a participant, as well as the host running the transaction coordination services.

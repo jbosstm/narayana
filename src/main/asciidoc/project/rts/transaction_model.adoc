@@ -1,3 +1,4 @@
+
 = Transaction Model
 
 The REST Atomic Transaction (RESTAT) model uses a traditional two-phase commit protocol with the following optimizations:

@@ -1,3 +1,4 @@
+
 = Introduction
 
 The _XML Transaction Service (XTS)_ component of {productName} supports the coordination of private and public Web Services in a business transaction.

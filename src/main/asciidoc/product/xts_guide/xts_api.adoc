@@ -1,3 +1,4 @@
+
 [[sec_xts_api]]
 = The XTS API
 

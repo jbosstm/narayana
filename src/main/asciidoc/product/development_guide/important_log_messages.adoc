@@ -1,3 +1,4 @@
+
 = Important Log Messages
 
 The transaction manager can generate a lot of logging information when configured to log in trace level.

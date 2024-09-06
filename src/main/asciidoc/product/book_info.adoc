@@ -1,4 +1,5 @@
 
+
 = Functionality of Narayana supported within Red Hat JBoss EAP
 
 include::{productSourceDir}/author_group.adoc[]

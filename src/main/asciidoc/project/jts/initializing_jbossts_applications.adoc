@@ -1,3 +1,4 @@
+
 = Initializing {parentProduct} Applications
 
 {parentProduct} must be initialized correctly before any application object is created.
