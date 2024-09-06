@@ -1,5 +1,6 @@
 
 = Overview
+:imagesdir: images
 
 A transaction is a unit of work that encapsulates multiple database actions such that either all the encapsulated actions fail or all succeed.
 
@@ -34,7 +35,7 @@ These classes form a hierarchy, part of which is shown in <<_txcore_class_hierar
 
 [[_txcore_class_hierarchy]]
 .ArjunaCore Class Hierarchy
-image::../images/core-txcore_class_hierarchy.png[align="center"]
+image::core-txcore_class_hierarchy.png[align="center"]
 
 Apart from specifying the scopes of transactions, and setting appropriate locks within objects, the application programmer does not have any other responsibilities: _ArjunaCore_ and _TXOJ_ guarantee that transactional objects will be registered with, and be driven by, the appropriate transactions, and crash recovery mechanisms are invoked automatically in the event of failures.
 
@@ -114,7 +115,7 @@ The fundamental life cycle of a persistent object in TXOJ is shown in link:#txoj
 
 [[_txoj_lifecycle]]
 .Life cycle of a persistent Object in TXOJ
-image::../images/core-txoj-lifecycle.png[align="center"]
+image::core-txoj-lifecycle.png[align="center"]
 
 [NOTE]
 ====

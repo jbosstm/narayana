@@ -4,6 +4,7 @@
 :sectnums:
 :toc: {toc}
 :icons: {icons}
+:imagesdir: images
 
 == What is a transaction?
 
@@ -71,7 +72,7 @@ Transaction Coordinator Location::
 The endpoint address participants contact to enroll.
 
 .Context Flow
-image::../images/transactions-overview-fig-web-services-context-flow.png[align="center"]
+image::transactions-overview-fig-web-services-context-flow.png[align="center"]
 
 == Participants
 
@@ -97,7 +98,7 @@ However, if crashed machines eventually recover, crash recovery mechanisms can b
 
 [[two_phase_commit_overview]]
 .Two-Phase `Commit` Overview
-image::../images/transactions-overview-fig-two-phase-commit-overview.png[align="center"]
+image::transactions-overview-fig-two-phase-commit-overview.png[align="center"]
 
 [NOTE]
 ====
@@ -200,7 +201,7 @@ See <<fig_interpositions>> for a graphical representation of this concept.
 
 [[fig_interpositions]]
 .Interpositions
-image::../images/transactions-overview-fig-interpositions.png[align="center"]
+image::transactions-overview-fig-interpositions.png[align="center"]
 
 Interposition is particularly useful for Web Services transactions, as a way of limiting the amount of network traffic required for coordination.
 For example, if communications between the top-level coordinator and a web service are slow because of network traffic or distance, the web service might benefit from executing in a subordinate transaction which employs a local coordinator service.

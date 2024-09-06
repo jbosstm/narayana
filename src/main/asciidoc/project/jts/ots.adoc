@@ -1,5 +1,6 @@
 
 = Introduction to the OTS
+:imagesdir: images
 
 Basic {parentProduct} programming involves using the OTS interfaces provided in the `CosTransactions` module, which is specified in `CosTransactions.idl`.
 This chapter is based on the `OTS Specification1`, specifically with the aspects of OTS that are valuable for developing OTS applications using {parentProduct}.
@@ -16,7 +17,7 @@ You can override many run-time decisions of {parentProduct} Java properties spec
 The property names are mentioned in the `com.arjuna.ats.jts.common.Environment` class.
 
 .OTS architecture
-image::../images/jts-ots_architecture.png[]
+image::jts-ots_architecture.png[]
 
 == Action programming models
 
@@ -488,10 +489,10 @@ It defines operations that simplify the use of the Transaction Service.
 |===
 
 .Creation of a top-level transaction using `Current`
-image::../images/jts-top_level_transaction_current.png[]
+image::jts-top_level_transaction_current.png[]
 
 .Creation of a transaction using `Current`
-image::../images/jts-subtransaction_current.png[]
+image::jts-subtransaction_current.png[]
 
 [[_current_jbossts_specific]]
 === {parentProduct} specifics
@@ -542,7 +543,7 @@ If the transaction is nested, the `Resource` is not informed of the sub-transact
 This example assumes that transactions are only nested two levels deep, for simplicity.
 
 .`Resource` and nested transactions
-image::../images/jts-resource_nested_transactions.png[]
+image::jts-resource_nested_transactions.png[]
 
 Do not register a given `Resource` with the same transaction more than once, or it will receive multiple termination calls.
 When a `Resource` is directed to `prepare`, `commit`, or `abort`, it needs to link these actions to a specific transaction.
@@ -618,10 +619,10 @@ Unlike `register_resource`, the resource is not propagated to the sub-transactio
 If you need this propagation, re-register using the supplied parent parameter.
 
 .Method `register_subtran_aware`
-image::../images/jts-register_subtran_aware.png[]
+image::jts-register_subtran_aware.png[]
 
 .Method `register_resource`
-image::../images/jts-register_resource.png[]
+image::jts-register_resource.png[]
 
 In either case, the resource cannot affect the outcome of the transaction completion.
 It can only act on the transaction's decision, after the decision is made.
@@ -660,7 +661,7 @@ If it rolls back, registered `Synchronizations` are not informed.
 Given the previous description of `Control`, `Resource`, `SubtransactionAwareResource`, and `Synchronization`, the following UML relationship diagram can be drawn:
 
 .Relationship between `Control`, `Resource`, `SubtransactionAwareResource`, and `Synchronization`
-image::../images/jts-interface_relationship.png[Relationship between `Control`, `Resource`, `SubtransactionAwareResource`, and `Synchronization`]
+image::jts-interface_relationship.png[Relationship between `Control`, `Resource`, `SubtransactionAwareResource`, and `Synchronization`]
 
 === {parentProduct} specifics
 
@@ -682,7 +683,7 @@ With the `OTS_SUPPORT_INTERPOSED_SYNCHRONIZATION` property variable set to `YES`
 == Transactions and registered resources
 
 .Relationship between a transaction `Control` and the resources registered with it
-image::../images/jts-control_and_resources.png[Relationship between a transaction `Control` and the resources registered with it]
+image::jts-control_and_resources.png[Relationship between a transaction `Control` and the resources registered with it]
 
 In <<_subtransaction_commit>>, a sub-transaction with both `Resource` and `SubtransactionAwareResource` objects commits.
 The `SubtransactionAwareResources` were registered using `register_subtran_aware`.
@@ -691,14 +692,14 @@ Only the `Resources` are automatically propagated to the parent transaction.
 
 [[_subtransaction_commit]]
 .Sub-transaction commit
-image::../images/jts-sub-transaction-commit.png[]
+image::jts-sub-transaction-commit.png[]
 
 <<_subtransaction_rollback>> illustrates the impact of a sub-transaction rolling back.
 Any registered resources are discarded, and all `SubtransactionAwareResources` are informed of the transaction outcome.
 
 [[_subtransaction_rollback]]
 .Sub-transaction rollback
-image::../images/jts-sub-transaction-rollback.png[]
+image::jts-sub-transaction-rollback.png[]
 
 <<_top_level_commit>> shows the activity diagram for committing a top-level transaction.
 sub-transactions within the top-level transaction which have also successfully committed propagate `SubtransactionAwareResources` to the top-level transaction.
@@ -708,10 +709,10 @@ Because of indirect context management, when the transaction commits, the transa
 
 [[_top_level_commit]]
 .Top-level commit
-image::../images/jts-top-level-commit.png[]
+image::jts-top-level-commit.png[]
 
 .Top-level rollback
-image::../images/jts-top-level-rollback.png[Top-level rollback]
+image::jts-top-level-rollback.png[Top-level rollback]
 
 == The `TransactionalObject` interface
 
@@ -780,7 +781,7 @@ Each `RecoveryCoordinator` is implicitly associated with a single `Resource`.
 It can drive the `Resource` through recovery procedures in the event of a failure which occurs during the transaction.
 
 .`Resource` and `RecoveryCoordinator`
-image::../images/jts-resource-and-recoverycoordinator.png[]
+image::jts-resource-and-recoverycoordinator.png[]
 
 == Checked transaction behavior
 

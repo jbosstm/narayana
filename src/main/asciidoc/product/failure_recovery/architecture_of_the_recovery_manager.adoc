@@ -1,12 +1,13 @@
 
 = Architecture of the Recovery Manager
+:imagesdir: images
 
 == Crash Recovery Overview
 
 The main architectural components within Crash Recovery are illustrated in the diagram below:
 
 .Recovery Manager Architecture
-image::../images/failure-recovery-fig1-crashrecoveryarchitecture.png[align="center"]
+image::failure-recovery-fig1-crashrecoveryarchitecture.png[align="center"]
 
 The Recovery Manager is a daemon process responsible for performing crash recovery.
 Only one Recovery Manager runs per node.
@@ -260,7 +261,7 @@ Instances of classes that implements the `XAResourceRecovery` interface are dyna
 
 [[resource-initiated_recovery_and_XA_recovery]]
 .Resource-initiated recovery and XA Recovery
-image::../images/failure-recovery-fig2-resourceinitiatedrecovery.png[align="center"]
+image::failure-recovery-fig2-resourceinitiatedrecovery.png[align="center"]
 
 The `XARecoveryModule` will use the `XAResourceRecovery` implementation to get a `XAResource` to the target datasource.
 On each invocation of `periodicWorkSecondPass`, the recovery module will issue an `XAResource.recover` request – this will (as described in the XA specification) return a list of the transaction identifiers (Xid's) that are known to the datasource and are in an indeterminate (in-doubt) state.

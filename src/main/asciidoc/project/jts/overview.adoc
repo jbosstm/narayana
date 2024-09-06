@@ -1,5 +1,6 @@
 
 = Transaction Processing Overview
+:imagesdir: images
 
 == Defining a transaction
 
@@ -62,7 +63,7 @@ However, if crashed machines eventually recover, crash recovery mechanisms can b
 
 [[_img_commit_protocol]]
 .Two-Phase Commit
-image::../images/jts-img-2phase.png[]
+image::jts-img-2phase.png[]
 
 == Transactional proxies
 

@@ -1,5 +1,6 @@
 
 = Transactions Overview
+:imagesdir: images
 
 [NOTE]
 ====
@@ -19,7 +20,7 @@ The main components involved in using and defining transactional Web Services us
 
 [[fig_web_services_transaction]]
 .Components Involved in an XTS Transaction
-image::../images/xts-fig-web-services-transaction.png[align="center"]
+image::xts-fig-web-services-transaction.png[align="center"]
 
 == The Coordinator
 
@@ -54,7 +55,7 @@ Transaction Coordinator Location::
 The endpoint address participants contact to enroll.
 
 .Web Services and Context Flow
-image::../images/xts-fig-web-services-context-flow.png[align="center"]
+image::xts-fig-web-services-context-flow.png[align="center"]
 
 == Participants
 
@@ -93,7 +94,7 @@ The general flow of a two-phase commit transaction is described in <<two_phase_c
 
 [[two_phase_commit_overview]]
 .Two-Phase Commit Overview
-image::../images/xts-fig-two-phase-commit-overview.png[align="center"]
+image::xts-fig-two-phase-commit-overview.png[align="center"]
 
 [NOTE]
 ====
@@ -195,7 +196,7 @@ See <<fig_interpositions>> for a graphical representation of this concept.
 
 [[fig_interpositions]]
 .Interpositions
-image::../images/xts-fig-interpositions.png[align="center"]
+image::xts-fig-interpositions.png[align="center"]
 
 Interposition is particularly useful for Web Services transactions, as a way of limiting the amount of network traffic required for coordination.
 For example, if communications between the top-level coordinator and a web service are slow because of network traffic or distance, the web service might benefit from executing in a subordinate transaction which employs a local coordinator service.

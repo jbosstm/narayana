@@ -1,5 +1,6 @@
 
 = Quick Start to JTS/OTS
+:imagesdir: images
 
 == Introduction
 
@@ -110,7 +111,7 @@ Interposed coordinators effectively form a tree structure with their parent coor
 This is shown in the figure below.
 
 .Interposition relationship
-image::extras/interposition.gif[]
+image::interposition.gif[]
 
 [NOTE]
 ====

@@ -1,5 +1,6 @@
 
 = Trail map
+:imagesdir: images
 
 == Introduction
 
@@ -78,7 +79,7 @@ This model consists of the follwng components (illustrated in <<figure1>>)
 
 .The X/Open DTP model
 [[figure1]]
-image::../images/jts-xopen.png[align="center"]
+image::jts-xopen.png[align="center"]
 
 === Interface between functional components
 
@@ -185,7 +186,7 @@ It provides a simplified model for exception handling since only two outcomes ar
 * success - meaning that all actions involved within a transaction are completed
 * failure - no actions complete
 
-image::../images/jts-trans_succes_failure.PNG.png[align="center"]
+image::jts-trans_succes_failure.PNG.png[align="center"]
 
 === Example
 
@@ -198,7 +199,7 @@ For instance, involved accounts may be either located in the same relational tab
 
 A Simple transfer consists on moving money from savings to checking while a Complex transfer can be performed at the end- of- day according to a reconciliation between international banks
 
-image::../images/jts-example_transfer.PNG.png[align="center"]
+image::jts-example_transfer.PNG.png[align="center"]
 
 The concept of a transaction, and a transaction manager (or a transaction processing service) simplifies the construction of such enterprise level distributed applications while maintaining the integrity of data in a unit of work.
 
@@ -227,7 +228,7 @@ These properties are assumed to be ensured, in the presence of failures; if acti
 A transaction system includes a set of components where each of them has a particular role.
 The main components are described below.
 
-image::../images/jts-transaction_components.PNG.png[align="center"]
+image::jts-transaction_components.PNG.png[align="center"]
 
 ==== Application Programs
 
@@ -328,7 +329,7 @@ A first technique focuses on manipulated data, such as the Do/Undo/Redo protocol
 A second technique relies on a distributed protocol named the two phases commit, ensuring that all participants involved within a distributed transaction set their data either in their final values or in their initial values.
 In other words, all participants must commit or all must roll back.
 
-image::../images/jts-recovery_logs.PNG.png[align="center"]
+image::jts-recovery_logs.PNG.png[align="center"]
 
 In addition to failures, we refer as centralized such system crashes, communication failures due, for instance, to network outages or message loss have to be considered during the recovery process of a distributed transaction.
 
@@ -372,7 +373,7 @@ Basically, these standards have proposed logical models, which divide transactio
 * functions performed by the Transaction Manager which manages transactions, and finally
 * Communication Resource Managers which allow exchanging information with other transactional domains.
 
-image::../images/jts-standards.PNG.png[align="center"]
+image::jts-standards.PNG.png[align="center"]
 
 ==== Overview of the OMG Object Transaction Service
 
@@ -391,7 +392,7 @@ This permits the incremental addition of objects into an environment of existing
 
 .OTS Architecture
 [[ots_architecture]]
-image::../images/jts-OTS.PNG.png[align="center"]
+image::jts-OTS.PNG.png[align="center"]
 
 The OTS architecture, shown in the <<ots_architecture>>, consists of the following components:
 
@@ -495,7 +496,7 @@ However, if using direct management, no changes to the threads transaction conte
 
 .OTS interfaces and their interactions
 [[ots_interfaces]]
-image::../images/jts-OTS_Interfaces.PNG.png[align="center"]
+image::jts-OTS_Interfaces.PNG.png[align="center"]
 
 The figure "<<ots_interfaces>>" describes the principal interfaces in the CORBA OTS specification, with their interaction, while the <<ots_interfaces_table>> below provides more details for each interface.
 
@@ -556,14 +557,14 @@ The applications can therefore initiate global transactions to include other OTS
 
 .The JTA/JTS transaction model
 [[jta_jts_transaction_model]]
-image::../images/jts-j2ee_1.PNG.png[align="center"]
+image::jts-j2ee_1.PNG.png[align="center"]
 
 The Java Transaction Service is architected around an application server and a transaction manager.
 The architecture is shown in <<jta_jts_architecture>>.
 
 .The JTA/JTS Architecture
 [[jta_jts_architecture]]
-image::../images/jts-j2ee_2.PNG.png[align="center"]
+image::jts-j2ee_2.PNG.png[align="center"]
 
 The JTS architecture consists of the following components:
 
@@ -589,7 +590,7 @@ The Java Transaction API consists of three elements: a high-level application tr
 
 .JTA Interfaces
 [[jta_interfaces]]
-image::../images/jts-j2ee_3_API.PNG.png[align="center"]
+image::jts-j2ee_3_API.PNG.png[align="center"]
 
 ===== Transaction Manager Interfaces
 
@@ -755,7 +756,7 @@ The <<ejb_and_transactions>> shows a simplified architecture of transaction mana
 
 .EJB and Transactions
 [[ejb_and_transactions]]
-image::../images/jts-j2ee_5_ejb_model.PNG.png[align="center"]
+image::jts-j2ee_5_ejb_model.PNG.png[align="center"]
 
 An enterprise bean is specified by two interfaces: the home interface and the remote interface.
 The home interface specifies how a bean can be created or found.
@@ -1516,7 +1517,7 @@ For instance, involved accounts may be either located in the same relational tab
 
 A Simple transfer consists on moving money from savings to checking while a Complex transfer can be performed at the end-of-day according to a reconciliation between international banks
 
-image::../images/jts-example_transfer.PNG.png[align="center"]
+image::jts-example_transfer.PNG.png[align="center"]
 
 ==== What is a Transaction?
 
@@ -1547,7 +1548,7 @@ These properties are assumed to be ensured, in the presence of failures; if acti
 A transaction system includes a set of components where each of them has a particular role.
 Main components are described below.
 
-image::../images/jts-transaction_components.PNG.png[align="center"]
+image::jts-transaction_components.PNG.png[align="center"]
 
 ===== Application Programs
 
@@ -1652,7 +1653,7 @@ A first technique focuses on manipulated data, such the Do/Undo/Redo protocol (c
 A second technique relies on a distributed protocol named the two phases commit, ensuring that all participants involved within a distributed transaction set their data either in their final values or in their initial values.
 In other words all participants must commit or all must rollback.
 
-image::../images/jts-recovery_logs.PNG.png[align="center"]
+image::jts-recovery_logs.PNG.png[align="center"]
 
 In addition to failures we refer as centralized such system crashes, communication failures due for instance to network outages or message loss have to be considered during the recovery process of a distributed transaction.
 
@@ -1696,7 +1697,7 @@ Basically these standards have proposed logical models, which divide transaction
 * functions performed by the Transaction Manager which manages transactions, and finally
 * Communication Resource Managers which allow exchanging information with other transactional domains.
 
-image::../images/jts-standards.PNG.png[align="center"]
+image::jts-standards.PNG.png[align="center"]
 
 === {parentProduct} Overview
 
@@ -1755,7 +1756,7 @@ The sample application consists of a banking application that involves a bank ab
 Clients can obtain information on accounts and perform operations such credit, withdraw and transfer money from one account to an other.
 
 .The Banking Applications
-image::../images/jts-banking_application_1.PNG.png[align="center"]
+image::jts-banking_application_1.PNG.png[align="center"]
 
 The client application:
 
@@ -1795,7 +1796,7 @@ According to the final transaction decision, the resource is able to set the Acc
 From the transactional view, Figure 2 depicts of transactional components.
 
 .The Banking Application and the transactional Component
-image::../images/jts-banking_application_2.PNG.png[align="center"]
+image::jts-banking_application_2.PNG.png[align="center"]
 
 ==== Deploying and Testing The Banking Application
 
@@ -3625,7 +3626,7 @@ ArjunaCore exploits object-oriented techniques to present programmers with a too
 These classes form a hierarchy, part of which is shown below.
 
 .ArjunaCore class hierarchy
-image::../images/jts-ArjunaCore_Classes.PNG.png[align="center"]
+image::jts-ArjunaCore_Classes.PNG.png[align="center"]
 
 Apart from specifying the scopes of transactions, and setting appropriate locks within objects, the application programmer does not have any other responsibilities: ArjunaCore and Transactional Objects for Java (TXOJ) guarantee that transactional objects will be registered with, and be driven by, the appropriate transactions, and crash recovery mechanisms are invoked automatically in the event of failures.
 
@@ -3670,7 +3671,7 @@ According to the its activation or deactivation a transactional object for Java 
 The fundamental life cycle of a persistent object in TXOJ is shown in Figure 2.
 
 .The life cycle of a persistent object.
-image::../images/jts-txoj_lifecycle.PNG.png[align="center"]
+image::jts-txoj_lifecycle.PNG.png[align="center"]
 
 * The object is initially passive, and is stored in the object store as an instance of the class OutputObjectState.
 * When required by an application the object is automatically activated by reading it from the store using a read_committed operation and is then converted from an InputObjectState instance into a fully-fledged object by the restore_state operation of the object.

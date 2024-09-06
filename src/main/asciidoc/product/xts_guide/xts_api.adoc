@@ -1,6 +1,7 @@
 
 [[sec_xts_api]]
 = The XTS API
+:imagesdir: images
 
 This chapter discusses the XTS API.
 You can use this information to write client and server applications which consume transactional Web Services and coordinate back-end systems.
@@ -19,7 +20,7 @@ In XTS, participant does this communication, as shown in <<fig_participant_backe
 
 [[fig_participant_backend_control]]
 .Transactions, Participants, and Back-End Transaction Control
-image::../images/xts-guide-fig-participant-backend-control.png[align="center"]
+image::xts-guide-fig-participant-backend-control.png[align="center"]
 
 ==== Atomic Transaction
 

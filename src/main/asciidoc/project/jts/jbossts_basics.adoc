@@ -1,5 +1,6 @@
 
 = {parentProduct} Basics
+:imagesdir: images
 
 == Introduction
 
@@ -58,7 +59,7 @@ These classes form a hierarchy, illustrated in <<_jbossts_class_hierarchy>>.
 
 [[_jbossts_class_hierarchy]]
 .{parentProduct} class hierarchy
-image::../images/jts-jbossts-class-hierarchy.png[{parentProduct} class hierarchy]
+image::jts-jbossts-class-hierarchy.png[{parentProduct} class hierarchy]
 
 Your main responsibilities are specifying the scope of transactions and setting appropriate locks within objects. {parentProduct} guarantees that transactional objects will be registered with, and be driven by, the appropriate transactions.
 Crash recovery mechanisms are invoked automatically in the event of failures.

@@ -1,5 +1,6 @@
 
 = Transaction Model
+:imagesdir: images
 
 The REST Atomic Transaction (RESTAT) model uses a traditional two-phase commit protocol with the following optimizations:
 
@@ -15,7 +16,7 @@ The diagram below illustrates the various resources defined within the RESTAT pr
 We shall discuss each of these in the following sections.
 
 .Architecture
-image::../images/rts-architecture.png[align="center"]
+image::rts-architecture.png[align="center"]
 
 These components are enumerated below and discussed in the following sections:
 
@@ -33,7 +34,7 @@ The participant is driven through two-phase commit by the coordinator.
 A transaction coordinator and two-phase participant go through the state transitions shown:
 
 .StateTransitions
-image::../images/rts-state_transitions.png[align="center"]
+image::rts-state_transitions.png[align="center"]
 
 As such, all of the resources in the protocol have statuses that can be represented as one of these values.
 Asking a resource to change its state from, say, Active to Committed, may drive it through all of the intermediate states and as a result trigger protocol specific events, such as driving the two-phase commit protocol.

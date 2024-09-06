@@ -1,5 +1,6 @@
 
 = Introduction
+:imagesdir: images
 
 == Contextual Overview
 
@@ -40,13 +41,13 @@ This name indicates that they are not autonomously responsible for determining t
 Therefore, whilst a top level coordinator exposes only the `commit` and `rollback` methods for transaction termination and handles the 2PC internally, the subordinates additionally expose the prepare method to their parent, behaving much like resources during the termination protocol.
 
 .Transaction interposition in a distributed JTA environment
-image::../images/txbridge-guide-interposition.png[align="center"]
+image::txbridge-guide-interposition.png[align="center"]
 
 In the transaction bridge, an interposed coordinator is registered into the existing transaction and performs the additional task of protocol mapping.
 That is, it appears to its parent coordinator to be a resource of its native transaction type, whilst appearing to its children to be a coordinator of their native transaction type, even though these transaction types differ.
 
 .Transactional bridging interposition
-image::../images/txbridge-guide-bridgeinterposition.png[align="center"]
+image::txbridge-guide-bridgeinterposition.png[align="center"]
 
 The interposed coordinator is responsible for performing mapping between the transaction protocols.
 There is a strong correspondence between the API and protocol used by the JTA and WS-AT transaction types, which is unsurprising given their common heritage and shared problem domain.

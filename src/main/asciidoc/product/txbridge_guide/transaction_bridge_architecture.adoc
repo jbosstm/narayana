@@ -18,7 +18,7 @@ However, it is an oversimplification of the situation where the JTS option is us
 We will return to this case later.
 
 .Simplified `Bridge` Architecture
-image::../images/txbridge-guide-architecture.png[align="center"]
+image::txbridge-guide-architecture.png[align="center"]
 
 == Shared Design Elements
 

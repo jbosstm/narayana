@@ -1,5 +1,6 @@
 
 = How {productName} manages the OTS Recovery Protocol
+:imagesdir: images
 
 == Recovery Protocol in OTS - Overview
 
@@ -8,7 +9,7 @@ Transaction's participants in a doubt status could use the `RecoveryCoordinator`
 According to that transaction status, those participants can take appropriate decision either by roll backing or committing.
 
 .Resource and `RecoveryCoordinator` relationship
-image::../images/failure-recovery-fig3-resource-recoverycoordinator.png[align="center"]
+image::failure-recovery-fig3-resource-recoverycoordinator.png[align="center"]
 
 A reference to a `RecoveryCoordinator` is returned as a result of successfully calling `register_resource` on the transaction Coordinator.
 This object, which is implicitly associated with a single Resource, can be used to drive the Resource through recovery procedures in the event of a failure occurring during the transaction.
@@ -27,7 +28,7 @@ Basically, the Portable Object Adapter, or POA is an object that intercepts a cl
 The Object is then invoked and the response is returned to the client.
 
 .Overview of the POA
-image::../images/failure-recovery-fig4-overview-of-poa.png[align="center"]
+image::failure-recovery-fig4-overview-of-poa.png[align="center"]
 
 The object that performs the client request is referred as a servant, which provides the implementation of the CORBA object requested by the client.
 A servant provides the implementation for one or more CORBA object references.
@@ -103,7 +104,7 @@ In addition to the creation of the default servant, an object reference to a `Re
 As we will see this object reference will be used to obtain its IP address, port number and POA name and assign them to any `RecoveryCoordinator` object reference created on register_resource.
 
 .Recovery Manager
-image::../images/failure-recovery-fig5-recoverymanager.png[align="center"]
+image::failure-recovery-fig5-recoverymanager.png[align="center"]
 
 When an application registers a resource with a transaction, a `RecoveryCoordinator` object reference is expected to be returned.
 To build that object reference, the Transaction Service uses the `RecoveryCoordinator` object reference created within the Recovery Manager as a template.
@@ -111,6 +112,6 @@ The new object reference contains practically the same information to retrieve t
 
 [[resource_registration]]
 .Resource registration and returned `RecoveryCoordinator` Object reference build from a referencestored in the ObjectStore.
-image::../images/failure-recovery-fig6-resourceregistration.png[align="center"]
+image::failure-recovery-fig6-resourceregistration.png[align="center"]
 
 Since a `RecoveryCoordintaor` object reference returned to an application contains all information to retrieve the POA then the default servant located in the Recovery Manager, all `replay_completion` invocation, per machine, are forwarded to the same default `RecoveryCoordinator` that is able to retreive the Object ID from the incoming request to extract the transaction identifier and the process identifier needed to determine the status of the requested transaction.

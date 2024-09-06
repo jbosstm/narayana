@@ -1,5 +1,6 @@
 
 = Advanced transaction issues with ArjunaCore
+:imagesdir: images
 
 Atomic actions (transactions) can be used by both application programmers and class developers.
 Thus, entire operations (or parts of operations) can be made atomic as required by the semantics of a particular operation.
@@ -80,7 +81,7 @@ Its results are made permanent when it commits and will not be undone if any of 
 
 .Independent Top-Level Action
 ====
-image::../images/core-independent_top_level_action.png[align="center"]
+image::core-independent_top_level_action.png[align="center"]
 A typical nesting of atomic actions, where action B is nested within action A.
 Although atomic action C is logically nested within action B (it had its Begin operation invoked while B was active) because it is an independent top-level action, it will commit or abort independently of the other actions within the structure.
 Because of the nature of independent top-level actions they should be used with caution and only in situations where their use has been carefully examined.

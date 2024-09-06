@@ -1,5 +1,6 @@
 
 = Using ArjunaCore
+:imagesdir: images
 
 This section describes _ArjunaCore_ and _Transactional Objects for Java_ (TXOJ) in more detail, and shows how to use ArjunaCore to construct transactional applications.
 
@@ -167,14 +168,14 @@ This copy resides within a single JVM, and all clients must address their invoca
 This model provides better performance, but represents a single point of failure, and in a multi-threaded environment may not protect the object from corruption if a single thread fails.
 
 .Single Object Model
-image::../images/appendix-single_object_model.png[align="center"]
+image::appendix-single_object_model.png[align="center"]
 
 Multiple::
 Logically, a single instance of the object exists, but copies of it are distributed across different JVMs.
 The performance of this model is worse than the SINGLE model, but it provides better failure isolation.
 
 .Multiple Object Model
-image::../images/appendix-multiple_object_model.png[align="center"]
+image::appendix-multiple_object_model.png[align="center"]
 
 The default model is SINGLE.
 The programmer can override this on a per-object basis by using the appropriate constructor.

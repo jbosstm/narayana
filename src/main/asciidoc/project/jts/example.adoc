@@ -1,5 +1,6 @@
 
 = Example
+:imagesdir: images
 
 This example illustrates the concepts and the implementation details for a simple client/server example using implicit context propagation and indirect context management.
 
@@ -120,7 +121,7 @@ The interposed coordinator is automatically registered with the root coordinator
 The root coordinator calls the interposed coordinator, which in turn calls the `commit_one_phase` method for the resource.
 
 .Sequence Diagram
-image::../images/jts-sequence-diagram.png[]
+image::jts-sequence-diagram.png[]
 
 ==== Interpretation of output
 

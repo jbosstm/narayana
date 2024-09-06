@@ -1,5 +1,6 @@
 
 = Troubleshooting
+:imagesdir: images
 
 This chapter covers issues that you may hit when developing applications with {productName}.
 
@@ -70,7 +71,7 @@ Here's a diagram showing the pertinent message exchanges that occur under a norm
 
 [[_fig_pcp_race_success]]
 .Successful close of activity
-image::../images/development-guide-fig-pcp-race-success.png[align="center"]
+image::development-guide-fig-pcp-race-success.png[align="center"]
 
 The messages are numbered to indicate the order in which they are sent:
 
@@ -117,7 +118,7 @@ The following diagram shows what messages are exchanged when the race condition 
 Notice that the activity ends in a consistent state.
 
 .Failure to close the activity
-image::../images/development-guide-fig-pcp-race-failure.png[align="center"]
+image::development-guide-fig-pcp-race-failure.png[align="center"]
 
 Messages 1-3 are omitted from the following explanation as they are the same as in the success case.
 
