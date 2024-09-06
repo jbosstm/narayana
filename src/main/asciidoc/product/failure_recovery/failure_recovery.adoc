@@ -9,9 +9,7 @@
 :leveloffset: +1
 
 include::{productSourceDir}/failure_recovery/architecture_of_the_recovery_manager.adoc[]
-
 include::{productSourceDir}/failure_recovery/how_narayana_manages_the_ots_recovery_protocol.adoc[]
-
 include::{productSourceDir}/failure_recovery/configuration_options.adoc[]
 
 :leveloffset: -1

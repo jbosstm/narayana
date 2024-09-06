@@ -4,8 +4,10 @@
 :sectnums:
 
 include::{projectSourceDir}/book_info.adoc[]
-include::{projectSourceDir}/preface.adoc[]
 
+:leveloffset: +1
+
+include::{projectSourceDir}/preface.adoc[]
 include::{projectSourceDir}/core/core.adoc[]
 include::{projectSourceDir}/jta/jta.adoc[]
 include::{projectSourceDir}/jts/jts.adoc[]
@@ -16,3 +18,5 @@ include::{projectSourceDir}/stm/stm.adoc[]
 include::{projectSourceDir}/compensations/compensations.adoc[]
 include::{projectSourceDir}/osgi/osgi.adoc[]
 include::{projectSourceDir}/appendix/appendix.adoc[]
+
+:leveloffset: -1

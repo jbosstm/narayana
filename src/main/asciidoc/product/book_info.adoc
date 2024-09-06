@@ -1,4 +1,5 @@
 
+:sectnums!:
 
 = Functionality of Narayana supported within Red Hat JBoss EAP
 
@@ -13,4 +14,4 @@ to develop applications that use transaction technology to manage business proce
 This document covers functionality that is available within both the Narayana community version and
 is also available within the Red Hat JBoss EAP product.
 
-
+:sectnums:

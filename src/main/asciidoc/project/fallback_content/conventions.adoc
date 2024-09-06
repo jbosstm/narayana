@@ -1,9 +1,5 @@
 
 = Document Conventions
-:doctype: book
-:sectnums:
-:toc: {toc}
-:icons: {icons}
 
 This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
 
