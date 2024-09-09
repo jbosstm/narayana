@@ -3,7 +3,7 @@
 
 = Functionality of Narayana supported within Red Hat JBoss EAP
 
-xref:fallback_content/legal_notice.adoc[Legal Notice]
+include::{productSourceDir}/fallback_content/legal_notice.adoc[]
 
 == Introduction
 

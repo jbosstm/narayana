@@ -3,7 +3,7 @@
 
 = Narayana Project Documentation
 
-xref:fallback_content/legal_notice.adoc[Legal Notice]
+include::{projectSourceDir}/fallback_content/legal_notice.adoc[]
 
 == Introduction
 
