@@ -167,7 +167,6 @@ _$1_
 
 * One sentence per line: at every full stop, new line.
 * Code snippets should be loaded from files (as DocBookRx does).
-I surround the code snippet with two `====` to create a frame around the code (it look better IMO).
 * DocBookRx converts DocBook classes, interfaces, etc. with `[class/interface/etc.]''Name_Of_The_Class''`.
 Using the RegEx pattern, I modified it to look like `'Name_Of_The_Class'` (where you should replace ' with `)
 * I don't like the space after the class name and before the comma/full stop.
