@@ -328,7 +328,7 @@ public class LRAService {
         }
     }
 
-    public synchronized int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
+    public int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
                                     StringBuilder compensatorData) {
         if (lra ==  null) {
