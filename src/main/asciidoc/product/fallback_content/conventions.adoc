@@ -101,7 +101,7 @@ Aside from standard usage for presenting the title of a work, italics denotes th
 For example:
 
 ====
-Publican is a _Asciidoc_ publishing system.
+This documentation uses _Asciidoc_.
 ====
 
 == Pull-quote Conventions
