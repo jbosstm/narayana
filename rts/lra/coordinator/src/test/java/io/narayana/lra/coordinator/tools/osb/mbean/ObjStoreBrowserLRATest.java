@@ -90,7 +90,8 @@ public class ObjStoreBrowserLRATest {
 
     @Test
     public void lraMBeanRemoval() throws Exception {
-        LongRunningAction lra = new LongRunningAction(new Uid());
+        String lraUrl = "http://localhost:8080/lra";
+        LongRunningAction lra = LRARecoveryModule.getService().startLRA(lraUrl, null, "client", Long.MAX_VALUE);
         OSEntryBean lraOSEntryBean = null;
         try {
             lra.begin(Long.MAX_VALUE); // Creating the LRA records in the log store.

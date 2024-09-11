@@ -726,23 +726,32 @@ public class LongRunningAction extends BasicAction {
 
     public LRAParticipantRecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
                                                   long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        LRAParticipantRecord participant = findLRAParticipant(participantUrl, false);
-
-        if (participant != null) {
-            participant.setCompensatorData(compensatorData);
-            return participant; // must have already been enlisted
+        ReentrantLock lock = tryLockTransaction();
+        if (lock == null) {
+            LRALogger.i18nLogger.warn_enlistment();
+            return null;
+        }
+        else {
+            try {
+                LRAParticipantRecord participant = findLRAParticipant(participantUrl, false);
+                if (participant != null) {
+                    participant.setCompensatorData(compensatorData);
+                    return participant; // must have already been enlisted
+                }
+                participant = doEnlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase, timeLimit,
+                        compensatorData);
+                if (participant != null) {
+                    // need to remember that there is a new participant
+                    deactivate(); // if it fails the superclass will have logged a warning
+                    savedIntentionList = true; // need this clean up if the LRA times out
+                }
+                return participant;
+            }
+            finally {
+                lock.unlock();
+            }
         }
 
-        participant = doEnlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase,
-                timeLimit, compensatorData);
-
-        if (participant != null) {
-            // need to remember that there is a new participant
-            deactivate(); // if it fails the superclass will have logged a warning
-            savedIntentionList = true; // need this clean up if the LRA times out
-        }
-
-        return participant;
     }
 
     private LRAParticipantRecord doEnlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
