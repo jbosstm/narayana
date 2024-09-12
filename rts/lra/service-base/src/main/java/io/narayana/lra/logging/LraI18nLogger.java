@@ -178,6 +178,9 @@ public interface LraI18nLogger {
     @Message(id = 25038, value = "Invalid participant enlistment with LRA %s: participant data is disabled")
     String error_participant_data_disallowed(String lraId);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25040, value = "Lock not acquired, enlistment failed: cannot enlist participant, cannot lock transaction")
+    void warn_enlistment();
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
