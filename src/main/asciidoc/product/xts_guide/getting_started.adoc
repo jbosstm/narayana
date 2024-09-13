@@ -1,19 +1,19 @@
 
 = Getting Started
 
-== EnableXTS on (appServer)
+== EnableXTS on {appServer}
 
-XTS, which is the Web Services component of {productName}, provides WS-AT and WS-BA support for Web Services hosted on the (appServer).
+XTS, which is the Web Services component of {productName}, provides WS-AT and WS-BA support for Web Services hosted on the {appServer}.
 XTS is available as an optional SubSystem, enabled using the `standalone-xts.xml` configuration.
 
-.Procedure: Starting (appServer) with XTS Enabled
-. Change to the (appServer) directory:
+.Procedure: Starting {appServer} with XTS Enabled
+. Change to the {appServer} directory:
 +
 `cd $JBOSS_HOME`
 . Copy the example XTS configuration into the configurations directory:
 +
 `cp docs/examples/configs/standalone-xts.xml standalone/configuration`
-. Start (appServer), specifying the xts configuration:
+. Start {appServer}, specifying the xts configuration:
 +
 Linux:
 +

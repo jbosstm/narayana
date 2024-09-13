@@ -17,17 +17,16 @@ These beans are singletons, instantiated upon first access, using the following 
 
 .Procedure: Algorithm for environment bean instantiation
 . The properties are loaded and populated from a properties file named and located as follows:
-+
-** If the properties file name property `com.arjuna.ats.arjuna.common.propertiesFile` is set, its value is used as the file name.
-** If not, the default file name `jbossts-properties.xml` is used.
+.. If the properties file name property `com.arjuna.ats.arjuna.common.propertiesFile` is set, its value is used as the file name.
+.. If not, the default file name `jbossts-properties.xml` is used.
 The definition of the used value can be found at Narayana distribution jar file under `META-INF/MANIFEST.MF` at property `arjuna-properties-file`.
 . The file thus named is searched for by, in order
-. absolute path
-. `user.dir`
-. `user.home`
-. `java.home`
-. directories contained on the classpath
-. a default file embedded in the product .jar file
+.. absolute path
+.. `user.dir`
+.. `user.home`
+.. `java.home`
+.. directories contained on the classpath
+.. a default file embedded in the product .jar file
 +
 if you use Narayana dependency `org.jboss.narayana.jts:narayana-jts-idlj` you can check the default properties settings https://github.com/jbosstm/narayana/blob/master/ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-properties.xml[
 in the Narayana repository at github].

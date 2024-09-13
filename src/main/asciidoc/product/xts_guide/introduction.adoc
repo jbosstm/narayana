@@ -84,7 +84,7 @@ The programming model is based on peer-to-peer relationships, with the result th
 In XTS, the active component is achieved through deployment of JaxWS endpoints.
 Each XTS endpoint that is reachable through SOAP/XML is published via JaxWS, without developer intevention.
 The only requirement is that transactional client applications and transactional web services must reside within a domain capable of hosting JaxWS endpoints, such as an application server.
-(appServer) can provide this functionality.
+{appServer} can provide this functionality.
 
 == SOAP
 

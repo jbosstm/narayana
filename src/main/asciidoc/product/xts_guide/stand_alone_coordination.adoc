@@ -14,7 +14,7 @@ Normally, the rest of the coordination process is executed from the remote host.
 This configuration is called _stand-alone coordination_.
 
 .Reasons for Choosing a Stand-Alone Coordinator
-* Efficiency: if a client application invokes Web Services on a remote (appServer), coordinating the transaction from the remote server might be more efficient, since the protocol-specific messages between the coordinator and the participants do not need to travel over the network.
+* Efficiency: if a client application invokes Web Services on a remote {appServer}, coordinating the transaction from the remote server might be more efficient, since the protocol-specific messages between the coordinator and the participants do not need to travel over the network.
 * Reliability: if the coordinator service runs on a dedicated host, there is no danger of failing applications or services affecting the coordinator and causing failures for unrelated transactions.
 * A third reason might be to use a coordination service provided by a third party vendor.
 
@@ -31,9 +31,9 @@ This can be done by changing the 'url' property of the 'xts-environment' element
 include::{productSourceDir}/xts_guide/extras/example-xts-subsystem.xml[]
 ----
 
-The XTS module (`_modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`) in the (appServer) includes a configuration file, `xts-properties.xml`, in the root of the jar.
+The XTS module (`_modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`) in the {appServer} includes a configuration file, `xts-properties.xml`, in the root of the jar.
 These properties can be edited and then re-packaged in the jar.
-The changes will take affect on next boot of the (appServer).
+The changes will take affect on next boot of the {appServer}.
 <<example_xts_properties.xml>> shows a fragment of this file which details the options for changing the coordinator URL.
 
 [[example_xts_properties.xml]]
@@ -48,13 +48,13 @@ These values only apply when the `coordinator.url` is not set.
 The URL is constructed by combining the specified values with default values for any missing elements.
 This is particularly useful for two specific use cases.
 
-. The first case is where the client is expected to use an XTS coordinator deployed in another (appServer).
-If, for example, this (appServer) is bound to address `10.0.1.99` , setting property `coordinator.address` to `10.0.1.99` is normally all that is required to configure the coordinator URL to identity the remote (appServer)'s coordination service.
-If the Web service on the remote (appServer) were reset to `9090` then it would also be necessary to set property `coordinator.port` to this value.
+. The first case is where the client is expected to use an XTS coordinator deployed in another {appServer}.
+If, for example, this {appServer} is bound to address `10.0.1.99` , setting property `coordinator.address` to `10.0.1.99` is normally all that is required to configure the coordinator URL to identity the remote {appServer}'s coordination service.
+If the Web service on the remote {appServer} were reset to `9090` then it would also be necessary to set property `coordinator.port` to this value.
 . The second common use case is where communications between client and coordinator, and between participant and coordinator, must use secure connections.
 If property `coordinator.scheme` is set to value `https`, the client's request to begin a transaction is sent to the coordinator service over a secure https connection.
 The XTS coordinator and participant services will ensure that all subsequent communications between coordinator and client or coordinator and web services also employ secure https connections.
-Note that this requires configuring the trust stores in the (appServer) running the client, coordinator and participant web services with appropriate trust certificates.
+Note that this requires configuring the trust stores in the {appServer} running the client, coordinator and participant web services with appropriate trust certificates.
 
 [NOTE]
 ====

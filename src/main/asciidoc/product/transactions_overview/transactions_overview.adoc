@@ -100,6 +100,12 @@ However, if crashed machines eventually recover, crash recovery mechanisms can b
 .Two-Phase `Commit` Overview
 image::transactions-overview-fig-two-phase-commit-overview.png[align="center"]
 
+* A transaction is started, and some work is performed.
+* Once the work is finished, the two-phase commit begins.
+* The coordinator (transaction manager) of the transaction asks each resource taking part in the transaction whether it is prepared to commit.
+* If all resources respond positively, the coordinator instructs the resources to make all work performed durable (usually committed to a database).
+* If not, all work performed is rolled back (undone) such that the underlying data structures are in their original states.
+    
 [NOTE]
 ====
 During two-phase commit transactions, coordinators and resources keep track of activity in non-volatile data stores so that they can recover in the case of a failure.
@@ -121,6 +127,7 @@ The synchronizations are then informed about when the transaction completes and 
 
 .Procedure: The "Four Phase Protocol" Created By Synchronizations
 Synchronizations essentially turn the two-phase commit protocol into a four-phase protocol:
+
 . Step 1
 +
 Before the transaction starts the two-phase commit, all registered Synchronizations are informed.

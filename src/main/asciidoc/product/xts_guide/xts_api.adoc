@@ -65,13 +65,13 @@ See Chapter 8 Stand-Alone Coordination for details of how to configure a coordin
 [WARNING]
 ====
 In previous releases, the XTS and Transaction Manager `.jar`, `.war` and configuration files needed to be bundled with the application.
-This deployment method is no longer supported in the (appServer) as XTS is pre-installed as a SubSystem.
+This deployment method is no longer supported in the {appServer} as XTS is pre-installed as a SubSystem.
 ====
 
 == API for the Atomic Transaction Protocol
 
 [[ref_durable2pcparticipant]]
-=== Durable2PCParticipant
+=== `Durable2PCParticipant`
 
 All participants which support `Durable2PC` protocol have to implement `com.arjuna.wst.Durable2PCParticipant` interface.
 
@@ -95,7 +95,7 @@ If `rollback` processing cannot complete, the participant should throw a `System
 `unknown`::
 This method has been deprecated and is slated to be removed from XTS in the future.
 
-`unknown`::
+`error`::
 In rare cases when recovering from a system crash, it may be impossible to complete or `roll back` a previously prepared participant, causing the `error` operation to be invoked.
 
 [[ref_volatile2pcparticipant]]
@@ -127,7 +127,7 @@ This method may not be called if a crash occurs during `commit` processing.
 `unknown`::
 This method is deprecated and will be removed in a future release of XTS.
 
-`unknown`::
+`error`::
 This method should never be called, since volatile participants are not involved in recovery processing.
 
 [[ref_vote]]
@@ -205,6 +205,7 @@ Upon completion, the `rollback` method disassociates the transaction from the cu
 .Exceptions
 `UnknownTransactionException`::
 No transaction is associated with the invoking thread.
+
 === UserTransactionFactory
 
 Call the `getUserTransaction` method to obtain a <<ref_usertransaction>> instance from a `UserTransactionFactory`.
@@ -273,6 +274,7 @@ No transaction is associated with the invoking thread.
 `WrongStateException`::
 The transaction is not in a state that allows participants to be enrolled.
 For instance, it may be in the process of terminating.
+
 === `TransactionManagerFactory`
 
 Use the `getTransactionManager` method to obtain a <<ref_transactionmanager>> from a `TransactionManagerFactory`.
@@ -309,6 +311,7 @@ Parametrised constructor will either enabled or disable JTA context propagation.
 .Parameters
 `enabled`::
 Boolean value saying to either enable or disable JTA context propagation.
+
 == API for the Business Activity Protocol
 
 === Compatibility
@@ -342,7 +345,7 @@ Return the status of the participant.
 `unknown`::
 This method is deprecated and will be removed a future XTS release.
 
-`unknown`::
+`error`::
 In rare cases when recovering from a system crash, it may be impossible to compensate a previously-completed participant.
 In such cases the `error` operation is invoked.
 
@@ -374,7 +377,7 @@ Returns the status of the participant.
 `unknown`::
 This method is deprecated and will be removed in a future release of XTS.
 
-`unknown`::
+`error`::
 In rare cases when recovering from a system crash, it may be impossible to compensate a previously completed participant.
 In such cases, the `error` method is invoked.
 
@@ -404,7 +407,7 @@ The `fault` method places the business activity into a mandatory `cancel-only` m
 The faulted participant is no longer involved in completion, close or compensation of the activity.
 
 [[ref_userbusinessactivity]]
-=== UserBusinessActivity
+=== `UserBusinessActivity`
 
 `com.arjuna.wst11.UserBusinessActivity` is the class that most clients employ.
 A client begins a new business activity by first obtaining a `UserBusinessActivity` from the `UserBusinessActivityFactory`.
@@ -446,6 +449,7 @@ All uncompleted Participant Completion participants and all Coordinator Completi
 `UnknownTransactionException`::
 No activity is associated with the invoking thread.
 Any participants that previous completed are directed to compensate their work.
+
 === UserBusinessActivityFactory
 
 Use the `getUserBusinessActivity` method to obtain a <<ref_userbusinessactivity>> instance from a `userBusinessActivityFactory`.
@@ -528,6 +532,7 @@ No transaction is associated with the invoking thread.
 
 `WrongStateException`::
 The transaction is not in a state where new participants may be enrolled, such as when it is terminating.
+
 === `BusinessActivityManagerFactory`
 
 Use the `getBusinessActivityManager` method to obtain a <<ref_businessactivitymanager>> instance from a `BusinessActivityManagerFactory`.

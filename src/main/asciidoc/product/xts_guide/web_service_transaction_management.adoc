@@ -27,12 +27,12 @@ More advanced options can be configured in the `xts-properties.xml_`.
 [NOTE]
 ====
 The XTS module (`modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`)
-in the (appServer)
+in the {appServer}
 includes the configuration file, `xts-properties.xml`,
 in the root of the jar.
 These properties can be edited and then
 re-packaged in the jar.
-The changes will take affect on next boot of the (appServer).
+The changes will take affect on next boot of the {appServer}.
 ====
 
 == Deployment descriptors

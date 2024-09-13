@@ -28,7 +28,7 @@ Each `Rmid` is represented by a separate `XAResource` object.
 * The DTP concept of Thread of Control maps to all Java threads that are given access to the `XAResource` and `Connection` objects.
 For example, it is legal for two different threads to perform the `start` and `end` operations on the same `XAResource` object.
 
-=== Extended `XAResource`control
+=== Extended `XAResource` control
 
 By default, whenever an `XAResource` object is registered with a JTA-compliant transaction service, there is no way to manipulate the order in which it is invoked during the two-phase commit protocol, with respect to other `XAResource` objects.
 {productName}, however, provides support for controlling the order via the two interfaces `com.arjuna.ats.jta.resources.StartXAResource` and `com.arjuna.ats.jta.resources.EndXAResource`.
