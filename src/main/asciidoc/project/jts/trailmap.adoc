@@ -2445,77 +2445,63 @@ The Banking application presented above gives the same output.
 It is possible to run the {parentProduct} Transaction Service and recovery manager processes on a different machine and have clients access these centralized services in a hub-and-spoke style architecture.
 
 All that must be done is to provide the clients with enough information to contact the transaction service (such as the ORB's NameService).
-However, configuring the ORB is beyond the remit of this trailmap and so we shall opt for a simpler mechanism wherby the transaction services IOR is shared by access to a common file.
+However, configuring the ORB is beyond the remit of this trailmap and so we shall opt for a simpler mechanism whereby the transaction services IOR is shared by access to a common file.
 
-This trailmap stage assumes that the transaction service has been appropriately installed and configured (the setenv.[bat|sh] script has been ran) onto two hosts (for the purpose of explanation we shall refer to these hosts as host1 and host2).
+This trailmap stage assumes that the transaction service has been appropriately installed and configured (the `setenv.[bat|sh]` script has been ran) onto two hosts (for the purpose of explanation we shall refer to these hosts as `host1` and `host2`).
 
-* Start the transaction service and recovery manager on host1
-
-** Start the recovery manager in one command prompt terminal
+* Start the recovery manager in one command prompt terminal
 +
 [source,shell]
 ----
 java com.arjuna.ats.arjuna.recovery.RecoveryManager [-test]
 ----
-
-** Start the transaction service in a second command prompt terminal
+* Start the transaction service in a second command prompt terminal
 +
 [source,shell]
 ----
 java com.arjuna.ats.jts.TransactionServer [-test]
 ----
+* Start the transaction service and recovery manager on `host1`
 
-* Share the transaction service IOR on host1 with host2
-
-Open a command prompt on host2 and copy the CosServices.cfg file from the `<narayana-jts_install_root>/etc` directory on host1.
-
-For example, using the popular scp package, open a shell prompt and issue the following command:
-+
+Open a command prompt on `host2` and copy the `CosServices.cfg` file from the `<narayana-jts_install_root>/etc` directory on `host1`.
+For example, using the popular `scp` package, open a shell prompt and issue the following command:
 [source,shell]
 ----
-scp user_
-@ __host1__:<ats_root>/etc/CosServices.cfg
-<host2_ats_root>/etc/
+scp user @ host1:<ats_root>/etc/CosServices.cfg <host2_ats_root>/etc/
 ----
-
-* Start the Bank Server and Bank Client applications on host2
+* Share the transaction service IOR on `host1` with `host2`
 +
 [NOTE]
 ====
 See the section above entitled "Using a stand-alone Transaction Server" for more information on how to configure these application to use a remote transaction service.
 ====
-
-** _ Testing the distributed transaction with __Implicit Propagation Context___
-
+* _Testing the distributed transaction with Implicit Propagation Context_
 ** Start the Server
 +
 [source,shell]
 ----
 java com.arjuna.demo.jts.remotebank.BankServer
 ----
-
 ** In a separate window, start the client
 +
 [source,shell]
 ----
 java com.arjuna.demo.jts.remotebank.BankClient
 ----
-
-** _ Testing the distributed transaction with __Explicit Propagation Context___
-
+* _Testing the distributed transaction with Explicit Propagation Context_
 ** Start the Server
 +
 [source,shell]
 ----
 java com.arjuna.demo.jts.explicitremotebank.BankServer
 ----
-
 ** In a separate window, start the client
 +
 [source,shell]
 ----
 java com.arjuna.demo.jts.explicitremotebank.BankClient
 ----
+** Start the Bank Server and Bank Client applications on `host2`
 
 ====== How the Banking Application is build using JTS interfaces
 
@@ -4193,7 +4179,15 @@ Full source code for the `src/com/arjuna/demo/jts/txojbank/BankImpl.java` -> Ban
 
 The role of the BankServer class is mainly to initialise the ORB and the Object Adapter and to create the default Bank object responsible to create banking accounts.
 
-Globally the BankServer has the following structure.
+Globally, the BankServer has the following structure.
+[source,java]
+----
+myORB = ORB.getInstance("ServerSide");
+myOA = OA.getRootOA(myORB);
+myORB.initORB(args, null);
+myOA.initOA();
+...
+----
 
 * Initialise the ORB
 +

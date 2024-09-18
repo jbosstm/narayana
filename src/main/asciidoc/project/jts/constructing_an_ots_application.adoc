@@ -136,7 +136,7 @@ This approach allows the server to apply integrity constraints which apply to th
 ====
 [source,C]
 ----
-
+include::{projectSourceDir}/jts/extras/reliable_server.java[]
 ----
 ====
 

@@ -21,9 +21,15 @@ It is specific to the type of coordination being performed.
 The fundamental idea underpinning _WS-Coordination (WS-C)_ is that a coordination infrastructure is needed in a Web Services environment.
 The WS-C specification defines a framework that allows different coordination protocols to be plugged in to coordinate work between clients, services, and participants, as shown in <<fig_ws_c_architecture>>.
 
+====
 [[fig_ws_c_architecture]]
 .WS-C Architecture
 image::xts-fig-ws-c-overview.png[align="center"]
+
+The WS-C specification speaks of activities , which are distributed units of work, involving one or more parties.
+These parties may be services, components, or even objects.
+At this level, an activity is minimally specified and is simply created, run, and then completed.
+====
 
 Whatever coordination protocol is used, and in whatever domain it is deployed, the same generic requirements are present.
 
@@ -236,7 +242,7 @@ Since the transaction has terminated, any failures of participants at this stage
 <<fig_at_model>> illustrates the intricate interweaving of individual protocols comprising the AT as a whole.
 
 [[fig_at_model]]
-.Contect Creation
+.Context Creation
 image::xts-fig-at-model.png[align="center"]
 
 ==== Business Activities
@@ -305,6 +311,7 @@ The _BusinessAgreementWithCoordinatorCompletion_ differs from the _BusinessAgree
 . Instead, the completion stage is driven by the client which created the BA, which sends a _completed_ message to the coordinator.
 . The coordinator sends a _complete_ message to each participant, indicating that no further requests will be sent to the service associated with the participant.
 . The participant continues on in the same manner as in the _BusinessAgreementWithParticipantCompletion_ protocol.
+
 The advantage of the BA model, compared to the AT model, is that it allows the participation of services that cannot lock resources for extended periods.
 
 While the full ACID semantics are not maintained by a BA, consistency can still be maintained through compensation.

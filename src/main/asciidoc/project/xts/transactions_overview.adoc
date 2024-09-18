@@ -18,9 +18,20 @@ Transactions ensure data integrity when an application interacts with multiple d
 
 The main components involved in using and defining transactional Web Services using XTS are illustrated in <<fig_web_services_transaction>>.
 
+====
 [[fig_web_services_transaction]]
 .Components Involved in an XTS Transaction
 image::xts-fig-web-services-transaction.png[align="center"]
+
+Transaction Service::
+The Transaction Service captures the model of the underlying transaction protocol and coordinates parties affiliated with the transaction according to that model.
+Transaction API::
+Provides an interface for transaction demarcation and the registration of participants.
+A Participant::
+The entity that cooperates with the transaction service on behalf of its associated business logic.
+The Context::
+Captures the necessary details of the transaction such that participants can enlist within its scope.
+====
 
 == The Coordinator
 
@@ -56,6 +67,9 @@ The endpoint address participants contact to enroll.
 
 .Web Services and Context Flow
 image::xts-fig-web-services-context-flow.png[align="center"]
+Whenever an application message is sent, the XTS Client API automatically creates a context and embeds it into the message.
+Similarly, any transaction-aware services can extract that context using the XTS service-side infrastructure and use it to perform work within the context of a particular transaction, even if that transaction was initiated elsewhere on the Web.
+The value of this approach is that the business logic contained within the client application and services are not peppered with transaction-processing code.
 
 == Participants
 
@@ -92,9 +106,17 @@ The classical two-phase commit approach is the bedrock of {productName}, and mor
 Two-phase commit provides coordination of parties that are involved in a transaction.
 The general flow of a two-phase commit transaction is described in <<two_phase_commit_overview>>.
 
+====
 [[two_phase_commit_overview]]
 .Two-Phase Commit Overview
 image::xts-fig-two-phase-commit-overview.png[align="center"]
+
+* A transaction is started, and some work is performed.
+* Once the work is finished, the two-phase commit begins.
+* The coordinator (transaction manager) of the transaction asks each resource taking part in the transaction whether it is prepared to commit.
+* If all resources respond positively, the coordinator instructs the resources to make all work performed durable (usually committed to a database).
+* If not, all work performed is rolled back (undone) such that the underlying data structures are in their original states.
+====
 
 [NOTE]
 ====
@@ -116,11 +138,19 @@ At that point, they can flush cached state, which might be used to improve perfo
 The synchronizations are then informed about when the transaction completes and its completion state.
 
 .Procedure: The "Four Phase Protocol" Created By Synchronizations
+
 Synchronizations essentially turn the two-phase commit protocol into a four-phase protocol:
-. Before the transaction starts the two-phase commit, all registered Synchronizations are informed.
+
+. Step 1
++
+Before the transaction starts the two-phase commit, all registered Synchronizations are informed.
 Any failure at this point will cause the transaction to roll back.
-. The coordinator then conducts the normal two-phase commit protocol.
-. Once the transaction has terminated, all registered Synchronizations are informed.
+. Step 2 and 3
++
+The coordinator then conducts the normal two-phase commit protocol.
+. Step 4
++
+Once the transaction has terminated, all registered Synchronizations are informed.
 However, this is a courtesy invocation because any failures at this stage are ignored: the transaction has terminated so there's nothing to affect.
 
 The synchronization protocol does not have the same failure requirements as the traditional two-phase commit protocol.
@@ -194,9 +224,18 @@ Try to avoid needing to perform resolution of heuristics, either by working with
 _Interposition_ is a scoping mechanism which allows coordination of a transaction to be delegated across a hierarchy of coordinators.
 See <<fig_interpositions>> for a graphical representation of this concept.
 
+====
 [[fig_interpositions]]
 .Interpositions
 image::xts-fig-interpositions.png[align="center"]
+
+The diagram shows a top-level coordinator and an interposed coordinator.
+The top-level coordinator is responsible for driving the original, top-level transaction to completion or rollback.
+The interposed coordinator manages its participants in a subordinate transaction, but it cannot act autonomously.
+From the point of view of the parent coordinator, it appears to be another participant in the top-level transaction.
+The interposed coordinator operates as an intermediary.
+It forwards incoming prepare and commit/rollback messages to its participants, combining their responses and returning them back to its parent coordinator.
+====
 
 Interposition is particularly useful for Web Services transactions, as a way of limiting the amount of network traffic required for coordination.
 For example, if communications between the top-level coordinator and a web service are slow because of network traffic or distance, the web service might benefit from executing in a subordinate transaction which employs a local coordinator service.

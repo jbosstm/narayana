@@ -90,7 +90,7 @@ Because of the nature of independent top-level actions they should be used with 
 Top-level actions can be used within an application by declaring and using instances of the class `TopLevelTransaction`.
 They are used in exactly the same way as other transactions.
 
-== Transactions within `save_state`and `restore_state`methods
+== Transactions within `save_state`and `restore_state` methods
 
 Exercise caution when writing the `save_state` and `restore_state` operations to ensure that no atomic actions are started, either explicitly in the operation or implicitly through use of some other operation.
 This restriction arises due to the fact that ArjunaCore may invoke `restore_state` as part of its commit processing resulting in the attempt to execute an atomic action during the commit or abort phase of another action.
