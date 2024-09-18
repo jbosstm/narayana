@@ -1,8 +1,6 @@
 
 :sectnums!:
 
-== Preface
-
 :leveloffset: +1
 
 include::{productSourceDir}/fallback_content/conventions.adoc[]
