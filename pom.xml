@@ -193,6 +193,7 @@
                 <!-- No sure if the following is correct -->
                 <parentProduct>Narayana</parentProduct>
                 <appServer>WildFly Application Server</appServer>
+                <stylesheet>stylesheet.css</stylesheet>
               </attributes>
             </configuration>
           </execution>

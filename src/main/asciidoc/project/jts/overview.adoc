@@ -9,8 +9,7 @@ A transaction is a unit of work that encapsulates multiple database actions such
 Transactions ensure data integrity when an application interacts with multiple datasources.
 
 ====
-.*Practical Example*
-
+.Practical Example
 If you subscribe to a newspaper using a credit card, you are using a transactional system.
 Multiple systems are involved, and each of the systems needs the ability to roll back its work, and cause the entire transaction to roll back if necessary.
 For instance, if the newspaper's subscription system goes offline halfway through your transaction, you don't want your credit card to be charged.

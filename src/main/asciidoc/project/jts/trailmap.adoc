@@ -1862,13 +1862,16 @@ This trail focuses to understanding concepts related to the creation of transact
 
 ====== Running The Banking application with JTA
 
-*Configuring {parentProduct}*
-
-Program Applications that create transactions using te JTA interface may invoke as well local services as remote services.
-When a remote invocation need to be performed, the current transactional context need to be propagated to the remote service in order to involve it to the transaction in progress.{parentProduct} allows the possibility to provide such feature using the facilities provided by JTS and ORB.
+====
+.Configuring {parentProduct}
+Program Applications that create transactions using the JTA interface may invoke as well local services as remote services.
+When a remote invocation need to be performed, the current transactional context need to be propagated to the remote service in order to involve it to the transaction in progress.
+{parentProduct} allows the possibility to provide such feature using the facilities provided by JTS and ORB.
 More precisely {parentProduct} need to be configured to determine in which type of transaction, local or distributed, the JTA interface is used.
+====
 
-*Executing the JTA sample*
+====
+.Executing the JTA sample
 
 The Banking sample using JTA creates local transactions, ensure that JTA is configured for local transactions as explained above.
 
@@ -1963,8 +1966,10 @@ withdraw from an account
 The requested account does not exist!
 ERROR - jakarta.transaction.RollbackException
 ----
+====
 
-*Building The Banking Application with JTA*
+====
+.Building The Banking Application with JTA
 
 From an architectural point of view of JTA, the bank client is considered as an application program able to manage transactions via the `jakarta.transaction.UserTransaction` interface.
 The following portion of the code illustrates how a JTA transaction is started and terminated when the client asks to transfer money from one account to another.
@@ -2163,8 +2168,10 @@ private float _initial_balance;
 private float _current_balance;
 private Account _account;
 ----
+====
 
-*Sample Application Source Code*
+====
+.Sample Application Source Code
 
 Full source code for the banking application with JTA is included to provide you with a starting point for experimentation.
 
@@ -2173,6 +2180,7 @@ Full source code for the banking application with JTA is included to provide you
 * `src/com/arjuna/demo/jta/localbank/Account.java` -> `Account.java`
 * `src/com/arjuna/demo/jta/localbank/AccountResource.java`
 * `src/com/arjuna/demo/jta/localbank/NotExistingAccount.java` -> `NotExistingAccount.java`
+====
 
 ===== Running The Banking application with JTS
 
@@ -2285,7 +2293,8 @@ ERROR - org.omg.CORBA.TRANSACTION_ROLLEDBACK:
 minor code: 50001  completed: No
 ----
 
-*Using a stand-alone Transaction Server*
+====
+.Using a stand-alone Transaction Server
 
 By default {parentProduct} does not use a separate transaction manager server: transaction managers are co-located with each application process to improve performance and improve application fault-tolerance.
 When running applications which require a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager property variable, in the `(jbossts_install_dir)/etc/jbossts-properties.xml` file, to YES.
@@ -2300,8 +2309,10 @@ java com.arjuna.ats.jts.TransactionServer [-test]
 The option `-test` allows to see the message "Ready" when the Transaction Server is started.
 
 The Banking application presented above gives the same output.
+====
 
-*Running The Banking application with JTS*
+====
+.Running The Banking application with JTS
 
 The JTS version of the Banking application means that the Object Request Broker will be used.
 The {parentProduct} distribution is provided to work with the bundled JacORB version
@@ -2423,8 +2434,10 @@ The requested account does not exist!
 ERROR - org.omg.CORBA.TRANSACTION_ROLLEDBACK:
 minor code: 50001 completed: No
 ----
+====
 
-*Using a stand-alone Transaction Server*
+====
+.Using a stand-alone Transaction Server
 
 By default {parentProduct} does not use a separate transaction manager server: transaction managers are co-located with each application process to improve performance and improve application fault-tolerance.
 When running applications which require a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager property variable, in the `jbossts-properties.xml` file, to YES.
@@ -2439,8 +2452,10 @@ java com.arjuna.ats.jts.TransactionServer [-test]
 The option `-test` allows to see the message "Ready" when the Transaction Server is started.
 
 The Banking application presented above gives the same output.
+====
 
-*Running the example on several machines*
+====
+.Running the example on several machines
 
 It is possible to run the {parentProduct} Transaction Service and recovery manager processes on a different machine and have clients access these centralized services in a hub-and-spoke style architecture.
 
@@ -2502,8 +2517,10 @@ java com.arjuna.demo.jts.explicitremotebank.BankServer
 java com.arjuna.demo.jts.explicitremotebank.BankClient
 ----
 ** Start the Bank Server and Bank Client applications on `host2`
+====
 
-====== How the Banking Application is build using JTS interfaces
+====
+.How the Banking Application is build using JTS interfaces
 
 From an architectural point of view of JTS, the bank client is considered as an application program able to manage transactions either in a direct or indirect management mode, respectively with the interfaces org.omg.CosTransactions.TransactionFactory and org.omg.CosTransactions.Terminator or with the org.omg.CosTransactions.Current interface.
 Transactions created by the client in the Banking application are done in the indirect mode.
@@ -2734,8 +2751,10 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA {
     private Account _account;
 }
 ----
+====
 
-*Sample Application Source Code*
+====
+.Sample Application Source Code
 
 Full source code for the banking application is included to provide you with a starting point for experimentation.
 
@@ -2745,8 +2764,10 @@ Full source code for the banking application is included to provide you with a s
 ** src/com/arjuna/demo/jts/localbank/Account.java">Account.java
 ** src/com/arjuna/demo/jts/localbank/AccountResource.java
 ** src/com/arjuna/demo/jts/localbank/NotExistingAccount.java">NotExistingAccount.java
+====
 
-*How the Banking Application is build using JTS interfaces*
+====
+.How the Banking Application is build using JTS interfaces
 
 The bank client is an application program able to manage transactions either in a direct or indirect management mode, respectively with the interfaces org.omg.CosTransactions.TransactionFactory and org.omg.CosTransactions.Terminator or with the org.omg.CosTransactions.Current interface.
 Transactions created by the client in the Banking application are done in the indirect mode.
@@ -3037,8 +3058,10 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA {
 
 }
 ----
+====
 
-*Sample Application Source Code*
+====
+.Sample Application Source Code
 
 Full source code for the banking application is included to provide you with a starting point for experimentation.
 
@@ -3049,8 +3072,10 @@ Full source code for the banking application is included to provide you with a s
 ** `src/com/arjuna/demo/jts/explicitremotebank/BankImpl.java`
 ** `src/com/arjuna/demo/jts/explicitremotebank/AccountImpl.java` -> `AccountImpl.java`
 ** `src/com/arjuna/demo/jts/explicitremotebank/AccountResource.java`
+====
 
-*How the Banking Application is build using JTS interfaces*
+====
+.How the Banking Application is build using JTS interfaces
 
 The bank client is an application program able to manage transactions either in a direct or indirect management mode, respectively with the interfaces org.omg.CosTransactions.TransactionFactory and org.omg.CosTransactions.Terminator or with the org.omg.CosTransactions.Current interface.
 Transactions created by the client in the Banking application are done in the indirect mode.
@@ -3342,8 +3367,10 @@ public class AccountResource
 
 }
 ----
+====
 
-*Sample Application Source Code*
+====
+.Sample Application Source Code
 
 Full source code for the banking application is included to provide you with a starting point for experimentation.
 
@@ -3354,8 +3381,10 @@ Full source code for the banking application is included to provide you with a s
 ** `src/com/arjuna/demo/jts/remotebank/BankImpl.java`
 ** `src/com/arjuna/demo/jts/remotebank/AccountImpl.java` -> `AccountImpl.java`
 ** `src/com/arjuna/demo/jts/remotebank/AccountResource.java`
+====
 
-*How the Banking Application is build using JTS interfaces*
+====
+.How the Banking Application is build using JTS interfaces
 
 From an architectural point of view of JTS, the bank client is considered as an application program able to manage transactions either in a direct or indirect management mode, respectively with the interfaces org.omg.CosTransactions.TransactionFactory and org.omg.CosTransactions.Terminator or with the org.omg.CosTransactions.Current interface.
 Transactions created by the client in the Banking application are done in the indirect mode.
@@ -3581,8 +3610,10 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA {
     private final Account _account;
 }
 ----
+====
 
-*Sample Application Source Code*
+====
+.Sample Application Source Code
 
 Full source code for the banking application is included to provide you with a starting point for experimentation.
 
@@ -3592,6 +3623,7 @@ Full source code for the banking application is included to provide you with a s
 ** `src/com/arjuna/demo/jts/localbank/Account.java` -> `Account.java`
 ** `src/com/arjuna/demo/jts/localbank/AccountResource.java`
 ** `src/com/arjuna/demo/jts/localbank/NotExistingAccount.java` -> `NotExistingAccount.java`
+====
 
 === Making the Banking Application Persistent
 
@@ -4708,7 +4740,8 @@ A set of arguments are provided:
 * to decide committing or aborting the transaction,
 * to decide generating a crash during the commitment process.
 
-*The demo's components*
+====
+.The demo's components
 
 The application consists of three programs
 
@@ -4725,8 +4758,10 @@ The application consists of three programs
 Using the provided {parentProduct} Recovery Modules ensures that resources are correctly recovered.
 This sample illustrates how to define and register its own module.
 It's the responsibility of the module to re-create the appropriate objects using information retrieved from a log.
+====
 
-*Recovery Module registration*
+====
+.Recovery Module registration
 
 The recovery module should now be deployed in order to be called by the Recovery Manager.
 To do so, we just need to add an entry in the `jbossts-properties.xml` by adding a new property as follows:
@@ -4738,8 +4773,10 @@ To do so, we just need to add an entry in the `jbossts-properties.xml` by adding
 
 Where <i> represent the new occurrence number that follows the last that already exists in the file.
 Once started, the Recovery Manager will automatically load the added Recovery module.
+====
 
-*Starting the Recovery Manager*
+====
+.Starting the Recovery Manager
 
 In a separate window launch the Recovery Manager, as follows:
 
@@ -4747,8 +4784,10 @@ In a separate window launch the Recovery Manager, as follows:
 ----
 java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 ----
+====
 
-*Launching the demo*
+====
+.Launching the demo
 
 To launch the Test Recovery Module, execute the following java program
 
@@ -4757,3 +4796,4 @@ To launch the Test Recovery Module, execute the following java program
 java com.arjuna.demo.recoverymodule.TestRecoveryModule
   [-commit|-abort] [-crash]
 ----
+====
