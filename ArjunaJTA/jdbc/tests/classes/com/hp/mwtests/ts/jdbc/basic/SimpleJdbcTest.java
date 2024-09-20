@@ -16,6 +16,9 @@ import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import jakarta.transaction.UserTransaction;
 
+import org.jnp.server.NamingBeanImpl;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -23,20 +26,28 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 public class SimpleJdbcTest {
-	private static final String DB_USER1 = "dtf11";
-	private static final String DB_USER2 = "dtf12";
-	private static final String DB_HOST = "tywin.eng.hst.ams2.redhat.com";
-	private static final String DB_SID = "orcl";
+	private static final String DB_USER1 = "user1";
+	private static final String DB_USER2 = "user2";
+
+	private NamingBeanImpl namingBeanImpl = null;
+
+	@Before
+	public void setup() throws Exception {
+		namingBeanImpl = new NamingBeanImpl();
+		namingBeanImpl.start();
+	}
+
+	@After
+	public void tearDown() {
+		namingBeanImpl.stop();
+	}
 
 	@Test
 	public void test() throws Exception {
 		arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier("1");
-		System.setProperty("java.naming.factory.initial",
-				"org.apache.naming.java.javaURLContextFactory");
-		System.setProperty("java.naming.factory.url.pkgs", "org.apache.naming");
-		final DataSource dataSource1 = getDataSource(DB_USER1, "oracle: "
+		final DataSource dataSource1 = getDataSource(DB_USER1, "resource: "
 				+ DB_USER1);
-		final DataSource dataSource2 = getDataSource(DB_USER2, "oracle: "
+		final DataSource dataSource2 = getDataSource(DB_USER2, "resource: "
 				+ DB_USER2);
 
 		prepare(dataSource1);
@@ -63,11 +74,10 @@ public class SimpleJdbcTest {
 
 	private static void prepare(DataSource dataSource) throws SQLException {
 		final Connection connection = dataSource.getConnection();
-		PreparedStatement preparedStatement = connection
-				.prepareStatement("SELECT * FROM user_tables WHERE table_name = 'JTA_TEST'");
-		final ResultSet resultSet = preparedStatement.executeQuery();
-		if (resultSet.next()) {
+		try {
 			connection.prepareStatement("DROP TABLE jta_test").execute();
+		} catch (SQLException e) {
+			// Ignore
 		}
 		connection.prepareStatement(
 				"CREATE TABLE jta_test (some_string VARCHAR2(10))").execute();
@@ -80,25 +90,13 @@ public class SimpleJdbcTest {
 			SecurityException, ClassNotFoundException {
 		InitialContext initialContext = prepareInitialContext();
 
-		Class clazz = Class.forName("oracle.jdbc.xa.client.OracleXADataSource");
+		Class clazz = Class.forName("org.h2.jdbcx.JdbcDataSource");
 		XADataSource xaDataSource = (XADataSource) clazz.newInstance();
-		clazz.getMethod("setDriverType", new Class[] { String.class }).invoke(
-				xaDataSource, new Object[] { "thin" });
-		clazz.getMethod("setServerName", new Class[] { String.class }).invoke(
-				xaDataSource, new Object[] { DB_HOST });
-		clazz.getMethod("setNetworkProtocol", new Class[] { String.class })
-				.invoke(xaDataSource, new Object[] { "tcp" });
-		clazz.getMethod("setDatabaseName", new Class[] { String.class })
-				.invoke(xaDataSource, new Object[] { DB_SID });
-		clazz.getMethod("setUser", new Class[] { String.class }).invoke(
-				xaDataSource, new Object[] { user });
-		clazz.getMethod("setPassword", new Class[] { String.class }).invoke(
-				xaDataSource, new Object[] { user });
-		clazz.getMethod("setPortNumber", new Class[] { int.class }).invoke(
-				xaDataSource, new Object[] { 1521 });
+		clazz.getMethod("setURL", new Class[] { String.class }).invoke(
+				xaDataSource, new Object[] { "jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1" });
 
-		final String name = "java:/comp/env/jdbc/" + user;
-		initialContext.bind(name, xaDataSource);
+		final String name = user;
+		initialContext.rebind(name, xaDataSource);
 
 		DriverManagerDataSource dataSource = new DriverManagerDataSource(
 				"jdbc:arjuna:" + name);
@@ -112,14 +110,14 @@ public class SimpleJdbcTest {
 			throws NamingException {
 		final InitialContext initialContext = new InitialContext();
 
-		try {
-			initialContext.lookup("java:/comp/env/jdbc");
-		} catch (NamingException ne) {
-			initialContext.createSubcontext("java:");
-			initialContext.createSubcontext("java:/comp");
-			initialContext.createSubcontext("java:/comp/env");
-			initialContext.createSubcontext("java:/comp/env/jdbc");
-		}
+//		try {
+//			initialContext.lookup("java:/comp/env/jdbc");
+//		} catch (NamingException ne) {
+////			initialContext.createSubcontext("java:");
+//			initialContext.createSubcontext("java:/comp");
+//			initialContext.createSubcontext("java:/comp/env");
+//			initialContext.createSubcontext("java:/comp/env/jdbc");
+//		}
 
 		return initialContext;
 	}
