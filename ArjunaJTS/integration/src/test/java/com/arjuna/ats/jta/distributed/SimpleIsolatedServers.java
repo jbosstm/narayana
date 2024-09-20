@@ -1065,7 +1065,8 @@ public class SimpleIsolatedServers {
 			Thread.currentThread().setContextClassLoader(classLoader);
 		}
 		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 1);
-		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 2);
+		// The second rollback invocation (from the proxyXAResource) is ignored because of JBTM-3843, that's why the following condition is == 1
+		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 1);
 	}
 
 	@Test
@@ -1121,6 +1122,36 @@ public class SimpleIsolatedServers {
 				completionCounter.getRollbackCount("2000") == 1);
 		assertTrue("" + completionCounter.getRollbackCount("1000"),
 				completionCounter.getRollbackCount("1000") == 2);
+	}
+
+	@Test
+	public void testPrepareThrowsXaRbIntegrity() throws Exception {
+		System.out.println("testPrepareThrowsXaRbIntegrity");
+
+		LocalServer originalServer = getLocalServer("1000");
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
+		TransactionManager transactionManager = originalServer.getTransactionManager();
+		transactionManager.begin();
+		Transaction originalTransaction = transactionManager.getTransaction();
+		originalTransaction.enlistResource(new TestResource(originalServer.getNodeName(), false));
+		TestResource testResource = new TestResource(originalServer.getNodeName(), false, false, true,new XAException(XAException.XA_RBINTEGRITY));
+		originalTransaction.enlistResource(testResource);
+		try {
+			transactionManager.commit();
+			fail("The transaction should not be able to commit normally");
+		} catch (RollbackException hme) {
+			// One of the resources rolled back
+		}
+		Thread.currentThread().setContextClassLoader(classLoader);
+
+		// No one committed
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
+		/*
+		 * Only one XAResourceRecord should have rolled back.
+		 * The other one was already rolled back by the RM, which returned XA_RBINTEGRITY.
+		 */
+		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 1);
 	}
 
 	private void doRecursiveTransactionalWork(int startingTimeout, List<String> nodesToFlowTo, boolean commit, boolean rollbackOnlyOnLastNode) throws Exception {

@@ -105,6 +105,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		_prepared = false;
 		_committed = false;
+		_rolledBack = false;
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
 		_participantStore = null;
 		_theUid = new Uid();
@@ -133,6 +134,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
             _prepared = true;
             _committed = false;
+            _rolledBack = false;
             _heuristic = TwoPhaseOutcome.FINISH_OK;
             _participantStore = null;
             _theUid = new Uid();
@@ -236,13 +238,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			 * XAER_PROTO.
 			 */
 
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
-
 			switch (e1.errorCode)
 			{
-			case XAException.XAER_RMERR:
-			case XAException.XAER_RMFAIL:
+			// No txn -> assume rollback
+			case XAException.XAER_NOTA:
+			// Rolled back by specs
 			case XAException.XA_RBROLLBACK:
 			case XAException.XA_RBEND:
 			case XAException.XA_RBCOMMFAIL:
@@ -251,9 +251,14 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			case XAException.XA_RBOTHER:
 			case XAException.XA_RBPROTO:
 			case XAException.XA_RBTIMEOUT:
+				// This will avoid calling rollback when aborting
+				_rolledBack = true;
+				return Vote.VoteRollback;
+				// We might need to roll back the XA resource for these error codes
 			case XAException.XAER_INVAL:
 			case XAException.XAER_PROTO:
-			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
+			case XAException.XAER_RMERR:
+			case XAException.XAER_RMFAIL:
 				return Vote.VoteRollback;
 			default:
 				throw new HeuristicHazard(); // we're not really sure (shouldn't get here though).
@@ -263,9 +268,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		{
             jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_preparefailed(_theXAResource.toString(),
                     XAHelper.xidToString(_tranID), "-", e2);
-
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
 
 			return Vote.VoteRollback;
 		}
@@ -319,12 +321,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						&& (e1.errorCode < XAException.XA_RBEND))
 				    {
 					/*
-					 * Has been marked as rollback-only. We still
-					 * need to call rollback.
+					 * Has been marked as rollback-only. If the branch has not been
+					 * already rolled back (i.e. _rolledBack == true ), we still need
+					 * to call rollback.
 					 */
 				    } else if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL)){
 				    	    try {
-				    	    	    _theXAResource.rollback(_tranID);
+				    	      if (!this._rolledBack) {
+				    	        _theXAResource.rollback(_tranID);
+				    	        this._rolledBack = true;
+				    	      }
 				    	    } catch (XAException e2)
 				    	    {	
                                 		jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
@@ -347,7 +353,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				boolean destroyState = true;
 				try
 				{
-					_theXAResource.rollback(_tranID);
+					if (!this._rolledBack)
+					{
+						_theXAResource.rollback(_tranID);
+						this._rolledBack = true;
+					}
 				}
 				catch (XAException e1)
 				{
@@ -395,6 +405,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBOTHER:
 						case XAException.XA_RBPROTO:
 						case XAException.XA_RBTIMEOUT:
+							_rolledBack = true;
 							destroyState();
 							break;
 						case XAException.XAER_NOTA:
@@ -530,6 +541,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBTIMEOUT:
 						case XAException.XA_RBTRANSIENT:
 						case XAException.XAER_RMERR:
+							_rolledBack = true;
 							updateState(TwoPhaseOutcome.HEURISTIC_ROLLBACK);
 
 							throw new org.omg.CosTransactions.HeuristicRollback();
@@ -546,6 +558,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			    			throw new org.omg.CosTransactions.HeuristicHazard();
     					case XAException.XAER_PROTO:
                             // presumed abort (or we could be really paranoid and throw a heuristic)
+                            this._rolledBack = true;
                             throw new TRANSACTION_ROLLEDBACK();
 
 						case XAException.XA_RETRY:
@@ -681,6 +694,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	    {
             jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.commit_one_phase");
 
+            _rolledBack = true;
 	        throw new TRANSACTION_ROLLEDBACK();
 	    }
 	    else
@@ -756,6 +770,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    _theXAResource.commit(_tranID, true);
 	                else {
 	                    _theXAResource.rollback(_tranID);
+	                    // _rolledBack set to true even though
+	                    // it's not needed at this stage
+	                    this._rolledBack = true;
 	                    throw endRBOnly;
 	                }
 	            }
@@ -770,6 +787,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                if ((e1.errorCode >= XAException.XA_RBBASE)
 	                        && (e1.errorCode <= XAException.XA_RBEND))
 	                {
+	                    this._rolledBack = true;
 	                    throw new TRANSACTION_ROLLEDBACK();
 	                }
 
@@ -791,6 +809,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                           handleForget() ;
 	                       } catch (SystemException ignore) {
 	                       }
+	                       this._rolledBack = true;
 	                       throw new TRANSACTION_ROLLEDBACK();
 	                case XAException.XA_RBROLLBACK:
 	                case XAException.XA_RBCOMMFAIL:
@@ -801,6 +820,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                case XAException.XA_RBTIMEOUT:
 	                case XAException.XA_RBTRANSIENT:
 	                case XAException.XAER_RMERR:
+	                    /**
+	                     * These codes imply that the RM rolled back the branch
+	                     * Setting _rolledBack to true is not strictly needed here,
+	                     * but we'll set it anyway for consistency
+	                     * this._rolledBack = true;
+	                     */
+	                    this._rolledBack = true;
 	                    throw new TRANSACTION_ROLLEDBACK();
 	                case XAException.XAER_NOTA:
 	                    // RM unexpectedly lost track of the tx, outcome is uncertain
@@ -809,6 +835,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                case XAException.XAER_PROTO:
 	                case XAException.XA_RETRY:  // not allowed to be thrown here by XA specification!
 	                    // presumed abort (or we could be really paranoid and throw a heuristic)
+	                    this._rolledBack = true;
 	                    throw new TRANSACTION_ROLLEDBACK();
 
 	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
@@ -845,7 +872,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	            }
 	        }
 	        else
+	        {
+	            this._rolledBack = true;
 	            throw new TRANSACTION_ROLLEDBACK();
+	        }
 	    }
 	}
 
@@ -1149,6 +1179,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_tranID = null;
 		_prepared = true;
 		_committed = false;
+		_rolledBack = false;
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
 		_theUid = new Uid(u);
 		_participantStore = null;
@@ -1487,6 +1518,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private boolean _prepared;
 	private boolean _committed;
 	private boolean _valid;
+	private boolean _rolledBack;
 	private int _heuristic;
 	private ParticipantStore _participantStore;
 	private Uid _theUid;
@@ -1500,7 +1532,5 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	private String _cachedUidStringForm;
 
-	private static boolean _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
-	
     private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
 }

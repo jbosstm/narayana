@@ -212,13 +212,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 			 * XAER_PROTO.
 			 */
 
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
-
 			switch (e1.errorCode)
 			{
-			case XAException.XAER_RMERR:
-			case XAException.XAER_RMFAIL:
+			// No txn -> assume rollback
+			case XAException.XAER_NOTA:
+			// No txn -> assume rollback
 			case XAException.XA_RBROLLBACK:
 			case XAException.XA_RBEND:
 			case XAException.XA_RBCOMMFAIL:
@@ -227,10 +225,15 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 			case XAException.XA_RBOTHER:
 			case XAException.XA_RBPROTO:
 			case XAException.XA_RBTIMEOUT:
+				// This will avoid calling rollback when aborting
+				_rolledBack = true;
+				return TwoPhaseOutcome.PREPARE_NOTOK;
+			// We might need to roll back the XA resource for these error codes
 			case XAException.XAER_INVAL:
 			case XAException.XAER_PROTO:
-			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
-				return TwoPhaseOutcome.PREPARE_NOTOK;  // will not call rollback
+			case XAException.XAER_RMERR:
+			case XAException.XAER_RMFAIL:
+				return TwoPhaseOutcome.PREPARE_NOTOK;
 			default:
 				return TwoPhaseOutcome.HEURISTIC_HAZARD; // we're not really sure (shouldn't get here though).
 			}
@@ -239,9 +242,6 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 		{
             jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
                     _theXAResource.toString(), "-", e2);
-
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
 
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
@@ -297,13 +297,17 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 						&& (e1.errorCode < XAException.XA_RBEND))
 				    {
 					/*
-					 * Has been marked as rollback-only. We still
-					 * need to call rollback.
+					 * Has been marked as rollback-only. If the branch has not been
+					 * already rolled back (i.e. _rolledBack == false), we still need
+					 * to call rollback.
 					 */
 					 
 				    } else if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL)){
 				    	    try {
-				    	    	    _theXAResource.rollback(_tranID);
+				    	      if (!this._rolledBack) {
+				    	        _theXAResource.rollback(_tranID);
+				    	        this._rolledBack = true;
+				    	      }
 				    	    } catch (XAException e2)
 				    	    {
 				    	       addDeferredThrowable(e2);
@@ -335,7 +339,10 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 				try
 				{
-					_theXAResource.rollback(_tranID);
+				  if (!this._rolledBack) {
+				    _theXAResource.rollback(_tranID);
+				    this._rolledBack = true;
+				  }
 				}
 				catch (XAException e1)
 				{
@@ -376,6 +383,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 						case XAException.XA_RBOTHER:
 						case XAException.XA_RBPROTO:
 						case XAException.XA_RBTIMEOUT:
+							/** The resource manager has rolled back the
+							 * transaction branch’s work and has released
+							 * all held resources. Nothing left to do
+							 */
+							this._rolledBack = true;
 							break;
 						default:
 							return TwoPhaseOutcome.FINISH_ERROR;
@@ -487,6 +499,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 						case XAException.XA_RBTRANSIENT:
 						case XAException.XAER_RMERR:
 	                                        case XAException.XAER_PROTO:  // XA spec implies rollback
+							_rolledBack = true;
 							_heuristic = TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 							return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 						case XAException.XA_HEURMIX:
@@ -584,6 +597,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	    {
             jtaLogger.i18NLogger.warn_resources_arjunacore_opcnulltx("XAResourceRecord.1pc");
 
+            _rolledBack = true;
 	        return TwoPhaseOutcome.ONE_PHASE_ERROR;  // rolled back!!
 	    }
 	    else
@@ -678,6 +692,9 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                    _theXAResource.commit(_tranID, true);
 	                else {
 	                    _theXAResource.rollback(_tranID);
+	                    // _rolledBack set to true even though
+	                    // it's not needed at this stage
+	                    this._rolledBack = true;
 	                    throw endRBOnly;
 	                }
 	            }
@@ -704,6 +721,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                    forget();
 	                    break;
 	                case XAException.XA_HEURRB:
+	                       _rolledBack = true;
 	                       forget();
 	                       return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XA_RBROLLBACK:
@@ -715,6 +733,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                case XAException.XA_RBTIMEOUT:
 	                case XAException.XA_RBTRANSIENT:
 	                case XAException.XAER_RMERR:
+	                    /** These codes imply that the RM rolled back the branch
+	                     * Setting _rolledBack to true is not strictly needed here,
+	                     * but we'll set it anyway for consistency
+	                     */
+	                    this._rolledBack = true;
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XAER_NOTA:
 	                    _heuristic = TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -728,6 +751,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	                case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
 	                case XAException.XAER_PROTO:
+	                    this._rolledBack = true;
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
 	                case XAException.XAER_RMFAIL: // This was modified as part of JBTM-XYZ - although RMFAIL is not clear there is a rollback/commit we are flagging this to the user
 	                    _heuristic = TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -750,7 +774,10 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	            }
 	        }
 	        else
-	            return TwoPhaseOutcome.ONE_PHASE_ERROR;
+	        {
+	          this._rolledBack = true;
+	          return TwoPhaseOutcome.ONE_PHASE_ERROR;
+	        }
 	    }
 
 	    if (commit)
@@ -1308,6 +1335,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	
 	private TransactionImple _theTransaction;
     private boolean _recovered = false;
+    private boolean _rolledBack = false;
 
     // extra metadata from the wrapper, if present
     private String _productName;
@@ -1315,8 +1343,6 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
     private String _jndiName;
     private static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin =
             jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
-
-	private static final boolean _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
 
     /*
      * WARNING: USE WITH EXTEREME CARE!!

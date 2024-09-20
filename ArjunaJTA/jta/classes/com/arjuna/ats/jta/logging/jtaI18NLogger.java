@@ -608,6 +608,10 @@ public interface jtaI18NLogger {
 			format = MESSAGE_FORMAT)
 	String warn_failed_to_enlist_one_phase_resource();
 
+    @Message(id = 16155, value = "The XA Rollback Optimization has been deprecated!", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_xa_rollback_optimization_deprecated();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
