@@ -298,8 +298,46 @@ public class JTATest {
             assertTrue(resource2Rollback);
         }
     }
-	
-	
+
+    @Test
+    public void testPrepareThrowsXaRbIntegrity() throws Exception {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                throw new XAException(XAException.XA_RBINTEGRITY);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+            }
+        }));
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource2Rollback = true;
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            // This is going to pass because of JBTM-3843
+            assertFalse(resource1Rollback);
+            assertTrue(resource2Rollback);
+        }
+    }
+
 	@Test
 	public void testHeuristicRollbackSuppressedException() throws NotSupportedException, SystemException, IllegalStateException, RollbackException, SecurityException, HeuristicMixedException, HeuristicRollbackException {
 

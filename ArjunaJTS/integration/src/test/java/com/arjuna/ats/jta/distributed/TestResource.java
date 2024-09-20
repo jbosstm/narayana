@@ -22,6 +22,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.distributed.server.CompletionCounter;
 
 public class TestResource implements XAResource {
+	private XAException fatalError;
+
 	private Xid xid;
 
 	protected int timeout = 0;
@@ -38,10 +40,27 @@ public class TestResource implements XAResource {
 
     private transient boolean fatalCommit;
 
+	private transient boolean fatalPrepare;
+
 	public TestResource(String serverId, boolean readonly) {
+		this(serverId, readonly, false);
+	}
+
+	public TestResource(String nodeName, boolean b, boolean fatalCommit) {
+		this(nodeName, b, fatalCommit, false);
+	}
+
+	public TestResource(String serverId, boolean readonly, boolean fatalCommit, boolean fatalPrepare) {
+		this(serverId, readonly, fatalCommit, fatalPrepare, null);
+	}
+
+	public TestResource(String serverId, boolean readonly, boolean fatalCommit, boolean fatalPrepare, XAException fatalError) {
 		this.completionCounter = CompletionCounter.getInstance();
 		this.serverId = serverId;
 		this.readonly = readonly;
+		this.fatalCommit = fatalCommit;
+		this.fatalPrepare = fatalPrepare;
+		this.fatalError = fatalError;
 	}
 
 	public TestResource(String serverId, File file) throws IOException {
@@ -107,12 +126,7 @@ public class TestResource implements XAResource {
 		fis.close();
 	}
 
-	public TestResource(String nodeName, boolean b, boolean fatalCommit) {
-       this(nodeName, b);
-       this.fatalCommit = fatalCommit;
-    }
-
-    /**
+	/**
 	 * This class declares that it throws an Error *purely for byteman* so that
 	 * we can crash the resource during this method:
 	 * https://issues.jboss.org/browse/BYTEMAN-156
@@ -121,34 +135,42 @@ public class TestResource implements XAResource {
 	public synchronized int prepare(Xid xid) throws XAException, Error {
 		System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      XA_PREPARE [" + xid + "]");
 
-		if (readonly)
-			return XA_RDONLY;
-		else {
-			File dir = new File(System.getProperty("user.dir") + "/distributedjta-tests/TestResource/" + serverId + "/");
-			dir.mkdirs();
-			file = new File(dir, new Uid().fileStringForm() + "_");
-			try {
-				file.createNewFile();
-				final int formatId = xid.getFormatId();
-				final byte[] gtrid = xid.getGlobalTransactionId();
-				final int gtrid_length = gtrid.length;
-				final byte[] bqual = xid.getBranchQualifier();
-				final int bqual_length = bqual.length;
-
-				DataOutputStream fos = new DataOutputStream(new FileOutputStream(file));
-				fos.writeInt(formatId);
-				fos.writeInt(gtrid_length);
-				fos.write(gtrid, 0, gtrid_length);
-				fos.writeInt(bqual_length);
-				fos.write(bqual, 0, bqual_length);
-				fos.flush();
-				fos.close();
-			} catch (IOException e) {
-				throw new XAException(XAException.XAER_RMERR);
+		if (fatalPrepare) {
+			if (fatalError == null) {
+				throw new Error();
 			}
-			return XA_OK;
+			throw fatalError;
+		} else {
+			if (readonly)
+				return XA_RDONLY;
+			else {
+				File dir = new File(System.getProperty("user.dir") + "/distributedjta-tests/TestResource/" + serverId + "/");
+				dir.mkdirs();
+				file = new File(dir, new Uid().fileStringForm() + "_");
+				try {
+					file.createNewFile();
+					final int formatId = xid.getFormatId();
+					final byte[] gtrid = xid.getGlobalTransactionId();
+					final int gtrid_length = gtrid.length;
+					final byte[] bqual = xid.getBranchQualifier();
+					final int bqual_length = bqual.length;
+
+					DataOutputStream fos = new DataOutputStream(new FileOutputStream(file));
+					fos.writeInt(formatId);
+					fos.writeInt(gtrid_length);
+					fos.write(gtrid, 0, gtrid_length);
+					fos.writeInt(bqual_length);
+					fos.write(bqual, 0, bqual_length);
+					fos.flush();
+					fos.close();
+				} catch (IOException e) {
+					throw new XAException(XAException.XAER_RMERR);
+				}
+				return XA_OK;
+			}
 		}
 	}
+
 
 	public synchronized void commit(Xid id, boolean onePhase) throws XAException {
 		System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      XA_COMMIT  [" + id + "]");
@@ -161,7 +183,10 @@ public class TestResource implements XAResource {
 		this.xid = null;
 		
 		if (fatalCommit) {
-		    throw new Error();
+			if (fatalError == null) {
+				throw new Error();
+			}
+			throw fatalError;
 		}
 	}
 

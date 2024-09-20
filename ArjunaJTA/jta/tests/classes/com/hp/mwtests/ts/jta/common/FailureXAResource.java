@@ -12,7 +12,7 @@ import javax.transaction.xa.Xid;
 public class FailureXAResource implements XAResource
 {
     public enum FailLocation { none, prepare, commit, rollback, end, prepare_and_rollback };
-    public enum FailType { normal, timeout, heurcom, nota, inval, proto, rmfail, rollback, XA_RBCOMMFAIL, XA_HEURHAZ, message };
+    public enum FailType { normal, timeout, heurcom, nota, inval, proto, rmfail, rollback, XA_RBCOMMFAIL, XA_HEURHAZ, message, XA_RBINTEGRITY };
     
     public FailureXAResource ()
     {
@@ -55,8 +55,13 @@ public class FailureXAResource implements XAResource
 	    if (_type == FailType.rmfail)
                 throw new XAException(XAException.XAER_RMFAIL);
 	    
+        if (_type == FailType.XA_RBINTEGRITY)
+            throw new XAException(XAException.XA_RBINTEGRITY);
+
 	    throw new XAException(XAException.XA_RBTIMEOUT);
 	}
+    // successful
+    this._committed = true;
     }
 
     public void end(Xid xid, int flags) throws XAException
@@ -98,6 +103,8 @@ public class FailureXAResource implements XAResource
                 throw xae;
             } else if(_type == FailType.XA_HEURHAZ) {// XA spec invalid error code
                 throw new XAException(XAException.XA_HEURHAZ);
+            } else if(_type == FailType.XA_RBINTEGRITY) {
+                throw new XAException(XAException.XA_RBINTEGRITY);
             } else {
                 throw new XAException(XAException.XAER_INVAL);
             }
@@ -136,8 +143,14 @@ public class FailureXAResource implements XAResource
             if (_type == FailType.rmfail)
                 throw new XAException(XAException.XAER_RMFAIL);
 
+            if (_type == FailType.XA_RBINTEGRITY)
+                throw new XAException(XAException.XAER_NOTA);
+
             throw new XAException(XAException.XA_HEURHAZ);
         }
+
+        // Successful
+        this._rolledBack = true;
     }
 
     public boolean setTransactionTimeout(int seconds) throws XAException
@@ -149,6 +162,18 @@ public class FailureXAResource implements XAResource
     {
     }
 
+    public boolean isRolledBack() {
+        return _rolledBack;
+    }
+
+    public boolean isCommitted() {
+        return _committed;
+    }
+
     private FailLocation _locale;
     private FailType _type;
+
+    private boolean _rolledBack = false;
+    private boolean _committed = false;
+
 }

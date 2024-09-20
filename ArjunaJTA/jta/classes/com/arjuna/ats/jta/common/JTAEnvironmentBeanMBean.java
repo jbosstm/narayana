@@ -28,6 +28,7 @@ public interface JTAEnvironmentBeanMBean
 
     List<String> getXaResourceOrphanFilterClassNames();
 
+    @Deprecated
     boolean isXaRollbackOptimization();
 
     boolean isXaAssumeRecoveryComplete();

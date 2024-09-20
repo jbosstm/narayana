@@ -56,7 +56,6 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile List<String> xaResourceOrphanFilterClassNames = new ArrayList<String>();
     private volatile List<XAResourceOrphanFilter> xaResourceOrphanFilters = null;
 
-    private volatile boolean xaRollbackOptimization = false;
     private volatile boolean xaAssumeRecoveryComplete = false;
 
     // com.arjuna.ats.jta.utils.
@@ -587,27 +586,32 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns if connections associated to XAResources that fail during prepare should be cleaned up immediately.
-     * TODO move to JDBC module as it's only for our own connection manager?
+     * <p><b>Deprecated</b>: This method will be removed in the next major release
+     * <p>Returns if connections associated to XAResources that fail during prepare should be cleaned up immediately.
+     * <p>TODO move to JDBC module as it's only for our own connection manager?
      *
-     * Default: false.
-     * Equivalent deprecated property: com.arjuna.ats.jta.xaRollbackOptimization
+     * <p>Default: false.
+     * <p>Equivalent deprecated property: com.arjuna.ats.jta.xaRollbackOptimization
      *
      * @return true for cleanup during prepare, false for cleanup during phase two rollback.
      */
+    @Deprecated
     public boolean isXaRollbackOptimization()
     {
-        return xaRollbackOptimization;
+        jtaLogger.i18NLogger.warn_xa_rollback_optimization_deprecated();
+        return false;
     }
 
     /**
-     * Sets if failed resources should be cleaned up during prepare or during phase two.
+     * <p><b>Deprecated</b> This method will be removed in the next major release
+     * <p>Sets if failed resources should be cleaned up during prepare or during phase two.
      *
      * @param xaRollbackOptimization true for immediate cleanup, false for phase two cleanup.
      */
+    @Deprecated
     public void setXaRollbackOptimization(boolean xaRollbackOptimization)
     {
-        this.xaRollbackOptimization = xaRollbackOptimization;
+        jtaLogger.i18NLogger.warn_xa_rollback_optimization_deprecated();
     }
 
     /**

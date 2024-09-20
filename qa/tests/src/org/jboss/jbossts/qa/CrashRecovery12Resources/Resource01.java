@@ -87,7 +87,7 @@ public class Resource01
 		}
 		if (crashIn == ROLLBACK)
 		{
-			throw (new XAException(XAException.XA_RBROLLBACK));
+			throw (new XAException(XAException.XAER_RMFAIL));
 		}
 		/* Crash in commit, rollback or no crash. */
 		return XA_OK;

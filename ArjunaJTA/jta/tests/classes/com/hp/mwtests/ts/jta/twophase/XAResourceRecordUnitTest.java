@@ -8,6 +8,7 @@
 package com.hp.mwtests.ts.jta.twophase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -203,5 +204,20 @@ public class XAResourceRecordUnitTest
         assertEquals(xares.nestedPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(xares.nestedCommit(), TwoPhaseOutcome.FINISH_OK);
         assertEquals(xares.nestedAbort(), TwoPhaseOutcome.FINISH_OK);
+    }
+
+    @Test
+    public void testPrepareFailureWithRollback () {
+        DummyXA res = new DummyXA(false);
+        FailureXAResource fxa = new FailureXAResource(FailLocation.prepare_and_rollback, FailType.XA_RBINTEGRITY);
+        TransactionImple tx = new TransactionImple(0);
+        XAResourceRecord xares = new XAResourceRecord(tx, fxa, tx.getTxId(), null);
+
+        assertEquals(xares.topLevelPrepare(), TwoPhaseOutcome.PREPARE_NOTOK);
+        assertEquals(xares.topLevelAbort(), TwoPhaseOutcome.FINISH_OK);
+
+        // Validates JBTM-3843 by checking if FailureXAResource committed and/or rolled back
+        assertFalse(fxa.isRolledBack());
+        assertFalse(fxa.isCommitted());
     }
 }
