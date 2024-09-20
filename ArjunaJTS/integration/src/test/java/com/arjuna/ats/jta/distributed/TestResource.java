@@ -46,8 +46,8 @@ public class TestResource implements XAResource {
 		this(serverId, readonly, false);
 	}
 
-	public TestResource(String nodeName, boolean b, boolean fatalCommit) {
-		this(nodeName, b, fatalCommit, false);
+	public TestResource(String serverId, boolean readonly, boolean fatalCommit) {
+		this(serverId, readonly, fatalCommit, false);
 	}
 
 	public TestResource(String serverId, boolean readonly, boolean fatalCommit, boolean fatalPrepare) {
@@ -172,8 +172,8 @@ public class TestResource implements XAResource {
 	}
 
 
-	public synchronized void commit(Xid id, boolean onePhase) throws XAException {
-		System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      XA_COMMIT  [" + id + "]");
+	public synchronized void commit(Xid xid, boolean onePhase) throws XAException {
+		System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      XA_COMMIT  [" + xid + "]");
 		completionCounter.incrementCommit(serverId);
 		if (file != null) {
 			if (!file.delete()) {
