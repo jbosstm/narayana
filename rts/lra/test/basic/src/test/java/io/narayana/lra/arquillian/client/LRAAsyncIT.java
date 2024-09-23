@@ -84,7 +84,9 @@ public class LRAAsyncIT extends TestBase {
                 // (note that the method LRAParticipant.CREATE_OR_CONTINUE_LRA also invokes
                 // other resource methods)
                 URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA);
+                synchronized (lrasToAfterFinish) {
                     lrasToAfterFinish.add(lra1);
+                    }
                     assertEquals("LRA should still be active. The identifier of the LRA was " + lra1, LRAStatus.Active,
                             lraClient.getStatus(lra1));
 
@@ -120,7 +122,9 @@ public class LRAAsyncIT extends TestBase {
 
             Callable<URI> callableTask = () -> {
                 URI lra = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
-                lrasToAfterFinish.add(lra);
+                synchronized (lrasToAfterFinish) {
+                    lrasToAfterFinish.add(lra);
+                }
 
                 assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
                 invokeInTransaction(lra, LRAParticipant.END_EXISTING_LRA);
