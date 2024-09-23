@@ -35,6 +35,7 @@ import io.narayana.lra.arquillian.resource.LRAParticipant;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
+
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 public class LRAAsyncIT extends TestBase {
@@ -60,11 +61,13 @@ public class LRAAsyncIT extends TestBase {
         super.before();
         log.info("Running test " + testName.getMethodName());
     }
+
     @Override
     public void after() {
         super.after();
         executorService.shutdown();
     }
+
     @Deployment
     public static WebArchive deploy() {
         return Deployer.deploy(LRAAsyncIT.class.getSimpleName(), LRAParticipant.class);
@@ -80,31 +83,28 @@ public class LRAAsyncIT extends TestBase {
     public void testChainOfInvocations() {
         Callable<URI> callableTask = () -> {
 
-                // Invoke a method which starts a transaction
-                // (note that the method LRAParticipant.CREATE_OR_CONTINUE_LRA also invokes
-                // other resource methods)
-                URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA);
-                synchronized (lrasToAfterFinish) {
-                    lrasToAfterFinish.add(lra1);
-                    }
-                    assertEquals("LRA should still be active. The identifier of the LRA was " + lra1, LRAStatus.Active,
-                            lraClient.getStatus(lra1));
+            // Invoke a method which starts a transaction
+            // (note that the method LRAParticipant.CREATE_OR_CONTINUE_LRA also invokes
+            // other resource methods)
+            URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA);
+            synchronized (lrasToAfterFinish) {
+                lrasToAfterFinish.add(lra1);
+            }
+            assertEquals("LRA should still be active. The identifier of the LRA was " + lra1, LRAStatus.Active,
+                    lraClient.getStatus(lra1));
 
-                    // end the LRA
-                    invokeInTransaction(lra1, LRAParticipant.END_EXISTING_LRA);
-
-
-                    return lraClient.getCurrent();
-
+            // end the LRA
+            invokeInTransaction(lra1, LRAParticipant.END_EXISTING_LRA);
+            return lraClient.getCurrent();
         };
 
         List<Callable<URI>> callableTasks = new ArrayList<>();
-        for(int i = 0; i< NUMBER_OF_TASKS; i++)
+        for (int i = 0; i < NUMBER_OF_TASKS; i++)
             callableTasks.add(callableTask);
 
         try {
             List<Future<URI>> futures = executorService.invokeAll(callableTasks);
-            for( Future<URI> f : futures)
+            for (Future<URI> f : futures)
                 assertNull(SHOULD_NOT_BE_ASSOCIATED, f.get());
 
         } catch (InterruptedException | ExecutionException e) {
@@ -118,64 +118,63 @@ public class LRAAsyncIT extends TestBase {
      */
     @Test
     public void testNoCurrent() {
-            invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
+        invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
 
-            Callable<URI> callableTask = () -> {
-                URI lra = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
-                synchronized (lrasToAfterFinish) {
-                    lrasToAfterFinish.add(lra);
-                }
-
-                assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
-                invokeInTransaction(lra, LRAParticipant.END_EXISTING_LRA);
-                return lra;
-
-            };
-
-
-            List<Callable<URI>> callableTasks = new ArrayList<>();
-            for(int i = 0; i< NUMBER_OF_TASKS; i++)
-                callableTasks.add(callableTask);
-
-            try {
-                List<Future<URI>> futures = executorService.invokeAll(callableTasks);
-                for( Future<URI> f : futures) {
-                    f.get();
-                    assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
-                }
-
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                fail("Error in testNoCurrent method: " + e.getMessage());
+        Callable<URI> callableTask = () -> {
+            URI lra = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
+            synchronized (lrasToAfterFinish) {
+                lrasToAfterFinish.add(lra);
             }
+
+            assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
+            invokeInTransaction(lra, LRAParticipant.END_EXISTING_LRA);
+            return lra;
+        };
+
+
+        List<Callable<URI>> callableTasks = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_TASKS; i++)
+            callableTasks.add(callableTask);
+
+        try {
+            List<Future<URI>> futures = executorService.invokeAll(callableTasks);
+            for (Future<URI> f : futures) {
+                f.get();
+                assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
+            }
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            fail("Error in testNoCurrent method: " + e.getMessage());
+        }
     }
 
     private URI invokeInTransaction(URI lra, String resourcePath) {
 
-            Response response = null;
+        Response response = null;
 
-            try {
-                Invocation.Builder builder = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
-                        .path(LRAParticipant.RESOURCE_PATH).path(resourcePath).build()).request();
+        try {
+            Invocation.Builder builder = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
+                    .path(LRAParticipant.RESOURCE_PATH).path(resourcePath).build()).request();
 
-                if (lra != null) {
-                    builder.header(LRA_HTTP_CONTEXT_HEADER, lra.toASCIIString());
-                }
-
-                response = builder.get();
-
-                assertTrue("This test expects that the invoked resource returns the identifier of the LRA "
-                        + "that was active during the invocation or an error message.", response.hasEntity());
-
-                String responseMessage = response.readEntity(String.class);
-
-                assertEquals(responseMessage, 200, response.getStatus());
-
-                return URI.create(responseMessage);
-            } finally {
-                if (response != null) {
-                    response.close();
-                }
+            if (lra != null) {
+                builder.header(LRA_HTTP_CONTEXT_HEADER, lra.toASCIIString());
             }
+
+            response = builder.get();
+
+            assertTrue("This test expects that the invoked resource returns the identifier of the LRA "
+                    + "that was active during the invocation or an error message.", response.hasEntity());
+
+            String responseMessage = response.readEntity(String.class);
+
+            assertEquals(responseMessage, 200, response.getStatus());
+
+            return URI.create(responseMessage);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
 }
