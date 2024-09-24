@@ -449,10 +449,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                             case XAException.XA_RBPROTO:
                             case XAException.XA_RBTIMEOUT:
                             case XAException.XA_RBTRANSIENT:
-                            case XAException.XAER_RMERR:
                             case XAException.XAER_PROTO:
-                                // could really do with an ABORTED status in TwoPhaseOutcome to differentiate
                                 // XA spec implies rollback
+                            case XAException.XAER_RMERR:
+                                // could really do with an ABORTED status in TwoPhaseOutcome to differentiate
+
                                 _rolledBack = true;
                                 _heuristic = TwoPhaseOutcome.HEURISTIC_ROLLBACK;
                                 return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
@@ -615,8 +616,9 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                      * Not strictly necessary since calling commit will
                      * do the rollback if end failed as above.
                      */
-                    if (endHeuristic != null)
+                    if (endHeuristic != null) {
                         throw endHeuristic;
+                    }
 
                     if (commit) {
                         _theXAResource.commit(_tranID, true);
