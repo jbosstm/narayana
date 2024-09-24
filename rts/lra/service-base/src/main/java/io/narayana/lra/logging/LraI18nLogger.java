@@ -168,6 +168,10 @@ public interface LraI18nLogger {
     @LogMessage(level = WARN)
     @Message(id = 25040, value = "Lock not acquired, enlistment failed: cannot enlist participant, cannot lock transaction")
     void warn_enlistment();
+
+    @Message(id = 25041, value = "Participant provided invalid callback endpoints, reason: %s link: %s")
+    String warn_invalid_compensator(String reason, String linkStr);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

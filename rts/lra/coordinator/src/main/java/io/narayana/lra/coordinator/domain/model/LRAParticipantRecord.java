@@ -1014,21 +1014,35 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         return participantPath;
     }
 
-    void setRecoveryURI(String recoveryURI) {
-        try {
-            this.recoveryURI = new URI(recoveryURI);
-        } catch (URISyntaxException e) {
-            String errorMsg = LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryURI, lraId);
+    // the participant is asking to be called back on different URLs
+    void updateCallbacks(String linkStr) {
+        Exception e = parseLink(linkStr);
 
-            LRALogger.logger.info(errorMsg);
+        if (e != null) {
+            String errorMsg = LRALogger.i18nLogger.warn_invalid_compensator(e.getMessage(), linkStr);
 
             throw new WebApplicationException(errorMsg, e,
                     Response.status(BAD_REQUEST).entity(errorMsg).build());
         }
     }
 
-    void setRecoveryURI(String recoveryUrlBase, String txId, String coordinatorId) {
-        setRecoveryURI(recoveryUrlBase + txId + '/' + coordinatorId);
+    void setRecoveryURI(String recoveryURI) {
+        try {
+            this.recoveryURI = new URI(recoveryURI);
+        } catch (URISyntaxException e) {
+            String errorMsg = LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryURI, lraId);
+
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf(errorMsg);
+            }
+
+            throw new WebApplicationException(errorMsg, e,
+                    Response.status(BAD_REQUEST).entity(errorMsg).build());
+        }
+    }
+
+    void setRecoveryURI(String recoveryUrlBase, String txId, String participantId) {
+        setRecoveryURI(String.format("%s/%s/%s", recoveryUrlBase, txId, participantId));
     }
 
     public String getCompensator() {

@@ -14,6 +14,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import io.narayana.lra.Current;
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -725,7 +726,8 @@ public class LongRunningAction extends BasicAction {
     }
 
     public LRAParticipantRecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                                  long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+                                                  long timeLimit, String compensatorData, String version)
+            throws UnsupportedEncodingException {
         ReentrantLock lock = tryLockTransaction();
         if (lock == null) {
             LRALogger.i18nLogger.warn_enlistment();
@@ -739,7 +741,7 @@ public class LongRunningAction extends BasicAction {
                     return participant; // must have already been enlisted
                 }
                 participant = doEnlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase, timeLimit,
-                        compensatorData);
+                        compensatorData, version);
                 if (participant != null) {
                     // need to remember that there is a new participant
                     deactivate(); // if it fails the superclass will have logged a warning
@@ -755,13 +757,33 @@ public class LongRunningAction extends BasicAction {
     }
 
     private LRAParticipantRecord doEnlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                                   long timeLimit, String compensatorData) {
+                                                   long timeLimit, String compensatorData, String version) {
         LRAParticipantRecord p = new LRAParticipantRecord(this, lraService, participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
-        String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), StandardCharsets.UTF_8);
+        /*
+         * versions are specific to the participant so only update the one used by this participant (ie different
+         * participants are allowed to be on different versions).
+         *
+         * From API version 1.2 onwards, the recovery URI is constructed from the RecoveryCoordinator path followed
+         * by segments for the Uid of the LRA and the Uid of the participant. If the passed in version is null
+         * then assume the latest. In previous versions the recovery URI was broken.
+         */
+        if (version != null && (version.equals(LRAConstants.API_VERSION_1_0) || version.equals(LRAConstants.API_VERSION_1_1))) {
+            // use the old broken method
+            String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), StandardCharsets.UTF_8);
 
-        p.setRecoveryURI(recoveryUrlBase, txId, pid);
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf(
+                        "LongRunningAction enlist: using old style recovery URL (txId=%s participantId=%s)",
+                        coordinatorUrl, txId);
+            }
+
+            p.setRecoveryURI(recoveryUrlBase, txId, pid);
+        } else {
+            // use the shiny new working method
+            p.setRecoveryURI(recoveryUrlBase, this.get_uid().fileStringForm(), pid);
+        }
 
         if (add(p) != AddOutcome.AR_REJECTED) {
             setTimeLimit(timeLimit);
@@ -1101,13 +1123,13 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    public void updateRecoveryURI(String compensatorUri, String recoveryUri) {
-        LRAParticipantRecord lraRecord = findLRAParticipant(compensatorUri, false);
+    public void updateRecoveryURI(String linkHeader, String recoveryUri) {
+        LRAParticipantRecord lraRecord = findLRAParticipant(recoveryUri, false);
 
         if (lraRecord != null) {
             try {
                 lraRecord.setRecoveryURI(recoveryUri);
-
+                lraRecord.updateCallbacks(linkHeader);
 
                 if (!deactivate()) {
                     if (LRALogger.logger.isInfoEnabled()) {

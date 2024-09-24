@@ -98,7 +98,7 @@ public class ObjStoreBrowserLRATest {
             String coordinatorUrl = "http://localhost:8080/lra-coordinator";
             String participantUrl = "http://localhost:8080/lra-participant";
             LRAParticipantRecord lraParticipant = lra.enlistParticipant(URI.create(coordinatorUrl), participantUrl,
-                    "/recover", Long.MAX_VALUE, null);
+                    "/recover", Long.MAX_VALUE, null, null);
 
             osb.probe();
 

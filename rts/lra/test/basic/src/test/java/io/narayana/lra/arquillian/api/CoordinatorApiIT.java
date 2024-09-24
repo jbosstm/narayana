@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static io.narayana.lra.LRAConstants.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.greaterThan;
@@ -555,6 +556,7 @@ public class CoordinatorApiIT extends TestBase {
      * Joining an LRA participant via entity body.
      */
     @Test
+    @ValidTestVersions({API_VERSION_1_0, API_VERSION_1_1}) // the recovery url was unusable in previous versions
     public void joinLRAWithBody() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
@@ -584,11 +586,44 @@ public class CoordinatorApiIT extends TestBase {
         }
     }
 
+    @Test
+    @ValidTestVersions({API_VERSION_1_2}) // the recovery url is usable versions after API_VERSION_1_1
+    // Remark if the API version is incremented then the new value for the version will need adding to annotation
+    public void joinLRAWithBodyWithCorrectRecoveryHeader() {
+        URI lraId = lraClient.startLRA(testRule.getMethodName());
+        lrasToAfterFinish.add(lraId);
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
+
+        try (Response response = client.target(coordinatorUrl)
+                .path(encodedLraId)
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, version)
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
+            Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
+                    Status.OK.getStatusCode(), response.getStatus());
+            Assert.assertEquals("Expected API header to be returned with the version provided in request",
+                    version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
+            String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
+            String recoveryUrlBody = response.readEntity(String.class);
+            URI recoveryUrlLocation = response.getLocation();
+            Assert.assertEquals("Expecting returned body and recovery header have got the same content",
+                    recoveryUrlBody, recoveryHeaderUrlMessage);
+            Assert.assertEquals("Expecting returned body and location have got the same content",
+                    recoveryUrlBody, recoveryUrlLocation.toString());
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
+                    recoveryUrlBody, containsString("lra-coordinator/recovery"));
+            MatcherAssert.assertThat("Expected returned message contains the LRA id",
+                    recoveryUrlBody, containsString(LRAConstants.getLRAUid(lraId)));
+        }
+    }
+
     /**
      * PUT - /{lraId}
      * Joining an LRA participant via link header.
      */
     @Test
+    @ValidTestVersions({API_VERSION_1_0, API_VERSION_1_1})
     public void joinLRAWithLinkSimple() {
         URI lraId = lraClient.startLRA(testRule.getMethodName());
         lrasToAfterFinish.add(lraId);
@@ -615,6 +650,37 @@ public class CoordinatorApiIT extends TestBase {
                     recoveryUrlBody, containsString("lra-coordinator/recovery"));
             MatcherAssert.assertThat("Expected returned message contains the LRA id",
                     recoveryUrlBody, containsString(encodedLraId));
+        }
+    }
+
+    @Test
+    @ValidTestVersions({API_VERSION_1_2})
+    public void joinLRAWithLinkSimpleWithCorrectRecoveryHeader() {
+        URI lraId = lraClient.startLRA(testRule.getMethodName());
+        lrasToAfterFinish.add(lraId);
+
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8);
+        try (Response response = client.target(coordinatorUrl)
+                .path(encodedLraId)
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, version)
+                .header("Link", "http://compensator.url:8080")
+                .put(null)) {
+            Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
+                    Status.OK.getStatusCode(), response.getStatus());
+            Assert.assertEquals("Expected API header to be returned with the version provided in request",
+                    version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
+            String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
+            String recoveryUrlBody = response.readEntity(String.class);
+            URI recoveryUrlLocation = response.getLocation();
+            Assert.assertEquals("Expecting returned body and recovery header have got the same content",
+                    recoveryUrlBody, recoveryHeaderUrlMessage);
+            Assert.assertEquals("Expecting returned body and location have got the same content",
+                    recoveryUrlBody, recoveryUrlLocation.toString());
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
+                    recoveryUrlBody, containsString("lra-coordinator/recovery"));
+            MatcherAssert.assertThat("Expected returned message contains the LRA id",
+                    recoveryUrlBody, containsString(LRAConstants.getLRAUid(lraId)));
         }
     }
 

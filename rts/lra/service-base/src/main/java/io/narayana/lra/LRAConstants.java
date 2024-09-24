@@ -31,6 +31,7 @@ public final class LRAConstants {
 
     public static final String API_VERSION_1_0 = "1.0";
     public static final String API_VERSION_1_1 = "1.1";
+    public static final String API_VERSION_1_2 = "1.2";
 
     /*
      * Supported Narayana LRA API versions.
@@ -41,14 +42,15 @@ public final class LRAConstants {
      */
     public static final String[] NARAYANA_LRA_API_SUPPORTED_VERSIONS = new String[] {
             API_VERSION_1_0,
-            API_VERSION_1_1
+            API_VERSION_1_1,
+            API_VERSION_1_2
     };
 
     /**
      * The Narayana API version for LRA coordinator supported for the release.
      * Any higher version is considered as unimplemented and unknown.
      */
-    public static final String CURRENT_API_VERSION_STRING = API_VERSION_1_1;
+    public static final String CURRENT_API_VERSION_STRING = API_VERSION_1_2;
 
     public static final String NARAYANA_LRA_API_VERSION_HEADER_NAME = "Narayana-LRA-API-version";
 
