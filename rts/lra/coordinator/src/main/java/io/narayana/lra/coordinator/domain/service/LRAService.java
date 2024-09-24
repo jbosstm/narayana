@@ -327,10 +327,15 @@ public class LRAService {
                     .entity(errorMsg).build());
         }
     }
-
     public int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
                                     StringBuilder compensatorData) {
+        return joinLRA(recoveryUrl, lra,timeLimit,  compensatorUrl, linkHeader, recoveryUrlBase, compensatorData, null);
+    }
+
+    public int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
+                                    String compensatorUrl, String linkHeader, String recoveryUrlBase,
+                                    StringBuilder compensatorData, String version) {
         if (lra ==  null) {
             lraTrace(null, "Error missing LRA header in join request");
         } else {
@@ -374,7 +379,7 @@ public class LRAService {
             if (compensatorData != null) {
                 participant = transaction.enlistParticipant(lra,
                         linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
-                        timeLimit, compensatorData.toString());
+                        timeLimit, compensatorData.toString(), version);
                 // return any previously registered data
                 compensatorData.setLength(0);
 
@@ -384,7 +389,7 @@ public class LRAService {
             } else {
                 participant = transaction.enlistParticipant(lra,
                         linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
-                        timeLimit, null);
+                        timeLimit, null, version);
             }
         } catch (UnsupportedEncodingException e) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();

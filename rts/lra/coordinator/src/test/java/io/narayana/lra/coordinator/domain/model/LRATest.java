@@ -8,6 +8,7 @@ package io.narayana.lra.coordinator.domain.model;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -17,6 +18,8 @@ import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,7 +29,9 @@ import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import io.narayana.lra.LRAConstants;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
+import org.hamcrest.MatcherAssert;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.test.TestPortProvider;
 import org.junit.After;
@@ -58,7 +63,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 public class LRATest extends LRATestBase {
-
+    static final String LRA_API_VERSION_HEADER_NAME = "Narayana-LRA-API-version";
+    static final String RECOVERY_HEADER_NAME = "Long-Running-Action-Recovery";
     private static LRAService service;
 
     private NarayanaLRAClient lraClient;
@@ -124,6 +130,71 @@ public class LRATest extends LRATestBase {
         server.stop();
     }
 
+    @Test
+    public void joinWithVersionTest() {
+        URI lraId = lraClient.startLRA("joinLRAWithBody");
+        String version = LRAConstants.API_VERSION_1_2;
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
+
+        try (Response response = client.target(coordinatorPath)
+                .path(encodedLraId)
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, version)
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
+            Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
+                    Response.Status.OK.getStatusCode(), response.getStatus());
+            Assert.assertEquals("Expected API header to be returned with the version provided in request",
+                    version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
+            String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
+            String recoveryUrlBody = response.readEntity(String.class);
+            URI recoveryUrlLocation = response.getLocation();
+            Assert.assertEquals("Expecting returned body and recovery header have got the same content",
+                    recoveryUrlBody, recoveryHeaderUrlMessage);
+            Assert.assertEquals("Expecting returned body and location have got the same content",
+                    recoveryUrlBody, recoveryUrlLocation.toString());
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
+                    recoveryUrlBody, containsString("lra-coordinator/recovery"));
+            // the new format just contains the Uid of the LRA
+            MatcherAssert.assertThat("Expected returned message contains the LRA id",
+                    recoveryUrlBody, containsString(LRAConstants.getLRAUid(lraId)));
+        } finally {
+            lraClient.cancelLRA(lraId);
+        }
+    }
+
+    @Test
+    public void joinWithOldVersionTest() {
+        URI lraId = lraClient.startLRA("joinLRAWithBody");
+        String version = LRAConstants.API_VERSION_1_1;
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
+
+        try (Response response = client.target(coordinatorPath)
+                .path(encodedLraId)
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, version)
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
+            Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
+                    Response.Status.OK.getStatusCode(), response.getStatus());
+            Assert.assertEquals("Expected API header to be returned with the version provided in request",
+                    version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
+            String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
+            String recoveryUrlBody = response.readEntity(String.class);
+            URI recoveryUrlLocation = response.getLocation();
+            Assert.assertEquals("Expecting returned body and recovery header have got the same content",
+                    recoveryUrlBody, recoveryHeaderUrlMessage);
+            Assert.assertEquals("Expecting returned body and location have got the same content",
+                    recoveryUrlBody, recoveryUrlLocation.toString());
+            MatcherAssert.assertThat("Expected returned message contains the sub-path of LRA recovery URL",
+                    recoveryUrlBody, containsString("lra-coordinator/recovery"));
+            MatcherAssert.assertThat("Expected returned message contains the LRA id",
+                    recoveryUrlBody, containsString(encodedLraId));
+        } finally {
+            lraClient.cancelLRA(lraId);
+        }
+    }
+
     /**
      * sanity check: test that a participant is notified when an LRA closes
      */
@@ -163,6 +234,74 @@ public class LRATest extends LRATestBase {
         assertEquals(completions + 1, completeCount.get());
         LRAStatus status = getStatus(new URI(lraId));
         assertTrue("LRA should have closed", status == null || status == LRAStatus.Closed);
+    }
+
+    /*
+     * Participants can update their callbacks to facilitate recovery.
+     * Test that the compensate endpoint can be changed:
+     */
+    @Test
+    public void testReplaceCompensator() throws URISyntaxException {
+        // verify that participants can change their callback endpoints
+        int fallbackCompensations = fallbackCompensateCount.get();
+        // call a participant method that starts an LRA and returns the lra and the recovery id in the response
+        String urls = client.target(TestPortProvider.generateURL("/base/test/start-with-recovery")).request().get(String.class);
+        String[] tokens = urls.split(",");
+        assertTrue("response is missing components for the lraId and/or recoveryId",
+                tokens.length >= 2);
+        // the service method returns the lra and recovery ids in a comma separated response:
+        String lraUrl = tokens[tokens.length - 2];
+        String recoveryUrl = tokens[tokens.length - 1];
+
+        // change the participant compensate endpoint (or change the resource completely to showcase migrating
+        // responsibility for the participant to a different microservice
+        String newCompensateCallback = TestPortProvider.generateURL("/base/test/fallback-compensate");
+        // define the new link header for the new compensate endpoint
+        String newCompensator = String.format("<%s>; rel=compensate", newCompensateCallback);
+
+        // check that performing a GET on the recovery url returns the participant callbacks:
+        try (Response r1 = client.target(recoveryUrl).request().get()) {
+            int res = r1.getStatus();
+            if (res != Response.Status.OK.getStatusCode()) {
+                // clean up and fail
+                fail("get recovery url failed: " + res);
+            }
+
+            String linkHeader = r1.readEntity(String.class);
+            // the link header should be a standard link header corresponding to the participant callbacks,
+            // just sanity check that the mandatory compensate rel type is present
+            String compensateRelationType = "rel=\"compensate\"";
+
+            MatcherAssert.assertThat("Compensator link header is missing the compensate rel type",
+                    linkHeader, containsString(compensateRelationType));
+        }
+
+        // use the recovery url to ask the coordinator to compensate on a different endpoint
+        try (Response r1 = client.target(recoveryUrl).request().put(Entity.text(newCompensator))) {
+            int res = r1.getStatus();
+            if (res != Response.Status.OK.getStatusCode()) {
+                // clean up and fail
+                try (Response r = client.target(String.format("%s/cancel", lraUrl)).request().put(null)) {
+                    if (r.getStatus() != Response.Status.OK.getStatusCode()) {
+                        fail("move and cancel failed");
+                    }
+                }
+                fail("move failed");
+            }
+        }
+
+        // cancel the LRA
+        try (Response r2 = client.target(String.format("%s/cancel", lraUrl)).request().put(null)) {
+            int res = r2.getStatus();
+            if (res != Response.Status.OK.getStatusCode()) {
+                fail("unable to cleanup: " + res);
+            }
+        }
+
+        // verify that the participant was called on the new endpoint and that the LRA cancelled
+        assertEquals(fallbackCompensations + 1, fallbackCompensateCount.get());
+        LRAStatus status = getStatus(new URI(lraUrl));
+        assertTrue("LRA should have cancelled", status == null || status == LRAStatus.Cancelled);
     }
 
     /**

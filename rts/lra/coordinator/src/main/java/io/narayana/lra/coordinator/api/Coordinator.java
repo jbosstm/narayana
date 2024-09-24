@@ -641,7 +641,7 @@ public class Coordinator extends Application {
         }
 
         StringBuilder recoveryUrl = new StringBuilder();
-        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, null, linkHeader, recoveryUrlBase, userData);
+        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, null, linkHeader, recoveryUrlBase, userData, version);
 
         try {
             return Response.status(status)

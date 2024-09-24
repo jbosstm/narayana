@@ -41,9 +41,6 @@ import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @Tag(name = "LRA Recovery")
 public class RecoveryCoordinator {
-    @Context
-    private UriInfo context;
-
     private final LRAService lraService;
 
     public RecoveryCoordinator() {
@@ -67,9 +64,11 @@ public class RecoveryCoordinator {
             @Parameter(name = "RecCoordId",
                 description = "An identifier that was returned by the coordinator when a participant joined the LRA",
                 required = true)
-            @PathParam("RecCoordId") String rcvCoordId) throws NotFoundException {
+            @PathParam("RecCoordId") String rcvCoordId,
+            @Context UriInfo uriInfo) throws NotFoundException {
 
-        String compensatorUrl = lraService.getParticipant(rcvCoordId);
+        String context = uriInfo.getRequestUri().toASCIIString();
+        String compensatorUrl = lraService.getParticipant(context);
 
         if (compensatorUrl == null) {
             String errorMsg = LRALogger.i18nLogger.warn_cannotFoundCompensatorUrl(rcvCoordId, lraId);
@@ -102,8 +101,10 @@ public class RecoveryCoordinator {
                 description = "An identifier that was returned by the coordinator when a participant joined the LRA",
                 required = true)
             @PathParam("RecCoordId") String rcvCoordId,
+            @Context UriInfo uriInfo,
             String newCompensatorUrl) throws NotFoundException {
-        String compensatorUrl = lraService.getParticipant(rcvCoordId);
+        String context = uriInfo.getRequestUri().toASCIIString();
+        String compensatorUrl = lraService.getParticipant(context);
 
         if (compensatorUrl != null) {
             URI lra;
@@ -117,9 +118,9 @@ public class RecoveryCoordinator {
                         Response.status(INTERNAL_SERVER_ERROR.getStatusCode()).entity(errMsg).build());
             }
 
-            lraService.updateRecoveryURI(lra, newCompensatorUrl, rcvCoordId, true);
+            lraService.updateRecoveryURI(lra, newCompensatorUrl, context, true);
 
-            return context.getRequestUri().toASCIIString();
+            return context;
         }
 
         String errorMsg = LRALogger.i18nLogger.warn_cannotFoundCompensatorUrl(rcvCoordId, lraId);

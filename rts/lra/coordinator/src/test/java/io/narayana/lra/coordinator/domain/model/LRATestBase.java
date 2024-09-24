@@ -49,6 +49,7 @@ public class LRATestBase {
 
     protected static UndertowJaxrsServer server;
     static final AtomicInteger compensateCount = new AtomicInteger(0);
+    static final AtomicInteger fallbackCompensateCount = new AtomicInteger(0);
     static final AtomicInteger completeCount = new AtomicInteger(0);
     static final AtomicInteger forgetCount = new AtomicInteger(0);
     static final long LRA_SHORT_TIMELIMIT = 10L;
@@ -79,11 +80,28 @@ public class LRATestBase {
         @LRA(value = LRA.Type.REQUIRED, end = false)
         public Response startInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI contextId,
                                    @HeaderParam(LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentLRA,
+                                   @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String recoveryId,
                                    @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
                                    @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
             LRATestBase.acceptCount.set(acceptCount);
 
             return getResult(cancel, contextId);
+        }
+
+        @GET
+        @Path("start-with-recovery")
+        @LRA(value = LRA.Type.REQUIRED, end = false)
+        public Response startInLRAWithRecovery(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI contextId,
+                                   @HeaderParam(LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentLRA,
+                                   @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String recoveryId,
+                                   @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
+                                   @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
+            LRATestBase.acceptCount.set(acceptCount);
+
+            Response.Status status = cancel ? Response.Status.INTERNAL_SERVER_ERROR : Response.Status.OK;
+
+            // the endpoint behaves differently from startInLRA in that the recoveryId is also returned
+            return Response.status(status).entity(String.format("%s,%s", contextId, recoveryId)).build();
         }
 
         @PUT
@@ -199,6 +217,19 @@ public class LRATestBase {
             }
 
             return Response.status(Response.Status.ACCEPTED).entity(ParticipantStatus.Compensating).build();
+        }
+
+        @PUT
+        @Path("/fallback-compensate")
+        public Response alternateCompensate(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI contextLRA,
+                                   @HeaderParam(LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentLRA) {
+            Response r = compensate(contextLRA, parentLRA);
+
+            if (r.getStatus() == Response.Status.OK.getStatusCode()) {
+                fallbackCompensateCount.incrementAndGet();
+            }
+
+            return r;
         }
 
         @PUT
