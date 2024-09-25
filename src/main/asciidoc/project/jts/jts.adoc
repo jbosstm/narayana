@@ -10,9 +10,7 @@
 :leveloffset: +2
 
 include::{projectSourceDir}/jts/introduction.adoc[]
-include::{projectSourceDir}/jts/starting_and_stopping_transaction_manager.adoc[]
 include::{projectSourceDir}/jts/ots_java_ee_transaction_service_management.adoc[]
-include::{projectSourceDir}/jts/failure_recovery_administration.adoc[]
 include::{projectSourceDir}/jts/orb_specific_configurations.adoc[]
 include::{projectSourceDir}/jts/initializing_jbossts_applications.adoc[]
 

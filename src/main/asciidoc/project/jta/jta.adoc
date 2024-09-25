@@ -1,4 +1,3 @@
-
 = JTA
 :doctype: book
 :sectnums:
@@ -11,10 +10,6 @@
 
 include::{projectSourceDir}/jta/introduction.adoc[]
 include::{projectSourceDir}/jta/starting_and_stopping_transaction_manager.adoc[]
-include::{projectSourceDir}/jta/objectstore_management.adoc[]
-include::{projectSourceDir}/jta/jbossjta_runtime_information.adoc[]
-include::{projectSourceDir}/jta/failure_recovery_administration.adoc[]
-include::{projectSourceDir}/jta/errors_and_exceptions.adoc[]
 include::{projectSourceDir}/jta/selecting_the_jta_implementation.adoc[]
 
 :leveloffset: -2
@@ -33,11 +28,6 @@ include::{projectSourceDir}/jta/using_jbossta_in_application_servers.adoc[]
 
 :leveloffset: +2
 
-include::{projectSourceDir}/jta/preparing_your_system.adoc[]
-include::{projectSourceDir}/jta/operating_system_services.adoc[]
-include::{projectSourceDir}/jta/logging.adoc[]
-include::{projectSourceDir}/jta/additional_jar_requirements.adoc[]
-include::{projectSourceDir}/jta/setting_properties.adoc[]
 include::{projectSourceDir}/jta/quick_start_to_jta.adoc[]
 
 :leveloffset: -2

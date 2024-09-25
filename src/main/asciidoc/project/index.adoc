@@ -8,6 +8,7 @@ include::{projectSourceDir}/book_info.adoc[]
 :leveloffset: +1
 
 include::{projectSourceDir}/preface.adoc[]
+include::{projectSourceDir}/general_procedures/general_procedures.adoc[]
 include::{projectSourceDir}/core/core.adoc[]
 include::{projectSourceDir}/jta/jta.adoc[]
 include::{projectSourceDir}/jts/jts.adoc[]
