@@ -1135,6 +1135,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			xar.end(_tranID, xaState);
 			setXAResourceState(xar, txInfoState);
 		} catch (XAException e1) {
+			boolean dontWarn = false;
 			switch (e1.errorCode) {
 				case XAException.XA_RBROLLBACK:
 				case XAException.XA_RBCOMMFAIL:
@@ -1145,8 +1146,13 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				case XAException.XA_RBTIMEOUT:
 				case XAException.XA_RBTRANSIENT:
 					setXAResourceState(xar, txInfoState);
+					if (xaState == XAResource.TMFAIL) {
+						dontWarn = true; // XA_RB* codes are valid spec behaviour if we're rolling back anyhow.
+					}
 			}
-			jtaxLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+			if (!dontWarn) {
+				jtaxLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+			}
 			throw e1;
 		}
 	}
