@@ -19,7 +19,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.hp.mwtests.ts.jta.xa.JTATest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +54,9 @@ public class JTSTest {
         ORBManager.setPOA(myOA);
         jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+
+        resource1Rollback = false;
+        resource2Rollback = false;
     }
     
     @After
@@ -297,6 +299,41 @@ public class JTSTest {
             // This is going to pass because of JBTM-3843
             assertFalse(resource1Rollback);
             assertTrue(resource2Rollback);
+        }
+    }
+
+    @Test
+    public void testRollbackCalledWhenEndHasXA_RBINTEGRITY() throws Exception {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource(){}));
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                assertTrue(flags == XAResource.TMSUCCESS);
+                throw new XAException(XAException.XA_RBINTEGRITY);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            assertTrue(resource1Rollback);
+            // Suppressed exceptions are not supported for the JTS mode of Narayana so can't check for the exception
+            // from the SimpleXAReesource end call
         }
     }
 
