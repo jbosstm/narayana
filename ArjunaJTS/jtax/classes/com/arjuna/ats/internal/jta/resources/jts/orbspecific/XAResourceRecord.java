@@ -190,6 +190,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
             return Vote.VoteRollback;
         }
 
+        boolean associationEnded = false;
+
         try {
             /*
              * Window of vulnerability versus performance trade-off: if we
@@ -211,6 +213,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
              * notices that there is no log entry for it.
              */
             endAssociation(XAResource.TMSUCCESS, TxInfo.NOT_ASSOCIATED);
+            associationEnded = true;
 
             if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY) {
                 removeConnection();
@@ -248,11 +251,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                 case XAException.XA_RBOTHER:
                 case XAException.XA_RBPROTO:
                 case XAException.XA_RBTIMEOUT:
-                    // No txn -> assume rollback
+                    if (associationEnded) {
+                        // No txn -> assume rollback
 
-                    // Rolled back by specs
-                    // This will avoid calling rollback when aborting
-                    _rolledBack = true;
+                        // Rolled back by specs
+                        // This will avoid calling rollback when aborting
+                        _rolledBack = true;
+                    }
                     return Vote.VoteRollback;
                 // We might need to roll back the XA resource for these error codes
                 case XAException.XAER_INVAL:

@@ -179,8 +179,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
             return TwoPhaseOutcome.PREPARE_NOTOK;
         }
 
+        boolean associationEnded = false;
+
         try {
             endAssociation(XAResource.TMSUCCESS, TxInfo.NOT_ASSOCIATED);
+            associationEnded = true;
 
             _prepared = true;
 
@@ -211,10 +214,12 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                 case XAException.XA_RBOTHER:
                 case XAException.XA_RBPROTO:
                 case XAException.XA_RBTIMEOUT:
-                    // No txn -> assume rollback
+                    if (associationEnded) {
+                        // No txn -> assume rollback
 
-                    // This will avoid calling rollback when aborting
-                    _rolledBack = true;
+                        // This will avoid calling rollback when aborting
+                        _rolledBack = true;
+                    }
                     return TwoPhaseOutcome.PREPARE_NOTOK;
                 // We might need to roll back the XA resource for these error codes
                 case XAException.XAER_INVAL:

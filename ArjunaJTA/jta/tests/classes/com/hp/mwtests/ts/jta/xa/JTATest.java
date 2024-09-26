@@ -19,6 +19,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -32,6 +33,12 @@ public class JTATest {
     private XAException exception;
     protected boolean resource1Rollback;
     protected boolean resource2Rollback;
+
+    @Before
+    public void before () {
+        resource1Rollback = false;
+        resource2Rollback = false;
+    }
 
     @Test
     public void testDuplicateXAREndCalled() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
@@ -339,6 +346,42 @@ public class JTATest {
             // This is going to pass because of JBTM-3843
             assertFalse(resource1Rollback);
             assertTrue(resource2Rollback);
+        }
+    }
+
+    @Test
+    public void testRollbackCalledWhenEndHasXA_RBINTEGRITY() throws Exception {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource(){}));
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                assertTrue(flags == XAResource.TMSUCCESS);
+                throw new XAException(XAException.XA_RBINTEGRITY);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            assertTrue(resource1Rollback);
+            // Only the exception from the XAResource::end is returned out of the suppressed list because
+            // the exception from the phase2 abort is not considered a problem
+            assertTrue(((XAException) e.getSuppressed()[0]).errorCode == XAException.XA_RBINTEGRITY);
         }
     }
 
