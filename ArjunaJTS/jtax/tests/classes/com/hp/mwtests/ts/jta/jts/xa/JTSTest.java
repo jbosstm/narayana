@@ -19,9 +19,12 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.jboss.byteman.contrib.bmunit.BMRule;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.ORBPackage.InvalidName;
 
@@ -34,6 +37,7 @@ import com.arjuna.orbportability.RootOA;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@RunWith(BMUnitRunner.class)
 public class JTSTest {
     private ORB myORB;
     private RootOA myOA;
@@ -334,6 +338,56 @@ public class JTSTest {
             assertTrue(resource1Rollback);
             // Suppressed exceptions are not supported for the JTS mode of Narayana so can't check for the exception
             // from the SimpleXAReesource end call
+        }
+    }
+
+    @Test
+    @BMRule(name = "Fail if logging statement executes",
+            targetClass = "com.arjuna.ats.internal.jta.utils.jtaxI18NLogger_$logger",
+            targetMethod = "warn_could_not_end_xar",
+            targetLocation = "AT ENTRY",
+            action = "throw new java.lang.Error(\"JBTM-3345 not solved\")")
+    public void testJBTM3345() throws Exception {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                throw new XAException(XAException.XA_RBINTEGRITY);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+            }
+        }));
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                assertTrue(flags == XAResource.TMFAIL);
+                throw new XAException(XAException.XA_RBROLLBACK);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource2Rollback = true;
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            // This is going to pass because of JBTM-3843
+            assertFalse(resource1Rollback);
+            assertTrue(resource2Rollback);
         }
     }
 
