@@ -308,7 +308,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                     }
                 } catch (XAException e1) {
                     if ((e1.errorCode >= XAException.XA_RBBASE)
-                            && (e1.errorCode < XAException.XA_RBEND)) {
+                            && (e1.errorCode <= XAException.XA_RBEND)) {
                         /*
                          * Has been marked as rollback-only. If the branch has not been
                          * already rolled back (i.e. _rolledBack == true ), we still need

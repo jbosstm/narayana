@@ -276,7 +276,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                     addDeferredThrowable(e1);
 
                     if ((e1.errorCode >= XAException.XA_RBBASE)
-                            && (e1.errorCode < XAException.XA_RBEND)) {
+                            && (e1.errorCode <= XAException.XA_RBEND)) {
                         /*
                          * Has been marked as rollback-only. If the branch has not been
                          * already rolled back (i.e. _rolledBack == false), we still need
