@@ -391,6 +391,41 @@ public class JTSTest {
         }
     }
 
+    @Test
+    public void testXAEndTMFAILXARBHandling () throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        XAResource xar = new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                assertTrue(flags == XAResource.TMFAIL);
+                throw new XAException(XAException.XA_RBTRANSIENT);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        };
+
+        assertTrue(theTransaction.enlistResource(xar));
+
+        tm.setRollbackOnly();
+        assertTrue(theTransaction.delistResource(xar, XAResource.TMFAIL));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            // This is expected
+        }
+    }
+
 	private class XARMERRXAResource implements XAResource {
 
 		private boolean returnRMERROutOfEnd;

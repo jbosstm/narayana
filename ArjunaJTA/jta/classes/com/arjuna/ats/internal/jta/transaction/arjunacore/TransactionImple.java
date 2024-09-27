@@ -867,8 +867,25 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 					{
 						if (XAUtils.canOptimizeDelist(xaRes))
 						{
-							xaRes.end(info.xid(), XAResource.TMFAIL);
-							xaRes.rollback(info.xid());
+							boolean rollbackOnly = false;
+							try {
+								xaRes.end(info.xid(), XAResource.TMFAIL);
+							} catch (XAException e1) {
+								if ((e1.errorCode >= XAException.XA_RBBASE)
+										&& (e1.errorCode <= XAException.XA_RBEND)) {
+									rollbackOnly = true;
+								}
+							}
+
+							try {
+								xaRes.rollback(info.xid());
+							} catch (XAException e1) {
+								// If we get a valid XA_RB from XAResource::end we should not treat an XAER_NOTA as
+								// unexpected and thus allow the optimized rollback to continue
+								if (!(rollbackOnly && e1.errorCode == XAException.XAER_NOTA)) {
+									throw e1;
+								}
+							}
 
 							info.setState(TxInfo.OPTIMIZED_ROLLBACK);
 
