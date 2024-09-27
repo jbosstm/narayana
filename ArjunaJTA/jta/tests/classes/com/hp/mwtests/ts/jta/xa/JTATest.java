@@ -475,6 +475,38 @@ public class JTATest {
     }
 
     @Test
+    public void testXAEndTMFAILXARBTransientHandling () throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                throw new XAException(XAException.XA_RBTRANSIENT);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        }));
+
+        tm.setRollbackOnly();
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            assertTrue(resource1Rollback);
+        }
+    }
+
+    @Test
     public void testHeuristicRollbackSuppressedException() throws NotSupportedException, SystemException, IllegalStateException, RollbackException, SecurityException, HeuristicMixedException, HeuristicRollbackException {
 
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
