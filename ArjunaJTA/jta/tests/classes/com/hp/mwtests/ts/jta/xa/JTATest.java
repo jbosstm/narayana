@@ -5,6 +5,7 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -503,6 +504,40 @@ public class JTATest {
             fail("Should not have committed");
         } catch (RollbackException e) {
             assertTrue(resource1Rollback);
+        }
+    }
+
+    @Test
+    public void testOnePhaseCommitWithXA_RBROLLBACK () throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                // This should be invoked on the path to successfully commit the branch
+                assertEquals(flags, TMSUCCESS);
+                throw new XAException(XAException.XA_RBROLLBACK);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+                throw new XAException(XAException.XAER_NOTA);
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            assertTrue(resource1Rollback);
+        } catch (HeuristicMixedException heuristicMixedException) {
+            fail("HeuristicMixedException shouldn't be thrown!");
         }
     }
 

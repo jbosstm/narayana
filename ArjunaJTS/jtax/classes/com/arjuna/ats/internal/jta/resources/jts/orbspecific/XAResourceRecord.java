@@ -654,6 +654,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
             throw new TRANSACTION_ROLLEDBACK();
         } else {
             if (_theXAResource != null) {
+
+                boolean rollbackOnly = false;
+
                 try {
                     switch (_heuristic) {
                         case TwoPhaseOutcome.HEURISTIC_HAZARD:
@@ -695,6 +698,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                             case XAException.XA_RBTIMEOUT:
                             case XAException.XA_RBTRANSIENT:
                                 // Has been marked as rollback-only. We still need to call rollback.
+                                rollbackOnly = true;
 
                                 endRBOnly = e1;
                                 commit = false;
@@ -766,6 +770,17 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                             this._rolledBack = true;
                             throw new TRANSACTION_ROLLEDBACK();
                         case XAException.XAER_NOTA:
+                            if (rollbackOnly) {
+                                /*
+                                 * If XAER_NOTA was returned after a XA_RB* code during the invokation of end,
+                                 * it means that the RM proactively rolled back the transaction before
+                                 * invoking rollback on the branch
+                                 */
+
+                                _rolledBack = true;
+                                throw new TRANSACTION_ROLLEDBACK();
+                            }
+
                             // RM unexpectedly lost track of the tx, outcome is uncertain
                             updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
                             throw new org.omg.CosTransactions.HeuristicHazard();
