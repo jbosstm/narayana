@@ -40,7 +40,7 @@ public class JTATest {
     protected boolean resource2Rollback;
 
     @Before
-    public void before () {
+    public void before() {
         resource1Rollback = false;
         resource2Rollback = false;
     }
@@ -363,7 +363,8 @@ public class JTATest {
 
         jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
-        assertTrue(theTransaction.enlistResource(new SimpleXAResource(){}));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+        }));
 
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
             @Override
@@ -441,7 +442,7 @@ public class JTATest {
     }
 
     @Test
-    public void testXAEndTMFAILXARBHandling () throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testXAEndTMFAILXARBHandling() throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
@@ -476,7 +477,7 @@ public class JTATest {
     }
 
     @Test
-    public void testXAEndTMFAILXARBTransientHandling () throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testXAEndTMFAILXARBTransientHandling() throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
@@ -508,7 +509,7 @@ public class JTATest {
     }
 
     @Test
-    public void testOnePhaseCommitWithXA_RBROLLBACK () throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testOnePhaseCommitWithXA_RBROLLBACK() throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
