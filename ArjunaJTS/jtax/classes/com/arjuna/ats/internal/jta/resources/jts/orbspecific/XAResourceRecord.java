@@ -1199,8 +1199,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
         setObjectStore();
 
         // only need do if we have prepared
-        if (_prepared)
-        {
+        if (_prepared) {
             OutputObjectState os = new OutputObjectState();
 
             _heuristic = h;

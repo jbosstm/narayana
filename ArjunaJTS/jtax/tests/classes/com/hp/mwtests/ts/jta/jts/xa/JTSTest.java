@@ -4,9 +4,8 @@
  */
 
 
-
 package com.hp.mwtests.ts.jta.jts.xa;
- 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +15,7 @@ import jakarta.transaction.HeuristicMixedException;
 import jakarta.transaction.HeuristicRollbackException;
 import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.RollbackException;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -52,7 +52,7 @@ public class JTSTest {
         System.setProperty("OrbPortabilityEnvironmentBean.orbDataClassName", System.getProperty("OrbPortabilityEnvironmentBean.orbDataClassName", "com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4"));
         myORB = ORB.getInstance("test");
         myOA = OA.getRootOA(myORB);
-        myORB.initORB(new String[] {}, null);
+        myORB.initORB(new String[]{}, null);
         myOA.initOA();
 
         ORBManager.setORB(myORB);
@@ -63,7 +63,7 @@ public class JTSTest {
         resource1Rollback = false;
         resource2Rollback = false;
     }
-    
+
     @After
     public void tearDown() {
         if (myOA != null) {
@@ -84,6 +84,7 @@ public class JTSTest {
 
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
             public int id = 1;
+
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -111,6 +112,7 @@ public class JTSTest {
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
             public int id = 1;
+
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -138,6 +140,7 @@ public class JTSTest {
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
             public int id = 2;
+
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 return false;
@@ -186,8 +189,7 @@ public class JTSTest {
     }
 
     @Test
-    public void testRMFAILcommit1PC() throws Exception
-    {
+    public void testRMFAILcommit1PC() throws Exception {
         XAResource theResource = new XAResource() {
 
             @Override
@@ -252,21 +254,21 @@ public class JTSTest {
             // Expected
         }
     }
-    
-	@Test
-	public void test() throws Exception {
 
-		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+    @Test
+    public void test() throws Exception {
 
-		tm.begin();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+        tm.begin();
 
-		assertTrue(theTransaction.enlistResource(new XARMERRXAResource(false)));
-		assertTrue(theTransaction.enlistResource(new XARMERRXAResource(true)));
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
-		tm.rollback();
-	}
+        assertTrue(theTransaction.enlistResource(new XARMERRXAResource(false)));
+        assertTrue(theTransaction.enlistResource(new XARMERRXAResource(true)));
+
+        tm.rollback();
+    }
 
     @Test
     public void testPrepareThrowsXaRbIntegrity() throws Exception {
@@ -316,7 +318,8 @@ public class JTSTest {
 
         jakarta.transaction.Transaction theTransaction = tm.getTransaction();
 
-        assertTrue(theTransaction.enlistResource(new SimpleXAResource(){}));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+        }));
 
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
             @Override
@@ -393,7 +396,7 @@ public class JTSTest {
     }
 
     @Test
-    public void testXAEndTMFAILXARBHandling () throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testXAEndTMFAILXARBHandling() throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
@@ -428,7 +431,7 @@ public class JTSTest {
     }
 
     @Test
-    public void testXAEndTMFAILXARBTransientHandling () throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testXAEndTMFAILXARBTransientHandling() throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
@@ -460,7 +463,7 @@ public class JTSTest {
     }
 
     @Test
-    public void testOnePhaseCommitWithXA_RBROLLBACK () throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
+    public void testOnePhaseCommitWithXA_RBROLLBACK() throws jakarta.transaction.SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
         jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();
 
@@ -493,76 +496,76 @@ public class JTSTest {
         }
     }
 
-	private class XARMERRXAResource implements XAResource {
+    private class XARMERRXAResource implements XAResource {
 
-		private boolean returnRMERROutOfEnd;
+        private boolean returnRMERROutOfEnd;
 
-		public XARMERRXAResource(boolean returnRMERROutOfEnd) {
-			this.returnRMERROutOfEnd = returnRMERROutOfEnd;
-		}
+        public XARMERRXAResource(boolean returnRMERROutOfEnd) {
+            this.returnRMERROutOfEnd = returnRMERROutOfEnd;
+        }
 
-		@Override
-		public void commit(Xid xid, boolean onePhase) throws XAException {
-			// TODO Auto-generated method stub
+        @Override
+        public void commit(Xid xid, boolean onePhase) throws XAException {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void end(Xid xid, int flags) throws XAException {
-			if (returnRMERROutOfEnd) {
-				throw new XAException(XAException.XAER_RMERR);
-			}
-		}
+        @Override
+        public void end(Xid xid, int flags) throws XAException {
+            if (returnRMERROutOfEnd) {
+                throw new XAException(XAException.XAER_RMERR);
+            }
+        }
 
-		@Override
-		public void forget(Xid xid) throws XAException {
-			// TODO Auto-generated method stub
+        @Override
+        public void forget(Xid xid) throws XAException {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public int getTransactionTimeout() throws XAException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        @Override
+        public int getTransactionTimeout() throws XAException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 
-		@Override
-		public boolean isSameRM(XAResource xares) throws XAException {
-			// TODO Auto-generated method stub
-			return false;
-		}
+        @Override
+        public boolean isSameRM(XAResource xares) throws XAException {
+            // TODO Auto-generated method stub
+            return false;
+        }
 
-		@Override
-		public int prepare(Xid xid) throws XAException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        @Override
+        public int prepare(Xid xid) throws XAException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 
-		@Override
-		public Xid[] recover(int flag) throws XAException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Xid[] recover(int flag) throws XAException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public void rollback(Xid xid) throws XAException {
-			// TODO Auto-generated method stub
+        @Override
+        public void rollback(Xid xid) throws XAException {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public boolean setTransactionTimeout(int seconds) throws XAException {
-			// TODO Auto-generated method stub
-			return false;
-		}
+        @Override
+        public boolean setTransactionTimeout(int seconds) throws XAException {
+            // TODO Auto-generated method stub
+            return false;
+        }
 
-		@Override
-		public void start(Xid xid, int flags) throws XAException {
-			// TODO Auto-generated method stub
+        @Override
+        public void start(Xid xid, int flags) throws XAException {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-	}
+    }
 
     private abstract class SimpleXAResource implements XAResource {
 
