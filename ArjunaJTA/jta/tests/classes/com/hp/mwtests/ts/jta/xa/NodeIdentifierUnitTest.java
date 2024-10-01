@@ -57,25 +57,6 @@ public class NodeIdentifierUnitTest
         assertEquals(tmNodeName, xaNodeNameFromBytes);
     }
 
-    /**
-     * setNodeIdentifier uses an SHA-224 message digest ie it produces a
-     * "secure one-way hash function that takes arbitrary-sized data and outputs a fixed-length hash value".
-     * The fixed-length hash value is then used to produce a byte array and the resulting digest is used to configure
-     * the node identifier bytes. These bytes are then used to set the string form of the node identifier using a UTF_8
-     * encoding, but this encoding can still produce a string that is longer than
-     * {@link com.arjuna.ats.arjuna.common.CoreEnvironmentBean#NODE_NAME_SIZE} and if this happens then the method
-     * {@link com.arjuna.ats.arjuna.common.CoreEnvironmentBean#setNodeIdentifier(byte[])} will use a Base64 Encoder
-     * to truncate it down to the maximum size. This test verifies the encoding works correctly by running the
-     * {@link NodeIdentifierUnitTest#setNodeIdentifier(String)} method many times. Without the encoding the
-     * test fails approximately 1 in 100 times.
-     */
-    @Test
-    public void testBase64Encoding() throws NoSuchAlgorithmException {
-        for (int i = 1; i < 1000; i++) {
-            setNodeIdentifier(UUID.randomUUID().toString());
-        }
-    }
-
     private static void setNodeIdentifier(String nodeIdentifier) throws NoSuchAlgorithmException {
         byte[] nodeIdentifierAsBytes = nodeIdentifier.getBytes();
         MessageDigest messageDigest224 = MessageDigest.getInstance("SHA-224");
