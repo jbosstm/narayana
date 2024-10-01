@@ -1645,12 +1645,6 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void unexpected_exception(@Cause() Throwable arg0);
 
-	@Message(id = 12414,
-			value = "The node identifier {0} was too long and was shortened by encoding the byte array in Base64 to give {1}",
-			format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	void warn_nodename_shortened(String xaNodeName, Integer nameLength);
-
 	// TODO Delete this as soon as JBTM-3983 has been implemented
 	@Message(id = 12415, value = "You have enabled a feature that has not yet been fully assessed for compliance " +
 			"across all Recovery Modules provided by Narayana. For more details, " +
