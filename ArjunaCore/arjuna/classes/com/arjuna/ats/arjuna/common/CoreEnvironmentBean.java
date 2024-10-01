@@ -6,8 +6,6 @@ package com.arjuna.ats.arjuna.common;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Process;
 import com.arjuna.ats.arjuna.utils.Utility;
@@ -89,10 +87,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 
     /**
      * Sets the node identifier. Should be uniq amongst all instances that share resource managers or an objectstore.
-     * <p>
-     * This config setting has the side effect of setting the node identifier bytes by extracting the bytes from
-     * the passed in String using the UTF_8 character set (if you need to control the length of the byte array
-     * please use the {@link #setNodeIdentifier(byte[]) method} directly).
      *
      * @param nodeIdentifier the Node Identifier.
      * @throws CoreEnvironmentBeanException if node identifier is null or too long.
@@ -119,42 +113,18 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         return this.nodeIdentifierBytes;
     }
 
-    /**
-     * Sets the node identifier bytes and must be unique amongst all instances that share resource managers
-     * or an objectstore. This method is subtly different from the other form because it does not use any character
-     * encoding (such encodings can change the length of a Java String). The byte array is restricted to
-     * {@value com.arjuna.ats.arjuna.coordinator.TxControl#NODE_NAME_SIZE} bytes - the length restriction is
-     * required because these bytes are encoded into other structures which have limited sizes.
-     * <p>
-     * This config setting has the side effect of setting the node identifier String (by encoding the passed
-     * in bytes with the UTF_8 character set) and if the length of the resulting String is greater than
-     * {@link #NODE_NAME_SIZE} then a CoreEnvironmentBeanException is thrown.
-     *
-     * @param nodeIdentifierBytes the bytes for node identifier.
-     * @throws CoreEnvironmentBeanException if node identifier is null or too long.
-     */
-    public void setNodeIdentifier(byte[] nodeIdentifierBytes) throws CoreEnvironmentBeanException
+    public void setNodeIdentifier(byte[] bytes) throws CoreEnvironmentBeanException
     {
-        if (nodeIdentifierBytes == null) {
-            tsLogger.i18NLogger.fatal_nodename_null();
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_null());
-        }
+        String name = new String(bytes, StandardCharsets.UTF_8);
 
-        if (nodeIdentifierBytes.length > TxControl.NODE_NAME_SIZE) {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, TxControl.NODE_NAME_SIZE);
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.
-                    get_fatal_nodename_too_long(nodeIdentifier, TxControl.NODE_NAME_SIZE));
-        }
-
-        String newName = new String(nodeIdentifierBytes, StandardCharsets.UTF_8);
-        if (newName.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE)
+        if (bytes.length > NODE_NAME_SIZE)
         {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE);
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE));
+            tsLogger.i18NLogger.fatal_nodename_too_long(name, NODE_NAME_SIZE);
+            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(name, NODE_NAME_SIZE));
         }
 
-        this.nodeIdentifier = newName;
-        this.nodeIdentifierBytes = nodeIdentifierBytes; // replace the bytes set via the last call
+        this.nodeIdentifierBytes = bytes;
+        this.nodeIdentifier = name;
     }
 
     /**
