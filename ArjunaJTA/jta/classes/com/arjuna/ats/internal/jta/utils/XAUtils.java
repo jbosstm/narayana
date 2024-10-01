@@ -81,12 +81,6 @@ public class XAUtils
         return XATxConverter.getNodeName(getXIDfromXid(xid));
 	}
 
-	public static byte[] getXANodeNameBytes (Xid xid)
-	{
-	    XID theXid = getXIDfromXid(xid); // narayana XidImple
-	    return XATxConverter.getNodeNameBytes(theXid);
-	}
-
 	/**
 	 * Returning subordinate node name codified inside of the Xid.
 	 *
