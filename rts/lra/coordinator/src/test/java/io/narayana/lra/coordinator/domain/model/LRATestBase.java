@@ -13,6 +13,8 @@ import java.io.File;
 import java.net.URI;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -55,6 +57,7 @@ public class LRATestBase {
     static final long LRA_SHORT_TIMELIMIT = 10L;
     private static LRAStatus status = LRAStatus.Active;
     private static final AtomicInteger acceptCount = new AtomicInteger(0);
+    static Queue<Integer> queue = new ConcurrentLinkedQueue<>(); // used to check the participant order
 
     @Path("/test")
     public static class Participant {
@@ -289,6 +292,62 @@ public class LRATestBase {
             } finally {
                 client.close();
             }
+        }
+    }
+
+    @Path("/participant1")
+    public static class Participant1 {
+        @GET
+        @Path("/continue")
+        @LRA(value = LRA.Type.MANDATORY, end = false)
+        public Response continueInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            return Response.ok().build();
+        }
+
+        @PUT
+        @Path("complete")
+        @Complete
+        public Response complete(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            queue.add(1); // indicate the order in which participant1 was compensated
+
+            return Response.status(Response.Status.OK).entity(ParticipantStatus.Completed).build();
+        }
+
+        @PUT
+        @Path("compensate")
+        @Compensate
+        public Response compensate(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            queue.add(1); // indicate the order in which participant1 was compensated
+
+            return Response.status(Response.Status.OK).entity(ParticipantStatus.Compensated).build();
+        }
+    }
+    @Path("/participant2")
+    public static class Participant2 {
+        @GET
+        @Path("/continue")
+        @LRA(value = LRA.Type.MANDATORY, end = false)
+        public Response continueInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            return Response.ok().build();
+        }
+
+
+        @PUT
+        @Path("complete")
+        @Complete
+        public Response complete(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            queue.add(2); // indicate the order in which participant2 was compensated
+
+            return Response.status(Response.Status.OK).entity(ParticipantStatus.Completed).build();
+        }
+
+        @PUT
+        @Path("compensate")
+        @Compensate
+        public Response compensate(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI ignore) {
+            queue.add(2); // indicate the order in which participant2 was compensated
+
+            return Response.status(Response.Status.OK).entity(ParticipantStatus.Compensated).build();
         }
     }
 
