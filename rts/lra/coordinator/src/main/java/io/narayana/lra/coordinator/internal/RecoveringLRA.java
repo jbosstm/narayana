@@ -63,8 +63,8 @@ class RecoveringLRA extends LongRunningAction {
                 if (heuristicList.size() != 0 || pendingList.size() != 0 || getLRAStatus() == LRAStatus.Active) {
                     // Note that we do not try to recover failed LRAs.
                     // Move any heuristics back onto the prepared list for another attempt:
-                    moveTo(heuristicList, preparedList);
-                    moveTo(pendingList, preparedList);
+                    moveTo(heuristicList, preparedList, false);
+                    moveTo(pendingList, preparedList, false);
 
                     checkParticipant(preparedList);
 

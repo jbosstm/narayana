@@ -521,8 +521,8 @@ public class LongRunningAction extends BasicAction {
                         failedList = new RecordList();
                     }
 
-                    moveTo(pendingList, preparedList);
-                    moveTo(heuristicList, preparedList);
+                    moveTo(pendingList, preparedList, true);
+                    moveTo(heuristicList, preparedList, true);
 
                     updateState(LRAStatus.Cancelling);
 
@@ -550,11 +550,11 @@ public class LongRunningAction extends BasicAction {
             }
         } else {
             if (cancel || status() == ActionStatus.ABORT_ONLY) {
-                // compensators must be called in reverse order so reverse the pending list
                 preparedList = new RecordList();
                 failedList = new RecordList();
-                moveTo(pendingList, preparedList);
-                moveTo(heuristicList, preparedList);
+                // move items from the pending and heuristic lists onto the prepared list
+                moveTo(pendingList, preparedList, true);
+                moveTo(heuristicList, preparedList, true);
 
                 // tell each participant that the LRA canceled
                 updateState(LRAStatus.Cancelling);
@@ -571,6 +571,8 @@ public class LongRunningAction extends BasicAction {
                 super.phase2Commit(true);
                 res = super.status();
             } else {
+                // participants should be called in the opposite order from which they joined
+                pendingList = invert(pendingList);
                 // tell each participant that the LRA closed ok
                 updateState(LRAStatus.Closing);
                 if (LRALogger.logger.isTraceEnabled()) {
@@ -626,7 +628,7 @@ public class LongRunningAction extends BasicAction {
             if (preparedList == null) {
                 preparedList = new RecordList();
             }
-            moveTo(heuristicList, preparedList);
+            moveTo(heuristicList, preparedList, false);
             checkParticipant(preparedList);
 
             if (LRALogger.logger.isTraceEnabled()) {
@@ -661,14 +663,31 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    protected void moveTo(RecordList fromList, RecordList toList) {
+    protected void moveTo(RecordList fromList, RecordList toList, boolean invert) {
         AbstractRecord record;
 
         if (fromList != null) {
             while ((record = fromList.getFront()) != null) {
-                toList.putFront(record);
+                if (invert) {
+                    toList.putRear(record);
+                } else {
+                    toList.putFront(record);
+                }
             }
         }
+    }
+
+    protected RecordList invert(RecordList list) {
+        RecordList inverted = new RecordList();
+        AbstractRecord record;
+
+        if (list != null) {
+            while ((record = list.getFront()) != null) {
+                inverted.putFront(record);
+            }
+        }
+
+        return inverted;
     }
 
     private boolean allFinished(RecordList... lists) {

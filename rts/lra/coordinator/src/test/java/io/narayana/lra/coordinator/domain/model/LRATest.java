@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import io.narayana.lra.LRAConstants;
+import jakarta.validation.constraints.AssertTrue;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.hamcrest.MatcherAssert;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
@@ -80,6 +81,8 @@ public class LRATest extends LRATestBase {
         public Set<Class<?>> getClasses() {
             HashSet<Class<?>> classes = new HashSet<>();
             classes.add(Participant.class);
+            classes.add(Participant1.class);
+            classes.add(Participant2.class);
             classes.add(ServerLRAFilter.class);
             classes.add(ParticipantStatusOctetStreamProvider.class);
             return classes;
@@ -193,6 +196,62 @@ public class LRATest extends LRATestBase {
         } finally {
             lraClient.cancelLRA(lraId);
         }
+    }
+
+    /*
+     * verify that participants are compensated in the reverse order from which they were enlisted with the LRA
+     */
+    @Test
+    public void testParticipantCallbackOrderWithCancel() {
+        participantCallbackOrder(true);
+    }
+
+    /*
+     * verify that participants are completed in the reverse order from which they were enlisted with the LRA
+     */
+    @Test
+    public void testParticipantCallbackOrderWithClose() {
+        participantCallbackOrder(false);
+    }
+
+    void participantCallbackOrder(boolean cancel) {
+        queue.clear(); // reset the queue which records the order in which participants are ended
+
+        URI lraId = lraClient.startLRA("testParticipantCallbackOrderWith" + (cancel ? "Cancel" : "Close"));
+
+        for (int i = 1; i <= 2; i++) { // pick out participants participant1 and participant2
+            String businessMethodName = String.format("/base/participant%d/continue", i);
+
+            // invoke a method that has LRA.Type.MANDATORY passing in the LRA that was just started
+            // (this will cause the participant to be enlisted with the LRA)
+            try (Response r = client.target(TestPortProvider.generateURL(businessMethodName)).request()
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId).get()) {
+                if (r.getStatus() != Response.Status.OK.getStatusCode()) {
+                    try {
+                        // clean up and fail
+                        lraClient.cancelLRA(lraId);
+
+                        fail("could not reach participant" + i + ", status code=" + r.getStatus());
+                    } catch (WebApplicationException e) {
+                        fail(String.format("could not reach participant%d, status code=%d and %s failed with %s",
+                                i, r.getStatus(), cancel ? "cancel" : "close", e.getMessage()));
+                    }
+                }
+            }
+        }
+
+        if (cancel) {
+            lraClient.cancelLRA(lraId);
+        } else {
+            lraClient.closeLRA(lraId);
+        }
+
+        // verify that participants participant1 and participant2 were compensated/completed in reverse order,
+        // ie the queue should be in the order {2, 1} because they were enlisted in the order {1, 2}
+        assertEquals(String.format("second participant should have %s first", cancel ? "compensated" : "completed"),
+                Integer.valueOf(2), queue.remove()); // removing the first item from the queue should give participant2
+
+        queue.remove(); // clean up item from participant1 (the remaining integer on the queue)
     }
 
     /**
