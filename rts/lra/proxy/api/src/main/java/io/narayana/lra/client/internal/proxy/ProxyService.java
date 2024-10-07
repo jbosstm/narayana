@@ -5,7 +5,7 @@
 
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.NarayanaLRAClient;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
