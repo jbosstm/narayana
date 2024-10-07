@@ -548,7 +548,8 @@ public class PeriodicRecovery extends Thread
         }
 
         // TODO Delete this as soon as JBTM-3983 has been implemented
-        if (module.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule")) {
+        if (_waitForWorkLeftToDo &&
+                module.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule")) {
             tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
         }
 
@@ -906,7 +907,7 @@ public class PeriodicRecovery extends Thread
         _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
 
         // TODO Delete this as soon as JBTM-3983 has been implemented
-        if (!_recoveryModules.isEmpty() &&
+        if (_waitForWorkLeftToDo && !_recoveryModules.isEmpty() &&
                 _recoveryModules.stream().anyMatch(
                         x -> !x.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"))) {
             tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
