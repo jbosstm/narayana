@@ -7,7 +7,7 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-class DummyRecoveryModule implements com.arjuna.ats.arjuna.recovery.RecoveryModule
+public class DummyRecoveryModule implements com.arjuna.ats.arjuna.recovery.RecoveryModule
 {
     public DummyRecoveryModule()
     {
