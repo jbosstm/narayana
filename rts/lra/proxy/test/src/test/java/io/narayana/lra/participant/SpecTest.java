@@ -5,7 +5,7 @@
 
 package io.narayana.lra.participant;
 
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.NarayanaLRAClient;
 
 import org.junit.After;
 import org.junit.Before;

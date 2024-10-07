@@ -8,7 +8,7 @@ package io.narayana.lra.filter;
 import io.narayana.lra.AnnotationResolver;
 import io.narayana.lra.Current;
 import io.narayana.lra.client.LRAParticipantData;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.logging.LRALogger;
