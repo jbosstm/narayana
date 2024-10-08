@@ -392,8 +392,10 @@ public class LongRunningAction extends BasicAction {
         return status;
     }
 
+    // a recovering LRA is one that is in state Cancelling or Closing or has pending listener notifications
+    // which are maintained on the heuristic list
     public boolean isRecovering() {
-        return status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing);
+        return status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing) || getSize(heuristicList) != 0;
     }
 
     public boolean isFailed() {
@@ -593,7 +595,9 @@ public class LongRunningAction extends BasicAction {
         }
 
         if (getSize(heuristicList) != 0) {
-            updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+            if (!isInEndState()) { // else it must be a failed AfterLRA notification which will need to be retried
+                updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+            }
         } else if (getSize(failedList) != 0) {
             updateState(cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose);
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
@@ -602,6 +606,7 @@ public class LongRunningAction extends BasicAction {
 
         if (isTopLevel()) {
             // note that we don't update the finish time for nested LRAs since their final state depends on the parent
+            // also the time spent invoking AfterLRA callbacks should probably not be included
             finishTime = LocalDateTime.now(ZoneOffset.UTC);
         }
 

@@ -57,6 +57,12 @@ public class LRATestBase {
     static final long LRA_SHORT_TIMELIMIT = 10L;
     private static LRAStatus status = LRAStatus.Active;
     private static final AtomicInteger acceptCount = new AtomicInteger(0);
+
+    // count the number of times the AfterLRA notification was delivered.
+    // Note that the default resource scope is @RequestScope so a new instance of the resource is created
+    // on each resource invocation so store the counter as a global
+    private static AtomicInteger afterCallCount = new AtomicInteger(0);
+
     static Queue<Integer> queue = new ConcurrentLinkedQueue<>(); // used to check the participant order
 
     @Path("/test")
@@ -348,6 +354,37 @@ public class LRATestBase {
             queue.add(2); // indicate the order in which participant2 was compensated
 
             return Response.status(Response.Status.OK).entity(ParticipantStatus.Compensated).build();
+        }
+    }
+
+    // a resource that runs a method in an LRA and expects to receive an AfterLRA notification
+    @Path("/lra-listener")
+    public static class AfterLRAListener {
+        @GET
+        @Path("/do-in-LRA")
+        @LRA(value = LRA.Type.REQUIRES_NEW)
+        public Response doInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+            afterCallCount.set(0);
+            return Response.ok(lraId.toASCIIString()).build();
+        }
+
+        @GET
+        @Path("/check-after")
+        @LRA(value = LRA.Type.NOT_SUPPORTED)
+        public Response checkAfter() {
+            return Response.ok(afterCallCount.get()).build();
+        }
+
+        @PUT
+        @Path("/after")
+        @AfterLRA
+        @LRA(value = LRA.Type.NOT_SUPPORTED)
+        public Response afterLRA() {
+            // return 500 on the first invocation and 200 thereafter so that we can verify that the coordinator
+            // keeps reissuing the notification until the resource acknowledges it with a 200 OK response.
+            // remark: something in the test env is replaying the end call so we automatically get two afterLRA
+            // notifications, and it is not the ServerLRAFilter that does the double call so test for <= 1
+            return afterCallCount.getAndIncrement() <= 1 ? Response.status(500).build() : Response.ok().build();
         }
     }
 

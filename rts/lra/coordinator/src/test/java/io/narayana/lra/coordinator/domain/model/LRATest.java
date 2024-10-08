@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import io.narayana.lra.LRAConstants;
-import jakarta.validation.constraints.AssertTrue;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.hamcrest.MatcherAssert;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
@@ -71,6 +70,7 @@ public class LRATest extends LRATestBase {
     private NarayanaLRAClient lraClient;
     private Client client;
     private String coordinatorPath;
+    private String recoveryPath;
 
     @Rule
     public TestName testName = new TestName();
@@ -83,6 +83,7 @@ public class LRATest extends LRATestBase {
             classes.add(Participant.class);
             classes.add(Participant1.class);
             classes.add(Participant2.class);
+            classes.add(AfterLRAListener.class);
             classes.add(ServerLRAFilter.class);
             classes.add(ParticipantStatusOctetStreamProvider.class);
             return classes;
@@ -118,6 +119,7 @@ public class LRATest extends LRATestBase {
 
         client = ClientBuilder.newClient();
         coordinatorPath = TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME);
+        recoveryPath = coordinatorPath + "/recovery";
         server.deploy(LRACoordinator.class);
         server.deployOldStyle(LRAParticipant.class);
 
@@ -776,6 +778,60 @@ public class LRATest extends LRATestBase {
             lraClient.cancelLRA(lraId);
             fail("should not be able to cancel a timed out LRA");
         } catch (WebApplicationException ignore) {
+        }
+    }
+
+    @Test
+    public void testLRAListener() throws InterruptedException, URISyntaxException {
+        String businessMethodName = "/base/lra-listener/do-in-LRA"; // the one that creates the LRA
+        String afterCheckMethodName = "/base/lra-listener/check-after"; // the one that reports the no of notifications
+        URI lraId;
+
+        // invoke a business method that should start and end an LRA
+        try (Response r = client.target(TestPortProvider.generateURL(businessMethodName)).request().get()) {
+            assertEquals("testLRAListener: business method call failed", 200, r.getStatus());
+            lraId = new URI(r.readEntity(String.class)); // remember the LRA so that it's status can be verified
+        }
+
+        // verify that the AfterLRA annotated method ("/lra-listener/after") keeps getting called until it returns 200
+        try (Response r = client.target(TestPortProvider.generateURL(afterCheckMethodName))
+                .request().get()) {
+            assertEquals("testLRAListener: check-after method call failed", 200, r.getStatus());
+
+            Integer notificationsBeforeRecovery = r.readEntity(Integer.class);
+            assertTrue("Expected at least one AfterLRA notifications", notificationsBeforeRecovery > 0);
+
+            // verify that the coordinator still regards the LRA as finished even though there are still listeners
+            LRAStatus status = lraClient.getStatus(lraId);
+            assertEquals("LRA should be in the closed state, not " + status, LRAStatus.Closed, status);
+
+            // trigger a recovery scan so that the coordinator redelivers the listener notification which can take
+            // a few seconds (maybe put this in a routine so that other tests can use it)
+            try (Response r2 = client.target(recoveryPath).request().get()) {
+                assertEquals("testLRAListener: trigger recovery method call failed", 200, r.getStatus());
+                r2.getEntity(); // read the response stream, ignore the result (but we could check to see if contains lraId)
+            }
+
+            // check that the listener was notified again during the recovery scan
+            try (Response r3 = client.target(TestPortProvider.generateURL(afterCheckMethodName)).request().get()) {
+                assertEquals("testLRAListener: check-after method call failed", 200, r3.getStatus());
+                int notificationsAfterRecovery = r3.readEntity(Integer.class);
+                assertTrue("Expected the recovery scan to produce extra AfterLRA listener notifications",
+                        notificationsAfterRecovery > notificationsBeforeRecovery);
+            }
+
+            // the AfterLRA notification handler during recovery ("/lra-listener/after")
+            // should have returned status 200, verify that the LRA is gone
+
+            try {
+                status = lraClient.getStatus(lraId);
+
+                fail("LRA should have gone but it is in state " + status);
+            } catch (NotFoundException ignore) {
+                ; // success the LRA is gone as expected
+            } catch (WebApplicationException e) {
+                fail("status of LRA unavailable: " + e.getMessage());
+            }
         }
     }
 
