@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import io.narayana.lra.LRAData;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.NarayanaLRAClient;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;

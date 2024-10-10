@@ -7,7 +7,7 @@ package io.narayana.lra.arquillian;
 
 import io.narayana.lra.LRAData;
 import io.narayana.lra.arquillian.resource.LRAListener;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.NarayanaLRAClient;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
