@@ -26,6 +26,7 @@ public class Deployer {
                         "io.narayana.lra.filter",
                         "io.narayana.lra.provider",
                         "io.narayana.lra.client",
+                        "io.narayana.lra.client.internal",
                         "io.narayana.lra.arquillian.spi")
                 // adds the TestBase class, the test class itself seems to be uploaded during deployment by Arquillian
                 // then it requires the parent class as well, otherwise Weld NoClassDefFoundError is shown
