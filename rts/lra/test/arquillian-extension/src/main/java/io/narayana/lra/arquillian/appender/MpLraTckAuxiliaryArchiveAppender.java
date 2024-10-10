@@ -61,6 +61,7 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
                         "io.narayana.lra.filter",
                         "io.narayana.lra.provider",
                         "io.narayana.lra.client",
+                        "io.narayana.lra.client.internal",
                         "org.eclipse.microprofile.lra")
                 .addPackages(true,
                         "io.narayana.lra.client.internal.proxy",
