@@ -782,6 +782,8 @@ public class BasicAction extends StateManager
         }
         catch (IOException e)
         {
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
             return false;
         }
 
@@ -856,6 +858,8 @@ public class BasicAction extends StateManager
                 }
                 catch (IOException e)
                 {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                     res = false;
                 }
             }
@@ -886,6 +890,8 @@ public class BasicAction extends StateManager
             }
             catch (IOException e)
             {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                 res = false;
             }
         }
@@ -902,6 +908,8 @@ public class BasicAction extends StateManager
             }
             catch (IOException e)
             {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                 res = false;
             }
 
@@ -929,6 +937,8 @@ public class BasicAction extends StateManager
                         }
                         catch (IOException e)
                         {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                             res = false;
                         }
                     }
@@ -954,6 +964,8 @@ public class BasicAction extends StateManager
                     }
                     catch (IOException e)
                     {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                         res = false;
                     }
                 }
@@ -974,6 +986,8 @@ public class BasicAction extends StateManager
             }
             catch (IOException e)
             {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_72(e.getMessage());
+
                 res = false;
             }
         }
@@ -1101,6 +1115,8 @@ public class BasicAction extends StateManager
         }
         catch (IOException e)
         {
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
             return false;
         }
 
@@ -1114,6 +1130,8 @@ public class BasicAction extends StateManager
         }
         catch (IOException e)
         {
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
             res = false;
         }
 
@@ -1141,6 +1159,8 @@ public class BasicAction extends StateManager
                 }
                 catch (IOException e)
                 {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
                     res = false;
                 }
             }
@@ -1162,6 +1182,8 @@ public class BasicAction extends StateManager
             }
             catch (IOException e)
             {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
                 res = false;
             }
         }
@@ -1180,6 +1202,8 @@ public class BasicAction extends StateManager
             }
             catch (IOException e)
             {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
                 res = false;
             }
 
@@ -1202,6 +1226,8 @@ public class BasicAction extends StateManager
                 }
                 catch (IOException e)
                 {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_73(e.getMessage());
+
                     res = false;
                 }
                 catch (final NullPointerException ex) {
