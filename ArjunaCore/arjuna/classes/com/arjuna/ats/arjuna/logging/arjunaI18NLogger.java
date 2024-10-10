@@ -1652,6 +1652,14 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_feature_not_supported_across_all_recovery_modules();
 
+	@Message(id = 12416, value = "BasicAction.save_state - IOException: {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_coordinator_BasicAction_72(String cause);
+
+	@Message(id = 12417, value = "BasicAction.restore_state - IOException: {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_coordinator_BasicAction_73(String cause);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
