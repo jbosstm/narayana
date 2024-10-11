@@ -39,7 +39,7 @@ public class WildflyLRACoordinatorDeployment implements Deployment<WebArchive> {
             deploymentName = DEFAULT_DEPLOYMENT_QUALIFIER;
         }
 
-        String lraVersion = System.getProperty("version.microprofile.lra");
+        String lraVersion = System.getProperty("version.microprofile.lra.fortest");
         String projectVersion = System.getProperty("project.version");
 
         // Creates the WAR archive
