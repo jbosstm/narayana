@@ -16,6 +16,10 @@
   <name>LRA crash tests</name>
   <description>LRA integration tests using unmanaged containers to simulate crash scenarios</description>
 
+  <properties>
+    <version.microprofile.lra.fortest>${version.microprofile.lra}</version.microprofile.lra.fortest>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>

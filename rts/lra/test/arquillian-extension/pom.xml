@@ -15,10 +15,6 @@
   <name>LRA tests: Arquillian extension</name>
   <description>Arquillian extensions needed for LRA tests to work</description>
 
-  <properties>
-    <version.microprofile.lra.fortest>${version.microprofile.lra}</version.microprofile.lra.fortest>
-  </properties>
-
   <dependencies>
     <!-- MicroProfile dependencies -->
     <dependency>
