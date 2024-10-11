@@ -9,12 +9,7 @@ import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -757,6 +752,28 @@ public class LRATest extends LRATestBase {
         assertEquals(compensations + 1, compensateCount.get());
         LRAStatus status = getStatus(new URI(lraId));
         assertTrue("LRA should have cancelled", status == null || status == LRAStatus.Cancelled);
+    }
+
+    @Test
+    public void testTimeoutWhileJoining() throws URISyntaxException {
+        String target = TestPortProvider.generateURL("/base/test/timeout-while-joining");
+        int compensations = compensateCount.get();
+
+        try (Response response = client.target(target)
+                .request()
+                .get()) {
+            assertEquals("expected HTTP 410 Gone", 410, response.getStatus());
+
+            // assert that the method was not invoked
+            String methodResponse = response.readEntity(String.class);
+
+            assertNotEquals("business method should not have been called", "success", methodResponse);
+
+            // TODO LRA025025 is the generic error code but can we get more specific
+            assertTrue("Expected LRA025025 but was " + methodResponse, methodResponse.startsWith("LRA025025"));
+        }
+
+        assertEquals("participant should not have been enlisted", compensations, compensateCount.get());
     }
 
     @Test
