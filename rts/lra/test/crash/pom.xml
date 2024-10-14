@@ -15,10 +15,6 @@
   <artifactId>crash-test</artifactId>
   <name>LRA crash tests</name>
   <description>LRA integration tests using unmanaged containers to simulate crash scenarios</description>
-
-  <properties>
-    <version.microprofile.lra.fortest>2.0</version.microprofile.lra.fortest>
-  </properties>
   
   <build>
     <plugins>
