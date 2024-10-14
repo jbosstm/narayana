@@ -276,7 +276,7 @@
                 <!-- used to resolve the resteasy-client version -->
                 <version.resteasy-client>${version.resteasy-client}</version.resteasy-client>
                 <!-- used to resolve eclipse microprofile versions -->
-                <version.microprofile.lra.fortest>2.0</version.microprofile.lra.fortest>
+                <version.microprofile.lra.fortest>${version.microprofile.lra}</version.microprofile.lra.fortest>
               </systemProperties>
             </configuration>
           </plugin>

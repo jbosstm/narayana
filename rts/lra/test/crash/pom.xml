@@ -15,7 +15,7 @@
   <artifactId>crash-test</artifactId>
   <name>LRA crash tests</name>
   <description>LRA integration tests using unmanaged containers to simulate crash scenarios</description>
-  
+
   <build>
     <plugins>
       <plugin>
