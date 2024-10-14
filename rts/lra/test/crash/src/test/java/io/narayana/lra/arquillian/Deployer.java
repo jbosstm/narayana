@@ -16,7 +16,7 @@ public class Deployer {
     public static WebArchive createDeployment(String appName, Class<?>... classes) {
 
         String resteasyClientVersion = System.getProperty("version.resteasy-client");
-        String eclipseLraVersion = System.getProperty("version.microprofile.lra");
+        String eclipseLraVersion = System.getProperty("version.microprofile.lra.fortest");
         String projectVersion = System.getProperty("project.version");
 
         return ShrinkWrap.create(WebArchive.class, appName + ".war")
