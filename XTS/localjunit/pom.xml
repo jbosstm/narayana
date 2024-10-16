@@ -170,7 +170,8 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <forkMode>once</forkMode>
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
               <systemPropertyVariables combine.children="append">
                 <!--
                                   Used in arquillian.xml
@@ -201,7 +202,8 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <forkMode>once</forkMode>
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
               <workingDirectory>.</workingDirectory>
               <systemPropertyVariables combine.children="append">
                 <!--
@@ -234,7 +236,8 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <argLine>${ipv6.server.jvm.args}</argLine>
-              <forkMode>once</forkMode>
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
               <workingDirectory>.</workingDirectory>
               <systemPropertyVariables combine.children="append">
                 <!--
