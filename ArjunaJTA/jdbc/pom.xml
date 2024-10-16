@@ -135,7 +135,8 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <argLine>${surefireArgLine}</argLine>
-            <forkMode>pertest</forkMode>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
             <workingDirectory>target/test-classes</workingDirectory>
             <runOrder>alphabetical</runOrder>
             <redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
