@@ -15,6 +15,8 @@ import io.narayana.lra.logging.LRALogger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -32,6 +34,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -458,7 +461,7 @@ public class Coordinator extends Application {
 
     @PUT
     @Path("{LraId}/cancel")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     @Operation(summary = "Attempt to cancel an LRA",
         description = " Trigger the compensation of the LRA. All"
             + " participants will be triggered by the coordinator (ie the compensate message will be sent to each participants)."
@@ -478,13 +481,27 @@ public class Coordinator extends Application {
         @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
         @PathParam("LraId")String lraId,
         @Parameter(ref = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)
+        @HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.TEXT_PLAIN) String mediaType,
         @HeaderParam(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) @DefaultValue(CURRENT_API_VERSION_STRING) String version,
         @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_LINK_HEADER_NAME) @DefaultValue("") String compensator,
         @HeaderParam(LRAConstants.NARAYANA_LRA_PARTICIPANT_DATA_HEADER_NAME) @DefaultValue("") String userData)
             throws NotFoundException {
-        return Response.ok(endLRA(toURI(lraId), true, false, compensator, userData).name())
-                .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
-                .build();
+
+        LRAStatus status = endLRA(toURI(lraId), true, false, compensator, userData);
+
+        if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+            JsonObject model = Json.createObjectBuilder()
+                    .add("status", status.name())
+                    .build();
+
+            return Response.ok(model.toString())
+                    .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
+                    .build();
+        } else { // produce MediaType.TEXT_PLAIN
+            return Response.ok(status.name())
+                    .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
+                    .build();
+        }
     }
 
     private LRAStatus endLRA(URI lraId, boolean compensate, boolean fromHierarchy, String compensator, String userData) throws NotFoundException {
