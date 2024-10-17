@@ -878,6 +878,14 @@ public class NarayanaLRAClient implements Closeable {
         return Current.peek();
     }
 
+    public void clearCurrent(boolean all) {
+        if (all) {
+            Current.popAll();
+        } else {
+            Current.pop();
+        }
+    }
+
     private void lraTracef(String reasonFormat, Object... parameters) {
         if (LRALogger.logger.isTraceEnabled()) {
             LRALogger.logger.tracef(reasonFormat, parameters);

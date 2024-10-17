@@ -6,6 +6,7 @@
 package io.narayana.lra.coordinator.domain.model;
 
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 import static org.hamcrest.Matchers.containsString;
@@ -24,11 +25,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.narayana.lra.LRAConstants;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.hamcrest.MatcherAssert;
@@ -137,7 +142,7 @@ public class LRATest extends LRATestBase {
 
     @Test
     public void joinWithVersionTest() {
-        URI lraId = lraClient.startLRA("joinLRAWithBody");
+        URI lraId = lraClient.startLRA(testName.getMethodName());
         String version = LRAConstants.API_VERSION_1_2;
         String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
 
@@ -148,7 +153,7 @@ public class LRATest extends LRATestBase {
                 // the request body should correspond to a valid compensator or be empty
                 .put(Entity.text(""))) {
             Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
-                    Response.Status.OK.getStatusCode(), response.getStatus());
+                    OK.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
             String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
@@ -170,7 +175,7 @@ public class LRATest extends LRATestBase {
 
     @Test
     public void joinWithOldVersionTest() {
-        URI lraId = lraClient.startLRA("joinLRAWithBody");
+        URI lraId = lraClient.startLRA(testName.getMethodName());
         String version = LRAConstants.API_VERSION_1_1;
         String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
 
@@ -181,7 +186,7 @@ public class LRATest extends LRATestBase {
                 // the request body should correspond to a valid compensator or be empty
                 .put(Entity.text(""))) {
             Assert.assertEquals("Expected joining LRA succeeded, PUT/200 is expected.",
-                    Response.Status.OK.getStatusCode(), response.getStatus());
+                    OK.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
             String recoveryHeaderUrlMessage = response.getHeaderString(RECOVERY_HEADER_NAME);
@@ -219,7 +224,7 @@ public class LRATest extends LRATestBase {
     void participantCallbackOrder(boolean cancel) {
         queue.clear(); // reset the queue which records the order in which participants are ended
 
-        URI lraId = lraClient.startLRA("testParticipantCallbackOrderWith" + (cancel ? "Cancel" : "Close"));
+        URI lraId = lraClient.startLRA(testName.getMethodName());
 
         for (int i = 1; i <= 2; i++) { // pick out participants participant1 and participant2
             String businessMethodName = String.format("/base/participant%d/continue", i);
@@ -228,7 +233,7 @@ public class LRATest extends LRATestBase {
             // (this will cause the participant to be enlisted with the LRA)
             try (Response r = client.target(TestPortProvider.generateURL(businessMethodName)).request()
                     .header(LRA_HTTP_CONTEXT_HEADER, lraId).get()) {
-                if (r.getStatus() != Response.Status.OK.getStatusCode()) {
+                if (r.getStatus() != OK.getStatusCode()) {
                     try {
                         // clean up and fail
                         lraClient.cancelLRA(lraId);
@@ -276,7 +281,7 @@ public class LRATest extends LRATestBase {
         Response r3 = client.target(String.format("%s/close", lraId)).request().put(null);
         int status = r3.getStatus();
         assertTrue("Problem closing LRA: ",
-                status == Response.Status.OK.getStatusCode() || status == Response.Status.NOT_FOUND.getStatusCode());
+                status == OK.getStatusCode() || status == Response.Status.NOT_FOUND.getStatusCode());
 
         // verify that the participant complete request is issued when a method annotated with @LRA returns
         int completions = completeCount.get();
@@ -295,6 +300,254 @@ public class LRATest extends LRATestBase {
         assertEquals(completions + 1, completeCount.get());
         LRAStatus status = getStatus(new URI(lraId));
         assertTrue("LRA should have closed", status == null || status == LRAStatus.Closed);
+    }
+
+    @Test
+    // validate that the coordinator produces Json if the accepts header specifies Json
+    public void testJsonContentNegotiation() {
+        negotiateContent(MediaType.APPLICATION_JSON);
+    }
+
+    @Test
+    // validate that the coordinator produces plain text if the accepts header specifies plain text
+    public void testPlainContentNegotiation() {
+        negotiateContent(MediaType.TEXT_PLAIN);
+    }
+
+    private void negotiateContent(String acceptMediaType) {
+        URI lraId = lraClient.startLRA(testName.getMethodName());
+
+        // cancel and validate that the response reports the status using the requested media type
+        try (Response r = client
+                .target(String.format("%s/cancel", lraId))
+                .request()
+                .accept(acceptMediaType)
+                .put(null)) {
+
+            int res = r.getStatus();
+
+            if (res != OK.getStatusCode()) {
+                fail("unable to cleanup: " + res);
+            }
+
+            try {
+                if (acceptMediaType.equals(MediaType.TEXT_PLAIN)) {
+                    String status = r.readEntity(String.class);
+
+                    assertEquals(LRAStatus.Cancelled.name(), status);
+                } else if (acceptMediaType.equals(MediaType.APPLICATION_JSON)) {
+                    // {"status":"Active"}
+                    String status = r.readEntity(String.class);
+                    String expected = String.format("{\"status\":\"%s\"}", LRAStatus.Cancelled.name());
+
+                    assertEquals(expected, status);
+                }
+            } catch (Exception e) {
+                fail("Could not read entity body: " + e.getMessage());
+            }
+        }
+
+        // we started the LRA using the client API which associates the LRA with the calling thread
+        // and since the test then cancelled it directly, ie not via the API, the LRA will still be associated.
+        // Therefore, it needs to be cleared otherwise subsequent tests will still see the LRA associated:
+        lraClient.clearCurrent(false);
+        assertNull("LRA is still associated with the current thread", lraClient.getCurrent());
+    }
+
+    @Test
+    public void testGetAllLRAsAcceptJson() {
+        URI lraId = lraClient.startLRA(testName.getMethodName());
+
+        // read all LRAs using Json
+        try (Response response = client.target(coordinatorPath)
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING)
+                .accept(MediaType.APPLICATION_JSON)
+                .get()) {
+            if (response.getStatus() != OK.getStatusCode()) {
+                LRALogger.logger.debugf("Error getting all LRAs from the coordinator, response status: %d",
+                        response.getStatus());
+                throw new WebApplicationException(response);
+            }
+
+            String lrasAsJson = response.readEntity(String.class); // all LRAs as a json string
+
+            try {
+                // parse the json string into an array of LRAData
+                LRAData[] lras = new ObjectMapper().readValue(lrasAsJson, LRAData[].class);
+                // see if lraId is in the returned array
+                Optional<LRAData> targetLRA = Arrays.stream(lras)
+                        .filter(lra -> lraId.equals(lra.getLraId()))
+                        .findFirst();
+
+                assertTrue("The LRA is unknown to the coordinator", targetLRA.isPresent());
+            } catch (JsonProcessingException e) {
+                fail("could not read json array: " + e.getMessage());
+            }
+        } finally {
+            try {
+                lraClient.cancelLRA(lraId);
+            } catch (WebApplicationException e) {
+                fail("Could not clean up: " + e);
+            }
+        }
+    }
+
+    @Test
+    // start an LRA and validate that the coordinator reports its status correctly
+    public void testLRAInfoAcceptJson() {
+        URI lraId = lraClient.startLRA(testName.getMethodName());
+
+        // request the status of the LRA that was just started
+        try (Response r = client
+                .target(String.format("%s", lraId))
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get()) {
+            int res = r.getStatus();
+
+            if (res != OK.getStatusCode()) {
+                fail("unable to read LRAData: HTTP status was " + res);
+            }
+
+            String info = r.readEntity(String.class); // the entity body should be a Json representation of the LRA
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                LRAData data = objectMapper.readValue(info, LRAData.class);
+                // or Json.createReader(new StringReader(info)).readObject(); for the raw Json
+
+                // validate the LRA id, the client id and the status
+                assertEquals(lraId, data.getLraId());
+                assertEquals(testName.getMethodName(), data.getClientId());
+                assertEquals(LRAStatus.Active, data.getStatus());
+
+            } catch (JsonProcessingException e) {
+                fail("Unable to parse JSON response: " + info);
+            }
+        } finally {
+            // clean up
+            try {
+                lraClient.cancelLRA(lraId);
+            } catch (WebApplicationException e) {
+                fail("Could not clean up: " + e);
+            }
+        }
+    }
+
+    @Test
+    // start an LRA and validate that the coordinator reports its status correctly
+    public void testLRAStatusWithJson() {
+        URI lraId = lraClient.startLRA(testName.getMethodName());
+
+        // request the status of the LRA that was just started
+        try (Response r = client
+                .target(String.format("%s/status", lraId))
+                .request()
+                .accept(MediaType.APPLICATION_JSON) // MediaType.TEXT_PLAIN, the default, is tested elsewhere
+                .get()) {
+            int res = r.getStatus();
+
+            if (res != OK.getStatusCode()) {
+                fail("unable to read LRAData: HTTP status was " + res);
+            }
+
+            String json = r.readEntity(String.class); // the entity body should be a Json representation of the LRA
+
+            try {
+                JsonNode node = new ObjectMapper().readTree(json);
+                // read the value
+                JsonNode n = node.get("status").get("string");
+                String v = n.textValue();
+                // or Json.createReader(new StringReader(info)).readObject(); for the raw Json
+
+                // validate the LRA status
+                assertEquals(LRAStatus.Active.name(), v);
+
+            } catch (JsonProcessingException e) {
+                fail("Unable to parse JSON response: " + json);
+            }
+        } finally {
+            // clean up
+            try {
+                lraClient.cancelLRA(lraId);
+            } catch (WebApplicationException e) {
+                fail("Could not clean up: " + e);
+            }
+        }
+    }
+
+    @Test
+    public void testStartAcceptJson() {
+        try (Response response = client.target(coordinatorPath + "/start")
+                .request()
+                .header(LRA_API_VERSION_HEADER_NAME, LRAConstants.CURRENT_API_VERSION_STRING)
+                .accept(MediaType.APPLICATION_JSON)
+                .post(null)) {
+            if (response.getStatus() != OK.getStatusCode()) {
+                LRALogger.logger.debugf("Error getting all LRAs from the coordinator, response status: %d",
+                        response.getStatus());
+                throw new WebApplicationException(response);
+            }
+
+            String json = "";
+            URI lraId = null;
+
+            try {
+                json = response.readEntity(String.class);
+
+                JsonNode node = new ObjectMapper().readTree(json);
+                // read the value
+                JsonNode n = node.get("lraId").get("string");
+                String v = n.textValue();
+                lraId = new URI(v);
+                // or Json.createReader(new StringReader(info)).readObject(); for the raw Json
+
+                // clean up
+                lraClient.closeLRA(lraId);
+            } catch (JsonProcessingException | URISyntaxException e) {
+                fail("Unable to parse JSON response: " + json);
+            } catch (WebApplicationException e) {
+                fail("Unable to close lra: " + lraId);;
+            }
+        }
+    }
+
+    @Test
+    public void testJoinLRAViaBody() {
+        URI lraId = lraClient.startLRA(testName.getMethodName());
+        String encodedLraId = URLEncoder.encode(lraId.toString(), StandardCharsets.UTF_8); // must be valid
+
+        try (Response response = client.target(coordinatorPath)
+                .path(encodedLraId)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                // the request body should correspond to a valid compensator or be empty
+                .put(Entity.text(""))) {
+
+            assertEquals(OK.getStatusCode(), response.getStatus());
+
+            String recoveryUrl = null;
+
+            try {
+                String json = response.readEntity(String.class);
+                JsonNode node = new ObjectMapper().readTree(json);
+                // read the value
+                JsonNode n = node.get("recoveryUrl");
+                recoveryUrl = n.textValue();
+            } catch (JsonProcessingException e) {
+                fail("could not read json response: " + e.getMessage());
+            }
+
+            try {
+                // just validate that the join request returned a valid URL
+                new URI(recoveryUrl);
+            } catch (URISyntaxException e) {
+                fail("testJoinLRAViaBody returned an invalid recovery URL: " + recoveryUrl);
+            }
+        } finally {
+            lraClient.closeLRA(lraId);
+        }
     }
 
     /*
@@ -323,7 +576,7 @@ public class LRATest extends LRATestBase {
         // check that performing a GET on the recovery url returns the participant callbacks:
         try (Response r1 = client.target(recoveryUrl).request().get()) {
             int res = r1.getStatus();
-            if (res != Response.Status.OK.getStatusCode()) {
+            if (res != OK.getStatusCode()) {
                 // clean up and fail
                 fail("get recovery url failed: " + res);
             }
@@ -340,10 +593,10 @@ public class LRATest extends LRATestBase {
         // use the recovery url to ask the coordinator to compensate on a different endpoint
         try (Response r1 = client.target(recoveryUrl).request().put(Entity.text(newCompensator))) {
             int res = r1.getStatus();
-            if (res != Response.Status.OK.getStatusCode()) {
+            if (res != OK.getStatusCode()) {
                 // clean up and fail
                 try (Response r = client.target(String.format("%s/cancel", lraUrl)).request().put(null)) {
-                    if (r.getStatus() != Response.Status.OK.getStatusCode()) {
+                    if (r.getStatus() != OK.getStatusCode()) {
                         fail("move and cancel failed");
                     }
                 }
@@ -354,7 +607,7 @@ public class LRATest extends LRATestBase {
         // cancel the LRA
         try (Response r2 = client.target(String.format("%s/cancel", lraUrl)).request().put(null)) {
             int res = r2.getStatus();
-            if (res != Response.Status.OK.getStatusCode()) {
+            if (res != OK.getStatusCode()) {
                 fail("unable to cleanup: " + res);
             }
         }
@@ -761,7 +1014,7 @@ public class LRATest extends LRATestBase {
 
     @Test
     public void testTimeOutWithNoParticipants() {
-        URI lraId = lraClient.startLRA(null, "testTimeLimit", 100L, ChronoUnit.MILLIS);
+        URI lraId = lraClient.startLRA(null, testName.getMethodName(), 100L, ChronoUnit.MILLIS);
 
         // a) wait for the time limit to be reached
         try {
