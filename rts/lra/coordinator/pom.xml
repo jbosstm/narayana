@@ -64,10 +64,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jackson2-provider</artifactId>
       <scope>provided</scope>
@@ -76,6 +72,15 @@
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-client</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+    </dependency>
+    <!-- include an implementation of the Jsonp object model -->
+    <dependency>
+      <groupId>org.eclipse.parsson</groupId>
+      <artifactId>parsson</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
