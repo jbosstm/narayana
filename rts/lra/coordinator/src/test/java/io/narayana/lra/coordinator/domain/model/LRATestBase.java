@@ -144,14 +144,9 @@ public class LRATestBase {
         @GET
         @Path("timeout-while-joining")
         @Produces(MediaType.APPLICATION_JSON)
-        @LRA(value = LRA.Type.REQUIRED, timeLimit = 10, timeUnit = ChronoUnit.MILLIS)
+        @LRA(value = LRA.Type.REQUIRED, timeLimit = 1000, timeUnit = ChronoUnit.MILLIS)
         public Response timeoutBeforeJoin(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                LRALogger.logger.debugf("Interrupted because time limit elapsed", e);
-            }
-            return Response.status(Response.Status.OK).entity("success").build();
+            return Response.status(Response.Status.CONFLICT).entity("success").build();
         }
 
         @GET
