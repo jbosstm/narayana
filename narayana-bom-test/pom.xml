@@ -55,7 +55,7 @@
     <version.org.wildfly.core>20.0.0.Final</version.org.wildfly.core>
     <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
     <version.postgresql>42.7.2</version.postgresql>
-    <version.quarkus>3.2.6.Final</version.quarkus>
+    <version.quarkus>3.15.1</version.quarkus>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
   </properties>
 
@@ -441,7 +441,7 @@
       </dependency>
       <dependency>
         <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-resteasy</artifactId>
+        <artifactId>quarkus-rest</artifactId>
         <version>${version.quarkus}</version>
         <scope>test</scope>
         <exclusions>
