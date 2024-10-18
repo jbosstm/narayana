@@ -33,7 +33,7 @@
     <version.jakarta.inject.jakarta.inject-api>2.0.1</version.jakarta.inject.jakarta.inject-api>
     <version.jakarta.interceptor.jakarta-interceptors-api>2.1.0</version.jakarta.interceptor.jakarta-interceptors-api>
     <version.jakarta.jms.jakarta-jms-api>3.1.0</version.jakarta.jms.jakarta-jms-api>
-    <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
+    <version.jakarta.json-api>2.1.1</version.jakarta.json-api>
     <version.jakarta.json.jakarta-json-api>2.0.1</version.jakarta.json.jakarta-json-api>
     <version.jakarta.persistence.jakarta.persistence-api>3.1.0</version.jakarta.persistence.jakarta.persistence-api>
     <version.jakarta.platform.jakarta.jakartaee-api>10.0.0</version.jakarta.platform.jakarta.jakartaee-api>
@@ -63,6 +63,7 @@
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>9.0.1.Final</version.org.jboss.openjdk-orb>
     <version.org.jboss.ws>2.0.0.Final</version.org.jboss.ws>
+    <version.parsson>1.1.1</version.parsson>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
@@ -328,7 +329,12 @@
         <artifactId>jakarta.json-api</artifactId>
         <version>${version.jakarta.json-api}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.eclipse.parsson</groupId>
+        <artifactId>parsson</artifactId>
+        <version>${version.parsson}</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
