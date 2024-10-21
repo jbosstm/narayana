@@ -57,6 +57,7 @@ public class LRATestBase {
     static final long LRA_SHORT_TIMELIMIT = 10L;
     private static LRAStatus status = LRAStatus.Active;
     private static final AtomicInteger acceptCount = new AtomicInteger(0);
+    static final String TIMEOUT_BEFORE_JOIN_BUSINESS_DATA = "success";
 
     // count the number of times the AfterLRA notification was delivered.
     // Note that the default resource scope is @RequestScope so a new instance of the resource is created
@@ -143,10 +144,9 @@ public class LRATestBase {
 
         @GET
         @Path("timeout-while-joining")
-        @Produces(MediaType.APPLICATION_JSON)
         @LRA(value = LRA.Type.REQUIRED, timeLimit = 1000, timeUnit = ChronoUnit.MILLIS)
         public Response timeoutBeforeJoin(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
-            return Response.status(Response.Status.CONFLICT).entity("success").build();
+            return Response.status(Response.Status.OK).entity(TIMEOUT_BEFORE_JOIN_BUSINESS_DATA).build();
         }
 
         @GET
