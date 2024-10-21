@@ -415,6 +415,8 @@ public class LongRunningAction extends BasicAction {
 
     boolean isFinished() {
         switch (status) {
+            case Active:
+                return false; // this is not covered by the default arm of the switch if there are no participants
             case Closed:
                 /* FALLTHROUGH */
             case Cancelled:
@@ -807,6 +809,10 @@ public class LongRunningAction extends BasicAction {
         } else {
             // use the shiny new working method
             p.setRecoveryURI(recoveryUrlBase, this.get_uid().fileStringForm(), pid);
+        }
+
+        if (isInEndState()) {
+            return null;
         }
 
         if (add(p) != AddOutcome.AR_REJECTED) {

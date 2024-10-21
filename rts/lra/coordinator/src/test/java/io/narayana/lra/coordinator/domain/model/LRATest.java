@@ -10,7 +10,13 @@ import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1015,12 +1021,13 @@ public class LRATest extends LRATestBase {
 
     @Test
     @BMRules(rules={
-        @BMRule(name = "Rendezvous doEnlistParticipant", targetClass = "io.narayana.lra.coordinator.domain.model.LongRunningAction",
-                targetMethod = "enlistParticipant", targetLocation = "ENTRY", helper = "io.narayana.lra.coordinator.domain.model.BytemanHelper",
-                action = "rendezvousEnlistAbort();"),
-        @BMRule(name = "Rendezvous abortLRA", targetClass = "io.narayana.lra.coordinator.domain.model.LongRunningAction",
-                targetMethod = "abortLRA", targetLocation = "EXIT", helper = "io.narayana.lra.coordinator.domain.model.BytemanHelper",
-                action = "rendezvousAbortEnlist();")
+            // a rule to abort an LRA when a participant is being enlisted
+            @BMRule(name = "Rendezvous doEnlistParticipant",
+                    targetClass = "io.narayana.lra.coordinator.domain.model.LongRunningAction",
+                    targetMethod = "enlistParticipant",
+                    targetLocation = "ENTRY",
+                    helper = "io.narayana.lra.coordinator.domain.model.BytemanHelper",
+                    action = "abortLRA($0)")
     })
     public void testTimeoutWhileJoining() throws URISyntaxException {
         String target = TestPortProvider.generateURL("/base/test/timeout-while-joining");
@@ -1031,12 +1038,14 @@ public class LRATest extends LRATestBase {
                 .get()) {
             assertEquals("expected HTTP 410 Gone", 410, response.getStatus());
 
-            // assert that the method was not invoked
+            // assert that the business method was not invoked
+            // the filter should detect that enlisting with the failed and respond with message code 25025
             String methodResponse = response.readEntity(String.class);
 
-            assertNotEquals("business method should not have been called", "success", methodResponse);
+            assertNotEquals("business method should not have been called",
+                    TIMEOUT_BEFORE_JOIN_BUSINESS_DATA, methodResponse);
 
-            // TODO LRA025025 is the generic error code but can we get more specific
+            // LRA025025 is the generic error code but can we get more specific
             assertTrue("Expected LRA025025 but was " + methodResponse, methodResponse.startsWith("LRA025025"));
         }
 
