@@ -153,11 +153,6 @@
       <artifactId>jakarta.transaction-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- Quarkus -->
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy</artifactId>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
