@@ -136,10 +136,12 @@ public class LRATest extends LRATestBase {
         server.deployOldStyle(LRAParticipant.class);
 
         service = LRARecoveryModule.getService();
+        assertNull(testName + ": current thread should not be associated with any LRAs", lraClient.getCurrent());
     }
 
     @After
     public void after() {
+        assertNull(testName + ": current thread should not be associated with any LRAs", lraClient.getCurrent());
         LRALogger.logger.debugf("Finished test %s", testName);
         lraClient.close();
         client.close();
@@ -358,7 +360,6 @@ public class LRATest extends LRATestBase {
         // and since the test then cancelled it directly, ie not via the API, the LRA will still be associated.
         // Therefore, it needs to be cleared otherwise subsequent tests will still see the LRA associated:
         lraClient.clearCurrent(false);
-        assertNull("LRA is still associated with the current thread", lraClient.getCurrent());
     }
 
     @Test
@@ -977,9 +978,6 @@ public class LRATest extends LRATestBase {
 
     @Test
     public void testGrandparentContext() {
-        assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
-                lraClient.getCurrent());
-
         // start a hierarchy of three LRAs
         URI grandParent = lraClient.startLRA("NestedParticipantIT#testGrandparentContext grandparent");
         URI parent = lraClient.startLRA("NestedParticipantIT#testGrandparentContext parent"); // child of grandParent
@@ -988,13 +986,38 @@ public class LRATest extends LRATestBase {
         lraClient.closeLRA(grandParent); // should close everything in the hierarchy
 
         // nothing should be associated with the calling thread
-        assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
-                lraClient.getCurrent());
-
         // and verify they are all closed
         assertStatus("grandparent", grandParent, null, LRAStatus.Closed);
         assertStatus("parent", parent, null, LRAStatus.Closed);
         assertStatus("child", child, null, LRAStatus.Closed);
+    }
+
+    @Test
+    public void testParentLRAContext() {
+        // start a hierarchy of three LRAs
+        URI grandParent = lraClient.startLRA("NestedParticipantIT#testParentLRAContext grandparent");
+        URI parent = lraClient.startLRA("NestedParticipantIT#testParentLRAContext parent"); // child of grandParent
+        URI child = lraClient.startLRA("NestedParticipantIT#testParentLRAContext child"); // child of parent
+        lraClient.closeLRA(parent); // should close everything in the hierarchy
+        // verify the parent and child are closed
+        assertStatus("grandparent", grandParent, null, LRAStatus.Active);
+        assertStatus("parent", parent, null, LRAStatus.Closed);
+        assertStatus("child", child, null, LRAStatus.Closed);
+        lraClient.closeLRA(grandParent); // should close everything in the hierarchy
+    }
+
+    @Test
+    public void testNestedLRAContext() {
+        // start a hierarchy of three LRAs
+        URI grandParent = lraClient.startLRA("NestedParticipantIT#testNestedLRAContext grandparent");
+        URI parent = lraClient.startLRA("NestedParticipantIT#testParentLRAContext parent"); // child of grandParent
+        URI child = lraClient.startLRA("NestedParticipantIT#testParentLRAContext child"); // child of parent
+        lraClient.closeLRA(child); // should close everything in the hierarchy
+        // verify they only the child is closed
+        assertStatus("grandparent", grandParent, null, LRAStatus.Active);
+        assertStatus("parent", parent, null, LRAStatus.Active);
+        assertStatus("child", child, null, LRAStatus.Closed);
+        lraClient.closeLRA(grandParent); // should close everything in the hierarchy
     }
 
     @Test
