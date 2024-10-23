@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.ws.rs.core.Application;
-
 import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
@@ -25,6 +23,10 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.Application;
+
+@ApplicationScoped
 public class TMApplication extends Application {
     private static final Logger log = Logger.getLogger(TMApplication.class);
 

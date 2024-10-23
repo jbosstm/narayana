@@ -13,7 +13,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.squareup.okhttp.OkHttpClient;
-import io.quarkus.runtime.QuarkusApplication;
 import io.undertow.Undertow;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -67,8 +66,7 @@ public class BaseTest {
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_NETTY = false;
-    protected static boolean USE_UNDERTOW = false;
-    protected static boolean USE_QUARKUS = true;
+    protected static boolean USE_UNDERTOW = true;
 // jarkarta TODO jersey    private static HttpServer grizzlyServer;
     protected static final String USE_SPDY_PROP = "rts.usespdy";
     protected static final String USE_SSL_PROP = "rts.usessl";
@@ -86,8 +84,6 @@ public class BaseTest {
     private static NettyJaxrsServer netty = null;
 // jakarta TODO    private static SelectorThread threadSelector = null;
     private static UndertowJaxrsServer undertow;
-    private static Undertow quarkusUndertow;
-
     protected static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
     }
@@ -101,22 +97,6 @@ public class BaseTest {
 
         System.out.printf("server is ready:");
 
-    }
-
-    protected static void startQuarkusApplication(Class<?> ... classes) throws Exception {
-
-    QuarkusApplication quarkusApplication = new QuarkusApplication() {
-            @Override
-            public int run(String... args) {
-                UndertowJaxrsServer server = new UndertowJaxrsServer();
-                // create a deployment object and add our REST endpoint class to it
-                server.start(Undertow.builder().addHttpListener(PORT, "localhost"));
-                server.deploy(new TMApplication(classes));//, SURL + "tx/");
-                System.out.printf("server started");
-                return 0;
-            }
-        };
-        quarkusApplication.run();
     }
 
     protected static void startRestEasy(Class<?> ... classes) throws Exception {
@@ -186,8 +166,6 @@ public class BaseTest {
             startRestEasy(classes);
         if (USE_UNDERTOW)
             startUndertow(classes);
-        else if (USE_QUARKUS)
-            startQuarkusApplication(classes);
         else
             throw new RuntimeException("Grizzly app server not supported with jakarta");
 //            startJersey(packages);
@@ -356,7 +334,6 @@ public class BaseTest {
     private static class Work {
         String id;
         String tid;
-        String uri;
         String pLinks;
         String enlistUrl;
         String recoveryUrl;
@@ -374,7 +351,6 @@ public class BaseTest {
         Work(String id, String tid, String uri, String pLinks, String enlistUrl, String recoveryUrl, String fault) {
             this.id = id;
             this.tid = tid;
-            this.uri = uri;
             this.pLinks = pLinks;
             this.enlistUrl = enlistUrl;
             this.recoveryUrl = recoveryUrl;
