@@ -23,7 +23,6 @@
 
   <properties>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
-    <version.glassfish.json>2.0.1</version.glassfish.json>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.io.smallrye.smallrye-config>3.2.0</version.io.smallrye.smallrye-config>
     <version.jakarta.activation.jakarta.activation-api>2.1.0</version.jakarta.activation.jakarta.activation-api>
@@ -405,12 +404,6 @@
         <artifactId>common</artifactId>
         <version>${project.version}</version>
         <classifier>test-sources</classifier>
-      </dependency>
-
-      <dependency>
-        <groupId>org.glassfish</groupId>
-        <artifactId>jakarta.json</artifactId>
-        <version>${version.glassfish.json}</version>
       </dependency>
 
       <dependency>
