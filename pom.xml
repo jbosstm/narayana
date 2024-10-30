@@ -183,14 +183,10 @@
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.8.3.1</version.com.github.spotbugs.spotbugs-maven-plugin>
-    <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
 
     <version.doxia>1.8.1</version.doxia>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.javadoc.plugin>3.5.0</version.javadoc.plugin>
-    <version.maven-failsafe-plugin>3.0.0-M7</version.maven-failsafe-plugin>
-    <version.maven-surefire-plugin>3.0.0-M7</version.maven-surefire-plugin>
-    <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
     <version.maven.jandex-plugin>3.1.7</version.maven.jandex-plugin>
 
     <!-- Needed forWildflyLRACoordinatorDeployment class -->
@@ -281,7 +277,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>${version.compiler.plugin}</version>
           <!-- Remove this when org.jboss.logging becomes Jakarta compatible -->
           <configuration>
             <compilerArgs>
@@ -320,7 +315,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>${version.maven-surefire-plugin}</version>
           <configuration>
             <argLine>${surefireArgLine}</argLine>
             <forkCount>1</forkCount>
@@ -454,7 +448,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${version.maven.checkstyle-plugin}</version>
         <configuration>
           <configLocation>narayana-checkstyle/checkstyle.xml</configLocation>
           <suppressionsLocation>narayana-checkstyle/suppressions.xml</suppressionsLocation>
