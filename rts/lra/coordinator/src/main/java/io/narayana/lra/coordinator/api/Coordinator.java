@@ -275,10 +275,10 @@ public class Coordinator extends Application {
     }
 
     /**
-     * Performing a POST on {@value LRAConstants#COORDINATOR_PATH_NAME}/start?ClientID=<ClientID>
+     * Performing a POST on {@value LRAConstants#COORDINATOR_PATH_NAME}/start?ClientID={ClientID}
      * will start a new lra with a default timeout and return an LRA URL
-     * of the form <coordinator url>/{@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>.
-     * Adding a query parameter, {@value LRAConstants#TIMELIMIT_PARAM_NAME}=<timeout>, will start a new lra with the specified timeout.
+     * of the form {coordinator url}/{@value LRAConstants#COORDINATOR_PATH_NAME}/{LraId}.
+     * Adding a query parameter, {@value LRAConstants#TIMELIMIT_PARAM_NAME}={timeout}, will start a new lra with the specified timeout.
      * If the lra is terminated because of a timeout, the lra URL is deleted and all further invocations on the URL will return 404.
      * The invoker can assume this was equivalent to a compensation operation.
      */
@@ -473,7 +473,7 @@ public class Coordinator extends Application {
     }
 
     /**
-     * Performing a PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>/close will trigger the successful completion
+     * Performing a PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/{LraId}/close will trigger the successful completion
      * of the LRA and all participants will be dropped by the LRA Coordinator.
      * The complete message will be sent to the participants.
      * Upon termination, the URL is implicitly deleted. If it no longer exists, then 404 will be returned.
@@ -725,7 +725,7 @@ public class Coordinator extends Application {
     }
     /**
      * A participant can resign from an LRA at any time prior to the completion of an activity by performing a
-     * PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>/remove with the URL of the participant.
+     * PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/{LraId}/remove with the URL of the participant.
      */
     @PUT
     @Path("{LraId}/remove")
