@@ -336,6 +336,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                     }
                 }
 
+                boolean removeConnection = true;
                 // This is used to ensure that if xa_rollback fails
                 boolean destroyState = true;
                 try {
@@ -400,7 +401,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                                      */
                                     destroyState = false;
                                 }
-                                break;
+                                removeConnection = false;
+                                // We don't want to report a heuristic as we don't know it won't rollback so throw UNKNOWN
+                                // (noting we end up in the finally for further processing)
+                                throw new UNKNOWN();
                             case XAException.XAER_NOTA:
                                 if (_phaseTwoStarted) {
                                     // rolled back previously and recovery completed
@@ -430,7 +434,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                     if (_prepared && destroyState) {
                         destroyState();
                     } else {
-                        removeConnection();
+                        if (removeConnection) {
+                            removeConnection();
+                        }
                     }
                 }
             }
