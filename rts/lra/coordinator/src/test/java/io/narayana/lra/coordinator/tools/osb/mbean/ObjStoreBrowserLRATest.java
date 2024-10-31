@@ -5,7 +5,6 @@
 
 package io.narayana.lra.coordinator.tools.osb.mbean;
 
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
