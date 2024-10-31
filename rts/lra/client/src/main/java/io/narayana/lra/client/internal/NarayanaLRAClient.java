@@ -452,8 +452,10 @@ public class NarayanaLRAClient implements Closeable {
      * For particular compensator class it returns termination uris based on the provided base uri.
      * You get map of string and URI.
      *
-     * @param compensatorClass  compensator class to examine
-     * @param uriInfo  the uri that triggered this join request.
+     * @param compensatorClass compensator class to examine.
+     * @param uriPrefix        the uri that triggered this join request.
+     * @param timeout          how long the participant is prepared to wait for LRA
+     *                         to compensate or complete.
      * @return map of URI
      */
     public static Map<String, String> getTerminationUris(Class<?> compensatorClass, String uriPrefix, Long timeout) {
