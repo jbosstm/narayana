@@ -130,7 +130,7 @@ Also don't forget the documentation (reference documentation for features, javad
 
 ## Update the issue with the correct release information:
 
-If the change would result in behaviour in Narayana that is incompatible with the current release stream for Narayana, then the relevant JIRA issue `Fix Version/s` must be set to the `<version+1>.next`. For example if the root pom.xml is currently `<version>7.0.3.Final-SNAPSHOT</version>` then the JIRA issue should have a `Fix Version/s` of `8.next` added.
+If the change would result in behaviour in Narayana that is incompatible with the current release stream for Narayana, then the relevant JIRA issue `Fix Version/s` must be set to the `<version+1>.next`. For example if the root pom.xml is currently `<version>7.0.3.Final-SNAPSHOT</version>` then the JIRA issue should have a `Fix Version/s` of `8.next` added. When resolving the issue in JIRA we encourage the assignee to consider adding a release note describing the impact of the change.
 
 When the github Pull Request has passed all relevant CI checks and has been Approved by a reviewer the code can be merged. If you don't have permission to do this then ping one of the team who will then merge it. Once merged the issue must be updated in the issue tracker (if you don't have permission then a team member will do this):
 
