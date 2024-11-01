@@ -391,12 +391,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                                 _rolledBack = true;
                                 destroyState();
                                 break;
-                            case XAException.XAER_NOTA:
-                                if (_phaseTwoStarted) {
-                                    // rolled back previously and recovery completed
-                                    destroyState();
-                                    break;
-                                }
                             case XAException.XAER_RMFAIL:
                                 if (_prepared) {
                                     /*
@@ -407,6 +401,12 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                                     destroyState = false;
                                 }
                                 break;
+                            case XAException.XAER_NOTA:
+                                if (_phaseTwoStarted) {
+                                    // rolled back previously and recovery completed
+                                    destroyState();
+                                    break;
+                                }
                             default:
                                 destroyState();
 
