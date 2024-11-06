@@ -407,6 +407,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                                     destroyState();
                                     break;
                                 }
+                                // DO NOT add any case handling below here which would break out of the switch and prevent
+                                // XAException.XAER_NOTA from throwing an org.omg.CosTransactions.HeuristicHazard or 
+                                // UNKNOWN exception
                             default:
                                 destroyState();
 
