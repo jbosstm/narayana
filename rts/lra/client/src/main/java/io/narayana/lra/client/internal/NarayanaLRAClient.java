@@ -16,6 +16,7 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -746,20 +747,20 @@ public class NarayanaLRAClient implements Closeable {
                     .get(JOIN_TIMEOUT, TimeUnit.SECONDS);
 
             String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
+            // remove it and create tests for PRECONDITION_FAILED and NOT_FOUND
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                String logMsg = LRALogger.i18nLogger.error_tooLateToJoin(lraId, responseEntity);
+                String logMsg = LRALogger.i18nLogger.error_tooLateToJoin(String.valueOf(lraId), responseEntity);
                 LRALogger.logger.error(logMsg);
                 throw new WebApplicationException(logMsg,
                         Response.status(PRECONDITION_FAILED).entity(logMsg).build());
             } else if (response.getStatus() == NOT_FOUND.getStatusCode()) {
                 String logMsg = LRALogger.i18nLogger.info_failedToEnlistingLRANotFound(
-                        lraId, coordinatorUrl, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
+                        lraId, coordinatorUrl, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(),
+                        GONE.getStatusCode(), GONE.getReasonPhrase());
                 LRALogger.logger.info(logMsg);
-                throw new WebApplicationException(logMsg);
+                throw new WebApplicationException(Response.status(GONE).entity(logMsg).build());
             } else if (response.getStatus() != OK.getStatusCode()) {
-                String logMsg = LRALogger.i18nLogger.error_failedToEnlist(lraId, coordinatorUrl, response.getStatus());
-                LRALogger.logger.error(logMsg);
-                throwGenericLRAException(uri, response.getStatus(), logMsg, null);
+                throw new WebApplicationException(responseEntity, response);
             }
 
             String recoveryUrl = null;
@@ -770,21 +771,20 @@ public class NarayanaLRAClient implements Closeable {
                     compensatorData.append(prevParticipantData);
                 }
 
-            try {
-                recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
-                return new URI(recoveryUrl);
-            } catch (URISyntaxException e) {
-                LRALogger.logger.infof(e,"join %s returned an invalid recovery URI '%s': %s", lraId, recoveryUrl, responseEntity);
-                throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                        "join " + lraId + " returned an invalid recovery URI '" + recoveryUrl + "' : " + responseEntity, e);
-                return null;
+                try {
+                    recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
+                    return new URI(recoveryUrl);
+                } catch (URISyntaxException e) {
+                    LRALogger.logger.infof(e,"join %s returned an invalid recovery URI '%s': %s", lraId, recoveryUrl, responseEntity);
+                    throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                            "join " + lraId + " returned an invalid recovery URI '" + recoveryUrl + "' : " + responseEntity, e);
+                    return null;
+                }
+            // don't catch WebApplicationException, just let it propagate
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                throw new WebApplicationException("join LRA client request timed out, try again later",
+                        Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
             }
-        } catch (WebApplicationException webApplicationException) {
-            throw new WebApplicationException(uri.toASCIIString(), GONE); // not sure why we think it's gone
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new WebApplicationException("join LRA client request timed out, try again later",
-                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
-        }
         } finally {
             if (client != null) {
                 client.close();

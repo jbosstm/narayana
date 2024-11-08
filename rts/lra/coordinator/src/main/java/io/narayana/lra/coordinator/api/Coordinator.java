@@ -30,6 +30,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -696,8 +697,14 @@ public class Coordinator extends Application {
         }
 
         StringBuilder recoveryUrl = new StringBuilder();
-        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, null, linkHeader, recoveryUrlBase, userData, version);
         String recoveryUrlValue;
+        int status;
+
+        try {
+            status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, null, linkHeader, recoveryUrlBase, userData, version);
+        } catch (ServiceUnavailableException e) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE.getStatusCode()).entity(e.getMessage()).build();
+        }
 
         if (acceptMediaType.equals(MediaType.APPLICATION_JSON)) {
             JsonObject model = Json.createObjectBuilder().add("recoveryUrl", recoveryUrl.toString()).build();

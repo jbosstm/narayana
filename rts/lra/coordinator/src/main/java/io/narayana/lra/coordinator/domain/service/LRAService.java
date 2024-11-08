@@ -17,6 +17,7 @@ import io.narayana.lra.coordinator.domain.model.LRAParticipantRecord;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 
+import jakarta.ws.rs.ServiceUnavailableException;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
 import jakarta.ws.rs.InternalServerErrorException;
@@ -210,7 +211,7 @@ public class LRAService {
         getRM().recover();
     }
 
-    public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
+    public boolean updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
         assert recoveryURI != null;
         assert compensatorUrl != null;
         LongRunningAction transaction = getTransaction(lraId);
@@ -228,8 +229,10 @@ public class LRAService {
         }
 
         if (persist) {
-            transaction.updateRecoveryURI(compensatorUrl, recoveryURI);
+            return transaction.updateRecoveryURI(compensatorUrl, recoveryURI);
         }
+
+        return true;
     }
 
     public String getParticipant(String rcvCoordId) {
@@ -257,9 +260,13 @@ public class LRAService {
 
         status = lra.begin(timelimit);
 
+        if (lra.getLRAStatus() == null) {
+            // unable to save state, tell the caller to try again later
+            throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState("deactivate"));
+        }
+
         if (status != ActionStatus.RUNNING) {
             lraTrace(lra.getId(), "failed to start LRA");
-
             lra.finishLRA(true);
 
             String errorMsg = "Could not start LRA: " + ActionStatus.stringForm(status);
@@ -402,7 +409,9 @@ public class LRAService {
 
         String recoveryURI = participant.getRecoveryURI().toASCIIString();
 
-        updateRecoveryURI(lra, participant.getParticipantURI(), recoveryURI, false);
+        if (!updateRecoveryURI(lra, participant.getParticipantURI(), recoveryURI, false)) {
+            throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState("deactivate"));
+        }
 
         recoveryUrl.append(recoveryURI);
 
@@ -440,7 +449,7 @@ public class LRAService {
             return NOT_FOUND.getStatusCode();
         }
 
-        return lra.setTimeLimit(timelimit);
+        return lra.setTimeLimit(timelimit, true);
     }
 
     public List<LRAData> getFailedLRAs() {

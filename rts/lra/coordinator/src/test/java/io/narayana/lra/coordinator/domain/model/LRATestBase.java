@@ -5,11 +5,14 @@
 
 package io.narayana.lra.coordinator.domain.model;
 
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -18,6 +21,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
@@ -62,7 +71,7 @@ public class LRATestBase {
     // count the number of times the AfterLRA notification was delivered.
     // Note that the default resource scope is @RequestScope so a new instance of the resource is created
     // on each resource invocation so store the counter as a global
-    private static AtomicInteger afterCallCount = new AtomicInteger(0);
+    private static final AtomicInteger afterCallCount = new AtomicInteger(0);
 
     static Queue<Integer> queue = new ConcurrentLinkedQueue<>(); // used to check the participant order
 
@@ -127,6 +136,8 @@ public class LRATestBase {
             return getResult(cancel, contextId);
         }
 
+        // some resource methods for testing behaviour with respect to time
+
         @GET
         @Path("time-limit")
         @Produces(MediaType.APPLICATION_JSON)
@@ -159,6 +170,57 @@ public class LRATestBase {
             server.stop(); //simulate a server crash
 
             return getResult(cancel, contextId);
+        }
+
+        /**
+         * Starts an LRA with the time limit and verifies that after the timelimit is passed the LRA is finished by the
+         * invocation to a mandatory LRA endpoint (which should fail with 412)
+         *
+         * @param lraId
+         *            the id of the LRA
+         * @return the JAX-RS response 200 if successful or the received HTTP status call otherwise
+         */
+        @GET
+        @Path("/time-limit2")
+        @Produces(MediaType.APPLICATION_JSON)
+        @LRA(value = LRA.Type.REQUIRED, timeLimit = 500, timeUnit = ChronoUnit.MILLIS)
+        public Response timeLimitTest(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+            try {
+                Thread.sleep(1000); // sleep for longer than specified in the timeLimit annotation attribute
+                // TODO use byteman
+
+                // force the implementation to notice that the LRA should have timed out by triggering
+                // a recovery scan so that the coordinator redelivers the listener notification which can take
+                // a few seconds (maybe put this in a routine so that other tests can use it)
+                String coordinatorPath = TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME);
+                String recoveryPath = coordinatorPath + "/recovery";
+
+                try (Client client = ClientBuilder.newClient()) {
+                    try (Response response = client.target(recoveryPath).request().get()) {
+                        assertEquals("unable to trigger a recovery scan", 200, response.getStatus());
+                        response.getEntity(); // clean up by reading the response stream ignoring the result
+
+                        // now the next request should fail with a 412 code since the LRA should no longer be active
+                        restPutInvocation(lraId, "/mandatory", "");
+                    } catch (WebApplicationException wae) {
+                        return Response.status(wae.getResponse().getStatus()).build();
+                    }
+                }
+
+                return Response.status(Response.Status.OK).entity(lraId.toASCIIString()).build();
+            } catch (InterruptedException e) {
+                System.out.printf("time-limit2: Interrupted because time limit elapsed:%s%n", e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+
+        @PUT
+        @Path("/mandatory")
+        @Produces(MediaType.TEXT_PLAIN)
+        @LRA(value = LRA.Type.MANDATORY, end = false)
+        public Response activityWithMandatoryLRA(@HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+                                                 @HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+            return Response.ok(lraId).header(LRA_HTTP_RECOVERY_HEADER, recoveryId).build();
         }
 
         @LRA(value = LRA.Type.NESTED, end = false)
@@ -417,5 +479,27 @@ public class LRATestBase {
                 }
             }
         }
+    }
+
+    protected int countRecords() throws ObjectStoreException, IOException {
+        InputObjectState uids = new InputObjectState();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+        int count = 0;
+
+        if (recoveryStore.allObjUids(LongRunningAction.getType(), uids) && uids.notempty()) {
+            boolean finished = false;
+
+            do {
+                Uid uid = UidHelper.unpackFrom(uids);
+
+                if (uid.notEquals(Uid.nullUid())) {
+                    count += 1;
+                } else {
+                    finished = true;
+                }
+            } while (!finished);
+        }
+
+        return count;
     }
 }

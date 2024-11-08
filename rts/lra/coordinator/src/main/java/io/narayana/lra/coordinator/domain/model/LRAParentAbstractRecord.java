@@ -61,7 +61,7 @@ public class LRAParentAbstractRecord extends AbstractRecord {
                 os.packString(childId.toASCIIString());
                 os.packBoolean(committed);
             } catch (IOException e) {
-                LRALogger.i18nLogger.warn_saveState(e.getMessage());
+                LRALogger.logger.warn(LRALogger.i18nLogger.warn_saveState(e.getMessage()));
                 return false;
             }
         }

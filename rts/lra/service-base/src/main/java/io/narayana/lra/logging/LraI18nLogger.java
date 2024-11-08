@@ -51,7 +51,7 @@ public interface LraI18nLogger {
     String error_invalidArgumentOnStatusFromCoordinator(URI coordinator, URL lra, @Cause Throwable t);
 
     @Message(id = 25008, value = "Too late to join with the LRA '%s', coordinator response: '%s'")
-    String error_tooLateToJoin(URL lra, String response);
+    String error_tooLateToJoin(String lra, String response);
 
     @Message(id = 25009, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%s'")
     String error_failedToEnlist(URL lra, URI coordinator, int status);
@@ -135,9 +135,8 @@ public interface LraI18nLogger {
     @Message(id=25031, value = "%s: Invalid link URI (%s): missing compensator or after LRA callback")
     String error_missingCompensator(URI id, String linkURI);
 
-    @LogMessage(level = WARN)
-    @Message(id = 25032, value = "LRA Record: Cannot save state (reason: %s")
-    void warn_saveState(String cause);
+    @Message(id = 25032, value = "LRA Record: Cannot save state (reason: %s)")
+    String warn_saveState(String cause);
 
     @LogMessage(level = WARN)
     @Message(id = 25033, value = "LRA Record: Cannot restore state (reason: %s)")
@@ -165,9 +164,8 @@ public interface LraI18nLogger {
     @Message(id = 25039, value = "Invalid argument passed to method: %s")
     String error_invalidArgument(String reason);
 
-    @LogMessage(level = WARN)
     @Message(id = 25040, value = "Lock not acquired, enlistment failed: cannot enlist participant, cannot lock transaction")
-    void warn_enlistment();
+    String warn_enlistment();
 
     @Message(id = 25041, value = "Participant provided invalid callback endpoints, reason: %s link: %s")
     String warn_invalid_compensator(String reason, String linkStr);
