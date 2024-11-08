@@ -417,10 +417,12 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     headers.putSingle(LRA_HTTP_RECOVERY_HEADER,
                             START_END_QUOTES_PATTERN.matcher(recoveryUrl.toASCIIString()).replaceAll(""));
                 } catch (WebApplicationException e) {
-                    progress = updateProgress(progress, ProgressStep.JoinFailed, e.getMessage());
+                    String reason = e.getMessage();
+
+                    progress = updateProgress(progress, ProgressStep.JoinFailed, reason);
                     abortWith(containerRequestContext, lraId.toASCIIString(),
                             e.getResponse().getStatus(),
-                            String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage()), progress);
+                            String.format("%s: %s", e.getClass().getSimpleName(), reason), progress);
                     // the failure plus any previous actions (such as leave and start requests) will be reported via the response filter
                 } catch (URISyntaxException e) {
                     progress = updateProgress(progress, ProgressStep.JoinFailed, e.getMessage()); // one or more of the participant end points was invalid
@@ -567,10 +569,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 String failureMessage =  processLRAOperationFailures(progress);
 
                 if (failureMessage != null) {
-                    LRALogger.logger.warn(failureMessage);
+                    responseContext.setEntity(failureMessage);
 
-                    // the actual failure(s) will also have been added to the i18NLogger logs at the time they occurred
-                    responseContext.setEntity(failureMessage, null, MediaType.TEXT_PLAIN_TYPE);
+                    LRALogger.logger.warn(failureMessage); // any other failure(s) will already have been logged
                 }
             }
         } finally {
@@ -716,7 +717,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private void abortWith(ContainerRequestContext containerRequestContext, String lraId, int statusCode,
                            String message, Collection<Progress> reasons) {
         // the response filter will set the entity body
-        containerRequestContext.abortWith(Response.status(statusCode).build());
+        containerRequestContext.abortWith(Response.status(statusCode).entity(message).build());
         // make the reason for the failure available to the response filter
         containerRequestContext.setProperty(ABORT_WITH_PROP, reasons);
 
@@ -751,14 +752,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     e.getResponse().getStatus(),
                     String.format("%s %s", e.getClass().getSimpleName(), e.getMessage()),
                     progress);
-        } catch (ProcessingException e) {
-            updateProgress(progress, ProgressStep.StartFailed, e.getMessage());
-
-            abortWith(containerRequestContext, null,
-                    Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    String.format("%s %s", e.getClass().getSimpleName(), e.getMessage()),
-                    progress);
         }
+
         return null;
     }
 

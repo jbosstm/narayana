@@ -13,19 +13,20 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+
 import io.narayana.lra.Current;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-
 import io.narayana.lra.coordinator.domain.service.LRAService;
+
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.ServiceUnavailableException;
+import jakarta.ws.rs.WebApplicationException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +50,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LongRunningAction extends BasicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/LongRunningAction";
     private static final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(10);
+    private static final String DEACTIVATE_REASON = "deactivate";
     private URI id;
     private URI parentId;
     private String clientId;
@@ -153,7 +155,7 @@ public class LongRunningAction extends BasicAction {
 
             os.packString(status.name());
         } catch (IOException e) {
-            LRALogger.i18nLogger.warn_saveState(e.getMessage());
+            LRALogger.logger.warn(LRALogger.i18nLogger.warn_saveState(e.getMessage()));
             return false;
         } finally {
             if (LRALogger.logger.isTraceEnabled()) {
@@ -318,7 +320,9 @@ public class LongRunningAction extends BasicAction {
                     }
                 }
 
-                setTimeLimit(ttl);
+                // remark setTimeLimit can call deactivate (under failure conditions)
+                // and since we are in the middle of a restore we don't want call save
+                setTimeLimit(ttl, false);
             }
 
             return true;
@@ -487,7 +491,7 @@ public class LongRunningAction extends BasicAction {
         boolean nested = !isTopLevel();
 
         if (status == LRAStatus.Active) {
-            updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+            updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing); // can throw ServiceUnavailableException
         } else if (isFinished()) {
             if (LRALogger.logger.isTraceEnabled()) {
                 trace_progress("finished");
@@ -528,7 +532,7 @@ public class LongRunningAction extends BasicAction {
                     moveTo(pendingList, preparedList, true);
                     moveTo(heuristicList, preparedList, true);
 
-                    updateState(LRAStatus.Cancelling);
+                    updateState(LRAStatus.Cancelling); // can throw ServiceUnavailableException
 
                     // call commit since the abort route does not save the failed list
                     if (LRALogger.logger.isTraceEnabled()) {
@@ -538,11 +542,11 @@ public class LongRunningAction extends BasicAction {
 
                     res = status();
 
-                    updateState(toLRAStatus(status()));
+                    updateState(toLRAStatus(status())); // can throw ServiceUnavailableException
                 } else {
                     // forget calls for nested participants
                     if (forgetAllParticipants()) {
-                        updateState(LRAStatus.Closed);
+                        updateState(LRAStatus.Closed); // can throw ServiceUnavailableException
                     } else {
                         // some forget calls have not been received, we need to repeat them at the next recovery pass
                         if (LRALogger.logger.isTraceEnabled()) {
@@ -561,7 +565,7 @@ public class LongRunningAction extends BasicAction {
                 moveTo(heuristicList, preparedList, true);
 
                 // tell each participant that the LRA canceled
-                updateState(LRAStatus.Cancelling);
+                updateState(LRAStatus.Cancelling); // can throw ServiceUnavailableException
 
                 // since the phase2Abort route skips prepare we need to make sure the heuristic list exists
                 if (heuristicList == null) {
@@ -578,7 +582,7 @@ public class LongRunningAction extends BasicAction {
                 // participants should be called in the opposite order from which they joined
                 pendingList = invert(pendingList);
                 // tell each participant that the LRA closed ok
-                updateState(LRAStatus.Closing);
+                updateState(LRAStatus.Closing); // can throw ServiceUnavailableException
                 if (LRALogger.logger.isTraceEnabled()) {
                     trace_progress("doEnd with close");
                 }
@@ -597,8 +601,9 @@ public class LongRunningAction extends BasicAction {
         }
 
         if (getSize(heuristicList) != 0) {
-            if (!isInEndState()) { // else it must be a failed AfterLRA notification which will need to be retried
-                updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+            if (!endStateCheck() && !isFinished()) {
+                // since endStateCheck() returned false we need to call updateState
+                updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing); // can throw ServiceUnavailableException
             }
         } else if (getSize(failedList) != 0) {
             updateState(cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose);
@@ -631,7 +636,9 @@ public class LongRunningAction extends BasicAction {
 
     protected void runPostLRAActions() {
         // if there are no more heuristic outcomes then update the status of the LRA
-        if (isInEndState() && heuristicList != null && heuristicList.size() != 0) {
+        endStateCheck();
+
+        if (isFinished() && heuristicList != null && heuristicList.size() != 0) {
             if (preparedList == null) {
                 preparedList = new RecordList();
             }
@@ -645,15 +652,26 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    protected void updateState(LRAStatus nextState) {
+    // return true if the state was updated
+    protected boolean updateState(LRAStatus nextState) {
+        return updateState(nextState, true);
+    }
+
+    // return true if the state was updated
+    protected boolean updateState(LRAStatus nextState, boolean save) {
         if (status != nextState) {
             status = nextState; // we trust that nextState is reachable from the current one
 
-            if ((pendingList != null && pendingList.size() != 0)) {
-                deactivate();
+            if (save && (pendingList != null && pendingList.size() != 0)) {
+                if (!deactivate()) {
+                    throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState(DEACTIVATE_REASON));
+                }
             }
+
+            return true;
         }
 
+        return false;
     }
 
     protected void checkParticipant(RecordList participants) {
@@ -717,15 +735,16 @@ public class LongRunningAction extends BasicAction {
         return true;
     }
 
-    protected boolean isInEndState() {
+    // return true if the status was changed
+    protected boolean endStateCheck() {
         // update the status first by checking for heuristics and failed participants
         if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
-            updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel);
+            return updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel);
         } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
-            updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Closed : LRAStatus.FailedToClose);
+            return updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Closed : LRAStatus.FailedToClose);
         }
 
-        return isFinished();
+        return false;
     }
 
     private int getSize(RecordList list) {
@@ -756,8 +775,9 @@ public class LongRunningAction extends BasicAction {
             throws UnsupportedEncodingException {
         ReentrantLock lock = tryLockTransaction();
         if (lock == null) {
-            LRALogger.i18nLogger.warn_enlistment();
-            return null;
+            String reason = LRALogger.i18nLogger.warn_enlistment();
+            LRALogger.logger.warn(reason);
+            throw new ServiceUnavailableException(reason);
         }
         else {
             try {
@@ -770,8 +790,13 @@ public class LongRunningAction extends BasicAction {
                         compensatorData, version);
                 if (participant != null) {
                     // need to remember that there is a new participant
-                    deactivate(); // if it fails the superclass will have logged a warning
-                    savedIntentionList = true; // need this clean up if the LRA times out
+                    if (deactivate()) { // if it fails the superclass will have logged a warning
+                        savedIntentionList = true; // need this clean up if the LRA times out
+                    } else {
+                        throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState(DEACTIVATE_REASON));
+                    }
+                } else {
+                    throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState(DEACTIVATE_REASON));
                 }
                 return participant;
             }
@@ -811,12 +836,23 @@ public class LongRunningAction extends BasicAction {
             p.setRecoveryURI(recoveryUrlBase, this.get_uid().fileStringForm(), pid);
         }
 
-        if (isInEndState()) {
-            return null;
+        endStateCheck();
+
+        if (isFinished()) {
+            throw new WebApplicationException(
+                    Response.status(Response.Status.GONE)
+                            .entity(LRALogger.i18nLogger.error_tooLateToJoin(id.toASCIIString(), "finished"))
+                            .build());
         }
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            setTimeLimit(timeLimit);
+            if (setTimeLimit(timeLimit, true) != Response.Status.OK.getStatusCode()) {
+                // there is no remove(p) so just issue a warning - but note that the caller will also try to
+                // save the state so the time limit will be written then or else it will
+                // throw new ServiceUnavailableException
+                LRALogger.logger.warn(
+                        LRALogger.i18nLogger.warn_saveState("could not durably record the new time limit"));
+            }
 
             if (LRALogger.logger.isTraceEnabled()) {
                 trace_progress("enlisted " + p.getParticipantPath());
@@ -977,21 +1013,21 @@ public class LongRunningAction extends BasicAction {
 
     private int lraStatusToHttpStatus() {
         if (status == null || status == LRAStatus.Active) {
-            return Status.NO_CONTENT.getStatusCode(); // in progress, 204
+            return Response.Status.NO_CONTENT.getStatusCode(); // in progress, 204
         }
 
         switch (status) {
             case Closed:
             case Cancelled:
-                return Status.OK.getStatusCode(); // 200
+                return Response.Status.OK.getStatusCode(); // 200
             case Closing:
             case Cancelling:
-                return Status.ACCEPTED.getStatusCode(); // 202
+                return Response.Status.ACCEPTED.getStatusCode(); // 202
             case FailedToCancel:
             case FailedToClose:
-                return Status.PRECONDITION_FAILED.getStatusCode(); // 412, probably not the correct code
+                return Response.Status.PRECONDITION_FAILED.getStatusCode(); // 412, probably not the correct code
             default:
-                return Status.INTERNAL_SERVER_ERROR.getStatusCode(); // 500
+                return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(); // 500
         }
     }
 
@@ -1028,13 +1064,18 @@ public class LongRunningAction extends BasicAction {
 
         startTime = LocalDateTime.now(ZoneOffset.UTC);
 
-        setTimeLimit(timeLimit);
-
         if (LRALogger.logger.isTraceEnabled()) {
             trace_progress("begin, deactivating");
         }
 
-        deactivate();
+        if (setTimeLimit(timeLimit, true) != Response.Status.OK.getStatusCode() || !deactivate()) {
+            // unable to persist the state
+            LRALogger.logger.warn(LRALogger.i18nLogger.warn_saveState(DEACTIVATE_REASON));
+
+            // the entry to the state model is LRAStatus.Active which was never achieved and
+            // the caller of this method (LRAService) wil notify the client about the failure
+            status = null;
+        }
 
         return res;
     }
@@ -1051,15 +1092,15 @@ public class LongRunningAction extends BasicAction {
         return add(childAR) != AddOutcome.AR_REJECTED;
     }
 
-    public int setTimeLimit(Long timeLimit) {
+    public int setTimeLimit(Long timeLimit, boolean save) {
         if (timeLimit <= 0L) {
             return Response.Status.OK.getStatusCode();
         }
 
-        return scheduleCancellation(this::abortLRA, timeLimit);
+        return scheduleCancellation(this::abortLRA, timeLimit, save);
     }
 
-    private int scheduleCancellation(Runnable runnable, Long timeLimit) {
+    private int scheduleCancellation(Runnable runnable, Long timeLimit, boolean save) {
         assert timeLimit > 0L;
 
         if (status() != ActionStatus.RUNNING) {
@@ -1106,9 +1147,6 @@ public class LongRunningAction extends BasicAction {
                 trace_progress("scheduleCancellation accepted");
             }
         } catch (RejectedExecutionException executionException) {
-            // This exception does not need to be handled as the periodic recovery
-            // will eventually discover that this LRA is eligible for cancellation.
-            updateState(LRAStatus.Cancelling);
             if (LRALogger.logger.isTraceEnabled()) {
                 trace_progress("scheduleCancellation rejected");
             }
@@ -1118,6 +1156,10 @@ public class LongRunningAction extends BasicAction {
                             "Exception message: %s",
                     this.getId(),
                     executionException.getMessage());
+
+            // This exception does not need to be handled as the periodic recovery
+            // will eventually discover that this LRA is eligible for cancellation.
+            updateState(LRAStatus.Cancelling, save);
         }
 
         return Response.Status.OK.getStatusCode();
@@ -1137,6 +1179,7 @@ public class LongRunningAction extends BasicAction {
                         LRALogger.logger.debugf("LongRunningAction.abortLRA cancelling LRA `%s", id);
                     }
 
+                    // nb updateState can throw an exception which is logged and the caller, ie scheduler, ignores it
                     if (getSize(pendingList) == 0 && getSize(preparedList) == 0 && getSize(heuristicList) == 0) {
                         updateState(LRAStatus.Cancelled);
                     } else {
@@ -1153,7 +1196,7 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    public void updateRecoveryURI(String linkHeader, String recoveryUri) {
+    public boolean updateRecoveryURI(String linkHeader, String recoveryUri) {
         LRAParticipantRecord lraRecord = findLRAParticipant(recoveryUri, false);
 
         if (lraRecord != null) {
@@ -1162,17 +1205,20 @@ public class LongRunningAction extends BasicAction {
                 lraRecord.updateCallbacks(linkHeader);
 
                 if (!deactivate()) {
-                    if (LRALogger.logger.isInfoEnabled()) {
-                        LRALogger.logger.infof("Could not save new recovery URL");
-                    }
+                    LRALogger.logger.warn(LRALogger.i18nLogger.warn_saveState(DEACTIVATE_REASON));
+
+                    return false;
                 }
 
             } catch (WebApplicationException e) {
                 if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
                 }
+                return false;
             }
         }
+
+        return true;
     }
 
     public URI getParentId() {

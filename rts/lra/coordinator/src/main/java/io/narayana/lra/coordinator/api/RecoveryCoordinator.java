@@ -9,6 +9,7 @@ import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
+import jakarta.ws.rs.ServiceUnavailableException;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -118,7 +119,10 @@ public class RecoveryCoordinator {
                         Response.status(INTERNAL_SERVER_ERROR.getStatusCode()).entity(errMsg).build());
             }
 
-            lraService.updateRecoveryURI(lra, newCompensatorUrl, context, true);
+            if (!lraService.updateRecoveryURI(lra, newCompensatorUrl, context, true)) {
+                // TODO add a test for it
+                throw new ServiceUnavailableException(LRALogger.i18nLogger.warn_saveState("deactivate"));
+            }
 
             return context;
         }

@@ -9,6 +9,7 @@ import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -32,14 +34,19 @@ import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.narayana.lra.LRAConstants;
+import jakarta.ws.rs.ServiceUnavailableException;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.jboss.byteman.contrib.bmunit.BMRule;
 import org.jboss.byteman.contrib.bmunit.BMRules;
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMScripts;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.test.TestPortProvider;
@@ -120,9 +127,9 @@ public class LRATest extends LRATestBase {
     @Before
     public void before() {
         LRALogger.logger.debugf("Starting test %s", testName);
+        clearObjectStore(testName);
         server = new UndertowJaxrsServer().start();
 
-        clearObjectStore(testName);
         lraClient = new NarayanaLRAClient();
 
         compensateCount.set(0);
@@ -1148,6 +1155,67 @@ public class LRATest extends LRATestBase {
             } catch (WebApplicationException e) {
                 fail("status of LRA unavailable: " + e.getMessage());
             }
+        }
+    }
+
+    // fault injection tests
+
+    @Test
+    @BMScripts(scripts = {
+            @BMScript("scripts/transition-active-failure")
+    })
+    public void testTransitionToActivateFailure() throws IOException, URISyntaxException {
+        try {
+            client.target(TestPortProvider.generateURL("/base/test/start")).request().get(String.class);
+            fail("expected ServiceUnavailableException on startLRA");
+        } catch (ServiceUnavailableException ignore) {
+            // expected since the byteman script fails the attempt to write to the store
+        }
+
+        // verify that nothing was written to the store
+        try {
+            assertEquals("LRA record should not have been created", 0, countRecords());
+        } catch (ObjectStoreException e) {
+            fail("Unable to read the store: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @BMRules(rules={
+            // a rule to fail store writes when an LRA participant is being enlisted
+            @BMRule(name = "fail deactivate during enlist",
+                    targetClass = "io.narayana.lra.coordinator.domain.model.LongRunningAction",
+                    targetMethod = "enlistParticipant",
+                    targetLocation = "AFTER INVOKE deactivate",
+                    action = "$! = false;" )
+    })
+    public void testEnlistFailure() throws IOException, URISyntaxException {
+        try {
+            Object res = client.target(TestPortProvider.generateURL("/base/test/start-end")).request().get(Object.class);
+            fail("should have thrown ServiceUnavailableException but returned " + res);
+        } catch (WebApplicationException e) {
+            assertEquals("Unexpected response code",
+                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getResponse().getStatus());
+            String reason = e.getResponse().readEntity(String.class);
+            assertTrue("response does not contain LRA025032",
+                    reason.contains("LRA025032")); // LRA025032 means deactivate failed
+        }
+    }
+
+    /*
+     * Service A - Timeout 500 ms Service B (Type.MANDATORY)
+     * Service A calls Service B after it has waited 1 sec. Service A returns http Status from the call to Service B.
+     *
+     * The test calls A and verifies if return is status 412 (precondition failed) or 410 (gone) since LRA is not
+     * active when Service B endpoint is called.
+     */
+    @Test
+    public void timeLimitWithPreConditionFailed() {
+        try (Response response = client.target(TestPortProvider.generateURL("/base/test/time-limit2")).request().get()) {
+
+            assertThat("Expected 412 or 410 response", response.getStatus(),
+                    Matchers.anyOf(Matchers.is(Response.Status.PRECONDITION_FAILED.getStatusCode()),
+                            Matchers.is(Response.Status.GONE.getStatusCode())));
         }
     }
 

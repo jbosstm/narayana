@@ -1,3 +1,7 @@
+/*
+   Copyright The Narayana Authors
+   SPDX-License-Identifier: Apache-2.0
+ */
 package io.narayana.lra.coordinator.domain.model;
 
 import java.lang.reflect.InvocationTargetException;

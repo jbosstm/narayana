@@ -10,6 +10,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import jakarta.ws.rs.ServiceUnavailableException;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -39,6 +40,8 @@ class RecoveringLRA extends LongRunningAction {
 
         try {
             tryReplayPhase2();
+        } catch (ServiceUnavailableException ignore) {
+            // it's already been logged so ignore and retry on the next round
         } finally {
             lock.unlock();
         }

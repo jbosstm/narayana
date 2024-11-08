@@ -862,7 +862,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 os.packString(participantPath);
                 os.packString(compensatorData);
             } catch (IOException e) {
-                LRALogger.i18nLogger.warn_saveState(e.getMessage());
+                LRALogger.logger.warn(LRALogger.i18nLogger.warn_saveState(e.getMessage()));
 
                 return false;
             } finally {

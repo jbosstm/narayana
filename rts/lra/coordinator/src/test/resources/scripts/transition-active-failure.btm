@@ -1,0 +1,8 @@
+# transition-active-failure.btm
+RULE store write failure
+CLASS com.arjuna.ats.arjuna.coordinator.BasicAction
+METHOD deactivate
+AT ENTRY
+IF true
+DO RETURN false
+ENDRULE
