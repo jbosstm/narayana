@@ -197,7 +197,7 @@ public class JDBCStore implements ObjectStoreAPI {
                 jdbcAccess.initialise(null);
             } else if (connectionDetails != null) {
                 StringTokenizer stringTokenizer = new StringTokenizer(connectionDetails, ";");
-                jdbcAccess = (JDBCAccess) Class.forName(stringTokenizer.nextToken()).newInstance();
+                jdbcAccess = (JDBCAccess) Class.forName(stringTokenizer.nextToken()).getDeclaredConstructor().newInstance();
                 jdbcAccess.initialise(stringTokenizer);
             } else {
                 throw new ObjectStoreException("Invalid store configuration");
@@ -245,7 +245,7 @@ public class JDBCStore implements ObjectStoreAPI {
                 }
             }
 
-            _theImple = (com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver) jdbcImpleClass.newInstance();
+            _theImple = (com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver) jdbcImpleClass.getDeclaredConstructor().newInstance();
 
             _theImple.initialise(jdbcAccess, tableName, jdbcStoreEnvironmentBean);
             imples.put(key, _theImple);

@@ -64,7 +64,7 @@ public class BeanPopulator
         if(!beanInstances.containsKey(key)) {
             T bean = null;
             try {
-                bean = beanClass.newInstance();
+                bean = beanClass.getDeclaredConstructor().newInstance();
                 if (properties != null) {
                     configureFromProperties(bean, name, properties);
                 } else {

@@ -55,7 +55,7 @@ public class XTSService implements XTSServiceMBean {
             }
 
             try {
-                XTSInitialisation initialisation = (XTSInitialisation)clazz.newInstance();
+                XTSInitialisation initialisation = (XTSInitialisation)clazz.getDeclaredConstructor().newInstance();
                 initialisation.startup();
                 xtsInitialisations.add(initialisation);
             } catch (InstantiationException ie) {

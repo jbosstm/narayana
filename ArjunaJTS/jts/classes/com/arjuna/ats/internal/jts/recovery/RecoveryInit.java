@@ -77,7 +77,7 @@ public class RecoveryInit
             {
                 Class recoveryCoordinatorInitialiser = ClassloadingUtility.loadClass(initClassName);
 
-                recoveryCoordinatorInitialiser.newInstance();
+                recoveryCoordinatorInitialiser.getDeclaredConstructor().newInstance();
             }
 
 		    // register the ContactWriter to watch for the first ArjunaFactory construction

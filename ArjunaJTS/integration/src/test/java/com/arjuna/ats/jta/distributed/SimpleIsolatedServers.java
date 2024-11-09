@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class SimpleIsolatedServers {
 
     @Before
     public void setup() throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException,
-            CoreEnvironmentBeanException, IOException, IllegalArgumentException, NoSuchFieldException {
+            CoreEnvironmentBeanException, IOException, IllegalArgumentException, NoSuchFieldException, InvocationTargetException {
 
         for (int i = 0; i < serverNodeNames.length; i++) {
             List<String> otherNodes = new ArrayList<String>();
@@ -122,13 +123,13 @@ public class SimpleIsolatedServers {
     }
 
     private void boot(int index) throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-            ClassNotFoundException, IllegalArgumentException, CoreEnvironmentBeanException, IOException, NoSuchFieldException {
+            ClassNotFoundException, IllegalArgumentException, CoreEnvironmentBeanException, IOException, NoSuchFieldException, InvocationTargetException {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         IsolatableServersClassLoader classLoaderForTransactionManager = new IsolatableServersClassLoader(null, SimpleIsolatedServers.class.getPackage()
                 .getName(), contextClassLoader);
         IsolatableServersClassLoader classLoader = new IsolatableServersClassLoader(SimpleIsolatedServers.class.getPackage().getName(), null,
                 classLoaderForTransactionManager);
-        localServers[index] = (LocalServer) classLoader.loadClass("com.arjuna.ats.jta.distributed.server.impl.ServerImpl").newInstance();
+        localServers[index] = (LocalServer) classLoader.loadClass("com.arjuna.ats.jta.distributed.server.impl.ServerImpl").getDeclaredConstructor().newInstance();
         Thread.currentThread().setContextClassLoader(classLoaderForTransactionManager);
         localServers[index].initialise(lookupProvider, serverNodeNames[index], serverPortOffsets[index], clusterBuddies[index],
                 classLoaderForTransactionManager);

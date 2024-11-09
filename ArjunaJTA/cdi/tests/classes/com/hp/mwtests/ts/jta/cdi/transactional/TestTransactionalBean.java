@@ -48,7 +48,7 @@ public class TestTransactionalBean {
     public void invokeWithDefault(Class<? extends Throwable> throwable) throws Throwable {
 
         AssertionParticipant.enlist();
-        throw throwable.newInstance();
+        throw throwable.getDeclaredConstructor().newInstance();
     }
 
 
@@ -56,28 +56,28 @@ public class TestTransactionalBean {
     public void invokeWithDefaultAndRollbackOn(Class<? extends Throwable> throwable) throws Throwable {
 
         AssertionParticipant.enlist();
-        throw throwable.newInstance();
+        throw throwable.getDeclaredConstructor().newInstance();
     }
 
     @Transactional(dontRollbackOn = TestRuntimeException.class)
     public void invokeWithDefaultAndDontRollbackOn(Class<? extends Throwable> throwable) throws Throwable {
 
         AssertionParticipant.enlist();
-        throw throwable.newInstance();
+        throw throwable.getDeclaredConstructor().newInstance();
     }
 
     @Transactional(dontRollbackOn = Error.class)
     public void invokeWithRequiresAndDontRollbackOnError(Class<? extends Throwable> throwable) throws Throwable {
 
         AssertionParticipant.enlist();
-        throw throwable.newInstance();
+        throw throwable.getDeclaredConstructor().newInstance();
     }
 
     @Transactional(dontRollbackOn = TestException.class, rollbackOn = TestException.class)
     public void invokeWithDefaultAndDoAndDontRollbackOn(Class<? extends Throwable> throwable) throws Throwable {
 
         AssertionParticipant.enlist();
-        throw throwable.newInstance();
+        throw throwable.getDeclaredConstructor().newInstance();
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)

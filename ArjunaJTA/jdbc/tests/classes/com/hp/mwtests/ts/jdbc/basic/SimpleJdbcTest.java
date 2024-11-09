@@ -91,7 +91,7 @@ public class SimpleJdbcTest {
 		InitialContext initialContext = prepareInitialContext();
 
 		Class clazz = Class.forName("org.h2.jdbcx.JdbcDataSource");
-		XADataSource xaDataSource = (XADataSource) clazz.newInstance();
+		XADataSource xaDataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
 		clazz.getMethod("setURL", new Class[] { String.class }).invoke(
 				xaDataSource, new Object[] { "jdbc:h2:mem:JBTMDB;DB_CLOSE_DELAY=-1" });
 

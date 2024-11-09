@@ -19,7 +19,7 @@ public class JNDISetup
     @Test
     public void test() throws Exception
     {
-        DBPlugin plugin = (DBPlugin)Thread.currentThread().getContextClassLoader().loadClass("TODO").newInstance();
+        DBPlugin plugin = (DBPlugin)Thread.currentThread().getContextClassLoader().loadClass("TODO").getDeclaredConstructor().newInstance();
 
         String jndiName = "jdbc/DB";
         DataSource ds = plugin.getDataSource(new String[] {"TODO"});

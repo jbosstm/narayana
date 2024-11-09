@@ -11,6 +11,7 @@ import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
 import org.jboss.jbossts.xts.recovery.XTSRecoveryModule;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +66,7 @@ public class ParticipantRecoveryInitialisation
             }
             
             try {
-                XTSRecoveryModule module = (XTSRecoveryModule)clazz.newInstance();
+                XTSRecoveryModule module = (XTSRecoveryModule)clazz.getDeclaredConstructor().newInstance();
                 module.install();
                 RecoveryManager.manager().addModule(module);
                 recoveryModules.add(module);
@@ -73,8 +74,12 @@ public class ParticipantRecoveryInitialisation
                 RecoveryLogger.i18NLogger.error_recovery_participant_ParticipantRecoveryInitialisation_3(className, ie);
             } catch (IllegalAccessException iae) {
                 RecoveryLogger.i18NLogger.error_recovery_participant_ParticipantRecoveryInitialisation_4(className, iae);
-            }
-        }
+            } catch (InvocationTargetException e) {
+                RecoveryLogger.i18NLogger.error_recovery_participant_ParticipantRecoveryInitialisation_5(className, e);
+	    } catch (NoSuchMethodException e) {
+                RecoveryLogger.i18NLogger.error_recovery_participant_ParticipantRecoveryInitialisation_6(className, e);
+	    }
+	}
 
         initialised =  true;
     }

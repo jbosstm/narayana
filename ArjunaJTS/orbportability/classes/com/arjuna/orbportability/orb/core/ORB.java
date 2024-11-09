@@ -38,7 +38,7 @@ public class ORB
                 opLogger.logger.trace("ORB.initialise() - using ORB Implementation " + clazz.getCanonicalName());
             }
 
-            _theORB = clazz.newInstance();
+            _theORB = clazz.getDeclaredConstructor().newInstance();
         }
         catch (Exception e)
         {

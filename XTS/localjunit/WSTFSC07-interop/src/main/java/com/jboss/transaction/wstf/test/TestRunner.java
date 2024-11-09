@@ -5,6 +5,8 @@
 
 package com.jboss.transaction.wstf.test;
 
+import java.lang.reflect.InvocationTargetException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -91,9 +93,9 @@ public class TestRunner
      * @throws IllegalArgumentException For an invalid test class.
      */
     private static TestCase createTest(final Class testClass, final String participantURI, final long testTimeout, final boolean asyncTest, final String testName)
-        throws IllegalAccessException, InstantiationException, IllegalArgumentException
+        throws IllegalAccessException, InstantiationException, IllegalArgumentException, NoSuchMethodException, InvocationTargetException
     {
-        final Object testObject = testClass.newInstance() ;
+        final Object testObject = testClass.getDeclaredConstructor().newInstance();
         if (testObject instanceof InteropTestCase)
         {
             final InteropTestCase interopTestCase = (InteropTestCase)testObject ;

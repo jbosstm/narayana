@@ -35,7 +35,7 @@ public class DynamicDataSourceJDBCAccess implements JDBCAccess {
 			}
 			try {
 				this.dataSource = (DataSource) Class.forName(
-						configuration.remove("ClassName")).newInstance();
+						configuration.remove("ClassName")).getDeclaredConstructor().newInstance();
 				Iterator<String> iterator = configuration.keySet().iterator();
 				while (iterator.hasNext()) {
 					String key = iterator.next();

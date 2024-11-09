@@ -51,7 +51,7 @@ public class JTATest
 	
 	try
 	{
-	    XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
+	    XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).getDeclaredConstructor().newInstance();
 	    XAResource theResource = creator.create(connectionString, true);
 
 	    if (theResource == null)

@@ -8,6 +8,8 @@ package com.arjuna.webservices11.util;
 import com.arjuna.webservices.logging.WSCLogger;
 
 import jakarta.xml.ws.Service;
+
+import java.lang.reflect.InvocationTargetException;
 import java.security.PrivilegedAction;
 
 /**
@@ -28,8 +30,8 @@ public final class ServiceAction<T extends Service> implements PrivilegedAction<
     @Override
     public T run() {
         try {
-            return serviceClass.newInstance();
-        } catch (final InstantiationException | IllegalAccessException e) {
+            return serviceClass.getDeclaredConstructor().newInstance();
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             WSCLogger.i18NLogger.warn_cannot_create_service_instance(serviceClass, e);
             throw new RuntimeException(e);
         }
