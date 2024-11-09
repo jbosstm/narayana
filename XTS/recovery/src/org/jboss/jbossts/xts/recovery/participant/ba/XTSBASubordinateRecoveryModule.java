@@ -53,7 +53,7 @@ public class XTSBASubordinateRecoveryModule implements XTSBARecoveryModule
             ios.setBuffer(recoveryState);
             String className = ios.unpackString();
             Class participantClass =  this.getClass().getClassLoader().loadClass(className);
-            BusinessAgreementWithCoordinatorCompletionParticipant participant = (BusinessAgreementWithCoordinatorCompletionParticipant)participantClass.newInstance();
+            BusinessAgreementWithCoordinatorCompletionParticipant participant = (BusinessAgreementWithCoordinatorCompletionParticipant)participantClass.getDeclaredConstructor().newInstance();
             ((PersistableParticipant)participant).restoreState(ios);
             return participant;
         }

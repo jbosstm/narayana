@@ -59,16 +59,16 @@ public class WSTXInitialisation
         // we only load classes which have been configured
         
         if (userTx != null) {
-            UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(WSTXInitialisation.class, userTx).newInstance()) ;
+            UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(WSTXInitialisation.class, userTx).getDeclaredConstructor().newInstance()) ;
         }
         if (txManager != null) {
-            TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(WSTXInitialisation.class, txManager).newInstance()) ;
+            TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(WSTXInitialisation.class, txManager).getDeclaredConstructor().newInstance()) ;
         }
         if (userBa != null) {
-            UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(WSTXInitialisation.class, userBa).newInstance()) ;
+            UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(WSTXInitialisation.class, userBa).getDeclaredConstructor().newInstance()) ;
         }
         if (baManager != null) {
-            BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(WSTXInitialisation.class, baManager).newInstance());
+            BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(WSTXInitialisation.class, baManager).getDeclaredConstructor().newInstance()) ;
         }
     }
 

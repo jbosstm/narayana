@@ -16,6 +16,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.jboss.jbossts.xts.recovery.XTSRecoveryModule;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -151,7 +152,7 @@ public class BAParticipantRecoveryModule implements XTSRecoveryModule
                         try {
                             // create a participant engine instance and tell it to recover itself
                             Class participantRecordClazz = Class.forName(participantRecordClazzName);
-                            BAParticipantRecoveryRecord participantRecord = (BAParticipantRecoveryRecord)participantRecordClazz.newInstance();
+                            BAParticipantRecoveryRecord participantRecord = (BAParticipantRecoveryRecord)participantRecordClazz.getDeclaredConstructor().newInstance();
                             participantRecord.restoreState(inputState);
                             // ok, now insert into recovery map if needed
                             XTSBARecoveryManager.getRecoveryManager().addParticipantRecoveryRecord(recoverUid, participantRecord);
@@ -160,12 +161,9 @@ public class BAParticipantRecoveryModule implements XTSRecoveryModule
                             // last time and 1.1 this time or vice versa or something is rotten in
                             // the state of Danmark
                             RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_4(participantRecordClazzName, recoverUid, cnfe);
-                        } catch (InstantiationException ie) {
+                        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                             // this is also worrying, log an error
-                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, ie);
-                        } catch (IllegalAccessException iae) {
-                            // this is another configuration problem, log an error
-                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, iae);
+                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, e);
                         }
                     } catch (IOException ioe) {
                         // hmm, record corrupted? log this as a warning

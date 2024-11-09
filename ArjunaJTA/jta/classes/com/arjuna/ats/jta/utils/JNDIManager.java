@@ -140,7 +140,7 @@ public class JNDIManager
         String tsrImplementation = jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryClassName();
         Object tsr = null;
         try {
-            tsr = Class.forName(tsrImplementation).newInstance();
+            tsr = Class.forName(tsrImplementation).getDeclaredConstructor().newInstance();
         } catch(Exception e) {
             NamingException namingException = new ConfigurationException(jtaLogger.i18NLogger.get_utils_JNDIManager_tsr1());
             namingException.setRootCause(e);

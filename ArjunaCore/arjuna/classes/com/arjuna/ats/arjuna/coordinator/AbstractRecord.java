@@ -447,7 +447,7 @@ public abstract class AbstractRecord extends StateManager
 	    {
         	    Class recordClass = RecordType.typeToClass(type);
         
-        	    return (AbstractRecord) recordClass.newInstance();
+        	    return (AbstractRecord) recordClass.getDeclaredConstructor().newInstance();
 	    }
 	    catch (final NullPointerException ex) {
             tsLogger.i18NLogger.warn_coordinator_AbstractRecord_npe(Integer.toString(type));

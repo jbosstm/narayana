@@ -40,7 +40,7 @@ public class XTSATSubordinateRecoveryModule implements XTSATRecoveryModule
             ios.setBuffer(recoveryState);
             String className = ios.unpackString();
             Class participantClass =  this.getClass().getClassLoader().loadClass(className);
-            Durable2PCParticipant participant = (Durable2PCParticipant)participantClass.newInstance();
+            Durable2PCParticipant participant = (Durable2PCParticipant)participantClass.getDeclaredConstructor().newInstance();
             ((PersistableParticipant)participant).restoreState(ios);
             return participant;
         }

@@ -237,6 +237,22 @@ public interface recoveryI18NLogger {
     @LogMessage(level = ERROR)
     public void error_recovery_participant_ParticipantRecoveryInitialisation_4(String arg0, @Cause() Throwable arg1);
 
+    @Message(id = 46054, value = "Unable to invoke module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_5(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46055, value = "Unable to find module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_6(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46056, value = "Unable to invoke module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_5(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46057, value = "Unable to find module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_6(String arg0, @Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

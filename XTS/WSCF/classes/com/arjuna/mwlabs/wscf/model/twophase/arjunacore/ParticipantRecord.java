@@ -525,7 +525,7 @@ public class ParticipantRecord extends
 			{
                 String resourcehandleImplClassName = os.unpackString();
                 Class clazz = ClassLoaderHelper.forName(ParticipantRecord.class, resourcehandleImplClassName);
-                _resourceHandle = (Participant)clazz.newInstance();
+                _resourceHandle = (Participant)clazz.getDeclaredConstructor().newInstance();
 
                 result = _resourceHandle.restore_state(os);
 

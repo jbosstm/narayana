@@ -27,7 +27,7 @@ public class JTATest
         String connectionString = null;
         boolean tmCommit = true;
 
-        XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
+        XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).getDeclaredConstructor().newInstance();
         XAResource theResource = creator.create(connectionString, true);
         XAResource theResource2 = creator.create(connectionString, true);
 

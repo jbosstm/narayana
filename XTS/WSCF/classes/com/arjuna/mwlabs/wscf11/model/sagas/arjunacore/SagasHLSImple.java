@@ -172,7 +172,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
         ensureContextInitialised();
         if (CONTEXT_IMPLE_CLASS != null) {
             try {
-                SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
+                SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.getDeclaredConstructor().newInstance();
 
                 ctx.initialiseContext(_coordManager.currentCoordinator());
 

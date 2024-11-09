@@ -11,6 +11,7 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 
 import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 
@@ -66,12 +67,16 @@ public class XTSHTTPServiceTestRunner extends HttpServlet
                 }
 
                 try {
-                    _currentTest = (XTSServiceTest)testClass.newInstance();
+                    _currentTest = (XTSServiceTest)testClass.getDeclaredConstructor().newInstance();
                 } catch (InstantiationException ie) {
                     throw new ServletException("XTSHTTPServicetestRunner : cannot instantiate test class " + _testClassName, ie);
                 } catch (IllegalAccessException iae) {
                     throw new ServletException("XTSHTTPServicetestRunner : cannot access constructor for test class " + _testClassName, iae);
-                }
+                } catch (InvocationTargetException e) {
+                    throw new ServletException("XTSHTTPServicetestRunner : cannot invoke constructor for test class " + _testClassName, e);
+                 } catch (NoSuchMethodException e) {
+                    throw new ServletException("XTSHTTPServicetestRunner : cannot find constructor for test class " + _testClassName, e);
+                 }
 
                 // since we are running in the AS startup thread we need a separate thread for the test
 

@@ -43,7 +43,7 @@ public class OA
                 opLogger.logger.trace("OA.initialise() - using OA Implementation " + clazz.getCanonicalName());
             }
 
-            _theOA = clazz.newInstance();
+            _theOA = clazz.getDeclaredConstructor().newInstance();
         }
         catch (Exception e)
         {

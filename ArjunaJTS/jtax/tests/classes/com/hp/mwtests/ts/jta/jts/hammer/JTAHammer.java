@@ -129,7 +129,7 @@ public class JTAHammer
 	 * specification). However, for simplicity we will ignore this.
 	 */
 
-	XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
+	XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).getDeclaredConstructor().newInstance();
 
 	number = threads;
 

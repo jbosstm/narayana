@@ -88,7 +88,7 @@ public class PersistableParticipantHelper
             {
                 final String className = ios.unpackString() ;
                 final Class resourceClass = ClassLoaderHelper.forName(PersistableParticipantHelper.class, className) ; // returns Class not instance
-                final Object resource = resourceClass.newInstance();
+                final Object resource = resourceClass.getDeclaredConstructor().newInstance();
                 ((PersistableParticipant)resource).restoreState(ios) ;
                 return resource ;
             }

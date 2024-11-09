@@ -7,6 +7,7 @@
 
 package com.arjuna.orbportability.internal.utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import com.arjuna.common.internal.util.ClassloadingUtility;
@@ -60,7 +61,7 @@ private void createInstance (String attrName, String className)
         }
         try
         {
-            Object o = c.newInstance();
+            Object o = c.getDeclaredConstructor().newInstance();
 
             if ( o instanceof InitClassInterface )
             {
@@ -69,13 +70,9 @@ private void createInstance (String attrName, String className)
 
             o = null;
         }
-        catch (IllegalAccessException e1)
+        catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e)
         {
-            opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e1);
-        }
-        catch (InstantiationException e2)
-        {
-            opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e2);
+            opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e);
         }
     }
     }

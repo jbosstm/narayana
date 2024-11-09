@@ -121,7 +121,7 @@ public class ClassloadingUtility
             }
             if(environmentBeanClass == null && environmentBeanInstanceName == null) {
                 // no bean ctor, try default ctor
-                instance = clazz.newInstance();
+                instance = clazz.getDeclaredConstructor().newInstance();
             }
 
         } catch (InstantiationException | InvocationTargetException e) {
@@ -134,6 +134,14 @@ public class ClassloadingUtility
             commonLogger.logger.warn(message);
         } catch (IllegalAccessException e) {
             String message = commonLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
+            if (failOnError) {
+                if (e.getCause() != null) {
+                    throw new Error(message, e.getCause().fillInStackTrace());
+                }
+            }
+            commonLogger.logger.warn(message);
+        } catch (NoSuchMethodException e) {
+            String message = commonLogger.i18NLogger.warn_common_NoSuchMethodException(className, e);
             if (failOnError) {
                 if (e.getCause() != null) {
                     throw new Error(message, e.getCause().fillInStackTrace());

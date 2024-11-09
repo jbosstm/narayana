@@ -14,6 +14,7 @@ import com.arjuna.mwlabs.wscf.utils.ContextProvider;
 import com.arjuna.mwlabs.wscf.utils.HLSProvider;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -118,14 +119,12 @@ public class ProtocolManager
                 HLSProvider hlsProvider = clazz.getAnnotation(HLSProvider.class);
                 String serviceType = hlsProvider.serviceType();
                 wscfLogger.i18NLogger.info_protocols_ProtocolManager_4(className, serviceType);
-                Object object = clazz.newInstance();
+                Object object = clazz.getDeclaredConstructor().newInstance();
                 _protocols.put(serviceType, object);
-            } catch (InstantiationException ie) {
-                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, ie);
-            } catch (IllegalAccessException iae) {
-                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, iae);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, e);
             }
-		}
+	}
 
         for (Class<?> clazz : contextProviderClasses) {
             String className = clazz.getName();
@@ -135,15 +134,13 @@ public class ProtocolManager
                 if (contextProvider !=  null) {
                     String coordinationType = contextProvider.coordinationType();
                     wscfLogger.i18NLogger.info_protocols_ProtocolManager_4(className, coordinationType);
-                    Object object = clazz.newInstance();
+                    Object object = clazz.getDeclaredConstructor().newInstance();
                     _protocols.put(coordinationType, object);
                 }
-            } catch (InstantiationException ie) {
-                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, ie);
-            } catch (IllegalAccessException iae) {
-                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, iae);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, e);
             }
-		}
+	}
 	}
 
 	private HashMap _protocols = new HashMap();

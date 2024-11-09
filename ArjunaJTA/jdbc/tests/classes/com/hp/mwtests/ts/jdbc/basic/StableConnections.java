@@ -57,7 +57,7 @@ public class StableConnections {
         InitialContext initialContext = prepareInitialContext();
 
         Class clazz = Class.forName("org.postgresql.xa.PGXADataSource");
-        XADataSource xaDataSource = (XADataSource) clazz.newInstance();
+        XADataSource xaDataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
         clazz.getMethod("setServerName", new Class[] { String.class }).invoke(
             xaDataSource, new Object[] { DB_HOST });
         clazz.getMethod("setDatabaseName", new Class[] { String.class })

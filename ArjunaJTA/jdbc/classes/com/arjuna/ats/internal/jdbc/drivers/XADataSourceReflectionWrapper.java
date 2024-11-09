@@ -23,7 +23,7 @@ public class XADataSourceReflectionWrapper
     {
         try
         {
-            xaDataSource = (XADataSource)Class.forName(classname).newInstance();
+            xaDataSource = (XADataSource)Class.forName(classname).getDeclaredConstructor().newInstance();
         }
         catch(Exception e) {
             throw new ExceptionInInitializerError(e);

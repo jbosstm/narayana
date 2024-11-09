@@ -223,7 +223,7 @@ public class PerformanceTestCommitMarkableResource extends
 		if (dbType.equals("oracle")) {
 			Class clazz = Class
 					.forName("oracle.jdbc.xa.client.OracleXADataSource");
-			dataSource = (XADataSource) clazz.newInstance();
+			dataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
 			clazz.getMethod("setDriverType", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "thin" });
 			clazz.getMethod("setServerName", new Class[] { String.class })
@@ -242,7 +242,7 @@ public class PerformanceTestCommitMarkableResource extends
 		} else if (dbType.equals("sybase")) {
 			Class clazz = Class
 					.forName("com.sybase.jdbc3.jdbc.SybXADataSource");
-			dataSource = (XADataSource) clazz.newInstance();
+			dataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
 
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "192.168.1.5" });
@@ -278,7 +278,7 @@ public class PerformanceTestCommitMarkableResource extends
 			((MysqlXADataSource) dataSource).setPassword("dtf11");
 		} else if (dbType.equals("db2")) {
 			Class clazz = Class.forName("com.ibm.db2.jcc.DB2XADataSource");
-			dataSource = (XADataSource) clazz.newInstance();
+			dataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,
 							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
@@ -295,7 +295,7 @@ public class PerformanceTestCommitMarkableResource extends
 		} else if (dbType.equals("sqlserver")) {
 			Class clazz = Class
 					.forName("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
-			dataSource = (XADataSource) clazz.newInstance();
+			dataSource = (XADataSource) clazz.getDeclaredConstructor().newInstance();
 
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,

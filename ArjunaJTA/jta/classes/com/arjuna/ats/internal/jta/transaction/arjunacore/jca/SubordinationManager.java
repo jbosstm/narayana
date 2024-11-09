@@ -81,7 +81,7 @@ public class SubordinationManager
             try
             {
                 Class clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.TransactionImporterImple");
-                transactionImporter = (TransactionImporter)clazz.newInstance();
+                transactionImporter = (TransactionImporter)clazz.getDeclaredConstructor().newInstance();
             }
             catch(Exception e)
             {
@@ -110,7 +110,7 @@ public class SubordinationManager
             try
             {
                 Class clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple");
-                xaTerminator = (XATerminator)clazz.newInstance();
+                xaTerminator = (XATerminator)clazz.getDeclaredConstructor().newInstance();
             }
             catch(Exception e)
             {

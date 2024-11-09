@@ -60,6 +60,9 @@ public interface commonI18NLogger {
     @LogMessage(level = WARN)
     public void warn_common_ClassloadingUtility_6(String arg0, @Cause() Throwable arg1);
 
+    @Message(id = 48009, value = "cannot create new instance of {0} as no zero-argument constructor exists", format = MESSAGE_FORMAT)
+    public String warn_common_NoSuchMethodException(String arg0, @Cause() Throwable arg1);
+
     /*
      * Allocate new messages directly above this notice. - id: use the next id
      * number in sequence. Don't reuse ids. The first two digits of the
