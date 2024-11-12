@@ -25,7 +25,7 @@ Although there are no formal guarantees to support this software the team and, w
 
 ## Requirements
 
-To build this project you will need a JDK (Java Development Kit) with a minimum version of 11 and a Maven with a minimum version specified in the [maven wrapper properties file](.mvn/wrapper/maven-wrapper.properties)
+To build this project you will need a JDK (Java Development Kit) with a minimum version of 17 and a Maven with a minimum version specified in the [maven wrapper properties file](.mvn/wrapper/maven-wrapper.properties)
 
 The commands to do this will vary depending upon which operating system you are building on.
 
