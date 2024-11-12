@@ -8,7 +8,7 @@ The build axis can be controlled by prefixing a ! on the following as appropriat
 
 CORE AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_OPENJDKORB PERFORMANCE LRA DB_TESTS mysql db2 postgres oracle
 
-Pull requests build and run with JDK11 and JDK17. Add the prefix `!` to disable these defaults. Include the text `JDK21` to build and run with JDK21
+Pull requests build and run with JDK17 and JDK21. Add the prefix `!` to disable these defaults.
 
 If it is determined that nothing needs to be tested for the pull request then you need to concatenate the two sets of characters: `NO_` `TEST` as a single word and provide the result into the description.
 

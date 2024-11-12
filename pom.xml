@@ -172,8 +172,8 @@
     <jvm.args.modular></jvm.args.modular>
     <jvm.args.other>-server</jvm.args.other>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
     <skipMavenDeployMojo>false</skipMavenDeployMojo>
@@ -517,7 +517,7 @@
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>[11,)</version>
+                  <version>[17,)</version>
                 </requireJavaVersion>
               </rules>
             </configuration>

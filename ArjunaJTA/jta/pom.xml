@@ -21,6 +21,9 @@
     <!-- java.net.preferIPv6Addresses=false is a workaround to (not) solve the bug in arquillian-extension-byteman -->
     <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
       -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=false</ipv6.server.jvm.args>
+    <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
+    <!-- required for VM attach under JDK 11-->
+    <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
   </properties>
 
   <dependencyManagement>
@@ -231,18 +234,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <!-- For further info about this profile, refer to https://github.com/arquillian/arquillian-extension-byteman -->
-    <profile>
-      <id>use-toolsjar-jigsaw</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <properties>
-        <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
-        <!-- required for VM attach under JDK 11-->
-        <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
-      </properties>
     </profile>
     <profile>
       <id>arq</id>
