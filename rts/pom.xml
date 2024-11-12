@@ -94,6 +94,5 @@
     </profiles>
   <modules>
     <module>at</module>
-    <module>lra</module>
   </modules>
 </project>

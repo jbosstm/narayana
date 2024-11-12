@@ -384,12 +384,6 @@
         <version>${version.hamcrest}</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-test-arquillian-extension</artifactId>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
 
       <dependency>
         <groupId>org.jboss.weld.se</groupId>

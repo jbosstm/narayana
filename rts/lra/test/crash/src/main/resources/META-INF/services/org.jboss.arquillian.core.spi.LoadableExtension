@@ -1,2 +1,0 @@
-# Arquillian adds extensions through this file
-io.narayana.lra.arquillian.LRACoordinatorExtension
