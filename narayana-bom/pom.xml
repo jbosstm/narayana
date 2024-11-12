@@ -607,37 +607,6 @@
         <type>test-jar</type>
       </dependency>
       <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-service-base</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-proxy-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>narayana-lra</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-coordinator-jar</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-coordinator-war</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
         <groupId>org.eclipse.microprofile.config</groupId>
         <artifactId>microprofile-config-api</artifactId>
         <version>${version.microprofile.config-api}</version>
@@ -661,26 +630,6 @@
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-        <artifactId>microprofile-fault-tolerance-api</artifactId>
-        <version>${version.microprofile.fault-tolerance}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.lra</groupId>
-        <artifactId>microprofile-lra-api</artifactId>
-        <version>${version.microprofile.lra}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.openapi</groupId>
-        <artifactId>microprofile-openapi-api</artifactId>
-        <version>${version.org.eclipse.microprofile.openapi}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.lra</groupId>
-        <artifactId>microprofile-lra-tck</artifactId>
-        <version>${version.microprofile.lra}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>

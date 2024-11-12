@@ -78,8 +78,6 @@ XTS: `./build.[sh|bat] -am -pl :jboss-xts`
 
 STM: `./build.[sh|bat] -am -pl :stm`
 
-LRA: `./build.[sh|bat] -am -f rts/lra`
-
 ## Narayana (BOM) Bill Of Materials
 
 maven BOM dependency used to encapsulate all the dependencies required by Narayana.
