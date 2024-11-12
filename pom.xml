@@ -189,8 +189,6 @@
     <version.javadoc.plugin>3.5.0</version.javadoc.plugin>
     <version.maven.jandex-plugin>3.1.7</version.maven.jandex-plugin>
 
-    <!-- Needed forWildflyLRACoordinatorDeployment class -->
-    <version.microprofile.lra>2.0</version.microprofile.lra>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
 
     <!-- This property is used in WarDeployment (XTS) -->
@@ -198,7 +196,6 @@
 
     <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
-    <!-- Needed forWildflyLRACoordinatorDeployment class -->
     <version.org.jboss.resteasy>6.2.5.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.7.0</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.quarkus-bom>3.0.1.Final</version.quarkus-bom>
