@@ -39,7 +39,7 @@ function is_ibm {
 function wildfly_minimum_jdk {
   if [ "$_jdk" -lt 17 ]; then
     echo "WildFly must be built with JDK 17 or greater" 
-    export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 JTA_AS_TESTS=0 RTS_AS_TESTS=0 LRA_AS_TESTS=0 XTS_AS_TESTS=0 XTS_TRACE=0 txbridge=0 ARQ_PROF=no_arq 
+    export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 JTA_AS_TESTS=0 RTS_AS_TESTS=0 XTS_AS_TESTS=0 XTS_TRACE=0 txbridge=0 ARQ_PROF=no_arq 
     # without AS test results the code coverage does not work, so not running it
     export CODE_COVERAGE=0
   fi
@@ -87,20 +87,18 @@ function init_test_options {
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
-    [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.lra.coordinator"
 
     if ! get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+        export PERF_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=1
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -112,7 +110,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -124,7 +121,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -136,7 +132,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 JAC_ORB=0 JTA_AS_TESTS=1
-          export LRA_TESTS=1 LRA_AS_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          export CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
         else
           export COMMENT_ON_PULL=""
@@ -149,7 +145,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 COMPENSATIONS_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -158,7 +153,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -167,7 +161,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
-          export JTA_AS_TESTS=0 LRA_TESTS=0 LRA_AS_TESTS=0
+          export JTA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -176,16 +170,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=1
-          export LRA_TESTS=0 LRA_AS_TESTS=0
-        else
-          export COMMENT_ON_PULL=""
-        fi
-    elif [[ $PROFILE == "LRA" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
-          comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
-          export AS_BUILD=1 AS_CLONE=1 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export LRA_TESTS=1 LRA_AS_TESTS=1
         else
           export COMMENT_ON_PULL=""
         fi
@@ -194,7 +178,6 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0
-          export LRA_TESTS=0 LRA_AS_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -213,8 +196,6 @@ function init_test_options {
     [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
     [ $RTS_AS_TESTS ] || RTS_AS_TESTS=0 # RTS tests
     [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
-    [ $LRA_AS_TESTS ] || LRA_AS_TESTS=0 #LRA tests
-    [ $LRA_TESTS ] || LRA_TESTS=0 # LRA Test
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
     [ $QA_TESTS ] || QA_TESTS=0 # QA test suite
@@ -385,6 +366,24 @@ function clone_as {
 function build_as {
   echo "Building JBoss EAP/WildFly"
 
+  #this is needed until LRA is not released
+  echo "Building LRA PR"
+  if [ -d lra ]; then
+    rm -rf lra
+  fi
+  git clone https://github.com/jbosstm/lra.git -o jbosstm
+  [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/lra.git failed"
+  cd lra
+  git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
+  git checkout $LRA_BRANCH
+  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+  cd ../
+  ./build.sh -f lra/pom.xml -B clean install
+  [ $? -eq 0 ] || fatal "Build of LRA failed"
+  LRA_VERSION=`awk '/lra-parent/ { while(!/<version>/) {getline;} print; }' lra/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  OVERRIDE_LRA_VERSION=" -Dversion.org.jboss.narayana.lra=${LRA_VERSION} "
+  
   cd $WILDFLY_CLONED_REPO
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WILDFLY_CLONED_REPO}/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
@@ -393,7 +392,7 @@ function build_as {
 
     # building WildFly
     export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@"
     [ $? -eq 0 ] || fatal "AS build failed"
 
   fi
@@ -411,8 +410,26 @@ function build_as {
 function tests_as {
   # running WildFly testsuite if configured to be run by axis AS_TESTS
 
+  #this is needed until LRA is not released
+  echo "Building LRA PR"
+  if [ -d lra ]; then
+    rm -rf lra
+  fi
+  git clone https://github.com/jbosstm/lra.git -o jbosstm
+  [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/lra.git failed"
+  cd lra
+  git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
+  git checkout $LRA_BRANCH
+  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+  cd ../
+  ./build.sh -f lra/pom.xml -B clean install
+  [ $? -eq 0 ] || fatal "Build of LRA failed"
+  LRA_VERSION=`awk '/lra-parent/ { while(!/<version>/) {getline;} print; }' lra/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  OVERRIDE_LRA_VERSION=" -Dversion.org.jboss.narayana.lra=${LRA_VERSION} "
+  
   cd $WILDFLY_CLONED_REPO
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS tests failed"
   cd $WORKSPACE
 }
@@ -438,9 +455,9 @@ function init_jboss_home {
 function xts_as_tests {
   echo "#-1. XTS AS Tests"
   cd $WILDFLY_CLONED_REPO
-  ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Test failed"
-  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -448,9 +465,9 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Tests"
   cd $WILDFLY_CLONED_REPO
-  ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Test failed"
-  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -462,20 +479,10 @@ function jta_as_tests {
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
   cd $WILDFLY_CLONED_REPO
   # Execute some directly relevant tests from modules of the application server
-  ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "JTA AS transactions Test failed"
-  ./build.sh -f iiop-openjdk/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f iiop-openjdk/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "JTA AS iiop-openjdk Test failed"
-  cd ${WORKSPACE}
-}
-
-function lra_as_tests {
-  echo "#-1. LRA AS Tests"
-  cd $WILDFLY_CLONED_REPO
-  ./build.sh -f testsuite/integration/microprofile-tck/lra/pom.xml -fae -B -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
-  [ $? -eq 0 ] || fatal "LRA AS Test failed"
-  ./build.sh -f microprofile/lra/pom.xml -fae -B -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
-  [ $? -eq 0 ] || fatal "LRA AS Test failed"
   cd ${WORKSPACE}
 }
 
@@ -487,16 +494,6 @@ function rts_tests {
   echo "#0. REST-AT To JTA Bridge Test"
   ./build.sh -f rts/at/bridge/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "REST-AT To JTA Bridge Test failed"
-}
-
-function lra_tests {
-  echo "#0. LRA Test"
-  cd ./rts/lra/
-  echo "#0. Running LRA tests using $ARQ_PROF profile"
-  # Ideally the following target would be test and integration-test but that doesn't seem to shutdown the server each time
-  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@" install
-  lra_arq=$?
-  if [ $lra_arq != 0 ] ; then fatal "LRA Test failed with failures in $ARQ_PROF profile" ; fi
 }
 
 function jta_cdi_tests {
@@ -891,12 +888,10 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests "$@"
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests "$@"
 [ $JTA_AS_TESTS = 1 ] && jta_as_tests "$@"
-[ $LRA_AS_TESTS = 1 ] && lra_as_tests "$@"
 [ $COMPENSATIONS_TESTS = 1 ] && [ "$_jdk" -ge 17 ] && compensations_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
-[ $LRA_TESTS = 1 ] && lra_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
 [ $CODE_COVERAGE = 1 ] && generate_code_coverage_report "$@"
