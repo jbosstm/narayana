@@ -582,7 +582,6 @@
                         <exclude name="**/tools/**"/>
                         <exclude name="**/apache-karaf*/**"/>
                         <exclude name="**/hornetq*/**"/>
-                        <exclude name="**/lra*/**"/>
                         <exclude name="**/vertx/**"/>
                         <exclude name="**/openjdk-orb-**.jar"/>
                         <exclude name="**/ext/jacocoant.jar"/>
