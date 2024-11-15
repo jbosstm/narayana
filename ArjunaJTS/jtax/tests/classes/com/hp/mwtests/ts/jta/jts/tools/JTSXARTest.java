@@ -6,11 +6,10 @@
 package com.hp.mwtests.ts.jta.jts.tools;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.HeuristicStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.OSBTypeHandler;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.HeuristicStatus;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
@@ -35,11 +34,6 @@ import static org.junit.Assert.assertFalse;
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSXARTest extends JTSOSBTestBase {
     void injectCommitException(String exceptionType) throws Exception {
         XAFailureSpec fault = new XAFailureSpec(

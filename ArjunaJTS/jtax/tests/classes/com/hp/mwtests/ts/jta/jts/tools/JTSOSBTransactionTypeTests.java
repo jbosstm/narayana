@@ -10,7 +10,7 @@ import javax.management.MBeanException;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper;
 import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicServerTransaction;
 import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicTransaction;
@@ -23,11 +23,6 @@ import com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction;
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSOSBTransactionTypeTests extends JTSOSBTestBase {
     @Test
     public void testArjunaTransactionImpleWrapper() throws MBeanException {

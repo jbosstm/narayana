@@ -13,11 +13,11 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.HeuristicStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.ActionBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.HeuristicStatus;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.ParticipantStatus;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
@@ -26,11 +26,6 @@ import com.arjuna.ats.jta.xa.XidImple;
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class XAResourceRecordBean extends LogRecordWrapper implements XAResourceRecordBeanMBean {
     JTSXAResourceRecordWrapper xares;
     String className = "unavailable";

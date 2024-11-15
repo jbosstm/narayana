@@ -7,10 +7,6 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
-/**
- * @deprecated as of 5.0.5.Final - no longer required
- */
-@Deprecated // no longer required
 public class ToolsInitialiser {
 	static private String JTS_TM_CLASSNAME_STANDALONE =
 		"com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple";

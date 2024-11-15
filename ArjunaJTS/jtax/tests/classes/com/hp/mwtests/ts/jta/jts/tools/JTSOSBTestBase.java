@@ -11,7 +11,7 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
@@ -41,11 +41,6 @@ import static org.junit.Assert.*;
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSOSBTestBase extends TestBase {
 	@BeforeClass
 	public static void beforeClass() {

@@ -13,20 +13,15 @@ import javax.management.MBeanException;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.OSBTypeHandler;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.OSBTypeHandler;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JCAServerTransactionHeaderReader;
 /**
  * An example of how to instrument new record types.
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class NewTypeTest extends JTSOSBTestBase {
 
     @Test

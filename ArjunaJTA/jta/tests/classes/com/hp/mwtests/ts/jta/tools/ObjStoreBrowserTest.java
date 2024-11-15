@@ -32,7 +32,7 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBeanMBean;
 import org.junit.After;
 import org.junit.Before;
@@ -40,10 +40,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
-import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.OSEntryBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.CommitMarkableResourceRecordBean;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean;
@@ -51,11 +51,6 @@ import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 class ExtendedFailureXAResource extends FailureXAResource implements XAResourceWrapper {
 	private boolean forgotten;
     private String productName;

@@ -6,8 +6,7 @@
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderState;
-import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.HeaderState;
 import com.arjuna.ats.jta.xa.XidImple;
 
 import java.io.IOException;
@@ -18,11 +17,6 @@ import java.io.IOException;
  *
  * @author Mike Musgrove
  */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class JCAServerTransactionHeaderReader extends ServerTransactionHeaderReader {
     private boolean wasInvoked = false;
 

@@ -11,7 +11,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.jta.Implementationsx;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
