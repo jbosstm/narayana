@@ -20,11 +20,11 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.api.mbeans.ParticipantStoreBean;
-import com.arjuna.ats.arjuna.tools.osb.api.mbeans.RecoveryStoreBean;
-import com.arjuna.ats.arjuna.tools.osb.api.proxy.ParticipantStoreProxy;
-import com.arjuna.ats.arjuna.tools.osb.api.proxy.RecoveryStoreProxy;
-import com.arjuna.ats.arjuna.tools.osb.api.proxy.StoreManagerProxy;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.ParticipantStoreBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.RecoveryStoreBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.proxy.ParticipantStoreProxy;
+import com.arjuna.ats.internal.arjuna.tools.osb.proxy.RecoveryStoreProxy;
+import com.arjuna.ats.internal.arjuna.tools.osb.proxy.StoreManagerProxy;
 
 public class ObjectStoreAPIJMXTest {
 	private RecoveryStoreBean rsb;

@@ -23,24 +23,19 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
-import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.ActionBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.ObjStoreItemMBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.OSEntryBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
 
 import java.util.Collection;
 
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
- * provide a better separation between public and internal classes.
- */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class ObjStoreBrowserTest {
 	private RecoveryManagerImple rcm;
 
@@ -68,7 +63,7 @@ public class ObjStoreBrowserTest {
         ObjStoreBrowser osb = new ObjStoreBrowser();
 
 		// define which object store types we are prepared to represent by mbeans
-        osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
+        osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.arjuna.tools.osb.mbean.ActionBean");
 
 		return osb;
 	}

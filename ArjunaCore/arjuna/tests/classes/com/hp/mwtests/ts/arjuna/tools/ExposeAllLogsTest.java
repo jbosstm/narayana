@@ -27,7 +27,7 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
@@ -35,10 +35,7 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
  * Test that the tooling can exposed all log record types
  *
  * @author Mike Musgrove
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to
- * provide a better separation between public and internal classes.
  */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class ExposeAllLogsTest {
     private static final String FOO_TYPE = "StateManager/LockManager/foo";
     private final String osMBeanName = com.arjuna.ats.arjuna.common.arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();

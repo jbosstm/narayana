@@ -25,17 +25,19 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.HeaderStateReader;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.OSBTypeHandler;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.OSEntryBean;
+import com.arjuna.ats.arjuna.tools.osb.api.ObjStoreBrowserMBean;
+import com.arjuna.ats.internal.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.tools.osb.util.JMXServer;
 
 /**
  * An MBean implementation for walking an ObjectStore and creating/deleting MBeans
  * that represent completing transactions (ie ones on which the user has called commit)
  *
  * @author Mike Musgrove
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to
- * provide a better separation between public and internal classes.
  */
-@Deprecated // in order to provide a better separation between public and internal classes.
 public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
     private static final String SUBORDINATE_AA_TYPE =
@@ -63,7 +65,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             new OSBTypeHandler(
                     true,
                     "com.arjuna.ats.arjuna.AtomicAction",
-                    "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean",
+                    "com.arjuna.ats.internal.arjuna.tools.osb.mbean.ActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
                     null
             ),
@@ -212,19 +214,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
-     * This method is deprecated in favour of {@link #setType(String, String)}.
-     * The issue with this method is there is no mechanism for determining which class
-     * is responsible for a given OS type.
-     * This method is a no-action method.
-     *
-     * Define which object store types will be registered as MBeans
-     * @param types the list of ObjectStore types that can be represented as MBeans
-     */
-    @Deprecated
-    public void setTypes(Map<String, String> types) {
-    }
-
-    /**
      * Tell the object browser which beans to use for particular Object Store Action type
      *
      * @param osTypeClassName {@link StateManager} type class name
@@ -364,23 +353,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         return null;
     }
 
-    /**
-     * Find the registered bean corresponding to a uid.
-     *
-     * @deprecated use {@link #findUid(com.arjuna.ats.arjuna.common.Uid)} instead.
-     * @param uid the uid
-     * @return the registered bean or null if the Uid is not registered
-     */
-    @Deprecated
-    public UidWrapper findUid(String uid) {
-        for (Map.Entry<String, List<UidWrapper>> typeEntry : registeredMBeans.entrySet())
-            for (UidWrapper w : typeEntry.getValue())
-                if (w.getUid().stringForm().equals(uid))
-                    return w;
-
-        return null;
-    }
-
     private boolean isRegistered(String type, Uid uid) {
         List<UidWrapper> beans = registeredMBeans.get(type);
 
@@ -467,7 +439,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         /*
          * now create the actual MBeans - we create all the UidWrappers before registering because
          * the process of creating a bean can call back into the browser to probe for a particular type
-         * (see for example com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean)
+         * (see for example com.arjuna.ats.internal.arjuna.tools.osb.mbean.ActionBean)
          */
         registerMBeans();
     }

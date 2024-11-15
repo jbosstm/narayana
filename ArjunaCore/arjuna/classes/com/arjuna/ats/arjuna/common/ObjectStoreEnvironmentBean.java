@@ -9,9 +9,11 @@ import java.lang.reflect.Method;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.tools.osb.api.ObjStoreBrowserMBean;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
@@ -783,12 +785,12 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      * Determine whether the ObjStoreBrowser should report basic information about all logs.
      * Because exposing log records has the side effect of activating the default is to
      * only activate ones for which we know the side effects are harmless
-     * {@link com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser ObjectStoreBrowser}
+     * {@link ObjStoreBrowser ObjectStoreBrowser}
      *
      * Use this method to explicitly set the desired behaviour.
      *
      * You can also set this behaviour via JMX using
-     * {@link com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserMBean#setExposeAllRecordsAsMBeans JMX}
+     * {@link ObjStoreBrowserMBean#setExposeAllRecordsAsMBeans JMX}
      * 
      * @param exposeAllLogRecords
      *            Set to true to expose basic information about all log records
