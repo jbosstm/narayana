@@ -83,7 +83,11 @@ For older modules where checkstyle is disabled, when editing a file you should e
 > [!NOTE]
 > To scan a single file using Narayana's checkstyle rules in a maven module where checkstyle is not enabled, run the following command from the root directory of the maven module containing the file:
 > ```
-> mvn checkstyle:check -Dcheckstyle.includes="path/to/the/file/filename.java" -Dcheckstyle.skip=false
+> mvn checkstyle:check -Dcheckstyle.includes="path/to/the/file/from/package/root/filename.java" -Dcheckstyle.skip=false
+> ```
+> For example, to scan the file `ArjunaJTA/jta/classes/com/arjuna/ats/internal/jta/resources/arjunacore/CommitMarkableResourceRecord.java` with Narayana's checkstyle rules, the following command should be executed from `ArjunaJTA/jta`:
+> ```
+> mvn checkstyle:check -Dcheckstyle.includes=com/arjuna/ats/internal/jta/resources/arjunacore/CommitMarkableResourceRecord.java -Dcheckstyle.skip=false
 > ```
 
 In general, most IDEs allow you to configure a rule file from your IDE settings (for Intelij that would be Settings -> Other Settings -> Checkstyle). The rule file is located in the [narayana-checkstyle repo](https://github.com/jbosstm/narayana-checkstyle-config/tree/main/src/main/resources/narayana-checkstyle).
