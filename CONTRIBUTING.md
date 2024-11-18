@@ -75,15 +75,19 @@ We expect all contributors and users to follow our [Contributor Covenant](https:
 
 We use the maven `checkstyle` and `sortpom` plugins which are enabled by default and skipped in certain cases for older modules.
 
-For older modules where checkstyle is disabled, when editing a file you should either
-a) follow the style currently used in the file you have edited or,
-b) reformat it according to our checkstyle ruleset (by temporarily enabling checkstyle
-on the affected module) but separate functional changes from formatting changes into different commits
-in the same PR (this rule facilitates traceability).
-In other words a file (in a module with checkstyle disabled) may only be re-formatted if it also
-contains a functional change and is made in a separate commit.
+For older modules where checkstyle is disabled, when editing a file you should either:
 
-Most IDEs allow you to configure a rule file from your IDE settings (for Intelij that would be Settings -> Other Settings -> Checkstyle). The rule file is located the [narayana-checkstyle repo](https://github.com/jbosstm/narayana-checkstyle-config/tree/main/src/main/resources/narayana-checkstyle)
+1. follow the style currently used in the file you have edited or,
+1. reformat it according to our checkstyle ruleset (by temporarily enabling checkstyle on the affected module) but separate functional changes from formatting changes into different commits in the same PR (this rule facilitates traceability). In other words, a file (in a module with checkstyle disabled) may only be re-formatted if it also contains a functional change and is made in a separate commit.
+
+> [!NOTE]
+> To scan a single file using Narayana's checkstyle rules in a maven module where checkstyle is not enabled, run the following command from the root directory of the maven module containing the file:
+> ```
+> mvn checkstyle:check -Dcheckstyle.includes="path/to/the/file/filename.java" -Dcheckstyle.skip=false
+> ```
+
+In general, most IDEs allow you to configure a rule file from your IDE settings (for Intelij that would be Settings -> Other Settings -> Checkstyle). The rule file is located in the [narayana-checkstyle repo](https://github.com/jbosstm/narayana-checkstyle-config/tree/main/src/main/resources/narayana-checkstyle).
+
 We do not use `@author` tags in the Javadoc in new code: they are hard to maintain, especially in a very active project, and we use the Git history to track authorship, however GitHub provides [this nice page with your contributions](https://github.com/jbosstm/narayana/graphs/contributors).
 
 Commits should be atomic and semantic. Commits should be squashed before submitting the PR unless the commits are necessary to track different parts of a fix or to separate out formatting only changes from functional changes. Fixup commits can be used temporarily during the review process, to help the reviewer navigate your changeset, but these should be squashed before merging the PR (in order to provide the software with a more meaningful commit history).
