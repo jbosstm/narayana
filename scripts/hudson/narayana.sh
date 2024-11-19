@@ -365,24 +365,6 @@ function clone_as {
 function build_as {
   echo "Building JBoss EAP/WildFly"
 
-  #this is needed until LRA is not released
-  echo "Building LRA PR"
-  if [ -d lra ]; then
-    rm -rf lra
-  fi
-  git clone https://github.com/jbosstm/lra.git -o jbosstm
-  [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/lra.git failed"
-  cd lra
-  git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-  git checkout $LRA_BRANCH
-  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-  cd ../
-  ./build.sh -f lra/pom.xml -B clean install
-  [ $? -eq 0 ] || fatal "Build of LRA failed"
-  LRA_VERSION=`awk '/lra-parent/ { while(!/<version>/) {getline;} print; }' lra/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  OVERRIDE_LRA_VERSION=" -Dversion.org.jboss.narayana.lra=${LRA_VERSION} "
-  
   cd $WILDFLY_CLONED_REPO
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WILDFLY_CLONED_REPO}/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
@@ -391,7 +373,7 @@ function build_as {
 
     # building WildFly
     export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@"
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
     [ $? -eq 0 ] || fatal "AS build failed"
 
   fi
@@ -409,26 +391,8 @@ function build_as {
 function tests_as {
   # running WildFly testsuite if configured to be run by axis AS_TESTS
 
-  #this is needed until LRA is not released
-  echo "Building LRA PR"
-  if [ -d lra ]; then
-    rm -rf lra
-  fi
-  git clone https://github.com/jbosstm/lra.git -o jbosstm
-  [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/lra.git failed"
-  cd lra
-  git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-  git checkout $LRA_BRANCH
-  [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-  cd ../
-  ./build.sh -f lra/pom.xml -B clean install
-  [ $? -eq 0 ] || fatal "Build of LRA failed"
-  LRA_VERSION=`awk '/lra-parent/ { while(!/<version>/) {getline;} print; }' lra/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  OVERRIDE_LRA_VERSION=" -Dversion.org.jboss.narayana.lra=${LRA_VERSION} "
-  
   cd $WILDFLY_CLONED_REPO
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -B -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS tests failed"
   cd $WORKSPACE
 }
@@ -454,9 +418,9 @@ function init_jboss_home {
 function xts_as_tests {
   echo "#-1. XTS AS Tests"
   cd $WILDFLY_CLONED_REPO
-  ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f xts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Test failed"
-  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -464,9 +428,9 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Tests"
   cd $WILDFLY_CLONED_REPO
-  ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f rts/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Test failed"
-  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -478,9 +442,9 @@ function jta_as_tests {
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
   cd $WILDFLY_CLONED_REPO
   # Execute some directly relevant tests from modules of the application server
-  ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f transactions/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "JTA AS transactions Test failed"
-  ./build.sh -f iiop-openjdk/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} ${OVERRIDE_LRA_VERSION} "$@" test
+  ./build.sh -f iiop-openjdk/pom.xml -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Djboss.dist="$JBOSS_HOME" -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? -eq 0 ] || fatal "JTA AS iiop-openjdk Test failed"
   cd ${WORKSPACE}
 }
