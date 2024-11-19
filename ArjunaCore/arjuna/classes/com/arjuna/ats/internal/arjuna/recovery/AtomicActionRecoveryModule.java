@@ -47,6 +47,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
         boolean AtomicActions = false;
         // Does not block the suspension of the Recovery Manager by default
         this.hasWorkLeftToDo = false;
+        // Does not report problems
+        this.problemDuringRecovery = false;
 
         // uids per transaction type
         InputObjectState aa_uids = new InputObjectState();
@@ -59,6 +61,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
             AtomicActions = _recoveryStore.allObjUids(_transactionType, aa_uids);
 
         } catch (ObjectStoreException ex) {
+            problemDuringRecovery = true;
             tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_1(ex);
         }
 
@@ -115,6 +118,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
 
                 rcvAtomicAction.replayPhase2();
             } catch (Exception ex) {
+                problemDuringRecovery = true;
                 tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_2(recoverUid, ex);
             }
         }
@@ -228,7 +232,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
                                     currentUid, ex);
 
                     // There might still be work to do if currentState throws an ObjectStoreException
-                    this.hasWorkLeftToDo = true;
+                    this.problemDuringRecovery = true;
                 }
             }
         }
@@ -236,7 +240,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
 
     @Override
     public boolean hasWorkLeftToDo() {
-        return this.hasWorkLeftToDo;
+        return this.hasWorkLeftToDo || this.problemDuringRecovery;
     }
 
     // 'type' within the Object Store for AtomicActions.
@@ -252,5 +256,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
     private TransactionStatusConnectionManager _transactionStatusConnectionMgr;
 
     private boolean hasWorkLeftToDo;
+
+    private boolean problemDuringRecovery;
 
 }
