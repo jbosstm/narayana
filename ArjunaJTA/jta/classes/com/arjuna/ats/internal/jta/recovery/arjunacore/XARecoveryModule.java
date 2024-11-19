@@ -51,15 +51,6 @@ import org.jboss.tm.XAResourceWrapper;
  * Designed to be able to recover any XAResource.
  */
 public class XARecoveryModule implements ExtendedRecoveryModule {
-    private final AtomicBoolean recoveryProblems = new AtomicBoolean(false);
-
-    boolean isRecoveryProblems() {
-        return this.recoveryProblems.get();
-    }
-
-    void setRecoveryProblems(final boolean recoveryProblems) {
-        this.recoveryProblems.set(recoveryProblems);
-    }
 
     public XARecoveryModule() {
         this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(), "Local XARecoveryModule");
@@ -286,8 +277,28 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
         return registeredXARecoveryModule;
     }
 
+    /**
+     * @param xaResourceRecord The record to reassociate.
+     * @return the XAResource than can be used to commit/rollback the specified
+     * record.
+     */
+    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord) {
+        if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("trying getNewXAResource for " + xaResourceRecord);
+        }
+        return getNewXAResource(xaResourceRecord.getXid(), xaResourceRecord.getJndiName());
+    }
+
     public String id() {
         return "XARecoveryModule:" + _recoveryManagerClass;
+    }
+
+    boolean isRecoveryProblems() {
+        return this.recoveryProblems.get();
+    }
+
+    void setRecoveryProblems(final boolean recoveryProblems) {
+        this.recoveryProblems.set(recoveryProblems);
     }
 
     /**
@@ -395,18 +406,6 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
             }
         }
         return null;
-    }
-
-    /**
-     * @param xaResourceRecord The record to reassociate.
-     * @return the XAResource than can be used to commit/rollback the specified
-     * record.
-     */
-    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord) {
-        if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("trying getNewXAResource for " + xaResourceRecord);
-        }
-        return getNewXAResource(xaResourceRecord.getXid(), xaResourceRecord.getJndiName());
     }
 
     protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName) {
@@ -1136,6 +1135,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
     private final Set<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new CopyOnWriteArraySet<XAResourceRecoveryHelper>();
 
     private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
+
+    private final AtomicBoolean recoveryProblems = new AtomicBoolean(false);
 
     private Hashtable _failures = null;
 
