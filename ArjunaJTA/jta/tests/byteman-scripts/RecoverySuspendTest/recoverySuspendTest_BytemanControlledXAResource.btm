@@ -1,0 +1,85 @@
+########################################################################
+#
+# Byteman script used to make BytemanControlledXAResource fail
+# XAResource.commit until XARecoveryModule acknowledges that
+# it needs to block the suspension of PeriodicRecovery.
+# The end goal of this script is to simulate an XA transaction that
+# fails while PeriodicRecovery is trying to recover it. This scenario
+# makes sure that PeriodicRecovery waits to suspend until all
+# transactions have recovered
+#
+########################################################################
+
+########################################################################
+# Rule to set waitForWorkLeftToDoFlag when
+# PeriodicRecovery._workLeftToDo is read in
+# PeriodicRecovery.suspendScan(boolean)
+########################################################################
+
+RULE setwaitForWorkLeftToDoFlag
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AT INVOKE doWork
+IF TRUE
+DO debug("[PeriodicRecovery] Setting waitForWorkLeftToDoFlag to true"),
+   flag("waitForWorkLeftToDoFlag")
+ENDRULE
+
+########################################################################
+# Rule to clear greenFlag when invoking
+# BytemanControlledXAResource.resetGreenFlag()
+########################################################################
+
+RULE resetGreenFlag
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD resetGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledXAResource] clearing greenFlag"),
+   clear("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to set greenFlag when
+# XARecoveryModule.hasWorkLeftToDo returns true
+########################################################################
+
+RULE setGreenFlagWithXARecoveryModule
+CLASS com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+METHOD hasWorkLeftToDo
+AT EXIT
+BIND returnValue:boolean = $!
+IF returnValue && flagged("waitForWorkLeftToDoFlag")
+DO debug("[XARecoveryModule] Setting greenFlag to true"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to set greenFlag when
+# AtomicActionRecoveryModule.hasWorkLeftToDo returns true
+########################################################################
+
+RULE setGreenFlagWithAtomicActionRecoveryModule
+CLASS com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+METHOD hasWorkLeftToDo
+AT EXIT
+BIND returnValue:boolean = $!
+IF returnValue && flagged("waitForWorkLeftToDoFlag")
+DO debug("[AtomicActionRecoveryModule] Setting greenFlag to true"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to artificially set greenFlag
+########################################################################
+
+RULE artificiallySetGreenFlag
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD setGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledXAResource] artificially setting greenFlag"),
+   flag("greenFlag")
+ENDRULE
+
+
