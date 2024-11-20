@@ -176,6 +176,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
 
         contactedJndiNames.clear();
         this.setRecoveryProblems(false);
+        // Does not block the suspension of the Recovery Manager by default
+        this.hasWorkLeftToDo = false;
 
         _uids = new InputObjectState();
 
@@ -291,6 +293,11 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
 
     public String id() {
         return "XARecoveryModule:" + _recoveryManagerClass;
+    }
+
+    @Override
+    public boolean hasWorkLeftToDo() {
+        return hasWorkLeftToDo || recoveryProblems.get();
     }
 
     boolean isRecoveryProblems() {
@@ -412,7 +419,6 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
         _logName = logName;
         _recoveryManagerClass = recoveryClass;
         if (_recoveryManagerClass == null) {
-            this.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_constfail();
         }
 
@@ -453,6 +459,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
                                     int recoveryStatus = record.recover();
 
                                     if (recoveryStatus != XARecoveryResource.RECOVERED_OK) {
+                                        hasWorkLeftToDo = true;
                                         if (recoveryStatus == XARecoveryResource.WAITING_FOR_RECOVERY) {
                                             // resource initiated recovery not possible (no distribution).
 
@@ -793,6 +800,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
                                 int recoveryStatus = record.recover();
 
                                 if (recoveryStatus != XARecoveryResource.RECOVERED_OK) {
+                                    hasWorkLeftToDo = true;
+                                    // Once JBTM-3953 is completed, this.setRecoveryProblems(true) should be removed
                                     this.setRecoveryProblems(true);
                                     jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName + ".xaRecovery", XARecoveryResourceHelper.stringForm(recoveryStatus));
                                 }
@@ -1136,6 +1145,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
 
     private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
 
+    // Once JBTM-3953 is completed, it should be considered whether this field could be converted to a simple boolean 
     private final AtomicBoolean recoveryProblems = new AtomicBoolean(false);
 
     private Hashtable _failures = null;
@@ -1151,6 +1161,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
     private List<SerializableXAResourceDeserializer> _seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
 
     private Set<String> contactedJndiNames = new HashSet<String>();
+
+    private boolean hasWorkLeftToDo;
 
     private static XARecoveryModule registeredXARecoveryModule;
 }
