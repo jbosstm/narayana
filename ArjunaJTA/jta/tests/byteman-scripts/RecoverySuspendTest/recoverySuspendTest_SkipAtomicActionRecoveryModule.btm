@@ -1,0 +1,29 @@
+########################################################################
+# Rule to skip
+# AtomicActionRecoveryModule.periodicWorkFirstPass()
+# until greenFlag gets set
+########################################################################
+
+RULE SkipAtomicActionRecoveryModuleFirstPass
+CLASS com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+METHOD periodicWorkFirstPass
+AT ENTRY
+IF NOT flagged("greenFlag")
+DO debug("[AtomicActionRecoveryModule.periodicWorkFirstPass] Returning immediately"),
+   return
+ENDRULE
+
+########################################################################
+# Rule to skip
+# AtomicActionRecoveryModule.periodicWorkSecondPass()
+# until greenFlag gets set
+########################################################################
+
+RULE SkipAtomicActionRecoveryModuleFirstPass
+CLASS com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+METHOD periodicWorkSecondPass
+AT ENTRY
+IF NOT flagged("greenFlag")
+DO debug("[AtomicActionRecoveryModule.periodicWorkSecondPass] Returning immediately"),
+   return
+ENDRULE
