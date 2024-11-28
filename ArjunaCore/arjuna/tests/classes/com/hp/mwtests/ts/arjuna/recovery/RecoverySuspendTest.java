@@ -66,10 +66,8 @@ public class RecoverySuspendTest {
         // the test set of modules
         _recoveryConfig.setRecoveryModuleClassNames(Arrays.asList(modules));
 
-        // obtain a new RecoveryManager with the above config:
+        // obtain a new RecoveryManager with the above configuration and start it
         _manager = RecoveryManager.manager(RecoveryManager.INDIRECT_MANAGEMENT);
-        // recovery can start
-        _manager.startRecoveryManagerThread();
 
         _recordTypeMap = new RecordTypeMap() {
             @SuppressWarnings("unchecked")
