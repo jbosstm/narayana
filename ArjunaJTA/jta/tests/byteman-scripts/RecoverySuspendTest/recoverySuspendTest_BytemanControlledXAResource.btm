@@ -1,0 +1,101 @@
+########################################################################
+#
+# Byteman script used to make BytemanControlledXAResource fail
+# XAResource.commit until XARecoveryModule acknowledges that
+# it needs to block the suspension of PeriodicRecovery.
+# The end goal of this script is to simulate an XA transaction that
+# fails while PeriodicRecovery is trying to recover it. This scenario
+# makes sure that PeriodicRecovery waits to suspend until all
+# transactions have recovered
+#
+########################################################################
+
+########################################################################
+# Rule to set waitForWorkLeftToDoFlag when
+# PeriodicRecovery._waitForWorkLeftToDo is read in
+# PeriodicRecovery.suspendScan(boolean)
+########################################################################
+
+RULE setwaitForWorkLeftToDoFlag
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan
+AFTER READ _waitForWorkLeftToDo
+IF $this._waitForWorkLeftToDo
+DO debug("[PeriodicRecovery] Setting waitForWorkLeftToDoFlag to true"),
+   flag("waitForWorkLeftToDoFlag")
+ENDRULE
+
+########################################################################
+# Rule to clear greenFlag when invoking 
+# BytemanControlledXAResource.resetGreenFlag()
+########################################################################
+
+RULE resetGreenFlag
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD resetGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledXAResource] clearing greenFlag"),
+   clear("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to set greenFlag when
+# XARecoveryModule.hasWorkLeftToDo returns true
+########################################################################
+
+RULE setGreenFlag
+CLASS com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+METHOD hasWorkLeftToDo
+AT EXIT
+BIND returnValue:boolean = $!
+IF returnValue && flagged("waitForWorkLeftToDoFlag")
+DO debug("[XARecoveryModule] Setting greenFlag to true"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to artificially set greenFlag
+########################################################################
+
+RULE artificiallySetGreenFlag
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD setGreenFlag
+AT ENTRY
+IF TRUE
+DO debug("[BytemanControlledXAResource] artificially setting greenFlag"),
+   flag("greenFlag")
+ENDRULE
+
+########################################################################
+# Rule to fail
+# BytemanControlledXAResource.commit()
+# until greenFlag gets set
+########################################################################
+
+RULE FailCommit
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD commit
+AT INVOKE deleteFile
+IF com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode != 0
+DO debug("[BytemanControlledXAResource.commit] throwing new XAException with code " +
+      com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode),
+   throw new XAException(com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode)
+ENDRULE
+
+########################################################################
+# Rule to fail
+# BytemanControlledXAResource.rollback()
+# until greenFlag gets set
+########################################################################
+
+RULE FailRollback
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD rollback
+AT INVOKE deleteFile
+IF NOT flagged("greenFlag")
+# && NOT com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode == 0
+DO debug("[BytemanControlledXAResource.rollback] throwing new XAException with code " +
+      com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode),
+   throw new XAException(com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode)
+ENDRULE
