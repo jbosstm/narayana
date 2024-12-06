@@ -38,7 +38,7 @@ ENDRULE
 RULE failIfTooManyRecoveryCycles
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan
-AT EXIT
+AT READ _workLeftToDo
 IF readCounter("recoveryCycles") > 1
 DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] too many recovery cycles (i.e. " +
     readCounter("recoveryCycles") + "), " +
