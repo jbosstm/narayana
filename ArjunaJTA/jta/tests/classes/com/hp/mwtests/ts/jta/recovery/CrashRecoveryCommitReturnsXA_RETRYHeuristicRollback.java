@@ -4,7 +4,6 @@
  */
 
 
-
 package com.hp.mwtests.ts.jta.recovery;
 
 import static org.junit.Assert.assertFalse;
@@ -43,148 +42,148 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 @RunWith(BMUnitRunner.class)
 @BMScript("recovery")
 public class CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback {
-	@Test
-	public void testHeuristicRollback() throws Exception {
-		// this test is supposed to leave a record around in the log store
-		// during a commit long enough
-		// that the periodic recovery thread runs and detects it. rather than
-		// rely on delays to make
-		// this happen (placing us at the mercy of the scheduler) we use a
-		// byteman script to enforce
-		// the thread sequence we need
+    @Test
+    public void testHeuristicRollback() throws Exception {
+        // this test is supposed to leave a record around in the log store
+        // during a commit long enough
+        // that the periodic recovery thread runs and detects it. rather than
+        // rely on delays to make
+        // this happen (placing us at the mercy of the scheduler) we use a
+        // byteman script to enforce
+        // the thread sequence we need
 
-		RecoveryEnvironmentBean recoveryEnvironmentBean = BeanPopulator
-				.getDefaultInstance(RecoveryEnvironmentBean.class);
-		// JBTM-1354 we need to make sure that a full scan has gone off
-		recoveryEnvironmentBean.setRecoveryBackoffPeriod(1);
-		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(Integer.MAX_VALUE);
+        RecoveryEnvironmentBean recoveryEnvironmentBean = BeanPopulator
+                .getDefaultInstance(RecoveryEnvironmentBean.class);
+        // JBTM-1354 we need to make sure that a full scan has gone off
+        recoveryEnvironmentBean.setRecoveryBackoffPeriod(1);
+        recoveryEnvironmentBean.setPeriodicRecoveryPeriod(Integer.MAX_VALUE);
 
-		List<String> recoveryModuleClassNames = new ArrayList<String>();
+        List<String> recoveryModuleClassNames = new ArrayList<String>();
 
-		recoveryModuleClassNames
-				.add("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule");
-		recoveryModuleClassNames
-				.add("com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule");
-		recoveryEnvironmentBean
-				.setRecoveryModuleClassNames(recoveryModuleClassNames);
-		List<String> expiryScannerClassNames = new ArrayList<String>();
-		expiryScannerClassNames
-				.add("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner");
-		recoveryEnvironmentBean
-				.setExpiryScannerClassNames(expiryScannerClassNames);
-		recoveryEnvironmentBean.setRecoveryActivators(null);
-		// start the recovery manager
+        recoveryModuleClassNames
+                .add("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule");
+        recoveryModuleClassNames
+                .add("com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule");
+        recoveryEnvironmentBean
+                .setRecoveryModuleClassNames(recoveryModuleClassNames);
+        List<String> expiryScannerClassNames = new ArrayList<String>();
+        expiryScannerClassNames
+                .add("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner");
+        recoveryEnvironmentBean
+                .setExpiryScannerClassNames(expiryScannerClassNames);
+        recoveryEnvironmentBean.setRecoveryActivators(null);
+        // start the recovery manager
 
-		RecoveryManager.manager().initialize();
+        RecoveryManager.manager().initialize();
 
-		XARecoveryModule xaRecoveryModule = null;
-		for (RecoveryModule recoveryModule : ((Vector<RecoveryModule>) RecoveryManager
-				.manager().getModules())) {
-			if (recoveryModule instanceof XARecoveryModule) {
-				xaRecoveryModule = (XARecoveryModule) recoveryModule;
-				break;
-			}
-		}
+        XARecoveryModule xaRecoveryModule = null;
+        for (RecoveryModule recoveryModule : ((Vector<RecoveryModule>) RecoveryManager
+                .manager().getModules())) {
+            if (recoveryModule instanceof XARecoveryModule) {
+                xaRecoveryModule = (XARecoveryModule) recoveryModule;
+                break;
+            }
+        }
 
-		if (xaRecoveryModule == null) {
-			throw new Exception("No XARM");
-		}
+        if (xaRecoveryModule == null) {
+            throw new Exception("No XARM");
+        }
 
-		// JBTM-1354 Run a scan to make sure that the recovery thread has completed a full run before starting the test
-		// The important thing is that replayCompletion is allowed to do a scan of the transactions 
-		RecoveryManager.manager().scan();
+        // JBTM-1354 Run a scan to make sure that the recovery thread has completed a full run before starting the test
+        // The important thing is that replayCompletion is allowed to do a scan of the transactions
+        RecoveryManager.manager().scan();
 
-		XAResource firstResource = new SimpleResource();
-		Object toWakeUp = new Object();
-		final SimpleResourceXA_RETRYHeuristicRollback secondResource = new SimpleResourceXA_RETRYHeuristicRollback();
+        XAResource firstResource = new SimpleResource();
+        Object toWakeUp = new Object();
+        final SimpleResourceXA_RETRYHeuristicRollback secondResource = new SimpleResourceXA_RETRYHeuristicRollback();
 
-		xaRecoveryModule
-				.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+        xaRecoveryModule
+                .addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
 
-					@Override
-					public boolean initialise(String p) throws Exception {
-						// TODO Auto-generated method stub
-						return true;
-					}
+                    @Override
+                    public boolean initialise(String p) throws Exception {
+                        // TODO Auto-generated method stub
+                        return true;
+                    }
 
-					@Override
-					public XAResource[] getXAResources() throws Exception {
-						// TODO Auto-generated method stub
-						return new XAResource[] { secondResource };
-					}
-				});
+                    @Override
+                    public XAResource[] getXAResources() throws Exception {
+                        // TODO Auto-generated method stub
+                        return new XAResource[]{secondResource};
+                    }
+                });
 
-		// ok, now drive a TX to completion. the script should ensure that the
-		// recovery
+        // ok, now drive a TX to completion. the script should ensure that the
+        // recovery
 
-		jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
-				.transactionManager();
+        jakarta.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
 
-		tm.begin();
+        tm.begin();
 
-		jakarta.transaction.Transaction theTransaction = tm.getTransaction();
-		Uid txUid = ((TransactionImple) theTransaction).get_uid();
+        jakarta.transaction.Transaction theTransaction = tm.getTransaction();
+        Uid txUid = ((TransactionImple) theTransaction).get_uid();
 
-		theTransaction.enlistResource(firstResource);
-		theTransaction.enlistResource(secondResource);
+        theTransaction.enlistResource(firstResource);
+        theTransaction.enlistResource(secondResource);
 
-		assertFalse(secondResource.wasCommitted());
+        assertFalse(secondResource.wasCommitted());
 
-		tm.commit();
+        tm.commit();
 
-		InputObjectState uids = new InputObjectState();
-		String type = new AtomicAction().type();
-		StoreManager.getRecoveryStore().allObjUids(type, uids);
-		boolean moreUids = true;
+        InputObjectState uids = new InputObjectState();
+        String type = new AtomicAction().type();
+        StoreManager.getRecoveryStore().allObjUids(type, uids);
+        boolean moreUids = true;
 
-		boolean found = false;
-		while (moreUids) {
-			Uid theUid = UidHelper.unpackFrom(uids);
-			if (theUid.equals(txUid)) {
-				found = true;
-				Field heuristicListField = BasicAction.class
-						.getDeclaredField("heuristicList");
-				heuristicListField.setAccessible(true);
-				ActionStatusService ass = new ActionStatusService();
+        boolean found = false;
+        while (moreUids) {
+            Uid theUid = UidHelper.unpackFrom(uids);
+            if (theUid.equals(txUid)) {
+                found = true;
+                Field heuristicListField = BasicAction.class
+                        .getDeclaredField("heuristicList");
+                heuristicListField.setAccessible(true);
+                ActionStatusService ass = new ActionStatusService();
 
-				{
-					int theStatus = ass.getTransactionStatus(type,
-							theUid.stringForm());
-					assertTrue(theStatus == ActionStatus.COMMITTED);
-					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
-							theUid, theStatus);
-					theStatus = rcvAtomicAction.status();
-					rcvAtomicAction.replayPhase2();
-					assertTrue(theStatus == ActionStatus.COMMITTED);
-					assertTrue(secondResource.wasCommitted());
-					RecordList heuristicList = (RecordList) heuristicListField
-							.get(rcvAtomicAction);
-					assertTrue(
-							"Expected 1 heuristics: " + heuristicList.size(),
-							heuristicList.size() == 1);
-				}
-				{
-					int theStatus = ass.getTransactionStatus(type,
-							theUid.stringForm());
-					assertTrue(theStatus == ActionStatus.COMMITTED);
-					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
-							theUid, theStatus);
-					theStatus = rcvAtomicAction.status();
-					assertTrue(theStatus == ActionStatus.COMMITTED);
-					RecordList heuristicList = (RecordList) heuristicListField
-							.get(rcvAtomicAction);
-					assertTrue(
-							"Expected 1 heuristics: " + heuristicList.size(),
-							heuristicList.size() == 1);
-					assertTrue(secondResource.wasCommitted());
-				}
-			} else if (theUid.equals(Uid.nullUid())) {
-				moreUids = false;
-			}
-		}
+                {
+                    int theStatus = ass.getTransactionStatus(type,
+                            theUid.stringForm());
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+                            theUid, theStatus);
+                    theStatus = rcvAtomicAction.status();
+                    rcvAtomicAction.replayPhase2();
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    assertTrue(secondResource.wasCommitted());
+                    RecordList heuristicList = (RecordList) heuristicListField
+                            .get(rcvAtomicAction);
+                    assertTrue(
+                            "Expected 1 heuristics: " + heuristicList.size(),
+                            heuristicList.size() == 1);
+                }
+                {
+                    int theStatus = ass.getTransactionStatus(type,
+                            theUid.stringForm());
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+                            theUid, theStatus);
+                    theStatus = rcvAtomicAction.status();
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    RecordList heuristicList = (RecordList) heuristicListField
+                            .get(rcvAtomicAction);
+                    assertTrue(
+                            "Expected 1 heuristics: " + heuristicList.size(),
+                            heuristicList.size() == 1);
+                    assertTrue(secondResource.wasCommitted());
+                }
+            } else if (theUid.equals(Uid.nullUid())) {
+                moreUids = false;
+            }
+        }
 
-		if (!found) {
-			throw new Exception("Could not locate the Uid");
-		}
-	}
+        if (!found) {
+            throw new Exception("Could not locate the Uid");
+        }
+    }
 }
