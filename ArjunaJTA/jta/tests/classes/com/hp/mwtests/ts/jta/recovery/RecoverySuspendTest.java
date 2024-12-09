@@ -127,6 +127,17 @@ public class RecoverySuspendTest {
     })
     public void testSuspensionWhenThereIsXAOrphanToRecover() {
 
+        /*
+         * AtomicActionRecoveryModule (AARM) is used only at the end of the test to clean the environment.
+         * In other words, instead of completing/deleting the transaction manually, the Recovery Manager
+         * will commit the transaction and, as a consequence, won't get stuck during suspension.
+         * NOTE: this is an artificial scenario as the transaction that the AARM eventually commits
+         * has already been rolled back by BytemanControlledXAResource (locally to itself).
+         * Thus, the transaction should have resulted in a heuristic outcome.
+         * The outcome achieved through the use of AARM isn't specs compliant,
+         * but it is good enough to clean the environment and test XARecoveryModule in isolation.
+         */
+
         // Set up the orphan filter
         XAResourceOrphanFilter xaResourceOrphanFilter = new NodeNameXAResourceOrphanFilter();
         _jtaEnvironmentBean.setXaResourceOrphanFilters(List.of(xaResourceOrphanFilter));

@@ -13,6 +13,7 @@ public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
     private Xid xid;
     private boolean firstAttemptToCommit = true;
     private boolean committed = false;
+    private boolean forgetHeuristic = false;
 
     public void commit(Xid xid, boolean onePhase) throws XAException {
         System.out.println("SimpleResourceXA_RETRY commit called: " + xid);
@@ -23,13 +24,17 @@ public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
         }
         xid = null;
         committed = true;
-        throw new XAException(XAException.XA_HEURRB);
+
+        if (!forgetHeuristic) {
+            throw new XAException(XAException.XA_HEURRB);
+        }
     }
 
     public void end(Xid xid, int flags) throws XAException {
     }
 
     public void forget(Xid xid) throws XAException {
+        forgetHeuristic = true;
     }
 
     public int getTransactionTimeout() throws XAException {
