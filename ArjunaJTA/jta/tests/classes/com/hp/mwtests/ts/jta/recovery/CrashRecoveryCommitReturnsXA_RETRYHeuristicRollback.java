@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import javax.transaction.xa.XAResource;
 
+import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
@@ -176,6 +177,24 @@ public class CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback {
                             "Expected 1 heuristics: " + heuristicList.size(),
                             heuristicList.size() == 1);
                     assertTrue(secondResource.wasCommitted());
+                }
+                {
+                    int theStatus = ass.getTransactionStatus(type,
+                            theUid.stringForm());
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    EditableAtomicAction editableAtomicAction = new EditableAtomicAction(theUid);
+                    editableAtomicAction.moveHeuristicToPrepared(0);
+                    RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+                            theUid, theStatus);
+                    theStatus = rcvAtomicAction.status();
+                    rcvAtomicAction.replayPhase2();
+                    assertTrue(theStatus == ActionStatus.COMMITTED);
+                    assertTrue(secondResource.wasCommitted());
+                    RecordList heuristicList = (RecordList) heuristicListField
+                            .get(rcvAtomicAction);
+                    assertTrue(
+                            "Expected 0 heuristics: " + heuristicList.size(),
+                            heuristicList.size() == 0);
                 }
             } else if (theUid.equals(Uid.nullUid())) {
                 moreUids = false;

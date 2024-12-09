@@ -22,8 +22,11 @@ public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
             throw new XAException(XAException.XA_RETRY);
         }
         xid = null;
-        committed = true;
-        throw new XAException(XAException.XA_HEURRB);
+
+        if (!committed) {
+            committed = true;
+            throw new XAException(XAException.XA_HEURRB);
+        }
     }
 
     public void end(Xid xid, int flags) throws XAException {
