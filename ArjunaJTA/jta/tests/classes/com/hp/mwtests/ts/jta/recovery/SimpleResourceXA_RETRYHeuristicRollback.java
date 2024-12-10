@@ -10,64 +10,69 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
-	private Xid xid;
-	private boolean firstAttemptToCommit = true;
-	private boolean committed = false;
+    private Xid xid;
+    private boolean firstAttemptToCommit = true;
+    private boolean committed = false;
+    private boolean forgetHeuristic = false;
 
-	public void commit(Xid xid, boolean onePhase) throws XAException {
-		System.out.println("SimpleResourceXA_RETRY commit called: " + xid);
-		if (firstAttemptToCommit) {
-			firstAttemptToCommit = false;
-			System.out.println("Returning XA_RETRY first time");
-			throw new XAException(XAException.XA_RETRY);
-		}
-		xid = null;
-		committed = true;
-		throw new XAException(XAException.XA_HEURRB);
-	}
+    public void commit(Xid xid, boolean onePhase) throws XAException {
+        System.out.println("SimpleResourceXA_RETRY commit called: " + xid);
+        if (firstAttemptToCommit) {
+            firstAttemptToCommit = false;
+            System.out.println("Returning XA_RETRY first time");
+            throw new XAException(XAException.XA_RETRY);
+        }
+        xid = null;
+        committed = true;
 
-	public void end(Xid xid, int flags) throws XAException {
-	}
+        if (!forgetHeuristic) {
+            throw new XAException(XAException.XA_HEURRB);
+        }
+    }
 
-	public void forget(Xid xid) throws XAException {
-	}
+    public void end(Xid xid, int flags) throws XAException {
+    }
 
-	public int getTransactionTimeout() throws XAException {
-		return 0;
-	}
+    public void forget(Xid xid) throws XAException {
+        forgetHeuristic = true;
+    }
 
-	public boolean isSameRM(XAResource xares) throws XAException {
-		return false;
-	}
+    public int getTransactionTimeout() throws XAException {
+        return 0;
+    }
 
-	public int prepare(Xid xid) throws XAException {
-		System.out.println("SimpleResourceXA_RETRY prepare called: " + xid);
-		this.xid = xid;
-		return XA_OK;
-	}
+    public boolean isSameRM(XAResource xares) throws XAException {
+        return false;
+    }
 
-	public Xid[] recover(int flag) throws XAException {
-		if (xid != null) {
-			return new Xid[] { xid };
-		}
-		return null;
-	}
+    public int prepare(Xid xid) throws XAException {
+        System.out.println("SimpleResourceXA_RETRY prepare called: " + xid);
+        this.xid = xid;
+        return XA_OK;
+    }
 
-	public void rollback(Xid xid) throws XAException {
-		System.out.println("SimpleResourceXA_RETRY ROLLBACK called: " + xid);
-		throw new XAException("SimpleResourceXA_RETRY WASN't EXPECTING THAT!");
-	}
+    public Xid[] recover(int flag) throws XAException {
+        if (xid != null) {
+            return new Xid[]{xid};
+        }
+        return null;
+    }
 
-	public boolean setTransactionTimeout(int seconds) throws XAException {
-		return true;
-	}
+    public void rollback(Xid xid) throws XAException {
+        System.out.println("SimpleResourceXA_RETRY ROLLBACK called: " + xid);
+        throw new XAException("SimpleResourceXA_RETRY WASN't EXPECTING THAT!");
+    }
 
-	public void start(Xid xid, int flags) throws XAException {
-	}
+    public boolean setTransactionTimeout(int seconds) throws XAException {
+        return true;
+    }
 
-	public boolean wasCommitted() {
-		// TODO Auto-generated method stub
-		return committed;
-	}
+    public void start(Xid xid, int flags) throws XAException {
+    }
+
+    public boolean wasCommitted() {
+        // TODO Auto-generated method stub
+        return committed;
+    }
 
 }

@@ -1,0 +1,15 @@
+########################################################################
+# Rule to fail
+# BytemanControlledXAResource.commit()
+# until greenFlag gets set
+########################################################################
+
+RULE FailCommit
+CLASS com.hp.mwtests.ts.jta.common.BytemanControlledXAResource
+METHOD commit
+AT INVOKE deleteFile
+IF com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode != 0 && NOT flagged("greenFlag")
+DO debug("[BytemanControlledXAResource.commit] throwing new XAException with code " +
+      com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode),
+   throw new XAException(com.hp.mwtests.ts.jta.common.BytemanControlledXAResource._xaExceptionCode)
+ENDRULE
