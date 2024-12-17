@@ -1,3 +1,8 @@
+/*
+   Copyright The Narayana Authors
+   SPDX-License-Identifier: Apache-2.0
+ */
+
 package com.hp.mwtests.ts.jta.common;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
