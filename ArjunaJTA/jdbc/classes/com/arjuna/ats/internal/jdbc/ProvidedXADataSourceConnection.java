@@ -35,7 +35,7 @@ public class ProvidedXADataSourceConnection extends BaseTransactionalDriverXACon
 				      ConnectionImple conn) throws SQLException
     {
 	if (jdbcLogger.logger.isTraceEnabled()) {
-        jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + xaDatasource + " )");
+        jdbcLogger.logger.trace("ProvidedXADataSourceConnection.ProvidedXADataSourceConnection( " + dbName + ", " + user + ", " + passwd + ", " + xaDatasource + " )");
     }
     _dbName = dbName;
 	_user = user;
