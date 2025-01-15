@@ -2720,8 +2720,8 @@ public class BasicAction extends StateManager
              * the pending list. Otherwise it is moved to another list or
              * dropped if readonly.
              */
-            boolean lastResource = record.typeIs() == RecordType.LASTRESOURCE;
-            if (lastResource && prevLastResource == null) {
+            boolean isLastResource = record.typeIs() == RecordType.LASTRESOURCE;
+            if (isLastResource && prevLastResource == null) {
                 // remember that we've processed a last resource so that if we have two such last resources
                 // we can detect and report heuristics caused by allowing multiple last resources
                 prevLastResource = record;
@@ -2729,7 +2729,7 @@ public class BasicAction extends StateManager
             int individualTwoPhaseOutcome = doPrepare(reportHeuristics, record);
 
             if (individualTwoPhaseOutcome == TwoPhaseOutcome.ONE_PHASE_ERROR &&
-                    lastResource && // could probably infer lastResource being true because of the ONE_PHASE_ERROR
+                    isLastResource && // could probably infer isLastResource being true because of the ONE_PHASE_ERROR
                     record != prevLastResource) {
                 /*
                  * Since prevLastResource, which is a last resource, committed (otherwise the decision would
@@ -2742,7 +2742,7 @@ public class BasicAction extends StateManager
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_71(get_uid(),
                         TwoPhaseOutcome.stringForm(individualTwoPhaseOutcome));
 
-                LastResourceRecord lrr = (LastResourceRecord) record; // the cast is safe because lastResource == true
+                LastResourceRecord lrr = (LastResourceRecord) record; // the cast is safe because isLastResource == true
 
                 // the resource should report the mixed outcome during rollback
                 lrr.setOutcome(TwoPhaseOutcome.HEURISTIC_MIXED);
