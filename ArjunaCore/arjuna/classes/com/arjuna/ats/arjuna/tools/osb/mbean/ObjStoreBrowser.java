@@ -26,6 +26,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * An MBean implementation for walking an ObjectStore and creating/deleting MBeans
@@ -148,6 +149,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     // A system property for defining extra bean types for instrumenting object store types
     // The format is OSType1=BeanType1,OSType2=BeanType2,etc
     public static final String OBJ_STORE_BROWSER_HANDLERS = "com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserHandlers";
+    private static volatile ObjStoreBrowser objectStoreBrowser;
     private final String objStoreBrowserMBeanName;
 
     public static HeaderStateReader getHeaderStateUnpacker(String type) {
@@ -264,6 +266,15 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
+     * Expose a method to passing in a type handler that can be used as a factory to create
+     * @param typeName
+     * @param osbTypeHander
+     */
+    public void addOSBTypeHandler(String typeName, OSBTypeHandler osbTypeHander) {
+        osbTypeMap.put(typeName, osbTypeHander);
+    }
+
+    /**
      * @param handler specification for handling object store types
      * @return the previous value associated with type handler, or null if there was no previous handler.
      */
@@ -317,6 +328,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * In other words, this class should be considered as a singleton class. In fact, if two ObjStoreBrowser instances
      * are created, they may interfere with each other.</p>
      */
+    // Deprecated, use the getInstance method instead since this is a singleton instance
+    @Deprecated
     public ObjStoreBrowser() {
         this(null);
     }
@@ -328,9 +341,26 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * In other words, this class should be considered as a singleton class. In fact, if two ObjStoreBrowser instances
      * are created, they may interfere with each other.</p>
      */
-   public ObjStoreBrowser(String logDir) {
+     // Deprecated, use the getInstance method instead since this is a singleton instance
+     // if needed you can set the logDir as 'arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(logDir)'
+    @Deprecated(forRemoval = true)
+    public ObjStoreBrowser(String logDir) {
         init(logDir);
         this.objStoreBrowserMBeanName = arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();
+    }
+
+
+    public static ObjStoreBrowser getInstance() {
+        ObjStoreBrowser result = objectStoreBrowser;
+        if (result != null) {
+            return result;
+        }
+        synchronized (ObjStoreBrowser.class) {
+            if (objectStoreBrowser == null) {
+                objectStoreBrowser = new ObjStoreBrowser();
+            }
+            return objectStoreBrowser;
+        }
     }
 
     /**
@@ -500,11 +530,13 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
         String beanType = osbType == null ? OSEntryBean.class.getName() : osbType.getBeanClass();
         String stateType = osbType == null ? null : osbType.getRecordClass();
-        UidWrapper w = new UidWrapper(this, beanType, type, stateType, uid, registerBean);
+        if(osbType == null){
+            UidWrapper w = new UidWrapper(this, beanType, type, stateType, uid, registerBean);
+            w.createMBean();
+            return w;
+        }
 
-        w.createMBean();
-
-        return w;
+        return osbType.createMBean(this, beanType, type, stateType, uid, registerBean);
     }
 
     private Collection<Uid> getUids(String type) throws MBeanException {
