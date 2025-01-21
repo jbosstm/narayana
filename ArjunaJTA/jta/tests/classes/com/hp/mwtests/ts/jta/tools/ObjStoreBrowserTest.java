@@ -112,7 +112,7 @@ public class ObjStoreBrowserTest {
     public void beforeTest() {
         FailureXAResource.resetForgetCounts();
 
-        osb = new ObjStoreBrowser();
+        osb = ObjStoreBrowser.getInstance();
 
         osb.start();
     }

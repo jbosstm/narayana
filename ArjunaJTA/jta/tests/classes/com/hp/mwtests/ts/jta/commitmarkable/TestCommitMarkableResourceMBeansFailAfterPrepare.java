@@ -27,7 +27,7 @@ public class TestCommitMarkableResourceMBeansFailAfterPrepare extends
     @BMScript("commitMarkableResourceFailAfterPrepare")
     public void testObjStoreBrowser() throws Exception {
         final DataSource dataSource = new JdbcDataSource();
-        ObjStoreBrowser osb = new ObjStoreBrowser();
+        ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
         Uid uid = generateCMRRecord(dataSource);
 
         osb.start();
