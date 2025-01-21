@@ -107,7 +107,7 @@ public class JTSOSBTestBase extends TestBase {
 	}
 
 	public ObjStoreBrowser createObjStoreBrowser(boolean probe) throws MBeanException {
-		ObjStoreBrowser osb = new ObjStoreBrowser();
+		ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
 
 		osb.viewSubordinateAtomicActions(true);
 

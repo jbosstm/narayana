@@ -135,7 +135,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 
 
 	private ObjStoreBrowser createObjStoreBrowser(boolean probe) throws MBeanException {
-		ObjStoreBrowser osb = new ObjStoreBrowser();
+		ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
 
 		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
 		osb.setType("com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");

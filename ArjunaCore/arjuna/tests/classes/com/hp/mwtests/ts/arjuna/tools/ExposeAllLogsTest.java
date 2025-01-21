@@ -34,6 +34,8 @@ import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
@@ -58,20 +60,26 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 public class ExposeAllLogsTest {
     private static final String FOO_TYPE = "StateManager/LockManager/foo";
     private final String osMBeanName = com.arjuna.ats.arjuna.common.arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();
+    private static ObjStoreBrowser osb;
 
-    @Test
-    public void test1() throws Exception
-    {
-        test(true);
+
+    @BeforeClass
+    public static void setUp(){
+        ObjectStoreEnvironmentBean osEnvBean = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
+        osEnvBean.setExposeAllLogRecordsAsMBeans(true);
+
+        //The ObjStoreBrowser is a singleton
+        osb = ObjStoreBrowser.getInstance();
+        osb.start();
+    }
+
+    @AfterClass
+    public static void stop(){
+        osb.stop();
     }
 
     @Test
-    public void test2() throws Exception
-    {
-        test(false);
-    }
-
-    private void test(boolean exposeAllLogsViaJMX) throws Exception
+    public void test() throws Exception
     {
         RecoveryStore store = StoreManager.getRecoveryStore();
         Set<Uid> uids;
@@ -87,7 +95,7 @@ public class ExposeAllLogsTest {
         assertTrue(store.write_committed(u, FOO_TYPE, state));
 
         // check that the record is not exposed
-        probeObjectStore(false, false);
+        osb.probe();
         // get uids via the object store API
         uids = getUids(store, new HashSet<Uid>(), FOO_TYPE);
         // and validate that there is a uid corresponding to u
@@ -96,17 +104,7 @@ public class ExposeAllLogsTest {
         // get uids via JMX
         getUids(uids2, agent.queryNames(osMBeanName + ",*", null));
 
-        // and validate that there is no MBean corresponding to u
-        assertFalse(uids2.containsKey(u));
-
-        // now try the same but tell the browser to expose all log records
-        probeObjectStore(true, exposeAllLogsViaJMX);
-
-        // and get the uids for log record MBeans
-        uids2.clear();
-        getUids(uids2, agent.queryNames(osMBeanName + ",*", null));
-
-        // and validate that there is now an MBean corresponding to u
+        // and validate that there is a MBean corresponding to u
         assertTrue(uids2.containsKey(u));
 
         // test that the MBean remove operation works
@@ -122,24 +120,8 @@ public class ExposeAllLogsTest {
         assertFalse(uids2.containsKey(u));
     }
 
-    private void probeObjectStore(boolean exposeAllLogs, boolean useJMX) throws MBeanException {
-        ObjectStoreEnvironmentBean osEnvBean = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
-
-        osEnvBean.setExposeAllLogRecordsAsMBeans(exposeAllLogs);
-
-        ObjStoreBrowser osb = new ObjStoreBrowser();
-
-        // make sure the object store tooling MBean is ready
-        osb.start();
-
-        if (useJMX)
-            osb.setExposeAllRecordsAsMBeans(exposeAllLogs);
-
-        osb.probe();
-    }
-
     // Given a set of MBean names find their corresponding Uids
-    private Map<Uid, ObjectName> getUids(Map<Uid, ObjectName> uids, Set<ObjectName> osEntries) {
+    protected static Map<Uid, ObjectName> getUids(Map<Uid, ObjectName> uids, Set<ObjectName> osEntries) {
         MBeanServer mbs = JMXServer.getAgent().getServer();
 
         for (ObjectName name : osEntries) {
@@ -153,7 +135,7 @@ public class ExposeAllLogsTest {
     }
 
     // look up an MBean property
-    private static Object getProperty(MBeanServer mbs, ObjectName name, String id) {
+    protected static Object getProperty(MBeanServer mbs, ObjectName name, String id) {
         try {
             return mbs.getAttribute(name, id);
         } catch (AttributeNotFoundException e) {
@@ -167,7 +149,7 @@ public class ExposeAllLogsTest {
     }
 
     // lookup all log records of a given type
-    private Set<Uid> getUids(RecoveryStore recoveryStore, Set<Uid> uids, String type) {
+    protected static Set<Uid> getUids(RecoveryStore recoveryStore, Set<Uid> uids, String type) {
         try {
             InputObjectState states = new InputObjectState();
 

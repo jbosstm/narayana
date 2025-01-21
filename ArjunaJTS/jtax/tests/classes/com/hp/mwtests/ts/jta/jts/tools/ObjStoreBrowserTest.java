@@ -76,7 +76,7 @@ public class ObjStoreBrowserTest {
     private ObjStoreBrowser osb;
 
 	private ObjStoreBrowser createObjStoreBrowser() {
-		ObjStoreBrowser osb = new ObjStoreBrowser();
+		ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
 
 		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
 
