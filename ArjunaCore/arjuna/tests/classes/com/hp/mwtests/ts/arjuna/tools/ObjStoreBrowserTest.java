@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class ObjStoreBrowserTest {
 	 * @return An object that maintains MBeans representing completing transactions
 	 */
 	private ObjStoreBrowser createObjStoreBrowser() {
-        ObjStoreBrowser osb = new ObjStoreBrowser();
+        ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
 
 		// define which object store types we are prepared to represent by mbeans
         osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
@@ -91,7 +92,8 @@ public class ObjStoreBrowserTest {
 	@Test
 	public void basicOSBTest () throws Exception
 	{
-		ObjStoreBrowser osb = new ObjStoreBrowser("os");
+		arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir("os");
+		ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
 
 		osb.start();
 		osb.probe();

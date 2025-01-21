@@ -124,7 +124,7 @@ public class XATerminatorImpleUnitTest extends TestBase
             assertEquals(XAException.XA_RETRY, e.errorCode);
         }
 
-        ObjStoreBrowser osb = new ObjStoreBrowser();
+        ObjStoreBrowser osb = ObjStoreBrowser.getInstance();
         osb.viewSubordinateAtomicActions(true);
         osb.setExposeAllRecordsAsMBeans(true);
         osb.start();
