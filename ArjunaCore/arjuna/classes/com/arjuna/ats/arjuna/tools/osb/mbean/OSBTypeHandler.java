@@ -21,7 +21,9 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -44,6 +46,7 @@ public class OSBTypeHandler {
     private String beanClass; // the JMX mbean representation of the record type
     private String typeName; // the type name {@link com.arjuna.ats.arjuna.coordinator.AbstractRecord#type()}
     HeaderStateReader headerStateReader;
+    private ClassLoader classLoaderToUse; // classLoader to load external bean types
 
     public OSBTypeHandler(boolean enabled, String recordClass, String beanClass, String typeName, String headerStateReaderClassName) {
         this(enabled, true, recordClass, beanClass, typeName, headerStateReaderClassName);
@@ -56,6 +59,17 @@ public class OSBTypeHandler {
         this.beanClass = beanClass;
         this.typeName = typeName;
         this.headerStateReader = headerStateReaderClassName == null ? new HeaderStateReader() : createHeader(headerStateReaderClassName);
+        this.classLoaderToUse = this.getClass().getClassLoader();
+    }
+
+    public OSBTypeHandler(boolean enabled, boolean allowRegistration, String recordClass, String beanClass, String typeName, String headerStateReaderClassName, ClassLoader classLoaderToUse) {
+        this.enabled = enabled;
+        this.allowRegistration = allowRegistration;
+        this.recordClass = recordClass;
+        this.beanClass = beanClass;
+        this.typeName = typeName;
+        this.headerStateReader = headerStateReaderClassName == null ? new HeaderStateReader() : createHeader(headerStateReaderClassName);
+        this.classLoaderToUse = classLoaderToUse;
     }
 
     private static HeaderStateReader createHeader(String headerStateReaderClassName) {
@@ -100,4 +114,27 @@ public class OSBTypeHandler {
         return headerStateReader;
     }
 
+    // This method is intended for the ObjStoreBrowser only
+    // the classLoaderToUse is needed here to load an external bean
+    UidWrapper createMBean(ObjStoreBrowser objStoreBrowser, String beantype, String type, String stateType, Uid uid,
+            boolean registerBean) {
+        UidWrapper w = new UidWrapper(objStoreBrowser, beantype, type, stateType, uid, registerBean);
+
+        OSEntryBean mbean = null;
+
+        try {
+            Class<OSEntryBean> cl = (Class<OSEntryBean>) classLoaderToUse.loadClass(beantype);
+            Constructor<OSEntryBean> constructor = cl.getConstructor(UidWrapper.class);
+            mbean = constructor.newInstance(w);
+        } catch (Throwable e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
+            tsLogger.i18NLogger.warn_osb_MBeanCtorFail(e);
+            mbean = new OSEntryBean(w);
+        }
+
+        mbean.activate();
+
+        w.setMBean(mbean);
+
+        return w;
+    }
 }

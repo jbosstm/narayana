@@ -226,4 +226,8 @@ public class UidWrapper {
 	public void setAllowRegistration(boolean allowRegistration) {
 		this.allowRegistration = allowRegistration;
 	}
+
+	void setMBean(OSEntryBean mbean) {
+		this.mbean = mbean;
+	}
 }
