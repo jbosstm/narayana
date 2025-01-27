@@ -73,22 +73,6 @@ else
   read
 fi
 
-cd ~/tmp/narayana/$CURRENT/sources/documentation/
-git checkout $CURRENT
-if [[ $? != 0 ]]
-then
-  echo 1>&2 documentation: Tag '$CURRENT' did not exist
-  exit
-fi
-
-rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
-if [[ $? != 0 ]]
-then
-  echo 1>&2 Could not clean install documentation
-  exit
-fi
-cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 if [[ $? != 0 ]]

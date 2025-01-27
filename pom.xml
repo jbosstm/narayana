@@ -304,7 +304,7 @@
           <configuration>
             <serverId>jboss-releases-repository</serverId>
             <nexusUrl>https://repository.jboss.org/nexus/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            <autoReleaseAfterClose>false</autoReleaseAfterClose>
             <skipNexusStagingDeployMojo>${skipNexusStagingDeployMojo}</skipNexusStagingDeployMojo>
           </configuration>
           <executions>
