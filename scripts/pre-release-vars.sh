@@ -1,2 +1,2 @@
-export BRANCH=main
+export BRANCH=7.1
 export CURRENT_SNAPSHOT_VERSION=7.1.1.Final-SNAPSHOT
