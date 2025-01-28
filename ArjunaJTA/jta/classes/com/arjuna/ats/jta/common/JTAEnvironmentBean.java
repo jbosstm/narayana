@@ -5,6 +5,9 @@
 
 package com.arjuna.ats.jta.common;
 
+import static java.security.AccessController.doPrivileged;
+
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1145,8 +1148,19 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean {
         if (userTransactionOperationsProvider == null && userTransactionOperationsProviderClassName != null) {
             synchronized (this) {
                 if (userTransactionOperationsProvider == null && userTransactionOperationsProviderClassName != null) {
-                    userTransactionOperationsProvider = ClassloadingUtility.loadAndInstantiateClass(UserTransactionOperationsProvider.class,
-                            userTransactionOperationsProviderClassName, null);
+                    if (System.getSecurityManager() == null) {
+                        userTransactionOperationsProvider = ClassloadingUtility.loadAndInstantiateClass(
+                                UserTransactionOperationsProvider.class, userTransactionOperationsProviderClassName,
+                                null);
+                    }
+                    else {
+                        doPrivileged((PrivilegedAction<Object>) () -> {
+                            userTransactionOperationsProvider = ClassloadingUtility.loadAndInstantiateClass(
+                                    UserTransactionOperationsProvider.class, userTransactionOperationsProviderClassName,
+                                    null);
+                            return null;
+                        });
+                    }
                 }
             }
         }
