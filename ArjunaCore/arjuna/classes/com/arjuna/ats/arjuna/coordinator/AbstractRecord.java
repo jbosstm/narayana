@@ -53,6 +53,14 @@ public abstract class AbstractRecord extends StateManager
 	public abstract int typeIs ();
 
 	/**
+	 * Ask the record type to clear any data it has previously cached so that the data may be
+	 * recomputed, for example if a record has determined that an endpoint it needs has failed
+	 * then it might cache that fact and stop using it.
+	 */
+	public void clearAnyCachedData() {
+	}
+
+	/**
 	 * If this abstract record caused a heuristic then it should return an
 	 * object which implements <code>HeuristicInformation</code>
 	 *

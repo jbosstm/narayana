@@ -250,6 +250,11 @@ public class ExtendedResourceRecord extends
 		return r;
 	}
 
+	public void clearAnyCachedData() {
+		_cachedType = -1;
+		_endpointFailed = false;
+	}
+
 	public Object value ()
 	{
 		return _resourceHandle;
