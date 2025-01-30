@@ -2721,6 +2721,10 @@ public class BasicAction extends StateManager
              * dropped if readonly.
              */
             boolean isLastResource = record.typeIs() == RecordType.LASTRESOURCE;
+            if (isLastResource) {
+                record.clearAnyCachedData();
+            }
+
             if (isLastResource && prevLastResource == null) {
                 // remember that we've processed a last resource so that if we have two such last resources
                 // we can detect and report heuristics caused by allowing multiple last resources
