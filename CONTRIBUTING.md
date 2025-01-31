@@ -128,19 +128,23 @@ Do not approve the PR until you have either seen a successful CI test of the PR,
 
 #### What can I expect in a code review?
 
-The review procedure is that the reviewer adds comments to the code if they have any issues with it. The person that raised the PR then responds by either:
+The review procedure is that the reviewer:
+* Adds comments to the code if they have any remarks about it - remarks should not be a reason for not providing an approval.
+* Requests changes on the pull request if the pull request contravenes a project expectation - in this case the reviewer should look to cite criteria
+
+These criteria may be:
+* Not specifically addressing the issue being fixed
+* Clean up changes not being in a separate git commit
+* Commit message not prefixed with a JIRA number
+* Too many separate commits in the same pull request related to the same JIRA and the same part of the change
+
+The person that raised the PR then responds by either:
 * Agreeing - in which case they add the change to their local repo and push to their own github fork of it - this will update the PR
 * Disagreeing - Adding a comment on why they think the review comment is invalid.
 
 If the person raising the PR disagrees with the review comment then he/she should respond to the comment saying why they disagree.
 
 Once all disagreements have been resolved and any changes after review have been pushed and retested then the PR may be merged.
-
-Please be aware that as well as general feedback, reviewers may comment if your pull request does not meet one of these criteria:
-* Not specifically address the issue being fixed
-* Clean up changes not in a separate git commit
-* Commit not prefixed with a JIRA number
-* Several separate commits in the same pull request related to the same JIRA
 
 ### Continuous Integration
 
