@@ -126,6 +126,22 @@ Before asking for a review it's best to wait for [Continuous Integration tests](
 Once a review has started both parties should attempt to respond to feedback in a timely manner.
 Do not approve the PR until you have either seen a successful CI test of the PR, or you can reasonably explain why a failure is unrelated to the code changes made in the PR (and documented in a PR comment).
 
+#### What can I expect in a code review?
+
+The review procedure is that the reviewer adds comments to the code if they have any issues with it. The person that raised the PR then responds by either:
+* Agreeing - in which case they add the change to their local repo and push to their own github fork of it - this will update the PR
+* Disagreeing - Adding a comment on why they think the review comment is invalid.
+
+If the person raising the PR disagrees with the review comment then he/she should respond to the comment saying why they disagree.
+
+Once all disagreements have been resolved and any changes after review have been pushed and retested then the PR may be merged.
+
+Please be aware that as well as general feedback, reviewers may comment if your pull request does not meet one of these criteria:
+* Not specifically address the issue being fixed
+* Clean up changes not in a separate git commit
+* Commit not prefixed with a JIRA number
+* Several separate commits in the same pull request related to the same JIRA
+
 ### Continuous Integration
 
 To ensure Narayana is stable for everyone, all changes should go through Narayana continuous integration: when you raise a pull request one of the members of the team will schedule a CI run to test your PR.
