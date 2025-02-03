@@ -5,10 +5,12 @@
 package com.arjuna.ats.internal.arjuna.recovery ;
 
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Vector;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -231,16 +233,18 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
                             _transactionType) != StateStatus.OS_UNKNOWN) {
                         RecoverAtomicAction rcvAtomicAction = doRecoverTransaction(currentUid);
 
-                        /*
-                         * hasFailedParticipants() relies on reportHeuristics being set to true
-                         * during replay_completion in RecoverAtomicAction
-                         */
-                        if (rcvAtomicAction.hasFailedParticipants() || rcvAtomicAction.hasPreparedParticipants()) {
-                            this.hasWorkLeftToDo = true;
-                        } else if (rcvAtomicAction.hasHeuristicParticipants()) {
-                            tsLogger.logger.tracef(
-                                    "AtomicActionRecoveryModule.processTransactionsStatus heuristic action {0} " +
-                                            "was ignored during the assessment of leftover work.", currentUid);
+                        if (isWaitForWorkLeftToDo && Objects.nonNull(rcvAtomicAction)) {
+                            /*
+                             * hasFailedParticipants() relies on reportHeuristics being set to true
+                             * during replay_completion in RecoverAtomicAction
+                             */
+                            if (rcvAtomicAction.hasFailedParticipants() || rcvAtomicAction.hasPreparedParticipants()) {
+                                this.hasWorkLeftToDo = true;
+                            } else if (rcvAtomicAction.hasHeuristicParticipants()) {
+                                tsLogger.logger.tracef(
+                                        "AtomicActionRecoveryModule.processTransactionsStatus heuristic action {0} " +
+                                                "was ignored during the assessment of leftover work.", currentUid);
+                            }
                         }
                     }
                 } catch (ObjectStoreException ex) {
@@ -275,5 +279,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
    private TransactionStatusConnectionManager _transactionStatusConnectionMgr ;
 
    private boolean hasWorkLeftToDo;
+
+    private boolean isWaitForWorkLeftToDo = recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForWorkLeftToDo();
 
 }
