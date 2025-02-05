@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
-    <version>7.1.2.Final</version>
+    <version>7.1.3.Final-SNAPSHOT</version>
   </parent>
   <groupId>org.jboss.narayana</groupId>
   <artifactId>narayana-bom</artifactId>
