@@ -23,104 +23,92 @@ import com.arjuna.ats.arjuna.utils.Utility;
  * the RecoveryManager. The work is actually completed by the recovery
  * modules. These modules are dynamically loaded. The modules to load
  * are specified by properties beginning with "RecoveryExtension"
- * <P>
+ * <p>
  * n.b. recovery scans may be performed by this object (it is a thread and may be started as a background task)
  * and by other ad hoc threads
- * @author
- * @version $Id: PeriodicRecovery.java 2342 2006-03-30 13:06:17Z  $
  */
 
-public class PeriodicRecovery extends Thread
-{
-   /***** public API *****/
+public class PeriodicRecovery extends Thread {
+
+    /***** public API *****/
 
     /**
-     *  state values indicating whether or not some thread is currently scanning. used to define values of field
+     * state values indicating whether or not some thread is currently scanning. used to define values of field
      * {@link PeriodicRecovery#_currentStatus}
      */
-   public static enum Status
-   {
-       /**
-        * state value indicating that no thread is scanning
-        */
-       INACTIVE,
-       /**
-        * state value indicating that some thread is scanning.
-        * n.b. the scanning thread may not be the singleton PeriodicRecovery thread instance
-        */
-       SCANNING
-   }
+    public static enum Status {
+        /**
+         * state value indicating that no thread is scanning
+         */
+        INACTIVE,
+        /**
+         * state value indicating that some thread is scanning.
+         * n.b. the scanning thread may not be the singleton PeriodicRecovery thread instance
+         */
+        SCANNING
+    }
 
     /**
      * state values indicating operating mode of scanning process for ad hoc threads and controlling behaviour of
      * singleton periodic recovery thread. used to define values of field {@link PeriodicRecovery#_currentMode}
-     *
+     * <p>
      * n.b. {@link PeriodicRecovery#_currentStatus} may not transition to state SCANNING when
      * {@link PeriodicRecovery#_currentStatus} is in state SUSPENDED or TERMINATED. However, if a scan is in
      * progress when {@link PeriodicRecovery#_currentMode} transitions to state SUSPENDED or TERMINATED
      * {@link PeriodicRecovery#_currentStatus} may (temporarily) remain in state SCANNING before transitioning
      * to state INACTIVE.
      */
-   public static enum Mode
-   {
-       /**
-        * state value indicating that new scans may proceed
-        */
-       ENABLED,
-       /**
-        * state value indicating that new scans may not proceed and the periodic recovery thread should suspend
-        */
-       SUSPENDED,
-       /**
-        * state value indicating that new scans may not proceed and that the singleton
-        * PeriodicRecovery thread instance should exit if it is still running
-        */
-       TERMINATED
-   }
+    public static enum Mode {
+        /**
+         * state value indicating that new scans may proceed
+         */
+        ENABLED,
+        /**
+         * state value indicating that new scans may not proceed and the periodic recovery thread should suspend
+         */
+        SUSPENDED,
+        /**
+         * state value indicating that new scans may not proceed and that the singleton
+         * PeriodicRecovery thread instance should exit if it is still running
+         */
+        TERMINATED
+    }
 
     /**
-     *
-     *
      * @param threaded
-     * @param useListener  if true, start a socket based listener.
+     * @param useListener if true, start a socket based listener.
      */
-    public PeriodicRecovery (boolean threaded, boolean useListener)
-    {
+    public PeriodicRecovery(boolean threaded, boolean useListener) {
         super("Periodic Recovery");
-        
+
         initialise();
 
         // Load the recovery modules that actually do the work.
 
         loadModules();
 
-        if (useListener)
-        {
-            try
-            {
+        if (useListener) {
+            try {
                 _workerService = new WorkerService(this);
 
                 _listener = new Listener(getServerSocket(), _workerService);
                 _listener.setDaemon(true);
 
                 tsLogger.i18NLogger.info_recovery_PeriodicRecovery_13(_socket.getInetAddress().getHostAddress(),
-                            Integer.toString(_socket.getLocalPort()));
-            }
-            catch (Exception ex) {
+                        Integer.toString(_socket.getLocalPort()));
+            } catch (Exception ex) {
                 tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_9(ex);
             }
         }
 
-        if (threaded)
-        {
+        if (threaded) {
             if (tsLogger.logger.isDebugEnabled()) {
                 tsLogger.logger.debug("PeriodicRecovery: starting background scanner thread");
             }
             start();
         }
 
-        if(useListener && _listener != null)
-        {
+        if (useListener && _listener != null) {
             if (tsLogger.logger.isDebugEnabled()) {
                 tsLogger.logger.debug("PeriodicRecovery: starting listener worker thread");
             }
@@ -130,61 +118,62 @@ public class PeriodicRecovery extends Thread
 
     /**
      * initiate termination of the periodic recovery thread and stop any subsequent scan requests from proceeding.
-     *
+     * <p>
      * this switches the recovery operation mode to TERMINATED. if a scan is in progress when this method is called
      * and has not yet started phase 2 of its scan it will be forced to return before completing phase 2.
      *
      * @param async false if the calling thread should wait for any in-progress scan to complete before returning
      */
-   public void shutdown (boolean async)
-   {
-       // closing the listener socket for not receiving more requests for the recovery scan
-       if (_listener != null) {
-           _listener.closeListenerSockets();
-       }
+    public void shutdown(boolean async) {
+        // closing the listener socket for not receiving more requests for the recovery scan
+        if (_listener != null) {
+            _listener.closeListenerSockets();
+        }
 
-       synchronized (_stateLock) {
-           if (getMode() != Mode.TERMINATED) {
-               if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("PeriodicRecovery: Mode <== TERMINATED");
-               }
-               setMode(Mode.TERMINATED);
-               _stateLock.notifyAll();
-           }
+        synchronized (_stateLock) {
+            if (getMode() != Mode.TERMINATED) {
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("PeriodicRecovery: Mode <== TERMINATED");
+                }
+                setMode(Mode.TERMINATED);
+                _stateLock.notifyAll();
+            }
 
-           if (!async) {
-               // synchronous, so we keep waiting until the currently active scan stops or scanning
-               // changes to TERMINATED
-               while (getStatus() == Status.SCANNING) {
-                   try {
-                       if (tsLogger.logger.isDebugEnabled()) {
-                           tsLogger.logger.debug("PeriodicRecovery: shutdown waiting for scan to end");
-                       }
-                       _stateLock.wait();
-                   } catch(InterruptedException ie) {
-                       // just ignore and retest condition
-                   }
-               }
-               if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("PeriodicRecovery: shutdown scan wait complete");
-               }
-           }
-       }
+            if (!async) {
+                /*
+                 * synchronous, so we keep waiting until the currently active scan
+                 * stops or scanning changes to TERMINATED
+                 */
+                while (getStatus() == Status.SCANNING) {
+                    try {
+                        if (tsLogger.logger.isDebugEnabled()) {
+                            tsLogger.logger.debug("PeriodicRecovery: shutdown waiting for scan to end");
+                        }
+                        _stateLock.wait();
+                    } catch (InterruptedException ie) {
+                        // just ignore and retest condition
+                    }
+                }
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("PeriodicRecovery: shutdown scan wait complete");
+                }
+            }
+        }
 
-       // stopping the listener with closing all opened connections
-       if (_listener != null) {
-           _listener.stopListener();
-       }
+        // stopping the listener with closing all opened connections
+        if (_listener != null) {
+            _listener.stopListener();
+        }
 
-       // if the shutdown is synchronous then make sure the periodic recovery thread really has stopped running
-       if (!async && this.isAlive()) {
-           try {
-               this.join();
-           } catch (InterruptedException e) {
-               // ignore
-           }
-       }
-   }
+        // if the shutdown is synchronous then make sure the periodic recovery thread really has stopped running
+        if (!async && this.isAlive()) {
+            try {
+                this.join();
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
+    }
 
     /**
      * Make all scanning operations suspend.
@@ -208,93 +197,85 @@ public class PeriodicRecovery extends Thread
      * is true, this parameter is overridden.
      * @return the previous mode before attempting the suspension
      */
-   public Mode suspendScan (boolean async)
-   {
-       synchronized (_stateLock)
-       {
-           Mode currentMode = getMode();
+    public Mode suspendScan(boolean async) {
+        synchronized (_stateLock) {
+            Mode currentMode = getMode();
 
-           if (currentMode == Mode.ENABLED && _waitForWorkLeftToDo) {
+            if (currentMode == Mode.ENABLED && _waitForWorkLeftToDo) {
 
-               doScanningWait();
-               doWork();
+                doScanningWait();
+                doWork();
 
-               /*
-                * Now, it is finally possible to start checking if there are transactions that
-                * are still in need of recovery (or resolution, in case of heuristics).
-                */
-               while (_workLeftToDo) {
-                   try {
-                       _stateLock.wait();
-                   } catch (InterruptedException e) {
-                       // we can ignore this exception
-                   }
-               }
-           }
+                /*
+                 * Now, it is finally possible to start checking if there are transactions that
+                 * are still in need of recovery (or resolution, in case of heuristics).
+                 */
+                while (_workLeftToDo) {
+                    try {
+                        _stateLock.wait();
+                    } catch (InterruptedException e) {
+                        // we can ignore this exception
+                    }
+                }
+            }
 
-           // only switch and kick everyone if we are currently ENABLED
-           if (currentMode == Mode.ENABLED) {
-               if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("PeriodicRecovery: Mode <== SUSPENDED");
-               }
-               setMode(Mode.SUSPENDED);
-               _stateLock.notifyAll();
-           }
+            // only switch and kick everyone if we are currently ENABLED
+            if (currentMode == Mode.ENABLED) {
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("PeriodicRecovery: Mode <== SUSPENDED");
+                }
+                setMode(Mode.SUSPENDED);
+                _stateLock.notifyAll();
+            }
 
-           if (!async && _waitForWorkLeftToDo) {
-               // synchronous, so we keep waiting until the currently active scan stops
-               while (getStatus() == Status.SCANNING) {
-                   try {
-                       if (tsLogger.logger.isDebugEnabled()) {
-                           tsLogger.logger.debug("PeriodicRecovery: suspendScan waiting for scan to end");
-                       }
-                       _stateLock.wait();
-                   } catch(InterruptedException ie) {
-                       // just ignore and retest condition
-                   }
-                   if (tsLogger.logger.isDebugEnabled()) {
-                       tsLogger.logger.debug("PeriodicRecovery: suspendScan scan wait compelete");
-                   }
-               }
-           }
+            if (!async && _waitForWorkLeftToDo) {
+                // synchronous, so we keep waiting until the currently active scan stops
+                while (getStatus() == Status.SCANNING) {
+                    try {
+                        if (tsLogger.logger.isDebugEnabled()) {
+                            tsLogger.logger.debug("PeriodicRecovery: suspendScan waiting for scan to end");
+                        }
+                        _stateLock.wait();
+                    } catch (InterruptedException ie) {
+                        // just ignore and retest condition
+                    }
+                    if (tsLogger.logger.isDebugEnabled()) {
+                        tsLogger.logger.debug("PeriodicRecovery: suspendScan scan wait compelete");
+                    }
+                }
+            }
 
-           return currentMode;
-       }
-   }
+            return currentMode;
+        }
+    }
 
     /**
      * resume scanning operations
-     *
+     * <p>
      * This switches the recovery operation mode from SUSPENDED to RESUMED. Any threads which suspended when
      * they tried to start a scan will be woken up by this transition.
      */
-   public void resumeScan ()
-   {
-       synchronized (_stateLock)
-       {
-           if (getMode() == Mode.SUSPENDED) {
-               if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("PeriodicRecovery: Mode <== ENABLED");
-               }
-               setMode(Mode.ENABLED);
-               _stateLock.notifyAll();
-           }
-       }
-   }
+    public void resumeScan() {
+        synchronized (_stateLock) {
+            if (getMode() == Mode.SUSPENDED) {
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("PeriodicRecovery: Mode <== ENABLED");
+                }
+                setMode(Mode.ENABLED);
+                _stateLock.notifyAll();
+            }
+        }
+    }
 
     /**
-     *
      * @return a bound server socket corresponding to the recovery manager
      * @throws IOException if the host name is unknown or the endpoint has already been bound
      */
-    public ServerSocket getServerSocket () throws IOException
-    {
-        synchronized (_socketLock)
-        {
-            if (_socket == null)
-            {
+    public ServerSocket getServerSocket() throws IOException {
+        synchronized (_socketLock) {
+            if (_socket == null) {
                 _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost());
-                
+
                 recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryPort(_socket.getLocalPort());
             }
 
@@ -302,127 +283,132 @@ public class PeriodicRecovery extends Thread
         }
     }
 
-   /**
-    * Implements the background thread which performs the periodic recovery
-    */
+    /**
+     * Implements the background thread which performs the periodic recovery
+     */
+    public void run() {
+        doInitialWait();
 
-   public void run ()
-   {
-       doInitialWait();
+        boolean finished = false;
 
-       boolean finished = false;
+        do {
+            boolean workToDo = false;
+            // ok, get to the point where we are ready to start a scan
+            synchronized (_stateLock) {
+                if (getStatus() == Status.SCANNING) {
+                    // need to wait for some other scan to finish
+                    if (tsLogger.logger.isDebugEnabled()) {
+                        tsLogger.logger.debug("PeriodicRecovery: background thread waiting on other scan");
+                    }
+                    doScanningWait();
+                    // we don't wait around if a worker scan request has just come in
+                    if (getMode() == Mode.ENABLED && !_workerScanRequested) {
+                        /*
+                         * the last guy just finished scanning so we ought to wait a bit rather than just
+                         * pile straight in to do some work
+                         */
+                        if (tsLogger.logger.isDebugEnabled()) {
+                            tsLogger.logger.debug("PeriodicRecovery: background thread backing off");
+                        }
+                        doPeriodicWait();
+                        // if we got told to stop then do so
+                        finished = (getMode() == Mode.TERMINATED);
+                    }
+                } else {
+                    // status == INACTIVE so we can go ahead and scan if scanning is enabled
+                    switch (getMode()) {
+                        case ENABLED:
+                            // ok grab our chance to be the scanning thread
+                            if (tsLogger.logger.isDebugEnabled()) {
+                                tsLogger.logger.debug("PeriodicRecovery: background thread Status <== SCANNING");
+                            }
+                            setStatus(Status.SCANNING);
+                            // must kick any other waiting threads
+                            _stateLock.notifyAll();
+                            workToDo = true;
+                            break;
+                        case SUSPENDED:
+                            // we need to wait while we are suspended
+                            if (tsLogger.logger.isDebugEnabled()) {
+                                tsLogger.logger.debug("PeriodicRecovery: background thread wait while SUSPENDED");
+                            }
+                            doSuspendedWait();
+                            // we come out of here with the lock and either ENABLED or TERMINATED
+                            finished = (getMode() == Mode.TERMINATED);
+                            break;
+                        case TERMINATED:
+                            finished = true;
+                            break;
+                    }
+                }
+            }
 
-       do
-       {
-           boolean workToDo = false;
-           // ok, get to the point where we are ready to start a scan
-           synchronized(_stateLock) {
-               if (getStatus() == Status.SCANNING) {
-                   // need to wait for some other scan to finish
-                   if (tsLogger.logger.isDebugEnabled()) {
-                       tsLogger.logger.debug("PeriodicRecovery: background thread waiting on other scan");
-                   }
-                   doScanningWait();
-                   // we don't wait around if a worker scan request has just come in
-                   if (getMode() == Mode.ENABLED && !_workerScanRequested) {
-                       // the last guy just finished scanning so we ought to wait a bit rather than just
-                       // pile straight in to do some work
-                       if (tsLogger.logger.isDebugEnabled()) {
-                           tsLogger.logger.debug("PeriodicRecovery: background thread backing off");
-                       }
-                       doPeriodicWait();
-                       // if we got told to stop then do so
-                       finished = (getMode() == Mode.TERMINATED);
-                   }
-               } else {
-                   // status == INACTIVE so we can go ahead and scan if scanning is enabled
-                   switch (getMode()) {
-                       case ENABLED:
-                           // ok grab our chance to be the scanning thread
-                           if (tsLogger.logger.isDebugEnabled()) {
-                               tsLogger.logger.debug("PeriodicRecovery: background thread Status <== SCANNING");
-                           }
-                           setStatus(Status.SCANNING);
-                           // must kick any other waiting threads
-                           _stateLock.notifyAll();
-                           workToDo = true;
-                           break;
-                       case SUSPENDED:
-                           // we need to wait while we are suspended
-                           if (tsLogger.logger.isDebugEnabled()) {
-                               tsLogger.logger.debug("PeriodicRecovery: background thread wait while SUSPENDED");
-                           }
-                           doSuspendedWait();
-                           // we come out of here with the lock and either ENABLED or TERMINATED
-                           finished = (getMode() == Mode.TERMINATED);
-                           break;
-                       case TERMINATED:
-                           finished = true;
-                           break;
-                   }
-               }
-           }
+            /*
+             * its ok to start work if requested -- we cannot be stopped now by a mode change to SUSPEND
+             * or TERMINATE until we get through phase 1 and maybe phase 2 if we are lucky
+             */
 
-           // its ok to start work if requested -- we cannot be stopped now by a mode change to SUSPEND
-           // or TERMINATE until we get through phase 1 and maybe phase 2 if we are lucky
+            if (workToDo) {
+                /*
+                 * ok it is now this thread's turn to run a scan. before starting we check if there is a
+                 * worker waiting and reset the waiting flag. we will check again after the scan has
+                 * completed to see if a worker request has come in after starting this scan.
+                 * If so we avoid notifying the worker ensuring a requst is only confirmed when a
+                 * full scan has happened afetr the request was made
+                 */
 
-           if (workToDo) {
-               // ok it is now this thread's turn to run a scan. before starting we check if there is a
-               // worker waiting and reset the waiting flag. we will check again after the scan has
-               // completed to see if a worker request has come in after starting this scan.
-               // if so we avoid notifying the worker ensuring a requst is only confirmed when a
-               // full scan has happened afetr the request was made
+                boolean notifyRequired;
+                synchronized (_stateLock) {
+                    notifyRequired = _workerScanRequested;
+                    _workerScanRequested = false;
+                }
 
-               boolean notifyRequired;
-               synchronized(_stateLock) {
-                   notifyRequired = _workerScanRequested;
-                   _workerScanRequested = false;
-               }
+                // we are in state SCANNING so actually do the scan
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("PeriodicRecovery: background thread scanning");
+                }
+                doWorkInternal();
+                // clear the SCANNING state now we have done
+                synchronized (_stateLock) {
+                    if (tsLogger.logger.isDebugEnabled()) {
+                        tsLogger.logger.debug("PeriodicRecovery: background thread Status <== INACTIVE");
+                    }
+                    setStatus(Status.INACTIVE);
+                    // must kick any other waiting threads
+                    _stateLock.notifyAll();
 
-               // we are in state SCANNING so actually do the scan
-               if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("PeriodicRecovery: background thread scanning");
-               }
-               doWorkInternal();
-               // clear the SCANNING state now we have done
-               synchronized(_stateLock) {
-                   if (tsLogger.logger.isDebugEnabled()) {
-                       tsLogger.logger.debug("PeriodicRecovery: background thread Status <== INACTIVE");
-                   }
-                   setStatus(Status.INACTIVE);
-                   // must kick any other waiting threads
-                   _stateLock.notifyAll();
-                   
-                   // check if we need to notify a listener worker that we just finished  a scan
-                   if (notifyRequired && !_workerScanRequested) {
-                       notifyWorker();
-                   }
+                    // check if we need to notify a listener worker that we just finished  a scan
+                    if (notifyRequired && !_workerScanRequested) {
+                        notifyWorker();
+                    }
 
-                   if (getMode() == Mode.ENABLED && !_workerScanRequested) {
-                       // we managed a full scan and scanning is still enabled
-                       // so wait a bit before the next attempt
-                       if (tsLogger.logger.isDebugEnabled()) {
-                           tsLogger.logger.debug("PeriodicRecovery: background thread backing off");
-                       }
-                       doPeriodicWait();
-                   }
-                   finished = (getMode() == Mode.TERMINATED);
-               }
-           }
-       } while (!finished);
+                    if (getMode() == Mode.ENABLED && !_workerScanRequested) {
+                        /*
+                         * we managed a full scan and scanning is still enabled
+                         * so wait a bit before the next attempt
+                         */
+                        if (tsLogger.logger.isDebugEnabled()) {
+                            tsLogger.logger.debug("PeriodicRecovery: background thread backing off");
+                        }
+                        doPeriodicWait();
+                    }
+                    finished = (getMode() == Mode.TERMINATED);
+                }
+            }
+        } while (!finished);
 
-       // make sure the worker thread is not wedged waiting for a scan to complete
+        // make sure the worker thread is not wedged waiting for a scan to complete
 
-       synchronized(_stateLock) {
-           if (_workerScanRequested) {
-               notifyWorker();
-           }
-       }
+        synchronized (_stateLock) {
+            if (_workerScanRequested) {
+                notifyWorker();
+            }
+        }
 
-       if (tsLogger.logger.isDebugEnabled()) {
-           tsLogger.logger.debug("PeriodicRecovery: background thread exiting");
-       }
-   }
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PeriodicRecovery: background thread exiting");
+        }
+    }
 
     /**
      * Perform a recovery scan on all registered modules.
@@ -431,12 +417,10 @@ public class PeriodicRecovery extends Thread
      * perform its own scan before returning. If scanning is suspended this will require waiting for scanning
      * to resume.
      */
-
-    public final void doWork ()
-    {
+    public final void doWork() {
         boolean workToDo = false;
 
-        synchronized(_stateLock) {
+        synchronized (_stateLock) {
             if (getMode() == Mode.SUSPENDED) {
                 if (tsLogger.logger.isDebugEnabled()) {
                     tsLogger.logger.debug("PeriodicRecovery: ad hoc thread wait while SUSPENDED");
@@ -475,29 +459,33 @@ public class PeriodicRecovery extends Thread
         }
 
         if (workToDo) {
-            // ok it is now this thread's turn to run a scan. before starting we check if there is a
-            // worker waiting and reset the waiting flag. we will check again after the scan has
-            // completed to see if a worker request has come in after starting this scan.
-            // if so we avoid notifying the worker ensuring a request is only confirmed when a
-            // full scan has happened after the request was made
+            /*
+             * ok it is now this thread's turn to run a scan. before starting we check if there is a
+             * worker waiting and reset the waiting flag. we will check again after the scan has
+             * completed to see if a worker request has come in after starting this scan.
+             * If so we avoid notifying the worker ensuring a request is only confirmed when a
+             * full scan has happened after the request was made
+             */
 
             boolean notifyRequired;
 
-            synchronized(_stateLock) {
+            synchronized (_stateLock) {
                 notifyRequired = _workerScanRequested;
                 _workerScanRequested = false;
             }
 
 
-            // ok to start work -- we cannot be stopped now by a mode change to SUSPEND or TERMINATE
-            // until we get through phase 1 and maybe phase 2 if we are lucky
+            /*
+             * ok to start work -- we cannot be stopped now by a mode change to SUSPEND or TERMINATE
+             * until we get through phase 1 and maybe phase 2 if we are lucky
+             */
             if (tsLogger.logger.isDebugEnabled()) {
                 tsLogger.logger.debug("PeriodicRecovery: ad hoc thread scanning");
             }
             doWorkInternal();
 
             // clear the scan for some other thread to have a go
-            synchronized(_stateLock) {
+            synchronized (_stateLock) {
                 if (tsLogger.logger.isDebugEnabled()) {
                     tsLogger.logger.debug("PeriodicRecovery: ad hoc thread Status <== INACTIVE");
                 }
@@ -505,8 +493,10 @@ public class PeriodicRecovery extends Thread
                 // must kick any other waiting threads
                 _stateLock.notifyAll();
 
-                // notify the worker if it was waiting before we started the scan otherwise just leave it to
-                // be notified when the next scan finishes.
+                /*
+                 * notify the worker if it was waiting before we started the scan otherwise just leave it to
+                 * be notified when the next scan finishes.
+                 */
                 if (notifyRequired && !_workerScanRequested) {
                     notifyWorker();
                 }
@@ -518,9 +508,7 @@ public class PeriodicRecovery extends Thread
      * called by the listener worker to wake the periodic recovery thread and get it to start a scan if one
      * is not already in progress
      */
-
-    public void wakeUp()
-    {
+    public void wakeUp() {
         synchronized (_stateLock) {
             _workerScanRequested = true;
             // wake up the periodic recovery thread if no scan is in progress
@@ -540,9 +528,7 @@ public class PeriodicRecovery extends Thread
      *
      * @param module The module to append.
      */
-
-    public final void addModule (RecoveryModule module)
-    {
+    public final void addModule(RecoveryModule module) {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: adding module " + module.getClass().getName());
         }
@@ -558,11 +544,10 @@ public class PeriodicRecovery extends Thread
 
     /**
      * remove a recovery module from the recovery modules list
-     * @param module the module to be removed
+     * @param module     the module to be removed
      * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete
      */
-    public final void removeModule (RecoveryModule module, boolean waitOnScan)
-    {
+    public final void removeModule(RecoveryModule module, boolean waitOnScan) {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: removing module " + module.getClass().getName());
         }
@@ -570,34 +555,32 @@ public class PeriodicRecovery extends Thread
         if (waitOnScan) {
             // make sure any scan which might be using the module has completed
             synchronized (_stateLock) {
-                    doScanningWait();
+                doScanningWait();
             }
         }
-        
+
         // now remove it.
-        
+
         _recoveryModules.remove(module);
     }
-    
+
     /**
      * Remove all modules.
-     * 
+     *
      * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete.
      */
-    
-    public final void removeAllModules (boolean waitOnScan)
-    {
+    public final void removeAllModules(boolean waitOnScan) {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: removing all modules.");
         }
-        
+
         if (waitOnScan) {
             // make sure any scan which might be using the module has completed
             synchronized (_stateLock) {
-                    doScanningWait();
+                doScanningWait();
             }
         }
-        
+
         _recoveryModules.clear();
     }
 
@@ -606,22 +589,21 @@ public class PeriodicRecovery extends Thread
      *
      * @return a copy of the the recovery modules list.
      */
-
-    public final Vector<RecoveryModule> getModules ()
-    {
-        // return a copy of the modules list so that clients are not affected by dynamic modifications to the list
-        // synchronize so that we don't copy in the middle of an add or remove
-
+    public final Vector<RecoveryModule> getModules() {
+        /*
+         * return a copy of the modules list so that clients are not affected by
+         * dynamic modifications to the list synchronize so that we don't copy
+         * in the middle of an add or remove
+         */
         synchronized (_recoveryModules) {
             return new Vector<RecoveryModule>(_recoveryModules);
         }
     }
-    /*
+
+    /**
      * debugging aid
      */
-
-    public Listener getListener()
-    {
+    public Listener getListener() {
         return _listener;
     }
 
@@ -631,10 +613,10 @@ public class PeriodicRecovery extends Thread
      * fetch the current activity status either INACTIVE or SCANNING
      *
      * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     *
      * @return INACTIVE if no scan is in progress or SCANNING if some thread is performing a scan
      */
-    private Status getStatus ()
-    {
+    private Status getStatus() {
         return _currentStatus;
     }
 
@@ -642,28 +624,28 @@ public class PeriodicRecovery extends Thread
      * fetch the current recovery operation mode either ENABLED, SUSPENDED or TERMINATED
      *
      * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     *
      * @return the current recovery operation mode
      */
-    public Mode getMode ()
-    {
+    public Mode getMode() {
         return _currentMode;
     }
 
     /**
      * set the current activity status
+     *
      * @param status the new status to be used
      */
-    private void setStatus (Status status)
-    {
+    private void setStatus(Status status) {
         _currentStatus = status;
     }
 
     /**
      * set the current recovery operation mode
+     *
      * @param mode the new mode to be used
      */
-    private void setMode (Mode mode)
-    {
+    private void setMode(Mode mode) {
         _currentMode = mode;
     }
 
@@ -673,8 +655,7 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
      * _currentStatus is SCANNING and _currentMode is ENABLED
      */
-    private void doBackoffWait()
-    {
+    private void doBackoffWait() {
         try {
             _stateLock.wait(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod() * 1000L);
         } catch (InterruptedException e) {
@@ -688,8 +669,7 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
      * _currentStatus is INACTIVE and _currentMode is ENABLED
      */
-    private void doPeriodicWait()
-    {
+    private void doPeriodicWait() {
         try {
             _stateLock.wait(recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod() * 1000L);
         } catch (InterruptedException e) {
@@ -700,8 +680,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait for the initial required recovery delay or less if the scanning status or scan mode changes
      */
-    private void doInitialWait()
-    {
+    private void doInitialWait() {
         if (_periodicRecoveryInitilizationOffset > 0) {
             try {
                 synchronized (_stateLock) {
@@ -718,8 +697,7 @@ public class PeriodicRecovery extends Thread
      *
      * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
      */
-    private void doSuspendedWait()
-    {
+    private void doSuspendedWait() {
         while (getMode() == Mode.SUSPENDED) {
             try {
                 _stateLock.wait();
@@ -734,8 +712,7 @@ public class PeriodicRecovery extends Thread
      *
      * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
      */
-    private void doScanningWait()
-    {
+    private void doScanningWait() {
         while (getStatus() == Status.SCANNING) {
             try {
                 _stateLock.wait();
@@ -751,36 +728,37 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> this must only be called when _currentStatus is SCANNING. on return _currentStatus is always
      * still SCANNING
      */
-
-    private void doWorkInternal()
-    {
+    private void doWorkInternal() {
         // n.b. we only get here if status is SCANNING
 
-         // Let's assume that we want to block the suspension of the Recovery Manager.
+        // Let's assume that we want to block the suspension of the Recovery Manager.
         _workLeftToDo = true;
 
         if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("Periodic recovery first pass at "+_theTimestamper.format(new Date()));
+            tsLogger.logger.debug("Periodic recovery first pass at " + _theTimestamper.format(new Date()));
         }
 
-        // n.b. this works on a copy of the modules list so it is not affected by
-        // dynamic updates in the middle of a scan, ensuring first+second pass happen
-        // for the same stable set of modules.
+        /*
+         * n.b. this works on a copy of the modules list so it is not affected by
+         * dynamic updates in the middle of a scan, ensuring first+second pass happen
+         * for the same stable set of modules.
+         */
 
         Vector copyOfModules = getModules();
-        
+
         Enumeration modules = copyOfModules.elements();
 
-        while (modules.hasMoreElements())
-        {
+        while (modules.hasMoreElements()) {
             RecoveryModule m = (RecoveryModule) modules.nextElement();
 
-            // we need to ensure we use the class loader context of the recovery module while we are executing
-            // its methods
+            /*
+             * we need to ensure we use the class loader context of the recovery module
+             * while we are executing its methods
+             */
 
             ClassLoader cl = switchClassLoader(m);
             try {
-            m.periodicWorkFirstPass();
+                m.periodicWorkFirstPass();
             } finally {
                 restoreClassLoader(cl);
             }
@@ -793,16 +771,20 @@ public class PeriodicRecovery extends Thread
         // take the lock again so we can do a backoff wait on it
 
         synchronized (_stateLock) {
-            // we have to wait for a bit to avoid catching (too many)
-            // transactions etc. that are really progressing quite happily
+            /*
+             * we have to wait for a bit to avoid catching (too many)
+             * transactions etc. that are really progressing quite happily
+             */
 
             doBackoffWait();
 
-            // we carry on scanning even if scanning is SUSPENDED because the suspending thread
-            // might be waiting on us to complete and we don't want to risk deadlocking it by waiting
-            // here for a resume.
-            // if we have been TERMINATED we bail out now
-            // n.b. if we give up here the caller is responsible for clearing the active scan
+            /*
+             * we carry on scanning even if scanning is SUSPENDED because the suspending thread
+             * might be waiting on us to complete and we don't want to risk deadlocking it by waiting
+             * here for a resume.
+             * If we have been TERMINATED we bail out now
+             * n.b. if we give up here the caller is responsible for clearing the active scan
+             */
 
             if (getMode() == Mode.TERMINATED) {
                 if (tsLogger.logger.isDebugEnabled()) {
@@ -815,14 +797,13 @@ public class PeriodicRecovery extends Thread
         // move on to phase 2
 
         if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("Periodic recovery second pass at "+_theTimestamper.format(new Date()));
+            tsLogger.logger.debug("Periodic recovery second pass at " + _theTimestamper.format(new Date()));
         }
 
         modules = copyOfModules.elements();
         boolean workLeftToDo = false;
 
-        while (modules.hasMoreElements())
-        {
+        while (modules.hasMoreElements()) {
             RecoveryModule m = (RecoveryModule) modules.nextElement();
 
             ClassLoader cl = switchClassLoader(m);
@@ -851,14 +832,11 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} at the point
      * where Status transitions from SCANNING to INACTIVE
      */
-
-    private void notifyWorker()
-    {
+    private void notifyWorker() {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: scan thread signals listener worker");
         }
-        if(_workerService != null)
-        {
+        if (_workerService != null) {
             _workerService.notifyDone();
         }
         _workerScanRequested = false;
@@ -866,7 +844,7 @@ public class PeriodicRecovery extends Thread
 
     /**
      * install the classloader associated with some specific recovery module as the current thread's class loader
-     *
+     * <p>
      * this avoids a problem where the background periodic recovery thread can see the same class as the recovery
      * module's class loader, specifically where a the recovery module resides in a sar (e.g. the XTS code).
      * If class with name "A" is loaded via the background thread class loader as A' and used to create instance
@@ -876,9 +854,7 @@ public class PeriodicRecovery extends Thread
      * @param rm the recovery module whose class loader is to be installed as the new thread class loader
      * @return the class loader currently installed as the thread class loader
      */
-
-    private ClassLoader switchClassLoader(RecoveryModule rm)
-    {
+    private ClassLoader switchClassLoader(RecoveryModule rm) {
         Thread currentThread = Thread.currentThread();
         ClassLoader cl = currentThread.getContextClassLoader();
 
@@ -891,9 +867,7 @@ public class PeriodicRecovery extends Thread
      *
      * @param cl the class loader to be set as the current thread class loader
      */
-
-    private void restoreClassLoader(ClassLoader cl)
-    {
+    private void restoreClassLoader(ClassLoader cl) {
         Thread currentThread = Thread.currentThread();
 
         currentThread.setContextClassLoader(cl);
@@ -902,8 +876,7 @@ public class PeriodicRecovery extends Thread
     /**
      * Load recovery modules prior to starting to recovery. These are loaded in list iteration order.
      */
-    private void loadModules ()
-    {
+    private void loadModules() {
         _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
 
         // TODO Delete this as soon as JBTM-3983 has been implemented
@@ -917,8 +890,7 @@ public class PeriodicRecovery extends Thread
     /**
      * initialise the periodic recovery instance to a suitable initial state
      */
-   private void initialise ()
-    {
+    private void initialise() {
         setStatus(Status.INACTIVE);
         setMode(Mode.ENABLED);
 
@@ -926,13 +898,14 @@ public class PeriodicRecovery extends Thread
         _waitForWorkLeftToDo = recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForWorkLeftToDo();
     }
 
-   // this refers to the modules specified in the recovery manager
-   // property file which are dynamically loaded.
-   /**
-    * list of instances of RecoiveryModule either loaded during startup as specified in the recovery manager
-    * property file or added dynamically by calls to addModule
-    */
-   private final Vector<RecoveryModule> _recoveryModules = new Vector<RecoveryModule>();
+    /**
+     * This refers to the modules specified in the recovery manager property file
+     * which are dynamically loaded.
+     * <p>
+     * list of instances of RecoiveryModule either loaded during startup as specified
+     * in the recovery manager property file or added dynamically by calls to addModule
+     */
+    private final Vector<RecoveryModule> _recoveryModules = new Vector<RecoveryModule>();
 
     /**
      * Time in seconds for which the periodic recovery thread waits to start initial scan.
@@ -940,12 +913,12 @@ public class PeriodicRecovery extends Thread
     private int _periodicRecoveryInitilizationOffset = 0;
 
     /**
-     *  default value for _backoffPeriod if not specified via RecoveryEnvironmentBean
+     * default value for _backoffPeriod if not specified via RecoveryEnvironmentBean
      */
     public static final int _defaultBackoffPeriod = 10;
 
     /**
-     *  default value for _recoveryPeriod if not specified via RecoveryEnvironmentBean
+     * default value for _recoveryPeriod if not specified via RecoveryEnvironmentBean
      */
     public static final int _defaultRecoveryPeriod = 120;
 
@@ -953,20 +926,20 @@ public class PeriodicRecovery extends Thread
      * lock controlling access to {@link PeriodicRecovery#_currentStatus}, {@link PeriodicRecovery#_currentMode} and
      * {@link PeriodicRecovery#_workerScanRequested}
      */
-   private final Object _stateLock = new Object();
+    private final Object _stateLock = new Object();
 
     /**
      * activity status indicating whether we IDLING or some thread is SCANNING
      */
-   private Status _currentStatus;
+    private Status _currentStatus;
 
     /**
      * operating mode indicating whether scanning is ENABLED, SUSPENDED or TERMINATED
      */
-   private Mode _currentMode;
+    private Mode _currentMode;
 
     /**
-     *  flag indicating whether the listener has prodded the recovery thread
+     * flag indicating whether the listener has prodded the recovery thread
      */
     private boolean _workerScanRequested = false;
 
@@ -992,24 +965,22 @@ public class PeriodicRecovery extends Thread
     private WorkerService _workerService = null;
 
     /**
-     * flag to signal that there are transactions to recover;
-     * this flag could ONLY be set to false during the
-     * periodic recovery cycle (i.e. doWorkInternal()).
+     * flag to signal that there are transactions to recover; this flag could ONLY
+     * be set to false during the periodic recovery cycle (i.e. doWorkInternal()).
      */
     private volatile boolean _workLeftToDo = true;
 
     // Variable to cache RecoveryEnvironmentBean.isWaitForWorkLeftToDo()
     private boolean _waitForWorkLeftToDo;
 
-   /*
-    * Read the system properties to set the configurable options
-    *
-    * Note: if we start and stop the service then changes to the timeouts
-    * won't be reflected. We will need to modify this eventually.
-    */
+    /*
+     * Read the system properties to set the configurable options
+     *
+     * Note: if we start and stop the service then changes to the timeouts
+     * won't be reflected. We will need to modify this eventually.
+     */
 
-   static
-   {
-   }
+    static {
+    }
 
 }
