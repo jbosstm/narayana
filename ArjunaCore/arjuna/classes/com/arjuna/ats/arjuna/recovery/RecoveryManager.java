@@ -18,23 +18,19 @@ import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerStatus;
 import com.arjuna.common.util.ConfigurationInfo;
 
-class ScanThread extends Thread
-{
+class ScanThread extends Thread {
 
-    public ScanThread (RecoveryManagerImple theImple, RecoveryScan callback)
-    {
-	super("RecoveryManagerScanThread");
+    public ScanThread(RecoveryManagerImple theImple, RecoveryScan callback) {
+        super("RecoveryManagerScanThread");
 
-	_theImple = theImple;
-	_callback = callback;
+        _theImple = theImple;
+        _callback = callback;
 
-	setDaemon(true);
+        setDaemon(true);
     }
 
-    public void run ()
-    {
-        if (_theImple != null)
-        {
+    public void run() {
+        if (_theImple != null) {
             _theImple.scan();
 
             if (_callback != null)
@@ -43,21 +39,19 @@ class ScanThread extends Thread
     }
 
     private RecoveryManagerImple _theImple;
-    private RecoveryScan         _callback;
+    private RecoveryScan _callback;
 }
 
 /**
  * The RecoveryManager daemon.
  */
+public class RecoveryManager {
 
-public class RecoveryManager
-{
     /**
      * In this mode the recovery manager runs periodically but may
      * also be driven through messages or via the scan operation if
      * it is embedded.
      */
-
     public static final int INDIRECT_MANAGEMENT = 0;
 
     /**
@@ -65,7 +59,6 @@ public class RecoveryManager
      * will only work if driven through messages or via the scan
      * operation if it is embedded.
      */
-
     public static final int DIRECT_MANAGEMENT = 1;
 
     /**
@@ -73,17 +66,14 @@ public class RecoveryManager
      * been created yet then it will be. The manager will be created in the
      * INDIRECT_MANAGEMENT mode.
      *
+     * @return the manager.
      * @throws IllegalArgumentException thrown if the manager has already been
      * created in a different mode to that requested.
-     *
-     * @return the manager.
      */
-
-    public static synchronized final RecoveryManager manager () throws IllegalArgumentException
-    {
-   	if (_recoveryManager == null)    		
-   		return manager(RecoveryManager.INDIRECT_MANAGEMENT);
-    return _recoveryManager;
+    public static synchronized final RecoveryManager manager() throws IllegalArgumentException {
+        if (_recoveryManager == null)
+            return manager(RecoveryManager.INDIRECT_MANAGEMENT);
+        return _recoveryManager;
     }
 
     /**
@@ -92,32 +82,26 @@ public class RecoveryManager
      * management mode defined by the parameter.
      *
      * @param mode the management mode for the manager.
-     *
+     * @return the manager.
      * @throws IllegalArgumentException thrown if the manager has already been
      * created in a different mode to that requested.
-     *
-     * @return the manager.
      */
+    public static synchronized final RecoveryManager manager(int mode) throws IllegalArgumentException {
+        if (_recoveryManager == null)
+            _recoveryManager = new RecoveryManager(mode);
+        else {
+            if (_recoveryManager.mode() != mode)
+                throw new IllegalArgumentException(tsLogger.i18NLogger.get_recovery_manager_already_started_in_different_mode(_recoveryManager.mode(), mode));
+        }
 
-    public static synchronized final RecoveryManager manager (int mode) throws IllegalArgumentException
-    {
-	if (_recoveryManager == null)
-	    _recoveryManager = new RecoveryManager(mode);
-	else
-	{
-	    if (_recoveryManager.mode() != mode)
-		  throw new IllegalArgumentException(tsLogger.i18NLogger.get_recovery_manager_already_started_in_different_mode(_recoveryManager.mode(), mode));
-	}
-
-	return _recoveryManager;
+        return _recoveryManager;
     }
 
     /**
      * Delay the start of the recovery manager thread when creating an indirect recovery manager.
      */
-    public static synchronized void delayRecoveryManagerThread()
-    {
-        delayRecoveryManagerThread = true ;
+    public static synchronized void delayRecoveryManagerThread() {
+        delayRecoveryManagerThread = true;
     }
 
     /**
@@ -126,9 +110,7 @@ public class RecoveryManager
      *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final void scan ()
-    {
+    public final void scan() {
         checkState();
 
         _theImple.scan();
@@ -142,17 +124,14 @@ public class RecoveryManager
      * @param callback callback The callback mechanism used to
      * inform users that the scan has completed. If this is <code>null</code>
      * then no callback will happen and asynchronous scanning will occur.
-     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final void scan (RecoveryScan callback)
-    {
+    public final void scan(RecoveryScan callback) {
         checkState();
 
-	ScanThread st = new ScanThread(_theImple, callback);
+        ScanThread st = new ScanThread(_theImple, callback);
 
-	st.start();
+        st.start();
     }
 
     /**
@@ -161,9 +140,7 @@ public class RecoveryManager
      *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final void terminate ()
-    {
+    public final void terminate() {
         terminate(false);
     }
 
@@ -175,9 +152,7 @@ public class RecoveryManager
      * @param async false means wait for any recovery scan in progress to complete.
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final synchronized void terminate (boolean async)
-    {
+    public final synchronized void terminate(boolean async) {
         checkState();
 
         synchronized (RecoveryManager.class) {
@@ -191,11 +166,8 @@ public class RecoveryManager
      * If the recovery manager has been shutdown previously then recreate it in
      * the same mode as before. Otherwise ignore.
      */
-
-    public final synchronized void initialize ()
-    {
-        if (_theImple == null)
-        {
+    public final synchronized void initialize() {
+        if (_theImple == null) {
             if ((_mode == RecoveryManager.INDIRECT_MANAGEMENT) && !delayRecoveryManagerThread)
                 _theImple = new RecoveryManagerImple(true);
             else
@@ -211,9 +183,7 @@ public class RecoveryManager
      *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public void waitForTermination ()
-    {
+    public void waitForTermination() {
         checkState();
 
         _theImple.waitForTermination();
@@ -232,9 +202,7 @@ public class RecoveryManager
      * @param async false means wait for the recovery manager to finish any scans before returning.
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public void suspend (boolean async)
-    {
+    public void suspend(boolean async) {
         trySuspend(async);
     }
 
@@ -258,9 +226,7 @@ public class RecoveryManager
     /**
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public void resume ()
-    {
+    public void resume() {
         checkState();
 
         _theImple.resumeScan();
@@ -271,11 +237,10 @@ public class RecoveryManager
      *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    public void startRecoveryManagerThread()
-    {
+    public void startRecoveryManagerThread() {
         checkState();
 
-        _theImple.start() ;
+        _theImple.start();
     }
 
     /**
@@ -285,53 +250,46 @@ public class RecoveryManager
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
-    public final void addModule (RecoveryModule module)
-    {
+    public final void addModule(RecoveryModule module) {
         checkState();
 
-	_theImple.addModule(module);
+        _theImple.addModule(module);
     }
 
     /**
      * Remove a recovery module from the system.
      *
-     * @param module The module to remove.
+     * @param module     The module to remove.
      * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final void removeModule (RecoveryModule module, boolean waitOnScan)
-    {
+    public final void removeModule(RecoveryModule module, boolean waitOnScan) {
         checkState();
 
-	_theImple.removeModule(module, waitOnScan);
+        _theImple.removeModule(module, waitOnScan);
     }
 
     /**
      * Remove all modules.
-     * 
+     * <p>
      * WARNING: Use with extreme care as this will stop recovery from doing anything!
      */
-    
-    public final void removeAllModules (boolean waitOnScan)
-    {
+    public final void removeAllModules(boolean waitOnScan) {
         checkState();
-        
+
         _theImple.removeAllModules(waitOnScan);
     }
-    
+
     /**
      * Obtain a snapshot list of available recovery modules.
      *
      * @return a snapshot list of the currently installed recovery modules
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-
-    public final Vector<RecoveryModule> getModules ()
-    {
+    public final Vector<RecoveryModule> getModules() {
         checkState();
 
-	return _theImple.getModules();
+        return _theImple.getModules();
     }
 
     /**
@@ -340,21 +298,17 @@ public class RecoveryManager
      *
      * @return the management mode.
      */
-
-    public final int mode ()
-    {
-	return _mode;
+    public final int mode() {
+        return _mode;
     }
 
-    public static InetAddress getRecoveryManagerHost() throws UnknownHostException
-    {
+    public static InetAddress getRecoveryManagerHost() throws UnknownHostException {
         String host = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress();
 
         return Utility.hostNameToInetAddress(host);
     }
 
-    public static int getRecoveryManagerPort()
-    {
+    public static int getRecoveryManagerPort() {
         return recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryPort();
     }
 
@@ -364,8 +318,7 @@ public class RecoveryManager
      * @return a bound client socket connection to the recovery manager
      * @throws IOException
      */
-    public static Socket getClientSocket () throws IOException
-    {
+    public static Socket getClientSocket() throws IOException {
         Socket socket = new Socket(getRecoveryManagerHost(), getRecoveryManagerPort());
 
         tsLogger.i18NLogger.info_recovery_RecoveryManager_4(socket.getInetAddress().getHostAddress(), Integer.toString(socket.getLocalPort()));
@@ -376,92 +329,75 @@ public class RecoveryManager
     /**
      * Run the RecoveryManager. See Administration manual for details.
      */
+    public static void main(String[] args) {
+        boolean testMode = false;
 
-    public static void main (String[] args)
-    {
-	boolean testMode = false;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].compareTo("-help") == 0) {
+                System.out.println("Usage: com.arjuna.ats.arjuna.recovery.RecoveryManager [-help] [-test] [-version]");
+                System.exit(0);
+            }
+            if (args[i].compareTo("-version") == 0) {
+                System.out.println("Version " + ConfigurationInfo.getVersion());
+                System.exit(0);
+            }
+            if (args[i].compareTo("-test") == 0) {
+                testMode = true;
+            }
+        }
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: com.arjuna.ats.arjuna.recovery.RecoveryManager [-help] [-test] [-version]");
-		System.exit(0);
-	    }
-	    if (args[i].compareTo("-version") == 0)
-	    {
-		System.out.println("Version " + ConfigurationInfo.getVersion());
-		System.exit(0);
-	    }
-	    if (args[i].compareTo("-test") == 0)
-	    {
-		testMode = true;
-	    }
-	}
-
-        try
-        {
+        try {
             RecoveryManager manager = null;
 
-            try
-            {
+            try {
                 manager = manager();
-            }
-            catch(Throwable e)
-            {
-                if(testMode)
-                {
-                    // in some test cases the recovery manager is killed and restarted in quick succession.
-                    // sometimes the O/S does not free up the port fast enough, so we can't reclaim it on restart.
-                    // For test mode only, we therefore have a simple backoff-retry kludge:
-                    System.err.println("Warning: got exception '"+e.toString()+"' on startup, will retry in 5 seconds in the hope it is transient.");
-                    try
-                    {
+            } catch (Throwable e) {
+                if (testMode) {
+                    /*
+                     * in some test cases the recovery manager is killed and restarted in quick succession.
+                     * sometimes the O/S does not free up the port fast enough, so we can't reclaim it on restart.
+                     * For test mode only, we therefore have a simple backoff-retry kludge:
+                     */
+                    System.err.println("Warning: got exception '" + e.toString() + "' on startup, will retry in 5 seconds in the hope it is transient.");
+                    try {
                         Thread.sleep(5000);
-                    }
-                    catch(InterruptedException interruptedException)
-                    {
+                    } catch (InterruptedException interruptedException) {
                         System.err.println("The retry attempt was interrupted. Exiting...");
                         throw new IllegalStateException(interruptedException);
                     }
                     manager = manager();
-                }
-                else
-                {
+                } else {
                     throw e;
                 }
             }
 
-            if (testMode)
-            {
+            if (testMode) {
                 System.out.println("Ready");
             }
 
-            // this is never going to return because it only returns when shutdown is called and
-            // there is nothing which is going to call shutdown. we probably aught  to provide a
-            // clean way of terminating this process.
+            /*
+             * this is never going to return because it only returns when shutdown is called and
+             * there is nothing which is going to call shutdown. we probably aught  to provide a
+             * clean way of terminating this process.
+             */
 
             manager.waitForTermination();
 
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             tsLogger.i18NLogger.unexpected_exception(e);
         }
     }
 
-    private RecoveryManager (int mode)
-    {
-	if ((mode == RecoveryManager.INDIRECT_MANAGEMENT) && !delayRecoveryManagerThread)
-	    _theImple = new RecoveryManagerImple(true);
-	else
-	    _theImple = new RecoveryManagerImple(false);
+    private RecoveryManager(int mode) {
+        if ((mode == RecoveryManager.INDIRECT_MANAGEMENT) && !delayRecoveryManagerThread)
+            _theImple = new RecoveryManagerImple(true);
+        else
+            _theImple = new RecoveryManagerImple(false);
 
-	_mode = mode;
+        _mode = mode;
     }
 
-    private final void checkState ()
-    {
+    private final void checkState() {
         if (_theImple == null)
             throw new IllegalStateException(tsLogger.i18NLogger.get_recovery_manager_implementation_is_not_set());
     }
@@ -470,5 +406,5 @@ public class RecoveryManager
     private int _mode;
 
     private static RecoveryManager _recoveryManager = null;
-    private static boolean delayRecoveryManagerThread ;
+    private static boolean delayRecoveryManagerThread;
 }
