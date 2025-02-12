@@ -216,7 +216,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
                             _transactionType) != StateStatus.OS_UNKNOWN) {
                         RecoverAtomicAction rcvAtomicAction = doRecoverTransaction(currentUid);
 
-                        if (isWaitForWorkLeftToDo && Objects.nonNull(rcvAtomicAction)) {
+                        if (Objects.nonNull(rcvAtomicAction)) {
                             /*
                              * hasFailedParticipants() relies on reportHeuristics being set to true
                              * during replay_completion in RecoverAtomicAction
@@ -262,7 +262,5 @@ public class AtomicActionRecoveryModule implements RecoveryModule {
     private boolean hasWorkLeftToDo;
 
     private boolean problemDuringRecovery;
-
-    private boolean isWaitForWorkLeftToDo = recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForWorkLeftToDo();
 
 }

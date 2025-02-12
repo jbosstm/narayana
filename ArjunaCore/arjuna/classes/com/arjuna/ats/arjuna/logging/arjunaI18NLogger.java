@@ -1645,13 +1645,6 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void unexpected_exception(@Cause() Throwable arg0);
 
-	// TODO Delete this as soon as JBTM-3983 has been implemented
-	@Message(id = 12415, value = "You have enabled a feature that has not yet been fully assessed for compliance " +
-			"across all Recovery Modules provided by Narayana. For more details, " +
-			"please refer to https://issues.redhat.com/browse/JBTM-3893.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	void warn_feature_not_supported_across_all_recovery_modules();
-
 	@Message(id = 12416, value = "BasicAction.save_state - IOException: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_coordinator_BasicAction_72(String cause);
