@@ -74,8 +74,6 @@ public class RecoverySuspendTest {
          * processed by the XA Recovery Module
          */
         _jtaEnvironmentBean.setOrphanSafetyInterval(periodicRecoveryPeriod);
-        // don't sign off until the store is empty
-        _recoveryConfig.setWaitForWorkLeftToDo(true);
 
         _recoveryConfig.setRecoveryModuleClassNames(modules);
 
@@ -185,7 +183,7 @@ public class RecoverySuspendTest {
         _manager = RecoveryManager.manager(RecoveryManager.INDIRECT_MANAGEMENT);
 
         // Synchronization is not needed (i.e. async = true) as isWaitForWorkLeftToDo() == true
-        _manager.suspend(true);
+        _manager.suspend(true, true);
 
         Assertions.assertEquals(numberOfCommits, BytemanControlledXAResource.getCommitCallCounter(),
                 String.format("BytemanControlledXAResource's getCommitCallCounter is %d but it should have been %d",

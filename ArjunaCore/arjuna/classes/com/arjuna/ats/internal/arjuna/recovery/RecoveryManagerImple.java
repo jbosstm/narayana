@@ -135,9 +135,16 @@ public class RecoveryManagerImple {
      * preserve data integrity.
      *
      * @param async false means wait for the recovery manager to finish any scans before returning.
+     * @param waitForWorkLeftToDo when true, it is important that, before invoking this method,
+     * all transactions will either be terminated by the Transaction Reaper or they have prepared
+     * and a log has been written, otherwise the suspend call may never return.
      */
+    public PeriodicRecovery.Mode trySuspendScan(boolean async, boolean waitForWorkLeftToDo) {
+        return _periodicRecovery.suspendScan(async, waitForWorkLeftToDo);
+    }
+
     public PeriodicRecovery.Mode trySuspendScan(boolean async) {
-        return _periodicRecovery.suspendScan(async);
+        return trySuspendScan(async, false);
     }
 
     public void resumeScan() {

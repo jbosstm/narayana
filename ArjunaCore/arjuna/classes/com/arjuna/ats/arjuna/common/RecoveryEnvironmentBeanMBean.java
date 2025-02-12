@@ -39,5 +39,6 @@ public interface RecoveryEnvironmentBeanMBean
 
     boolean isTimeoutSocket();
 
+    @Deprecated(forRemoval = true)
     boolean isWaitForWorkLeftToDo();
 }

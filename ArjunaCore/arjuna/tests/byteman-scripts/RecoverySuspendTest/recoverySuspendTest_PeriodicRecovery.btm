@@ -5,14 +5,14 @@
 ########################################################################
 
 ########################################################################
-# Rule to fail PeriodicRecovery.suspendScan(boolean) when
+# Rule to fail PeriodicRecovery.suspendScan(boolean,boolean) when
 # PeriodicRecovery._workLeftToDo is set to true after doWork
 # gets invoked
 #########################################################################
 
 RULE failSuspendScan
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
-METHOD suspendScan
+METHOD suspendScan(boolean,boolean)
 AFTER INVOKE doWork
 IF $this._workLeftToDo
 DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] _workLeftToDo was true while it should have been false")
