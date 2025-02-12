@@ -40,6 +40,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     private volatile int transactionStatusManagerExpiryTime = 12; // hours
 
     private volatile boolean waitForWorkLeftToDo = false;
+    private volatile boolean waitForHeuristicDuringSuspension = false;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.expiryScanner")
     private volatile List<String> expiryScannerClassNames = new ArrayList<String>();
@@ -450,7 +451,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      *
      * If there is no pre-instantiated instance set and classloading or instantiation of one or more
      * elements fails, this method will log an appropriate warning and return a non-null set with
-     * fewer elements. 
+     * fewer elements.
      *
      * @return the set of RecoveryModule instances.
      */
@@ -489,7 +490,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
             }
         }
     }
-    
+
 
     /**
      * Returns a list of names of classes that implement RecoveryActivator.
@@ -607,7 +608,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      * <ul>
      *    <li>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</li>
      * </ul>
-     * 
+     *
      * @return true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should wait that all
      * {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover all their
      * transactions before shutting down; false otherwise.
@@ -619,7 +620,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 
     /**
      * Configure the suspension of {@link com.arjuna.ats.arjuna.recovery.RecoveryManager}
-     * 
+     *
      * @param waitForWorkLeftToDo true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should
      * wait that all {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover
      * all their transactions before shutting down; false otherwise.
@@ -627,5 +628,29 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setWaitForWorkLeftToDo(boolean waitForWorkLeftToDo)
     {
         this.waitForWorkLeftToDo = waitForWorkLeftToDo;
+    }
+
+    /**
+     * <p>This method gives information about the behaviour of
+     * {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} when suspending.
+     * <p>In particular, heuristic transactions will be waited upon in case the graceful suspension
+     * of {@link com.arjuna.ats.arjuna.recovery.RecoveryManager#suspend(boolean,boolean)} is active
+     *
+     * @return true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should wait that all
+     * heuristic transactions have been resolved before suspending; false otherwise.
+     */
+    public boolean isWaitForHeuristicDuringSuspension() {
+        return this.waitForHeuristicDuringSuspension;
+    }
+
+    /**
+     * Configure how {@link com.arjuna.ats.arjuna.recovery.RecoveryManager}'s suspension should behave
+     * when there are heuristic transactions in the object store.
+     *
+     * @param waitForHeuristicDuringSuspension true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager}
+     * should wait that all heuristic transactions have been resolved before suspending; false otherwise.
+     */
+    public void setWaitForHeuristicDuringSuspension(boolean waitForHeuristicDuringSuspension) {
+        this.waitForHeuristicDuringSuspension = waitForHeuristicDuringSuspension;
     }
 }
