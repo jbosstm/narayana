@@ -79,7 +79,6 @@
           </excludes>
         </configuration>
       </plugin>
-
       <plugin>
         <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -95,6 +94,24 @@
         <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>rulecheck-test</id>
+            <goals>
+              <goal>rulecheck</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*.btm</include>
+              </includes>
+              <verbose>true</verbose>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
