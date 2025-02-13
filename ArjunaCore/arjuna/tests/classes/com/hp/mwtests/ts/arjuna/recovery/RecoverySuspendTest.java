@@ -164,7 +164,9 @@ public class RecoverySuspendTest {
             @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest")
     })
     public void testSuspensionWhenThereIsAHeuristicMixedAtomicActionToRecoverButNotWaiting() {
-        heuristicTest(TwoPhaseOutcome.HEURISTIC_MIXED);
+        // false is the default anyway
+        _recoveryConfig.setWaitForHeuristicDuringSuspension(false);
+        heuristicTest(TwoPhaseOutcome.HEURISTIC_MIXED, 1);
     }
 
     @Test
@@ -173,10 +175,34 @@ public class RecoverySuspendTest {
             @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest")
     })
     public void testSuspensionWhenThereIsAHeuristicHazardAtomicActionToRecoverButNotWaiting() {
-        heuristicTest(TwoPhaseOutcome.HEURISTIC_HAZARD);
+        // false is the default anyway
+        _recoveryConfig.setWaitForHeuristicDuringSuspension(false);
+        heuristicTest(TwoPhaseOutcome.HEURISTIC_HAZARD, 1);
     }
 
-    private void heuristicTest(int heuristicType) {
+    @Test
+    @BMScripts(scripts = {
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledRecord"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_SwitchAutomatically")
+    })
+    public void testSuspensionWhenThereIsAHeuristicHazardAtomicActionToRecoverAndWaiting() {
+        _recoveryConfig.setWaitForHeuristicDuringSuspension(true);
+        heuristicTest(TwoPhaseOutcome.HEURISTIC_HAZARD, 2);
+    }
+
+    @Test
+    @BMScripts(scripts = {
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledRecord"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_SwitchAutomatically")
+    })
+    public void testSuspensionWhenThereIsAHeuristicMixedAtomicActionToRecoverAndWaiting() {
+        _recoveryConfig.setWaitForHeuristicDuringSuspension(true);
+        heuristicTest(TwoPhaseOutcome.HEURISTIC_MIXED, 2);
+    }
+
+    private void heuristicTest(int heuristicType, int numberOfCommits) {
         // Make sure that the test environment is ready
         BytemanControlledRecord.resetCommitCallCounter();
         BytemanControlledRecord.resetGreenFlag();
