@@ -156,6 +156,11 @@ under the License.
       <url>http://my.repository.com/repo/path</url>
     </mirror>
      -->
+    <mirror>
+      <id>jboss-public-repository-group-mirror</id>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <mirrorOf>jboss-public-repository-group</mirrorOf>
+    </mirror>
   </mirrors>
 
   <!-- profiles
