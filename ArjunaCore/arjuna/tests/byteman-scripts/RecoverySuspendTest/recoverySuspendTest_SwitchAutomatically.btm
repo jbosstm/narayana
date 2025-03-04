@@ -1,0 +1,15 @@
+########################################################################
+# Rule to switch automatically
+# _recoveryConfig.setWaitForHeuristicDuringSuspension(boolean) to false
+# once the greenFlag has been set
+########################################################################
+
+RULE SwitchWaitForHeuristicDuringSuspensionToFalse
+CLASS com.arjuna.ats.arjuna.recovery.RecoverAtomicAction
+METHOD hasHeuristicParticipants
+AT EXIT
+BIND returnValue:boolean = $!
+IF returnValue
+DO debug("[RecoverAtomicAction] Heuristic transaction acknowledged"),
+   com.arjuna.ats.arjuna.common.recoveryPropertyManager.getRecoveryEnvironmentBean().setWaitForHeuristicDuringSuspension(false)
+ENDRULE
