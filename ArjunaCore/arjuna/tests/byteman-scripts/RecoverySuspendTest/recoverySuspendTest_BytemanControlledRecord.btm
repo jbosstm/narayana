@@ -12,15 +12,15 @@
 
 ########################################################################
 # Rule to set waitForWorkLeftToDoFlag when
-# PeriodicRecovery._waitForWorkLeftToDo is read in
-# PeriodicRecovery.suspendScan(boolean)
+# the parameter waitForWorkLeftToDo is read in
+# PeriodicRecovery.suspendScan(boolean,boolean)
 ########################################################################
 
 RULE setwaitForWorkLeftToDoFlag
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
-METHOD suspendScan
-AFTER READ _waitForWorkLeftToDo
-IF $this._waitForWorkLeftToDo
+METHOD suspendScan(boolean,boolean)
+AFTER READ $2
+IF $2
 DO debug("[PeriodicRecovery] Setting waitForWorkLeftToDoFlag to true"),
    flag("waitForWorkLeftToDoFlag")
 ENDRULE

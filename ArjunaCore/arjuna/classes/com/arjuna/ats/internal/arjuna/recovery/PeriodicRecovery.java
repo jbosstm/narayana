@@ -2,6 +2,7 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
+
 package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -183,25 +183,27 @@ public class PeriodicRecovery extends Thread {
      * recovery thread will suspend its thread until the mode changes.
      * If a scan is in progress when this method is called it will complete its scan
      * without suspending.
-     * <p>
-     * Note that this method is also influenced by
-     * {@link RecoveryEnvironmentBean#isWaitForWorkLeftToDo()}.
-     * In case {@link RecoveryEnvironmentBean#setWaitForWorkLeftToDo(boolean)} was
-     * initialised to true, it is important that, before invoking this method, all
-     * transactions will either be terminated by the Transaction Reaper or they
-     * have prepared and a log has been written, otherwise the suspend call may
-     * never return.
-     *
      * @param async false if the calling thread should wait for any in-progress scan to
-     * complete before returning. In case {@link RecoveryEnvironmentBean#isWaitForWorkLeftToDo()}
+     * complete before returning. In case {@code waitForWorkLeftToDo}
      * is true, this parameter is overridden.
+     * @param waitForWorkLeftToDo when true, it is important that, before invoking this method,
+     * all transactions will either be terminated by the Transaction Reaper or they have prepared
+     * and a log has been written, otherwise the suspend call may never return.
      * @return the previous mode before attempting the suspension
      */
-    public Mode suspendScan(boolean async) {
+    public Mode suspendScan(boolean async, boolean waitForWorkLeftToDo) {
+
+        // TODO Delete this as soon as JBTM-3983 has been implemented
+        if (waitForWorkLeftToDo && !_recoveryModules.isEmpty() &&
+                _recoveryModules.stream().anyMatch(
+                        x -> !x.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"))) {
+            tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
+        }
+
         synchronized (_stateLock) {
             Mode currentMode = getMode();
 
-            if (currentMode == Mode.ENABLED && _waitForWorkLeftToDo) {
+            if (currentMode == Mode.ENABLED && waitForWorkLeftToDo) {
 
                 doScanningWait();
                 doWork();
@@ -228,7 +230,7 @@ public class PeriodicRecovery extends Thread {
                 _stateLock.notifyAll();
             }
 
-            if (!async && _waitForWorkLeftToDo) {
+            if (!async && waitForWorkLeftToDo) {
                 // synchronous, so we keep waiting until the currently active scan stops
                 while (getStatus() == Status.SCANNING) {
                     try {
@@ -247,6 +249,23 @@ public class PeriodicRecovery extends Thread {
 
             return currentMode;
         }
+    }
+
+    /**
+     * Make all scanning operations suspend.
+     * <p>
+     * This switches the recovery operation mode to <code>SUSPENDED</code>.
+     * Any attempt to start a new scan either by ad hoc threads or by the periodic
+     * recovery thread will suspend its thread until the mode changes.
+     * If a scan is in progress when this method is called it will complete its scan
+     * without suspending.
+     * @param async false if the calling thread should wait for any in-progress scan to
+     * complete before returning. In case {@code waitForWorkLeftToDo}
+     * is true, this parameter is overridden.
+     * @return the previous mode before attempting the suspension
+     */
+    public Mode suspendScan(boolean async) {
+        return suspendScan(async, false);
     }
 
     /**
@@ -531,12 +550,6 @@ public class PeriodicRecovery extends Thread {
     public final void addModule(RecoveryModule module) {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("PeriodicRecovery: adding module " + module.getClass().getName());
-        }
-
-        // TODO Delete this as soon as JBTM-3983 has been implemented
-        if (_waitForWorkLeftToDo &&
-                module.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule")) {
-            tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
         }
 
         _recoveryModules.add(module);
@@ -878,13 +891,6 @@ public class PeriodicRecovery extends Thread {
      */
     private void loadModules() {
         _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
-
-        // TODO Delete this as soon as JBTM-3983 has been implemented
-        if (_waitForWorkLeftToDo && !_recoveryModules.isEmpty() &&
-                _recoveryModules.stream().anyMatch(
-                        x -> !x.getClass().getName().equals("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"))) {
-            tsLogger.i18NLogger.warn_feature_not_supported_across_all_recovery_modules();
-        }
     }
 
     /**
@@ -895,7 +901,6 @@ public class PeriodicRecovery extends Thread {
         setMode(Mode.ENABLED);
 
         _periodicRecoveryInitilizationOffset = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryInitilizationOffset();
-        _waitForWorkLeftToDo = recoveryPropertyManager.getRecoveryEnvironmentBean().isWaitForWorkLeftToDo();
     }
 
     /**
@@ -969,9 +974,6 @@ public class PeriodicRecovery extends Thread {
      * be set to false during the periodic recovery cycle (i.e. doWorkInternal()).
      */
     private volatile boolean _workLeftToDo = true;
-
-    // Variable to cache RecoveryEnvironmentBean.isWaitForWorkLeftToDo()
-    private boolean _waitForWorkLeftToDo;
 
     /*
      * Read the system properties to set the configurable options

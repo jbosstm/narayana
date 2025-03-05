@@ -60,8 +60,6 @@ public class RecoverySuspendTest {
         // Let's go quick on this
         _recoveryConfig.setRecoveryBackoffPeriod(recoveryBackoffPeriod);
         _recoveryConfig.setPeriodicRecoveryPeriod(periodicRecoveryPeriod);
-        // don't sign off until the store is empty
-        _recoveryConfig.setWaitForWorkLeftToDo(true);
 
         // the test set of modules
         _recoveryConfig.setRecoveryModuleClassNames(Arrays.asList(modules));
@@ -229,7 +227,7 @@ public class RecoverySuspendTest {
         waitForTransactionsWithoutTimeout();
 
         // Synchronization is not needed (i.e. async = true) as isWaitForWorkLeftToDo() == true
-        _manager.suspend(true);
+        _manager.suspend(true, true);
 
         Assertions.assertEquals(numberOfCommits, BytemanControlledRecord.getCommitCallCounter(),
                 String.format("BytemanControlledRecord's getCommitCallCounter is %d but it should have been %d",
