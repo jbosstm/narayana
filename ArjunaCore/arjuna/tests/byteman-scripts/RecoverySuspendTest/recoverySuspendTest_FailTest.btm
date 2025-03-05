@@ -10,7 +10,7 @@
 
 RULE startCounting
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
-METHOD suspendScan
+METHOD suspendScan(boolean,boolean)
 AFTER INVOKE doWork
 IF $this._workLeftToDo
 DO debug("[PeriodicRecovery] allowing byteman to start counting recovery cycles..."),
@@ -37,7 +37,7 @@ ENDRULE
 
 RULE failIfTooManyRecoveryCycles
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
-METHOD suspendScan
+METHOD suspendScan(boolean,boolean)
 AT READ _workLeftToDo
 IF readCounter("recoveryCycles") > 1
 DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] too many recovery cycles (i.e. " +

@@ -194,22 +194,31 @@ public class RecoveryManager {
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
      * preserve data integrity.
-     * <p>
-     * Note that this method is also influenced by
-     * {@link com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean#setWaitForWorkLeftToDo}.
-     * For more details, see {@link PeriodicRecovery#suspendScan(boolean)}
-     *
+     * @param async false means wait for the recovery manager to finish any scans before returning.
+     * @param waitForWorkLeftToDo when true, it is important that, before invoking this method,
+     * all transactions will either be terminated by the Transaction Reaper or they have prepared
+     * and a log has been written, otherwise the suspend call may never return.
+     * @throws IllegalStateException if the recovery manager has been shutdown.
+     */
+    public void suspend(boolean async, boolean waitForWorkLeftToDo) {
+        trySuspend(async, waitForWorkLeftToDo);
+    }
+
+    /**
+     * Suspend the recovery manager. If the recovery manager is in the process of
+     * doing recovery scans then it will be suspended afterwards, in order to
+     * preserve data integrity.
      * @param async false means wait for the recovery manager to finish any scans before returning.
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
     public void suspend(boolean async) {
-        trySuspend(async);
+        trySuspend(async, false);
     }
 
-    public RecoveryManagerStatus trySuspend(boolean async) {
+    public RecoveryManagerStatus trySuspend(boolean async, boolean waitForWorkLeftToDo) {
         checkState();
 
-        PeriodicRecovery.Mode mode = _theImple.trySuspendScan(async);
+        PeriodicRecovery.Mode mode = _theImple.trySuspendScan(async, waitForWorkLeftToDo);
 
         switch (mode) {
             case ENABLED:
@@ -221,6 +230,10 @@ public class RecoveryManager {
             default:
                 throw new IllegalArgumentException("incompatible enum types");
         }
+    }
+
+    public RecoveryManagerStatus trySuspend(boolean async) {
+        return trySuspend(async, false);
     }
 
     /**

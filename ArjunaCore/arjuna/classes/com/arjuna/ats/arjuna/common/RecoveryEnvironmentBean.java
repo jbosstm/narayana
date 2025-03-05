@@ -38,6 +38,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
     private volatile int expiryScanInterval = 12; // hours
     private volatile int transactionStatusManagerExpiryTime = 12; // hours
 
+    @Deprecated(forRemoval = true)
     private volatile boolean waitForWorkLeftToDo = false;
     private volatile boolean waitForHeuristicDuringSuspension = false;
 
@@ -552,6 +553,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
      * {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover all their
      * transactions before shutting down; false otherwise.
      */
+    @Deprecated(forRemoval = true)
     public boolean isWaitForWorkLeftToDo() {
         return waitForWorkLeftToDo;
     }
@@ -563,6 +565,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
      * wait that all {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover
      * all their transactions before shutting down; false otherwise.
      */
+    @Deprecated(forRemoval = true)
     public void setWaitForWorkLeftToDo(boolean waitForWorkLeftToDo) {
         this.waitForWorkLeftToDo = waitForWorkLeftToDo;
     }

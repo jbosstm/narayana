@@ -26,11 +26,11 @@ public class RecoverySuspendLoggingCheckTest {
     public void testAddModuleNoWarn() {
 
         RecoveryEnvironmentBean _recoveryConfig = recoveryPropertyManager.getRecoveryEnvironmentBean();
-        _recoveryConfig.setWaitForWorkLeftToDo(false);
         _recoveryConfig.setRecoveryModuleClassNames(
                 Arrays.asList(new String[] { "com.hp.mwtests.ts.arjuna.recovery.DummyRecoveryModule" }));
 
         RecoveryManager _manager = RecoveryManager.manager(RecoveryManager.INDIRECT_MANAGEMENT);
+        _manager.trySuspend(false, false);
         _manager.terminate();
     }
 
@@ -39,14 +39,14 @@ public class RecoverySuspendLoggingCheckTest {
     public void testAddModuleWarn() {
 
         RecoveryEnvironmentBean _recoveryConfig = recoveryPropertyManager.getRecoveryEnvironmentBean();
-        // don't sign off until the store is empty
-        _recoveryConfig.setWaitForWorkLeftToDo(true);
         // the test set of modules
         _recoveryConfig.setRecoveryModuleClassNames(
                 Arrays.asList(new String[] { "com.hp.mwtests.ts.arjuna.recovery.DummyRecoveryModule" }));
 
         try {
             RecoveryManager _manager = RecoveryManager.manager(RecoveryManager.INDIRECT_MANAGEMENT);
+            // don't sign off until the store is empty
+            _manager.trySuspend(false, true);
             _manager.terminate();
             assertEquals(System.getProperty("Called"), "true");
         } finally {
