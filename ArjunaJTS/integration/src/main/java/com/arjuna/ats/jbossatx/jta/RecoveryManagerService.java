@@ -54,8 +54,12 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry {
     }
 
     public void suspend() {
+        this.suspend(false, false);
+    }
+
+    public void suspend(boolean async, boolean waitForWorkLeftToDo) {
         jbossatxLogger.i18NLogger.info_jta_RecoveryManagerService_suspend();
-        _recoveryManager.suspend(false);
+        _recoveryManager.suspend(async, waitForWorkLeftToDo);
     }
 
     public void resume() {
