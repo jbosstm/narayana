@@ -8,6 +8,7 @@ import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple;
+import com.arjuna.ats.arjuna.logging.ArjunaLoggerInterceptor;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
@@ -56,6 +57,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile int txReaperZombieMax = TransactionReaper.defaultZombieMax;
     private volatile long txReaperTraceGracePeriod = TransactionReaper.defaultUntracedPeriod;
     private volatile long txReaperTraceInterval = TransactionReaper.defaultTracePeriod;
+    private ArjunaLoggerInterceptor loggerInterceptor;
 
     private volatile int defaultTimeout = 60; // seconds
     private volatile boolean transactionStatusManagerEnable = true;
@@ -544,6 +546,21 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      */
     public void setTxReaperTraceInterval(long txReaperTraceInterval) {
         this.txReaperTraceInterval = txReaperTraceInterval;
+    }
+
+    public ArjunaLoggerInterceptor getLoggerInterceptor() {
+        return loggerInterceptor;
+    }
+
+    /**
+     * Configure an optional log message interceptor to be used by the Transaction Reaper.
+     * The class must be on the class path.
+     * <p>
+     * @param loggerInterceptorClassName the class name of the log message interceptor (@see ArjunaLoggerInterceptor)
+     */
+    public void setLoggerInterceptor(String loggerInterceptorClassName) {
+        this.loggerInterceptor = ClassloadingUtility.loadAndInstantiateClass(
+                ArjunaLoggerInterceptor.class, loggerInterceptorClassName, null, true);
     }
 
     /**

@@ -114,6 +114,16 @@
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logmanager</groupId>
+          <artifactId>log4j2-jboss-logmanager</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logmanager</groupId>
+      <artifactId>log4j2-jboss-logmanager</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
@@ -174,7 +184,7 @@
               </execution>
             </executions>
             <configuration>
-              <source>8</source>
+              <source>${maven.compiler.source}</source>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>*.internal.*</excludePackageNames>
             </configuration>
