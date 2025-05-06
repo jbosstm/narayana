@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.arjuna.ats.arjuna.logging.ArjunaLoggerInterceptor;
+import org.jboss.logmanager.Logger;
+
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -847,6 +850,14 @@ public class TransactionReaper
     {
         if (TransactionReaper._theReaper == null)
         {
+            ArjunaLoggerInterceptor externalLogger = arjPropertyManager.getCoordinatorEnvironmentBean().getLoggerInterceptor();
+
+            if (externalLogger != null) {
+                Logger.getLogger(tsLogger.logger.getName()).setFilter(new ReaperLogFilter(externalLogger));
+
+                tsLogger.i18NLogger.info_coordinator_TransactionReaper_20();
+            }
+
             if (tsLogger.logger.isTraceEnabled()) {
                 tsLogger.logger.trace("TransactionReaper::instantiate()");
             }
