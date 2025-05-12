@@ -1660,6 +1660,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_coordinator_BasicAction_73(String cause);
 
+	@Message(id = 12418, value = "TransactionReaper Installing logger redirect filter", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	void info_coordinator_TransactionReaper_20();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
