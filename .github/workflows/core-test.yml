@@ -5,6 +5,9 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   core-test:
     name: CORE test with JDK ${{ matrix.java-version }}
+    if: |
+      github.event_name != 'pull_request' ||
+      contains(join(github.event.pull_request.labels.*.name, ','), 'testing/core')
     timeout-minutes: 120
     strategy:
       matrix:
