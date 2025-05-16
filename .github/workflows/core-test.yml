@@ -45,6 +45,18 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java-version }}
 
+      - name: Cache Maven dependencies
+        if: steps.check-label.outputs.should_skip != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository/*/*
+            !~/.m2/repository/org/jboss
+            !~/.m2/repository/org/wildfly
+          key: maven-${{ runner.os }}-core
+          restore-keys: |
+            maven-${{ runner.os }}-
+
       - name: CORE testing profile
         if: steps.check-label.outputs.should_skip != 'true'
         run: |
