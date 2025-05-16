@@ -5,6 +5,11 @@ on:
   pull_request:
     types: [opened, labeled, unlabeled]
   workflow_dispatch:
+    
+# Only run the latest job
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   core-test:
