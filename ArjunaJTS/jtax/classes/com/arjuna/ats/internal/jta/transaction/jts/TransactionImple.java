@@ -32,6 +32,7 @@ import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
@@ -215,7 +216,9 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			}
 			catch (WrongTransaction wt)
 			{
-                jtaxLogger.i18NLogger.warn_get_jtax_transaction_jts_wrongstatetx(_theTransaction, wt);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtaxLogger.i18NLogger.warn_get_jtax_transaction_jts_wrongstatetx(_theTransaction, wt); // JBTM-3990
+				}
                 InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx());
                 inactiveTransactionException.initCause(wt);
@@ -775,8 +778,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 								 * rollback only.
 								 */
 
-                                jtaxLogger.i18NLogger.warn_jtax_transaction_jts_starterror("TransactionImple.enlistResource - XAResource.start",
-                                        XAHelper.printXAErrorCode(e), XAHelper.xidToString(xid), e);
+								if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+									jtaxLogger.i18NLogger.warn_jtax_transaction_jts_starterror("TransactionImple.enlistResource - XAResource.start",
+											XAHelper.printXAErrorCode(e), XAHelper.xidToString(xid), e); // JBTM-3990
+								}
 
 								markRollbackOnly();
 
@@ -785,8 +790,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
 						if (retry < 0)
 						{
-                            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_starterror("TransactionImple.enlistResource - XAResource.start",
-                                    XAHelper.printXAErrorCode(e), XAHelper.xidToString(xid), e);
+							if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+								jtaxLogger.i18NLogger.warn_jtax_transaction_jts_starterror("TransactionImple.enlistResource - XAResource.start",
+										XAHelper.printXAErrorCode(e), XAHelper.xidToString(xid), e); // JBTM-3990
+							}
 
 							markRollbackOnly();
 
@@ -816,7 +823,9 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				}
 				catch (XAException ex)
 				{
-                    jtaxLogger.i18NLogger.warn_jtax_transaction_jts_xaerror("TransactionImple.enlistResource - xa_start: ", XAHelper.printXAErrorCode(ex), ex);
+					if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+						jtaxLogger.i18NLogger.warn_jtax_transaction_jts_xaerror("TransactionImple.enlistResource - xa_start: ", XAHelper.printXAErrorCode(ex), ex); // JBTM-3990
+					}
 
 					markRollbackOnly();
 
@@ -1426,7 +1435,9 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(e4);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(e4); // JBTM-3990
+				}
 			    
 				RollbackException rollbackException = new RollbackException(e4.toString());
                 if(_rollbackOnlyCallerStacktrace != null) {
@@ -1688,7 +1699,9 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_threaderror(e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_threaderror(e); // JBTM-3990
+			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
@@ -1740,13 +1753,17 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		}
 		catch (XAException ex)
 		{
-            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_xaerror("TransactionImple.isNewRM", XAHelper.printXAErrorCode(ex), ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_xaerror("TransactionImple.isNewRM", XAHelper.printXAErrorCode(ex), ex); // JBTM-3990
+			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString(), ex);
 		}
 		catch (Exception e)
 		{
-            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_rmerror(e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_rmerror(e); // JBTM-3990
+			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}

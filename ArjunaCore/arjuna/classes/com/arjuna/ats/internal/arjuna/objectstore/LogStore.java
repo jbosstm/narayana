@@ -19,6 +19,7 @@ import java.util.Stack;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -795,7 +796,9 @@ public class LogStore extends FileSystemStore
                 {
                     unlockAndClose(fd, ofile);
 
-                    tsLogger.i18NLogger.warn_LogStore_1(e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.i18NLogger.warn_LogStore_1(e); // JBTM-3990
+                    }
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed to locate file "
@@ -805,7 +808,9 @@ public class LogStore extends FileSystemStore
                 {
                     unlockAndClose(fd, ofile);
 
-                    tsLogger.i18NLogger.warn_LogStore_1(e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.i18NLogger.warn_LogStore_1(e); // JBTM-3990
+                    }
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed for "
@@ -938,7 +943,9 @@ public class LogStore extends FileSystemStore
         }
         catch (final Throwable ex)
         {
-            tsLogger.i18NLogger.warn_LogStore_1(ex);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+            }
 
             throw new ObjectStoreException(ex.toString(), ex);
         }
@@ -1091,7 +1098,9 @@ public class LogStore extends FileSystemStore
                         }
                         catch (final Exception ex)
                         {
-                            tsLogger.i18NLogger.warn_LogStore_1(ex);
+                            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                            }
 
                             // TODO log
 
@@ -1116,7 +1125,9 @@ public class LogStore extends FileSystemStore
                     }
                     catch (final Exception ex)
                     {
-                        tsLogger.i18NLogger.warn_LogStore_1(ex);
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                            tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                        }
 
                         // TODO log
 
@@ -1147,13 +1158,17 @@ public class LogStore extends FileSystemStore
             }
             catch (final ObjectStoreException ex)
             {
-                tsLogger.i18NLogger.warn_LogStore_1(ex);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                }
 
                 throw ex;
             }
             catch (final Exception ex)
             {
-                tsLogger.i18NLogger.warn_LogStore_1(ex);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                }
 
                 throw new ObjectStoreException(ex.toString(), ex);
             }
@@ -1226,7 +1241,9 @@ public class LogStore extends FileSystemStore
                             }
                             catch (final Exception ex)
                             {
-                                tsLogger.i18NLogger.warn_LogStore_1(ex);
+                                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                    tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                                }
 
                                 throw new ObjectStoreException(ex.toString(), ex);
                             }
@@ -1307,13 +1324,17 @@ public class LogStore extends FileSystemStore
             }
             catch (final ObjectStoreException ex)
             {
-                tsLogger.i18NLogger.warn_LogStore_1(ex);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                }
 
                 throw ex;
             }
             catch (final Exception ex)
             {
-                tsLogger.i18NLogger.warn_LogStore_1(ex);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    tsLogger.i18NLogger.warn_LogStore_1(ex); // JBTM-3990
+                }
 
                 throw new ObjectStoreException(ex.toString(), ex);
             }

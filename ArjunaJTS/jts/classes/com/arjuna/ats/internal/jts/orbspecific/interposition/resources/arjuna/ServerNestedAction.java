@@ -23,6 +23,7 @@ import org.omg.CosTransactions.NotPrepared;
 import org.omg.CosTransactions.NotSubtransaction;
 import org.omg.CosTransactions.SubtransactionAwareResource;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.interposition.resources.arjuna.ServerResource;
@@ -97,8 +98,10 @@ public class ServerNestedAction extends ServerResource implements
         }
 
         if (_theControl == null) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_1(
-                    "ServerNestedAction.commit_subtransaction");
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_1(
+                        "ServerNestedAction.commit_subtransaction"); // JBTM-3990
+            }
 
             throw new INVALID_TRANSACTION(ExceptionCodes.SERVERAA_NO_CONTROL,
                     CompletionStatus.COMPLETED_NO);
@@ -129,20 +132,26 @@ public class ServerNestedAction extends ServerResource implements
             theTransaction.commit(false);
         }
         catch (TRANSACTION_ROLLEDBACK e1) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e1);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e1); // JBTM-3990
+            }
 
             throw e1;
         }
         catch (INVALID_TRANSACTION e5) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e5);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e5); // JBTM-3990
+            }
 
             throw e5;
         }
         catch (HeuristicMixed e2) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e2);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e2); // JBTM-3990
+            }
 
             /*
              * Can't rethrow heuristic exceptions for subtransactions!
@@ -152,21 +161,27 @@ public class ServerNestedAction extends ServerResource implements
                     CompletionStatus.COMPLETED_MAYBE);
         }
         catch (HeuristicHazard e3) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e3);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e3); // JBTM-3990
+            }
 
             throw new BAD_OPERATION(ExceptionCodes.HEURISTIC_COMMIT,
                     CompletionStatus.COMPLETED_MAYBE);
         }
         catch (SystemException e4) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e4);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e4); // JBTM-3990
+            }
 
             throw e4;
         }
         catch (Exception e5) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
-                    "ServerNestedAction.commit_subtransaction", e5);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.commit_subtransaction", e5); // JBTM-3990
+            }
 
             throw new UNKNOWN(e5.toString());
         }
@@ -184,8 +199,10 @@ public class ServerNestedAction extends ServerResource implements
         }
 
         if (_theControl == null) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_2(
-                    "ServerNestedAction.rollback_subtransaction");
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_2(
+                        "ServerNestedAction.rollback_subtransaction"); // JBTM-3990
+            }
 
             throw new INVALID_TRANSACTION(ExceptionCodes.SERVERAA_NO_CONTROL,
                     CompletionStatus.COMPLETED_NO);

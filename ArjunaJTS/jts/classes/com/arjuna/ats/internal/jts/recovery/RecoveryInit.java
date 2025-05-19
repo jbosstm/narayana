@@ -9,6 +9,7 @@ package com.arjuna.ats.internal.jts.recovery;
 
 import java.util.List;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.orbportability.ORBInfo;
@@ -91,7 +92,9 @@ public class RecoveryInit
 		}
 		catch (Exception e)
 		{
-            jtsLogger.i18NLogger.fatal_recovery_RecoveryInit_4();
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.fatal_recovery_RecoveryInit_4(); // JBTM-3990
+			}
 
 		    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}

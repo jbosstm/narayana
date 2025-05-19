@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -396,7 +397,9 @@ public class IDLCompiler extends Task
         }
         catch (Exception e)
         {
-            log(opLogger.i18NLogger.warn_unexpectedexception(e), e, Project.MSG_WARN);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                log(opLogger.i18NLogger.warn_unexpectedexception(e), e, Project.MSG_WARN); // JBTM-3990
+            }
             throw new BuildException("The following exception occurred while executing the IDL compiler: " + e);
         }
 

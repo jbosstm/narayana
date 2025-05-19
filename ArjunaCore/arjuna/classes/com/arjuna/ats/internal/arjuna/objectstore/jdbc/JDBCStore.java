@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
@@ -251,7 +252,9 @@ public class JDBCStore implements ObjectStoreAPI {
             imples.put(key, _theImple);
             storeNames.put(key, _storeName);
         } catch (Exception e) {
-            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(_storeName, e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(_storeName, e); // JBTM-3990
+            }
             throw new ObjectStoreException(e);
         }
     }

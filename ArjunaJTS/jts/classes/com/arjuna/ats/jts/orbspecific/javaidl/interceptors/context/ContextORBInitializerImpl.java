@@ -18,6 +18,7 @@ import org.omg.PortableInterceptor.ORBInitializer;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.jts.OTSManager;
@@ -78,8 +79,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (UnknownEncoding ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_codecerror(
-                "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_codecerror(
+					"ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_codeccreate(), ex);
 	}
@@ -101,8 +104,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
-                "ContextORBInitializerImpl", "ClientRequestInterceptor", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
+					"ContextORBInitializerImpl", "ClientRequestInterceptor", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_cie(), ex);
 	}
@@ -124,8 +129,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
-                 "ContextORBInitializerImpl", "ServerRequestInterceptor", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
+					"ContextORBInitializerImpl", "ServerRequestInterceptor", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_sie(), ex);
 	}

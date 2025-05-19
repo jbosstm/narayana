@@ -35,7 +35,7 @@ public abstract class ParticipantInterceptor {
             participantManager.completed();
 
         } catch (RuntimeException e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e); // JBTM-3990
             participantManager.exit();
             throw e;
         } catch (Exception e) {

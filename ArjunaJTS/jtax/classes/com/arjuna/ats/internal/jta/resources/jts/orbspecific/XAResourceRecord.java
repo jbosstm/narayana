@@ -36,6 +36,7 @@ import org.omg.CosTransactions.RecoveryCoordinatorHelper;
 import org.omg.CosTransactions.Vote;
 
 import com.arjuna.ArjunaOTS.OTSAbstractRecord;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -50,6 +51,7 @@ import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -228,7 +230,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
             }
         } catch (XAException e1) {
             jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_preparefailed(_theXAResource.toString(),
-                    XAHelper.xidToString(_tranID), XAHelper.printXAErrorCode(e1), e1);
+                    XAHelper.xidToString(_tranID), XAHelper.printXAErrorCode(e1), e1); // JBTM-3990 TODO cannot remove this without heavily reworking the logic
 
             if (jtaxLogger.logger.isTraceEnabled()) {
                 jtaxLogger.logger.tracef(
@@ -322,8 +324,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                                 this._rolledBack = true;
                             }
                         } catch (XAException e2) {
-                            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
-                                    XAHelper.printXAErrorCode(e2), _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
+                            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
+                                        XAHelper.printXAErrorCode(e2), _theXAResource.toString(), XAHelper.xidToString(_tranID), e2); // JBTM-3990
+                            }
 
                             removeConnection();
 
@@ -349,7 +353,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                         // some other thread got there first (probably)
                     } else {
                         jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
-                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
+                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1); // JBTM-3990 cannot remove this without heavily reworking the logic of this catch block
 
                         if (jtaxLogger.logger.isTraceEnabled()) {
                             jtaxLogger.logger.tracef(
@@ -425,8 +429,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                         }
                     }
                 } catch (Exception e2) {
-                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.rollback",
-                            _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.rollback",
+                                _theXAResource.toString(), XAHelper.xidToString(_tranID), e2); // JBTM-3990
+                    }
 
                     throw new UNKNOWN();
                 } finally {
@@ -486,8 +492,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                         _committed = false;
 
                         jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.commit",
-                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
-
+                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1); // JBTM-3990 cannot remove this without heavily reworking the logic of this catch block
                         if (jtaxLogger.logger.isTraceEnabled()) {
                             jtaxLogger.logger.tracef(
                                     "XAResourceRecord.commit exception %s " +
@@ -561,8 +566,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                 } catch (Exception e2) {
                     _committed = false;
 
-                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.commit",
-                            _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.commit",
+                                _theXAResource.toString(), XAHelper.xidToString(_tranID), e2); // JBTM-3990
+                    }
 
                     throw new UNKNOWN();
                 } finally {
@@ -657,7 +664,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
         }
 
         if (_tranID == null) {
-            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.commit_one_phase");
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.commit_one_phase"); // JBTM-3990
+            }
 
             _rolledBack = true;
             throw new TRANSACTION_ROLLEDBACK();
@@ -818,15 +827,21 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                             throw new UNKNOWN();
                     }
                 } catch (SystemException ex) {
-                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex); // JBTM-3990
+                    }
 
                     throw ex;
                 } catch (org.omg.CosTransactions.HeuristicHazard ex) {
-                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex); // JBTM-3990
+                    }
 
                     throw ex;
                 } catch (Exception e2) {
-                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_coperror(e2);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_coperror(e2); // JBTM-3990
+                    }
 
                     throw new UNKNOWN();
                 } finally {
@@ -870,8 +885,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA 
                 _heuristic = TwoPhaseOutcome.FINISH_OK;
                 _forgotten = true;
             } catch (Exception e) {
-                jtaLogger.i18NLogger.warn_recovery_forgetfailed(
-                        "XAResourceRecord forget failed:", e);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    jtaLogger.i18NLogger.warn_recovery_forgetfailed(
+                            "XAResourceRecord forget failed:", e); // JBTM-3990
+                }
 
                 // log will be rewritten
                 throw new UNKNOWN(e.getMessage());

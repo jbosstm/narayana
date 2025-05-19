@@ -17,6 +17,7 @@ import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
@@ -158,7 +159,9 @@ public class TransactionImporterImple implements TransactionImporter
 				throw new XAException(XAException.XA_RBROLLBACK);
 			}
 		} catch (SystemException e) {
-			jtaLogger.i18NLogger.error_failed_to_get_transaction_status(tx, e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.error_failed_to_get_transaction_status(tx, e); // JBTM-3990
+			}
 			throw new XAException(XAException.XA_RBROLLBACK);
 		}
 

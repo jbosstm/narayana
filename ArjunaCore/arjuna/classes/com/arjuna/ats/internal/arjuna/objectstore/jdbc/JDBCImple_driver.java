@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -277,7 +278,9 @@ public abstract class JDBCImple_driver {
 				theState = StateStatus.OS_UNCOMMITTED;
 			}
 		} catch (Exception e) {
-			tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e); // JBTM-3990
+			}
 			throw new ObjectStoreException(e);
 		} finally {
 			if (rs != null) {
@@ -537,15 +540,19 @@ public abstract class JDBCImple_driver {
 					if (buffer != null) {
 						result = new InputObjectState(objUid, typeName, buffer);
 					} else {
-						tsLogger.i18NLogger
-								.warn_objectstore_JDBCImple_readfailed();
+						if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+							tsLogger.i18NLogger
+									.warn_objectstore_JDBCImple_readfailed(); // JBTM-3990
+						}
 						throw new ObjectStoreException(tsLogger.i18NLogger.warn_objectstore_JDBCImple_readfailed_message());
 					}
 				}
 
 				connection.commit();
 			} catch (Exception e) {
-				tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(e); // JBTM-3990
+				}
 				throw new ObjectStoreException(e);
 			} finally {
 				if (rs != null) {

@@ -5,6 +5,7 @@
 
 package org.jboss.narayana.jta.jms;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import jakarta.jms.JMSException;
@@ -32,7 +33,9 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION;
         } catch (SystemException e) {
-            jtaLogger.i18NLogger.warn_failed_to_get_transaction_status(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_get_transaction_status(e); // JBTM-3990
+            }
             throw getJmsException(jtaLogger.i18NLogger.get_failed_to_get_transaction_status(), e);
         }
     }
@@ -42,7 +45,9 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             getTransaction().registerSynchronization(synchronization);
         } catch (IllegalStateException | RollbackException | SystemException e) {
-            jtaLogger.i18NLogger.warn_failed_to_register_synchronization(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_register_synchronization(e); // JBTM-3990
+            }
             throw getJmsException(jtaLogger.i18NLogger.get_failed_to_register_synchronization(), e);
         }
     }
@@ -51,11 +56,15 @@ public class TransactionHelperImpl implements TransactionHelper {
     public void registerXAResource(XAResource xaResource) throws JMSException {
         try {
             if (!getTransaction().enlistResource(xaResource)) {
-                jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(null);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(null); // JBTM-3990
+                }
                 throw getJmsException(jtaLogger.i18NLogger.get_failed_to_enlist_xa_resource(), null);
             }
         } catch (RollbackException | IllegalStateException | SystemException e) {
-            jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(e); // JBTM-3990
+            }
             throw getJmsException(jtaLogger.i18NLogger.get_failed_to_enlist_xa_resource(), e);
         }
     }
@@ -64,11 +73,15 @@ public class TransactionHelperImpl implements TransactionHelper {
     public void deregisterXAResource(XAResource xaResource) throws JMSException {
         try {
             if (!getTransaction().delistResource(xaResource, XAResource.TMSUCCESS)) {
-                jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(null);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(null); // JBTM-3990
+                }
                 throw getJmsException(jtaLogger.i18NLogger.get_failed_to_delist_xa_resource(), null);
             }
         } catch (IllegalStateException | SystemException e) {
-            jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(e); // JBTM-3990
+            }
             throw getJmsException(jtaLogger.i18NLogger.get_failed_to_delist_xa_resource(), e);
         }
     }
@@ -77,7 +90,9 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getTransaction();
         } catch (SystemException e) {
-            jtaLogger.i18NLogger.warn_failed_to_get_transaction(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_get_transaction(e); // JBTM-3990
+            }
             throw getJmsException(jtaLogger.i18NLogger.get_failed_to_get_transaction(), e);
         }
     }

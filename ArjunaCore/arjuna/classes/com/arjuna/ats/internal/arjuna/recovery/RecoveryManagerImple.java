@@ -47,8 +47,8 @@ public class RecoveryManagerImple {
          */
 
         if (useListener && isRecoveryManagerEndPointInUse()) {
-
             try {
+                // JBTM-3990 log a message because the caller is not guaranteed to log it
                 tsLogger.i18NLogger.fatal_recovery_fail(RecoveryManager.getRecoveryManagerHost().getHostAddress(),
                         Integer.toString(RecoveryManager.getRecoveryManagerPort()));
             } catch (Throwable t) {

@@ -10,6 +10,7 @@ package com.arjuna.ats.internal.jdbc;
 import com.arjuna.ats.jdbc.TransactionalDriver;
 
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import java.sql.Connection;
@@ -80,7 +81,9 @@ public class ConnectionManager {
                                 break;
                             }
                         } catch (Exception ex) {
-                            jdbcLogger.i18NLogger.warn_connection_problem(ex.getMessage(), ex);
+                            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jdbcLogger.i18NLogger.warn_connection_problem(ex.getMessage(), ex); // JBTM-3990
+                            }
                             SQLException sqlException = new SQLException(ex.getMessage());
                             sqlException.initCause(ex);
                             throw sqlException;

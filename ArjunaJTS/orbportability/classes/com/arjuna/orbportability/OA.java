@@ -20,6 +20,7 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
 import org.omg.PortableServer.POAPackage.InvalidPolicy;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.orbportability.exceptions.FatalError;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.internal.utils.PostSetLoader;
@@ -169,13 +170,17 @@ public abstract class OA
                 }
                 catch (final org.omg.CORBA.INITIALIZE ex)
                 {
-                    opLogger.i18NLogger.warn_OA_initialize();
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        opLogger.i18NLogger.warn_OA_initialize(); // JBTM-3990
+                    }
                     
                     throw ex;
                 }
                 catch (final Exception e)
                 {
-                    opLogger.i18NLogger.warn_OA_caughtexception("OA.initPOA", e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        opLogger.i18NLogger.warn_OA_caughtexception("OA.initPOA", e); // JBTM-3990
+                    }
 
                    throw new FatalError("OA.initPOA: "+e.toString());
                 }
@@ -201,7 +206,9 @@ public abstract class OA
 
         if (!_oa.initialised())
         {
-            opLogger.i18NLogger.warn_OA_oanotinitialised();
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                opLogger.i18NLogger.warn_OA_oanotinitialised(); // JBTM-3990
+            }
 
             throw new AdapterInactive();
         }

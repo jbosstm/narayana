@@ -27,6 +27,7 @@ import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextHelper;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 
@@ -204,7 +205,9 @@ public org.omg.CORBA.Object getService (String serviceName,
 		}
 		catch (Exception e)
 		{
-            opLogger.i18NLogger.warn_Services_unexpectedexception("Services.getService", e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				opLogger.i18NLogger.warn_Services_unexpectedexception("Services.getService", e); // JBTM-3990
+			}
 
 		    input.close();
 		    throw new UNKNOWN();
@@ -212,7 +215,9 @@ public org.omg.CORBA.Object getService (String serviceName,
 
 		if (ior == null)
 		{
-            opLogger.i18NLogger.warn_Services_servicenotfound(serviceName, configFile);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				opLogger.i18NLogger.warn_Services_servicenotfound(serviceName, configFile); // JBTM-3990
+			}
 
 		    throw new InvalidName();
 		}
@@ -265,7 +270,9 @@ public org.omg.CORBA.Object getService (String serviceName,
 	break;
 	case NAMED_CONNECT:
 	    {
-            opLogger.i18NLogger.warn_Services_unsupportedoption("NAMED_CONNECT");
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				opLogger.i18NLogger.warn_Services_unsupportedoption("NAMED_CONNECT"); // JBTM-3990
+			}
 
 		throw new BAD_PARAM();
 	    }
@@ -461,7 +468,9 @@ public void registerService (org.omg.CORBA.Object objRef,
 	break;
 	case NAMED_CONNECT:
 	    {
-            opLogger.i18NLogger.warn_Services_optionnotsupported("Services.registerService", "NAMED_CONNECT");
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				opLogger.i18NLogger.warn_Services_optionnotsupported("Services.registerService", "NAMED_CONNECT"); // JBTM-3990
+			}
 
 		throw new BAD_PARAM();
 	    }

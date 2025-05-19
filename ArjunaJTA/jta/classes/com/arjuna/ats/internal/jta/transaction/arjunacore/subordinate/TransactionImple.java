@@ -17,6 +17,7 @@ import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -146,7 +147,9 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-            jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex); // JBTM-3990
+			}
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -190,7 +193,9 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex); // JBTM-3990
+			}
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -260,7 +265,9 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-            jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex); // JBTM-3990
+			}
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -278,7 +285,9 @@ public class TransactionImple extends
 	    }
 	    catch (final Exception ex)
 	    {
-			jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex); // JBTM-3990
+			}
 
 	        UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
 	        unexpectedConditionException.initCause(ex);

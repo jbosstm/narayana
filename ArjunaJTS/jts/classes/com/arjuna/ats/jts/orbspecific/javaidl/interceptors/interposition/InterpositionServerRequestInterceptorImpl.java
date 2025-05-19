@@ -23,6 +23,7 @@ import org.omg.PortableInterceptor.InvalidSlot;
 import org.omg.PortableInterceptor.ServerRequestInfo;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
@@ -241,13 +242,17 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	}
 	catch (SystemException ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie(
-                "InterpositionServerRequestInterceptorImpl::send_reply", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie(
+					"InterpositionServerRequestInterceptorImpl::send_reply", ex); // JBTM-3990
+		}
 	    
 	    throw ex;
 	}
 	catch (Exception e) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_reply", e);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_reply", e); // JBTM-3990
+		}
 
         throw new BAD_OPERATION();
     }
@@ -265,12 +270,16 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 	    suspendContext(request_info);
 	}
 	catch (SystemException ex) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", ex); // JBTM-3990
+		}
 
         throw ex;
     }
 	catch (Exception e) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", e);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", e); // JBTM-3990
+		}
 
         throw new BAD_OPERATION();
     }
@@ -288,12 +297,16 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 	    suspendContext(request_info);
 	}
 	catch (SystemException ex) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", ex); // JBTM-3990
+		}
 
         throw ex;
     }
 	catch (Exception e) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", e);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", e); // JBTM-3990
+		}
 
         throw new BAD_OPERATION();
     }

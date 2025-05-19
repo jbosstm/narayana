@@ -9,6 +9,7 @@ package com.arjuna.ats.jts.thread;
 
 import org.omg.CosTransactions.Control;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
@@ -66,7 +67,9 @@ public class OTSThread extends Thread
 	    }
 	    catch (Exception e)
 	    {
-            jtsLogger.i18NLogger.warn_thread_resumefailed( "OTSThread.run", e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_thread_resumefailed("OTSThread.run", e); // JBTM-3990
+			}
 
 		throw new FatalError("OTSThread.run - "+jtsLogger.i18NLogger.get_thread_resumefailederror(), e);
 	    }

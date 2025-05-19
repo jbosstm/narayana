@@ -31,6 +31,7 @@ import org.omg.CosTransactions.Synchronization;
 import org.omg.CosTransactions.SynchronizationUnavailable;
 import org.omg.CosTransactions.Unavailable;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -126,7 +127,9 @@ public class AtomicTransaction
 			}
 			catch (SystemException e)
 			{
-                jtsLogger.i18NLogger.warn_extensions_atunavailable("AtomicTransaction.get_transaction_name");
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_extensions_atunavailable("AtomicTransaction.get_transaction_name"); // JBTM-3990
+				}
 
 				throw e;
 			}

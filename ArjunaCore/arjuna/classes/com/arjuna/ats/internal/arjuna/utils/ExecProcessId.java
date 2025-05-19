@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -120,7 +121,9 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     try {
                         theTokenizer = new StringTokenizer(bstream.toString(StandardCharsets.UTF_8.name()));
                     } catch (UnsupportedEncodingException e) {
-                        tsLogger.i18NLogger.fatal_encoding_not_supported(StandardCharsets.UTF_8.name());
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                            tsLogger.i18NLogger.fatal_encoding_not_supported(StandardCharsets.UTF_8.name()); // JBTM-3990
+                        }
                         throw new IllegalStateException(
                             tsLogger.i18NLogger.get_encoding_not_supported(StandardCharsets.UTF_8.name()));
                     }

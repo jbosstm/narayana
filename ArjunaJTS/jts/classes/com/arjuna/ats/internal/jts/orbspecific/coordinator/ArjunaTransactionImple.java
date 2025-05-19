@@ -50,6 +50,7 @@ import com.arjuna.ArjunaOTS.ManagedSynchronization;
 import com.arjuna.ArjunaOTS.ManagedSynchronizationHelper;
 import com.arjuna.ArjunaOTS.OTSAbstractRecord;
 import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -870,7 +871,9 @@ public class ArjunaTransactionImple extends
             catch (Inactive ex1) {
             }
             catch (SystemException ex2) {
-                jtsLogger.i18NLogger.warn_orbspecific_coordinator_rbofail("ArjunaTransactionImple.register_resource", get_uid(), ex2);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_orbspecific_coordinator_rbofail("ArjunaTransactionImple.register_resource", get_uid(), ex2); // JBTM-3990
+				}
 
                 throw ex2;
             }

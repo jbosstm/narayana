@@ -31,6 +31,8 @@ import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.ReadOnly;
 import org.jboss.narayana.rest.integration.api.Vote;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+
 /**
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -181,7 +183,9 @@ public final class ParticipantResource {
         try {
             vote = participantInformation.getParticipant().prepare();
         } catch (ParticipantException e) {
-            RESTATLogger.atI18NLogger.warn_prepareParticipantResource(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                RESTATLogger.atI18NLogger.warn_prepareParticipantResource(e.getMessage(), e); // JBTM-3990
+            }
             participantInformation.setStatus(TxStatus.TransactionActive.name());
             throw e;
         }
@@ -217,13 +221,17 @@ public final class ParticipantResource {
                 participantInformation.getParticipant().commit();
             } catch (HeuristicException e) {
                 if (!e.getHeuristicType().equals(HeuristicType.HEURISTIC_COMMIT)) {
-                    RESTATLogger.atI18NLogger.warn_heuristicRollbackParticipantResource(e.getMessage(), e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        RESTATLogger.atI18NLogger.warn_heuristicRollbackParticipantResource(e.getMessage(), e); // JBTM-3990
+                    }
                     participantInformation.setStatus(e.getHeuristicType().toTxStatus());
                     RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
                     throw new HeuristicException(e.getHeuristicType());
                 }
             } catch (ParticipantException e) {
-                RESTATLogger.atI18NLogger.warn_participantRollbackParticipantResource(e.getMessage(), e);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    RESTATLogger.atI18NLogger.warn_participantRollbackParticipantResource(e.getMessage(), e); // JBTM-3990
+                }
                 participantInformation.setStatus(TxStatus.TransactionPrepared.name());
                 throw e;
             }

@@ -13,6 +13,7 @@ import jakarta.transaction.HeuristicRollbackException;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.SystemException;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
@@ -164,7 +165,9 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+                        }
 
                     UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                     unexpectedConditionException.initCause(ex);
@@ -200,7 +203,7 @@ public class TransactionImple extends
 
                         if (!endSuspendedRMs())
                         {
-                            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_endsuspendfailed1();
+                            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_endsuspendfailed1(); // JBTM-3990 complex reworking of the switch logic
                         }
 
                         int res = subAct.doRollback();
@@ -225,7 +228,9 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+                        }
 
                     UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                     unexpectedConditionException.initCause(ex);
@@ -289,7 +294,9 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+                        }
 
                         throw new IllegalStateException(ex);
                 }
@@ -312,7 +319,9 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+                        if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                                jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+                        }
 
                         throw new IllegalStateException(ex);
                 }
@@ -328,7 +337,9 @@ public class TransactionImple extends
             }
             catch (final Exception ex)
             {
-                    jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+                    }
 
                 UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
                 unexpectedConditionException.initCause(ex);

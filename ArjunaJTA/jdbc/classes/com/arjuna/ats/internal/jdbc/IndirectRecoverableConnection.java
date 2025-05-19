@@ -168,7 +168,7 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
         } catch (SQLException ex) {
             throw ex;
         } catch (Exception e) {
-			jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
+			jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e); // JBTM=3990
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);

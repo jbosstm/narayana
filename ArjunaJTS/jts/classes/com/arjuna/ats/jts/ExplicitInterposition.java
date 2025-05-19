@@ -16,6 +16,7 @@ import org.omg.CosTransactions.Coordinator;
 import org.omg.CosTransactions.PropagationContext;
 
 import com.arjuna.ArjunaOTS.InterpositionFailed;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
@@ -141,7 +142,9 @@ public class ExplicitInterposition
 
 		if (_inUse)
 		{
-            jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.unregisterTransaction");
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.unregisterTransaction"); // JBTM-3990
+			}
 
 			throw new InterpositionFailed();
 		}
@@ -167,7 +170,9 @@ public class ExplicitInterposition
 						}
 						catch (Exception e)
 						{
-							jtsLogger.i18NLogger.warn_caughtexception(e);
+							if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+								jtsLogger.i18NLogger.warn_caughtexception(e); // JBTM-3990
+							}
 
 							ctx = null;
 
@@ -184,7 +189,9 @@ public class ExplicitInterposition
 			}
 			catch (Exception e)
 			{
-				jtsLogger.i18NLogger.warn_caughtexception(e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_caughtexception(e); // JBTM-3990
+				}
 
 				throw new InterpositionFailed(e.toString());
 			}
@@ -203,7 +210,9 @@ public class ExplicitInterposition
 			}
 			catch (Exception e)
 			{
-				jtsLogger.i18NLogger.warn_caughtexception(e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_caughtexception(e); // JBTM-3990
+				}
 
 				throw new InterpositionFailed(e.toString());
 			}
@@ -276,7 +285,9 @@ public class ExplicitInterposition
 
 		if (_inUse)
 		{
-            jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.registerTransaction");
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.registerTransaction"); // JBTM-3990
+			}
 
 			throw new InterpositionFailed();
 		}
@@ -324,7 +335,9 @@ public class ExplicitInterposition
 		}
 		catch (Exception e)
 		{
-            jtsLogger.i18NLogger.warn_eicaughtexception("ExplicitInterposition.registerTransaction(PropagationContext)", e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_eicaughtexception("ExplicitInterposition.registerTransaction(PropagationContext)", e); // JBTM-3990
+			}
 
 			throw new InterpositionFailed();
 		}

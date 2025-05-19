@@ -4,6 +4,7 @@
  */
 package com.arjuna.ats.arjuna.coordinator;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
@@ -30,11 +31,15 @@ public class AsyncBeforeSynchronization implements Callable<Boolean> {
         try {
            return synchronization.beforeCompletion();
         } catch (Exception e) {
-            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(synchronization.toString(), e);
-            throw e;
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(synchronization.toString(), e);
+            }
+            throw e; // JBTM-3990
         } catch (Error e) {
-            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(synchronization.toString(), e);
-            throw e;
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(synchronization.toString(), e);
+            }
+            throw e; // JBTM-3990
         } finally {
             ThreadActionData.popAction(false);
         }
