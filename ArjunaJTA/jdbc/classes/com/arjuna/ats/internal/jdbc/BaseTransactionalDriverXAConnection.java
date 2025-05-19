@@ -7,6 +7,7 @@ package com.arjuna.ats.internal.jdbc;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
@@ -35,7 +36,9 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
                 _theConnection = _theDataSource.getXAConnection(_user, _passwd);
             }
         } catch (Exception e) {
-            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e); // JBTM-3990
+            }
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -105,7 +108,9 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
 
             return _theXAResource;
         } catch (Exception e) {
-            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e); // JBTM-3990
+            }
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -146,7 +151,9 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
 
             return _theConnection;
         } catch (Exception e) {
-            jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e); // JBTM-3990
+            }
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);

@@ -13,6 +13,7 @@ import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Coordinator;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -107,7 +108,9 @@ public class BaseTransaction
 		}
 		catch (NullPointerException ex)
 		{
-			jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaxLogger.i18NLogger.warn_jtax_transaction_jts_ex(ex); // JBTM-3990
+			}
 
 			throw new IllegalStateException(
                     "BaseTransaction.commit - "

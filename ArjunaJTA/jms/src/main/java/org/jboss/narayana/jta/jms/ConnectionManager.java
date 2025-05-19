@@ -7,6 +7,7 @@
 package org.jboss.narayana.jta.jms;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.XAConnection;
@@ -100,7 +101,9 @@ public class ConnectionManager {
                 } catch (JMSException ignore) {
                 }
             }
-            jtaLogger.i18NLogger.warn_failed_to_create_jms_connection(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jtaLogger.i18NLogger.warn_failed_to_create_jms_connection(e); // JBTM-3990
+            }
             throw new XAException(XAException.XAER_RMFAIL);
         }
     }

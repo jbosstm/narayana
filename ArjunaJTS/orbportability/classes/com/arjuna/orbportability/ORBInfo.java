@@ -7,6 +7,7 @@
 
 package com.arjuna.orbportability;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.internal.utils.SimpleXMLParser;
 import com.arjuna.orbportability.logging.opLogger;
@@ -138,7 +139,9 @@ public class ORBInfo
         }
         catch (Exception e)
         {
-            opLogger.i18NLogger.fatal_ORBInfo_creationfailed(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                opLogger.i18NLogger.fatal_ORBInfo_creationfailed(e); // JBTM-3990
+            }
             throw new ExceptionInInitializerError( e );
         }
     }

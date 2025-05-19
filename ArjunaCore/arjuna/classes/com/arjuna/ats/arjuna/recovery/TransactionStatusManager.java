@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -116,6 +117,7 @@ public class TransactionStatusManager
            }
        }
        catch ( IOException ex ) {
+           // JBTM-3990 still log the information
            tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_14(getListenerHostName(), Integer.toString(getListenerPort(-1)));
 
            throw new FatalError(tsLogger.i18NLogger.get_recovery_TransactionStatusManager_9(), ex);

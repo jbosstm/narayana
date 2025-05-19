@@ -689,8 +689,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 							 * only.
 							 */
 
-                            jtaLogger.i18NLogger.warn_transaction_arjunacore_enliststarterror("TransactionImple.enlistResource",
-                                    XAHelper.xidToString(xid), XAHelper.printXAErrorCode(e), e);
+							if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+								jtaLogger.i18NLogger.warn_transaction_arjunacore_enliststarterror("TransactionImple.enlistResource",
+										XAHelper.xidToString(xid), XAHelper.printXAErrorCode(e), e); // JBTM-3990
+							}
 
 							markRollbackOnly();
 
@@ -699,8 +701,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
 						if (retry < 0)
 						{
-                            jtaLogger.i18NLogger.warn_transaction_arjunacore_enliststarterror("TransactionImple.enlistResource",
-                                    XAHelper.xidToString(xid), XAHelper.printXAErrorCode(e), e);
+							if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+								jtaLogger.i18NLogger.warn_transaction_arjunacore_enliststarterror("TransactionImple.enlistResource",
+										XAHelper.xidToString(xid), XAHelper.printXAErrorCode(e), e); // JBTM-3990
+							}
 
 							markRollbackOnly();
 
@@ -736,8 +740,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				}
 				catch (XAException ex)
 				{
-                    jtaLogger.i18NLogger.warn_transaction_arjunacore_xastart("TransactionImple.enlistResource - xa_start ",
-                            XAHelper.xidToString(xid), XAHelper.printXAErrorCode(ex), ex);
+					if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+						jtaLogger.i18NLogger.warn_transaction_arjunacore_xastart("TransactionImple.enlistResource - xa_start ",
+								XAHelper.xidToString(xid), XAHelper.printXAErrorCode(ex), ex); // JBTM-3990
+					}
 
 					markRollbackOnly();
 
@@ -1114,10 +1120,12 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 						dontWarn = true; // XA_RB* codes are valid spec behaviour if we're rolling back anyhow.
 					}
 			}
-			if(dontWarn) {
+			if(dontWarn) { // JBTM-3990
 				jtaLogger.logger.trace("Could not end XA resource {0}", xar, e1);
 			} else {
-				jtaLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				    jtaLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+				}
 			}
 			throw e1;
 		}
@@ -1563,7 +1571,9 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-            jtaLogger.i18NLogger.warn_transaction_arjunacore_threadexception(e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.warn_transaction_arjunacore_threadexception(e); // JBTM-3990
+			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
@@ -1615,15 +1625,17 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 		}
 		catch (XAException ex)
 		{
-            jtaLogger.i18NLogger.warn_transaction_arjunacore_newtmerror("TransactionImple.isNewRM",
-								XAHelper.printXAErrorCode(ex), ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtaLogger.i18NLogger.warn_transaction_arjunacore_newtmerror("TransactionImple.isNewRM",
+						XAHelper.printXAErrorCode(ex), ex); // JBTM-3990
+			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString(), ex);
 		}
 		catch (Exception e)
 		{
             jtaLogger.i18NLogger.warn_transaction_arjunacore_newtmerror("TransactionImple.isNewRM",
-								"-", e);
+								"-", e); // JBTM-3990
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}

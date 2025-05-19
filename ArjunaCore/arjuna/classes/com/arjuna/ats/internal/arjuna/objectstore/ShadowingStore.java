@@ -12,8 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.SyncFailedException;
 
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -587,7 +589,9 @@ public class ShadowingStore extends FileSystemStore
                 {
                     closeAndUnlock(fd, null, ofile);
 
-                    tsLogger.logger.warn(e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.logger.warn(e); // JBTM-3990
+                    }
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed to locate file "
@@ -597,7 +601,9 @@ public class ShadowingStore extends FileSystemStore
                 {
                     closeAndUnlock(fd, null, ofile);
 
-                    tsLogger.logger.warn(e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.logger.warn(e); // JBTM-3990
+                    }
 
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed for "

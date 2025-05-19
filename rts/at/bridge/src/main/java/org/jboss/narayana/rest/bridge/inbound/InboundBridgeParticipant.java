@@ -5,6 +5,7 @@
 
 package org.jboss.narayana.rest.bridge.inbound;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 
 import org.jboss.jbossts.star.logging.RESTATLogger;
@@ -159,7 +160,8 @@ public class InboundBridgeParticipant implements Participant, Serializable {
                 SubordinationManager.getXATerminator().commit(inboundBridge.getXid(), false);
             }
         } catch (XAException e) {
-            RESTATLogger.atI18NLogger.warn_subordinateCommitXAException(e.getMessage(), e);
+
+            RESTATLogger.atI18NLogger.warn_subordinateCommitXAException(e.getMessage(), e); // JBTM-3990 there is no default case in the switch
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:
@@ -182,7 +184,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
                 SubordinationManager.getXATerminator().rollback(inboundBridge.getXid());
             }
         } catch (XAException e) {
-            RESTATLogger.atI18NLogger.warn_subordinateRollbackXAException(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_subordinateRollbackXAException(e.getMessage(), e); // JBTM-3990 there is no default case in the switch
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:

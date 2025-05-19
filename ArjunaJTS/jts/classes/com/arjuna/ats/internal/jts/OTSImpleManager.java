@@ -16,6 +16,7 @@ import org.omg.CORBA.UserException;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosTransactions.TransactionFactory;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
@@ -204,19 +205,25 @@ public class OTSImpleManager
 							throw new BAD_PARAM();
 					}
 					catch (InvalidName e1) {
-                        jtsLogger.i18NLogger.warn_otsserverfailed(e1);
+						if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+							jtsLogger.i18NLogger.warn_otsserverfailed(e1); // JBTM-3990
+						}
 
                         throw new FatalError(
                                 e1.toString(), e1);
                     }
 					catch (BAD_PARAM ex1) {
-                        jtsLogger.i18NLogger.warn_otsserverfailed(ex1);
+						if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+							jtsLogger.i18NLogger.warn_otsserverfailed(ex1); // JBTM-3990
+						}
 
                         throw new FatalError(
                                 ex1.toString(), ex1);
                     }
 					catch (IOException e2) {
-                        jtsLogger.i18NLogger.warn_otsservererror(e2);
+						if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+							jtsLogger.i18NLogger.warn_otsservererror(e2); // JBTM-3990
+						}
 
                         throw new FatalError(
                                 e2.toString(), e2);
@@ -228,7 +235,9 @@ public class OTSImpleManager
                                 e3.toString(), e3);
                     }
 					catch (UserException e4) {
-                        jtsLogger.i18NLogger.warn_otsservererror(e4);
+						if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+							jtsLogger.i18NLogger.warn_otsservererror(e4); // JBTM-3990
+						}
 
                         throw new FatalError(
                                 e4.toString(), e4);

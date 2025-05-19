@@ -28,6 +28,7 @@ import org.omg.CosTransactions.otid_t;
 import com.arjuna.ArjunaOTS.GlobalTransactionInfo;
 import com.arjuna.ArjunaOTS.TransactionInfo;
 import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -689,7 +690,9 @@ public class TransactionFactoryImple extends
 			}
 			catch (Exception e)
 			{
-				jtsLogger.i18NLogger.warn_caughtexception(e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_caughtexception(e); // JBTM-3990
+				}
 
 				throw new UNKNOWN();
 			}
@@ -745,7 +748,9 @@ public class TransactionFactoryImple extends
 			}
 			catch (Exception e)
 			{
-				jtsLogger.i18NLogger.warn_caughtexception(e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_caughtexception(e); // JBTM-3990
+				}
 
 				throw new UNKNOWN();
 			}

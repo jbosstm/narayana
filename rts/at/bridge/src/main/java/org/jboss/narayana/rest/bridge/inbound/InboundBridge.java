@@ -21,6 +21,7 @@ import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.logging.Logger;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
@@ -89,7 +90,9 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
         try {
             TransactionManager.transactionManager().resume(transaction);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_failedToStartBridge(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                RESTATLogger.atI18NLogger.warn_failedToStartBridge(e.getMessage(), e); // JBTM-3990
+            }
             throw new InboundBridgeException("Failed to start the bridge.", e);
         }
     }
@@ -102,7 +105,9 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
         try {
             TransactionManager.transactionManager().suspend();
         } catch (SystemException e) {
-            RESTATLogger.atI18NLogger.warn_failedToStopBridge(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                RESTATLogger.atI18NLogger.warn_failedToStopBridge(e.getMessage(), e); // JBTM-3990
+            }
             throw new InboundBridgeException("Failed to stop the bridge.", e);
         }
     }
@@ -190,7 +195,7 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
         try {
             transaction.enlistResource(inboundBridge);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_failedToEnlistTransaction(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_failedToEnlistTransaction(e.getMessage(), e); // JBTM-3990
             throw new InboundBridgeException("Failed to enlist inbound bridge to the transaction.", e);
         }
     }
@@ -207,7 +212,9 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
             transaction = SubordinationManager.getTransactionImporter()
                     .importTransaction(xid, TxControl.getDefaultTimeout());
         } catch (XAException e) {
-            RESTATLogger.atI18NLogger.warn_failedToImportTransaction(e.getMessage(), e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                RESTATLogger.atI18NLogger.warn_failedToImportTransaction(e.getMessage(), e); // JBTM-3990
+            }
             throw new InboundBridgeException("Failed to import transaction.", e);
         }
 

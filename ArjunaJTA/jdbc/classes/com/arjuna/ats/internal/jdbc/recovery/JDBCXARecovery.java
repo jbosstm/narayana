@@ -23,6 +23,7 @@ import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 /**
  * This provides recovery for compliant JDBC drivers. It is not meant to be
@@ -140,17 +141,19 @@ public class JDBCXARecovery implements XAResourceRecovery
         }
         catch (SQLException ex)
         {
-            jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, ex);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, ex); // JBTM-3990
+            }
 
-            throw ex;
+            throw ex;  // the recovery module will log the problem
         }
         catch (Exception e)
         {
-            jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, e);
+            jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, e); // JBTM.3990
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
-            throw sqlException;
+            throw sqlException;  // the recovery module will log the problem
         }
     }
 
@@ -178,17 +181,21 @@ public class JDBCXARecovery implements XAResourceRecovery
         }
         catch (SQLException ex)
         {
-            jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, ex);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, ex); // JBTM-3990
+            }
 
-            throw ex;
+            throw ex; // the recovery module will log the problem
         }
         catch (Exception e)
         {
-            jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, e); // JBTM-3990
+            }
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
-            throw sqlException;
+            throw sqlException; // the recovery module will log the problem
         }
     }
 

@@ -81,7 +81,7 @@ public class jndi implements XAModifier
 	    }
 	    catch (SQLException e)
 	    {
-            jdbcLogger.i18NLogger.warn_isolationlevelfailset("ConnectionImple.getConnection", e);
+            jdbcLogger.i18NLogger.warn_isolationlevelfailset("ConnectionImple.getConnection", e); // JBTM=3990
 
 		throw e;
 	    }

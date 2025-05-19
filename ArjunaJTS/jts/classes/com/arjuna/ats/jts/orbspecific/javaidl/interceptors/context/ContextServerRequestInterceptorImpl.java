@@ -22,6 +22,7 @@ import org.omg.PortableInterceptor.InvalidSlot;
 import org.omg.PortableInterceptor.ServerRequestInfo;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -170,7 +171,9 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	    }
 	    catch (TRANSACTION_REQUIRED ex)
 	    {
-			jtsLogger.i18NLogger.warn_caughtexception(ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_caughtexception(ex); // JBTM-3990
+			}
 		
 		throw ex;
 	    }
@@ -213,12 +216,16 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	    suspendContext(request_info);
 	}
 	catch (SystemException ex) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", ex); // JBTM-3990
+		}
 
         throw ex;
     }
 	catch (Exception e) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", e);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", e); // JBTM-3990
+		}
 
         throw new BAD_OPERATION(e.toString());
     }
@@ -236,12 +243,16 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 	    suspendContext(request_info);
 	}
 	catch (SystemException e1) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e1);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e1); // JBTM-3990
+		}
 
         throw e1;
     }
 	catch (Exception e2) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e2);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e2); // JBTM-3990
+		}
 
         throw new BAD_OPERATION(e2.toString());
     }
@@ -259,12 +270,16 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 	    suspendContext(request_info);
 	}
 	catch (SystemException ex) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", ex); // JBTM-3990
+		}
 
         throw ex;
     }
 	catch (Exception e) {
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", e);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", e); // JBTM-3990
+		}
 
         throw new BAD_OPERATION(e.toString());
     }
@@ -308,7 +323,9 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 			    ctx = null;
 			}
 			catch (Exception e) {
-                jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl.suspendContext", e);
+				if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+					jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl.suspendContext", e); // JBTM-3990
+				}
 
                 throw new UNKNOWN(e.toString());
             }

@@ -48,6 +48,8 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     @FullPropertyName(name = "timeout.factor")
     private volatile int timeoutFactor = 1;
 
+    private boolean logAndRethrow = true;
+
     /**
      * Returns the 'var' directory path.
      *
@@ -332,4 +334,24 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         return ConfigurationInfo.getBuildId();
     }
 
+    /**
+     * Due to historical reasons some exceptions (a small number) are logged just before the exception is thrown.
+     * Such behavior is considered to be an antipattern. To avoid this behaviour call this setter with the value
+     * false (the default is true). Note that there are only a few places in the code where this antipattern is
+     * followed. The behaviour is now configurable because some of the log messages contain more information than
+     * is available in the exception or the caller that receives the exception does not log the problem, or the
+     * problem is reported by an internal thread, or the problem is on the server side of a client server interaction.
+     *
+     * @param logAndRethrow when false avoid, where possible, the log and rethrow antipattern
+     */
+    public void setLogAndRethrow(boolean logAndRethrow) {
+        this.logAndRethrow = logAndRethrow;
+    }
+
+    /**
+     * @link setLogAndRethrow
+     */
+    public boolean isLogAndRethrow() {
+        return logAndRethrow;
+    }
 }

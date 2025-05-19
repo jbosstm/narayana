@@ -12,6 +12,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.common.internal.util.ClassloadingUtility;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import javax.sql.XAConnection;
 import java.sql.SQLException;
@@ -123,7 +124,9 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 
                 super.createConnection();
             } catch (Exception e) {
-                jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e);;
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    jdbcLogger.i18NLogger.warn_connection_problem(e.getMessage(), e); // JBTM-3990
+                }
 
                 SQLException sqlException = new SQLException(e.toString());
                 sqlException.initCause(e);

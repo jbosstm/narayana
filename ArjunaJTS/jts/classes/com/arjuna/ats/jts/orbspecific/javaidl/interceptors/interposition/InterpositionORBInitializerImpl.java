@@ -18,6 +18,7 @@ import org.omg.PortableInterceptor.ORBInitializer;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.jts.OTSManager;
@@ -79,8 +80,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (UnknownEncoding ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_codecerror(
-                "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_codecerror(
+					"InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_codeccreate(), ex);
 	}
@@ -102,8 +105,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (DuplicateName ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
-                 "InterpositionORBInitializerImpl", "ClientRequestInterceptor", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
+					"InterpositionORBInitializerImpl", "ClientRequestInterceptor", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_cie(), ex);
 	}
@@ -125,8 +130,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (DuplicateName ex)
 	{
-        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
-                "InterpositionORBInitializerImpl", "ServerRequestInterceptor", ex);
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
+					"InterpositionORBInitializerImpl", "ServerRequestInterceptor", ex); // JBTM-3990
+		}
 
 	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_sie(), ex);
 	}

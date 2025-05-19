@@ -6,6 +6,8 @@
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
 import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
@@ -308,7 +310,9 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                         return TwoPhaseOutcome.FINISH_ERROR;
                     }
                 } catch (RuntimeException e) {
-                    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID), _theXAResource.toString(), "-", e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID), _theXAResource.toString(), "-", e); // JBTM-3990
+                    }
 
                     throw e;
                 }
@@ -610,8 +614,10 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                         }
                     }
                 } catch (RuntimeException e) {
-                    jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
-                            _theXAResource.toString(), "-", e);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), "-", e); // JBTM-3990
+                    }
 
                     throw e;
                 }

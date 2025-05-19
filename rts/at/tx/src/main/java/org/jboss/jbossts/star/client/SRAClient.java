@@ -644,7 +644,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
     private void aquireConnection() {
         if (connectionInUse) {
-            System.out.printf("SRAClient: trying to aquire an in use connection");
+            System.out.printf("SRAClient: trying to aquire an in use connection"); // JBTM-3990 needs a log code
 
             throw new GenericSRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "SRAClient: trying to aquire an in use connection", null);

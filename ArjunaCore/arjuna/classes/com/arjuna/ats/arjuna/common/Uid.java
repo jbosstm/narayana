@@ -231,7 +231,9 @@ public class Uid implements Cloneable, Serializable
                 }
                 catch (Exception e)
                 {
-                    tsLogger.i18NLogger.fatal_common_Uid_4(uidString);
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.i18NLogger.fatal_common_Uid_4(uidString); // JBTM-3990
+                    }
 
                     throw new FatalError(tsLogger.i18NLogger.get_common_Uid_2(), e);
                 }

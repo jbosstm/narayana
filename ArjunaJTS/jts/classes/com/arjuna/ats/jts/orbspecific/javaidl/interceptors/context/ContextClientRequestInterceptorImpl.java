@@ -23,6 +23,7 @@ import org.omg.IOP.ServiceContext;
 import org.omg.PortableInterceptor.ClientRequestInfo;
 import org.omg.PortableInterceptor.ClientRequestInterceptor;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -236,7 +237,9 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		throw e;
 	    }
 	    catch (Exception ex) {
-            jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_error(ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_error(ex); // JBTM-3990
+			}
 
             throw new UNKNOWN(ex.toString());
         }

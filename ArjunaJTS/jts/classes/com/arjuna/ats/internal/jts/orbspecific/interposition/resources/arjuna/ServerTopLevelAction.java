@@ -24,6 +24,7 @@ import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.Resource;
 import org.omg.CosTransactions.Vote;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -459,7 +460,9 @@ public void commit_one_phase () throws HeuristicHazard, SystemException
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
 
 	if (theTransaction == null) {
-        jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_notx("ServerTopLevelAction.commit_one_phase");
+		if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+			jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_notx("ServerTopLevelAction.commit_one_phase"); // JBTM-3990
+		}
 
         throw new INVALID_TRANSACTION(ExceptionCodes.NO_TRANSACTION, CompletionStatus.COMPLETED_NO);
     }

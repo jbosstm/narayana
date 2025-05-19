@@ -39,6 +39,8 @@ import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
 import org.jboss.logging.Logger;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import jakarta.ws.rs.core.Link;
@@ -469,7 +471,9 @@ public class TxSupport {
             try {
                 body = (status != -1 ? getContent(connection) : "");
             } catch (IOException e) {
-                RESTATLogger.atI18NLogger.info_txSupportHttpRequest(e.getMessage(), e);
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    RESTATLogger.atI18NLogger.info_txSupportHttpRequest(e.getMessage(), e); // JBTM-3990
+                }
                 body = "";
             }
 

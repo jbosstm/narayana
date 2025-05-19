@@ -7,6 +7,7 @@ package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.wst.*;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
@@ -90,7 +91,9 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         }
         catch(XAException xaException)
         {
-            txbridgeLogger.i18NLogger.error_ibdp_nosub(xaException);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                txbridgeLogger.i18NLogger.error_ibdp_nosub(xaException); // JBTM-3990
+            }
             throw new IOException(xaException);
         }
 
@@ -126,7 +129,9 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         }
         catch(XAException xaException)
         {
-            txbridgeLogger.i18NLogger.error_ibdp_norecovery(subordinateTransactionId, xaException);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                txbridgeLogger.i18NLogger.error_ibdp_norecovery(subordinateTransactionId, xaException); // JBTM-3990
+            }
             throw new IOException(xaException);
         }
     }

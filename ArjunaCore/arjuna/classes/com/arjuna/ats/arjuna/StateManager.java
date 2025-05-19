@@ -748,7 +748,9 @@ public class StateManager
                     processUid = UidHelper.unpackFrom(os);
             }
             else {
-                tsLogger.i18NLogger.warn_StateManager_9();
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    tsLogger.i18NLogger.warn_StateManager_9(); // JBTM-3990
+                }
 
                 throw new IOException(tsLogger.i18NLogger.get_StateManager_15());
             }
@@ -1214,7 +1216,9 @@ public class StateManager
                 }
                 catch (final Throwable ex)
                 {
-                    tsLogger.i18NLogger.warn_StateManager_13();
+                    if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                        tsLogger.i18NLogger.warn_StateManager_13(); // JBTM-3990
+                    }
 
                     throw new FatalError(tsLogger.i18NLogger.get_StateManager_14());
                 }

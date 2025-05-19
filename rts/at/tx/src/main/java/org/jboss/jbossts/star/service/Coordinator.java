@@ -39,6 +39,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -378,7 +379,9 @@ public class Coordinator {
 
             throw new TransactionStatusException("Transaction failed to start: " + status);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_failedToStartTransactionCorrdinator(e);
+            if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                RESTATLogger.atI18NLogger.warn_failedToStartTransactionCorrdinator(e); // JBTM-3990
+            }
             throw new TransactionStatusException("Transaction failed to start: " + e);
         } finally {
             AtomicAction.suspend();

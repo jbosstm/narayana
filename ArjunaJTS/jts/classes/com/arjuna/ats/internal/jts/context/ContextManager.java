@@ -27,6 +27,7 @@ import org.omg.CosTransactions.TransactionFactory;
 import org.omg.PortableInterceptor.InvalidSlot;
 
 import com.arjuna.ArjunaOTS.ActionControl;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
@@ -154,7 +155,9 @@ public class ContextManager
 	    }
 	    catch (Throwable ex)
 	    {
-            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.current", ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_context_genfail("ContextManager.current", ex); // JBTM-3990
+			}
 
 		throw new BAD_OPERATION();
 	    }
@@ -692,12 +695,16 @@ public class ContextManager
         }
 	    catch (SystemException ex)
 	    {
-            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", ex);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", ex); // JBTM-3990
+			}
 
 		throw ex;
 	    }
 	    catch (Exception e) {
-            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", e);
+			if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+				jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", e); // JBTM-3990
+			}
 
             throw new UNKNOWN();
         }
