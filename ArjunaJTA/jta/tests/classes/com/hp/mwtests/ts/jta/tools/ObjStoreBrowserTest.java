@@ -64,14 +64,6 @@ class ExtendedFailureXAResource extends FailureXAResource {
 public class ObjStoreBrowserTest {
     private ObjStoreBrowser osb;
 
-	private ObjStoreBrowser createObjStoreBrowser() {
-		ObjStoreBrowser osb = new ObjStoreBrowser();
-
-		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
-
-		return osb;
-	}
-
 	@BeforeClass
 	public static void setUp() {
 	}
@@ -81,6 +73,7 @@ public class ObjStoreBrowserTest {
         FailureXAResource.resetForgetCounts();
 
         osb = ObjStoreBrowser.getInstance();
+        osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
 
         osb.start();
     }
