@@ -85,20 +85,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                     "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
                     null
             ),
-            // JTAActionBean overrides ActionBean when the ArjunaJTA module is present, as opposed to just ArjunaCore
-            // on its own.
-            // These handlers are iterated over and added to the osbTypeMap map using typeName as the key so,
-            // to ensure that JTAActionBean is added to the map in JTA mode, please ensure that it appears
-            // last in this collection so that it overwrites the previous value. An alternative could be to make
-            // the beanClass field a comma separated list and the first one that is found to be known to the
-            // class loader would be used, or a completely different design for the instrumentation could be chosen
-            new OSBTypeHandler(
-                    true,
-                    "com.arjuna.ats.arjuna.AtomicAction",
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean",
-                    "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
-                    null
-            ),
     };
 
     private static final OSBTypeHandler[] defaultJTSOsbTypes = {
@@ -319,17 +305,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         setExposeAllRecordsAsMBeans(arjPropertyManager.
             getObjectStoreEnvironmentBean().getExposeAllLogRecordsAsMBeans());
 
-        for (OSBTypeHandler osbType : defaultOsbTypes) {
-            try {
-                Class.forName(osbType.getBeanClass(), true, this.getClass().getClassLoader());
-                osbTypeMap.put(osbType.getTypeName(), osbType);
-            } catch (ClassNotFoundException ignore) {
-                // Some record types (currently only StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction)
-                // use different handlers depending upon whether ArjunaJTA is present. Ignore classes which
-                // aren't present and log an info message
-                tsLogger.i18NLogger.info_osbSkipHandler(osbType.getBeanClass());
-            }
-        }
+        for (OSBTypeHandler osbType : defaultOsbTypes)
+            osbTypeMap.put(osbType.getTypeName(), osbType);
 
         for (OSBTypeHandler osbType : defaultJTSOsbTypes)
             osbTypeMap.put(osbType.getTypeName(), osbType);
@@ -477,6 +454,34 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
+     * Update registered MBeans based on the current set of Uids.
+     * @param allCurrUids any registered MBeans not in this collection will be deregistered
+     */
+    private void unregisterRemovedUids(Map<String, Collection<Uid>> allCurrUids) {
+
+        for (Map.Entry<String, List<UidWrapper>> e : registeredMBeans.entrySet()) {
+            String type = e.getKey();
+            List<UidWrapper> registeredBeansOfType = e.getValue();
+            Collection<Uid> currUidsOfType = allCurrUids.get(type);
+
+            if (currUidsOfType != null) {
+                Iterator<UidWrapper> iterator = registeredBeansOfType.iterator();
+
+                while (iterator.hasNext()) {
+                    UidWrapper w = iterator.next();
+
+                    if (!currUidsOfType.contains(w.getUid())) {
+                        w.unregister();
+                        iterator.remove();
+                    }
+                }
+            } else {
+                unregisterMBeans(registeredBeansOfType);
+            }
+        }
+    }
+
+    /**
      * See if any new MBeans need to be registered or if any existing MBeans no longer exist
      * as ObjectStore entries.
      *
@@ -485,11 +490,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     public synchronized void probe() throws MBeanException {
         Map<String, Collection<Uid>> currUidsForType = new HashMap<>();
 
-        // recreate every MBean so clear the cache first
-        unregisterMBeans();
-
         for (String type : getTypes())
             currUidsForType.put(type, getUids(type));
+
+        // if there are any beans in registeredMBeans that don't appear in new list and unregister them
+        unregisterRemovedUids(currUidsForType); //unregisterMBeans();
 
         for (Map.Entry<String, Collection<Uid>> e : currUidsForType.entrySet()) {
             String type = e.getKey();
