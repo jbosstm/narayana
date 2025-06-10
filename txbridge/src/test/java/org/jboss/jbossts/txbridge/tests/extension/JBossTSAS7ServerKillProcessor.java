@@ -16,15 +16,15 @@ public class JBossTSAS7ServerKillProcessor extends JBossTSBaseServerKillProcesso
     private static final String PROCESSES_CMD = JBossTSServerExtension.OSType.getOSType().getPSCommand();
     private static final String PS_AUX_CMD = JBossTSServerExtension.isSolaris() ? "/usr/ucb/ps aux" : "ps aux";
     private static final String CHECK_JBOSS_ALIVE_CMD = "if [ \"x`" + PROCESSES_CMD + " | grep 'jboss-module[s]'`\" = \"x\" ]; then exit 1; fi";
-    private static final String SHUTDOWN_JBOSS_CMD = PROCESSES_CMD + " | grep jboss-module[s] | awk '" + JBossTSServerExtension.OSType.getOSType().getPSIDIndex() + "' | xargs kill";
-    private static final String CHECK_FOR_DEFUNCT_JAVA_CMD = "if [ \"x`" + PS_AUX_CMD + " | grep '\\[java\\] <defunct>'`\" = \"x\" ]; then exit 1; fi";  
-    
+    private static final String SHUTDOWN_JBOSS_CMD = "pgrep -f 'jboss-module[s]' | xargs kill";
+    private static final String CHECK_FOR_DEFUNCT_JAVA_CMD = "if [ \"x`" + PS_AUX_CMD + " | grep '\\[java\\] <defunct>'`\" = \"x\" ]; then exit 1; fi";
+
     @Override
     protected boolean jbossIsAlive() throws Exception {
         //Command will 'exit 1' if jboss is not running and 'exit 0' if it is.
     	return runShellCommandExitCode(getJBossAliveCmd()) == 0;
     }
-    
+
     @Override
     protected boolean isDefunctJavaProcess() throws Exception {
         //Command will 'exit 1' if a defunct java process is not running and 'exit 0' if there is.
@@ -46,17 +46,17 @@ public class JBossTSAS7ServerKillProcessor extends JBossTSBaseServerKillProcesso
             }
         }
     }
-    
+
     private int runShellCommandExitCode(String cmd) throws Exception {
         getLogger().info("Executing shell command: '" + cmd + "'");
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", cmd);
         Process p = pb.start();
-        
+
         dumpStream("std out", p.getInputStream());
         dumpStream("std error", p.getErrorStream());
-    
+
         p.waitFor();
-	        
+
         p.destroy();
 
         return p.exitValue();
@@ -69,14 +69,14 @@ public class JBossTSAS7ServerKillProcessor extends JBossTSBaseServerKillProcesso
         Process p = pb.start();
         String res = dumpStream("std out", p.getInputStream());
         dumpStream("std error", p.getErrorStream());
-    
+
         p.waitFor();
-	        
+
         p.destroy();
 
         return res;
 	}
-	
+
 	@Override
 	protected Logger getLogger() {
 		return logger;
