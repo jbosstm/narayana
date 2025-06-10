@@ -39,7 +39,7 @@ jobs:
         env:
           LRA_TCK_TIMEOUT_FACTOR: 1
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lra-logs-jdk${{ matrix.java-version }}
