@@ -1,6 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!--
    Copyright The Narayana Authors
    SPDX short identifier: Apache-2.0
  -->
@@ -22,7 +22,6 @@
     <maven.deploy.skip>true</maven.deploy.skip>
     <narayana.home.url>http://narayana.io/</narayana.home.url>
     <surefire.reports.directory>surefire-reports</surefire.reports.directory>
-    <sortpom.skip>true</sortpom.skip>
   </properties>
 
   <profiles>
@@ -48,240 +47,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>prepare-reports</id>
-                <phase>prepare-package</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <target>
-                    <typedef resource="org/jacoco/ant/antlib.xml"/>
-                    <echo message="Coverage report"/>
-                    <report>
-                      <executiondata>
-                        <fileset dir="../ArjunaCore/arjuna/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaCore/txoj/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../rts/at/tx/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../rts/at/integration/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../rts/at/bridge/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../common/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../STM/target/coverage-reports" includes="jacoco-ut.exec"/>
-
-                        <fileset dir="../ArjunaJTA/jta/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaJTA/jdbc/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaJTA/cdi/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaJTA/jms/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../tools/target/coverage-reports" includes="jacoco-ut.exec"/>
-
-                        <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaJTS/orbportability/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../ArjunaJTS/jtax/target/coverage-reports" includes="jacoco-ut.exec"/>
-
-                        <fileset dir="../XTS/localjunit/disabled-context-propagation/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../XTS/localjunit/unit/target/coverage-reports" includes="jacoco-ut.exec"/>
-                        <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"/>
-
-                        <fileset dir="../txbridge/target/coverage-reports" includes="jacoco-ut.exec"/>
-                      </executiondata>
-
-                      <structure name="JaCoCo">
-                        <group name="org.jboss.narayana.arjunacore">
-                          <classfiles>
-                            <fileset dir="../ArjunaCore/arjuna/target/classes" includes="**/*.class"/>
-                            <fileset dir="../ArjunaCore/txoj/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaCore/arjuna/classes"/>
-                            <fileset dir="../ArjunaCore/txoj/classes"/>
-                          </sourcefiles>
-                        </group>
-                        <group name="org.jboss.narayana.rts">
-                          <classfiles>
-                            <fileset dir="../rts/at/tx/target/classes" includes="**/*.class"/>
-                            <fileset dir="../rts/at/integration/target/classes" includes="**/*.class"/>
-                            <fileset dir="../rts/at/bridge/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../rts/at/tx/src/main/java"/>
-                            <fileset dir="../rts/at/integration/src/main/java"/>
-                            <fileset dir="../rts/at/bridge/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.common">
-                          <classfiles>
-                            <fileset dir="../common/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../common/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.stm">
-                          <classfiles>
-                            <fileset dir="../STM/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../STM/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.tools">
-                          <classfiles>
-                            <fileset dir="../tools/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../tools/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.jta.jta">
-                          <classfiles>
-                            <fileset dir="../ArjunaJTA/jta/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaJTA/jta/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.jta.jdbc">
-                          <classfiles>
-                            <fileset dir="../ArjunaJTA/jdbc/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaJTA/jdbc/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.jta.cdi">
-                          <classfiles>
-                            <fileset dir="../ArjunaJTA/cdi/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaJTA/cdi/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.jta.jms">
-                          <classfiles>
-                            <fileset dir="../ArjunaJTA/jms/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaJTA/jms/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.jts">
-                          <classfiles>
-                            <fileset dir="../ArjunaJTS/jts/target/classes/" includes="**/*.class"/>
-                            <fileset dir="../ArjunaJTS/orbportability/target/classes" includes="**/*.class"/>
-                            <fileset dir="../ArjunaJTS/jtax/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../ArjunaJTS/jts/classes/"/>
-                            <fileset dir="../ArjunaJTS/orbportability/classes"/>
-                            <fileset dir="../ArjunaJTS/jtax/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.xts">
-                          <classfiles>
-                            <fileset dir="../XTS/bridge/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/byteman_support/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/recovery/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/sar/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/WS-C/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/WS-T/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/WSAS/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/WSCF/target/classes" includes="**/*.class"/>
-                            <fileset dir="../XTS/WSTX/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../XTS/bridge/src"/>
-                            <fileset dir="../XTS/byteman_support/src/main/java"/>
-                            <fileset dir="../XTS/recovery/src"/>
-                            <fileset dir="../XTS/sar/src"/>
-                            <fileset dir="../XTS/WS-C/dev/src"/>
-                            <fileset dir="../XTS/WS-T/dev/src"/>
-                            <fileset dir="../XTS/WSAS/classes"/>
-                            <fileset dir="../XTS/WSCF/classes"/>
-                            <fileset dir="../XTS/WSTX/classes"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.txbridge">
-                          <classfiles>
-                            <fileset dir="../txbridge/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../txbridge/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-
-                        <group name="org.jboss.narayana.compensations">
-                          <classfiles>
-                            <fileset dir="../compensations/target/classes" includes="**/*.class"/>
-                          </classfiles>
-                          <sourcefiles>
-                            <fileset dir="../compensations/src/main/java"/>
-                          </sourcefiles>
-                        </group>
-                      </structure>
-
-                      <html destdir="${project.build.directory}/coverage"
-                            footer="Code Coverage Report for JaCoCo ${project.version}"
-                            locale="en"/>
-                      <csv destfile="${project.build.directory}/coverage/coverage.csv"/>
-                      <xml destfile="${project.build.directory}/coverage/coverage.xml"/>
-                    </report>
-
-                    <echo message="JUnit report"/>
-                    <mkdir dir="${project.build.directory}/junit"/>
-                    <junitreport todir="${project.build.directory}/junit">
-                      <fileset dir="../ArjunaCore/arjuna/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaCore/txoj/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <fileset dir="../rts/at/tx/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../rts/at/integration/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../rts/at/bridge/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../common/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../STM/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <fileset dir="../ArjunaJTA/jta/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/jdbc/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/cdi/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/jms/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../tools/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <!--
-                      <fileset dir="../ArjunaJTS/jts/target/idlj-surefire-reports" includes="**/*.xml"/>
-                      -->
-                      <fileset dir="../ArjunaJTS/jts/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
-                      <!--
-                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-surefire-reports" includes="**/*.xml"/>
-                      -->
-                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
-                      <!--
-                      <fileset dir="../ArjunaJTS/jtax/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      -->
-
-                      <fileset dir="../XTS/localjunit/disabled-context-propagation/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../XTS/localjunit/unit/target/${surefire.reports.directory}" includes="**/*.xml"/>
-                      <fileset dir="../XTS/localjunit/WSTX11-interop/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <fileset dir="../txbridge/target/${surefire.reports.directory}" includes="**/*.xml"/>
-
-                      <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
-                        <param name="narayana.url" expression="${narayana.home.url}"/>
-                      </report>
-                    </junitreport>
-                    <move file="${project.build.directory}/junit/junit-noframes.html" tofile="${project.build.directory}/junit/index.html"/>
-                  </target>
-                </configuration>
-              </execution>
-            </executions>
             <dependencies>
               <dependency>
                 <groupId>org.jacoco</groupId>
@@ -294,6 +59,238 @@
                 <version>1.8.2</version>
               </dependency>
             </dependencies>
+            <executions>
+              <execution>
+                <id>prepare-reports</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <target>
+                    <typedef resource="org/jacoco/ant/antlib.xml"></typedef>
+                    <echo message="Coverage report"></echo>
+                    <report>
+                      <executiondata>
+                        <fileset dir="../ArjunaCore/arjuna/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaCore/txoj/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../rts/at/tx/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../rts/at/integration/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../rts/at/bridge/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../common/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../STM/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+
+                        <fileset dir="../ArjunaJTA/jta/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaJTA/jdbc/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaJTA/cdi/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaJTA/jms/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../tools/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+
+                        <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaJTS/orbportability/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../ArjunaJTS/jtax/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+
+                        <fileset dir="../XTS/localjunit/disabled-context-propagation/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../XTS/localjunit/unit/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+
+                        <fileset dir="../txbridge/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                      </executiondata>
+
+                      <structure name="JaCoCo">
+                        <group name="org.jboss.narayana.arjunacore">
+                          <classfiles>
+                            <fileset dir="../ArjunaCore/arjuna/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../ArjunaCore/txoj/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaCore/arjuna/classes"></fileset>
+                            <fileset dir="../ArjunaCore/txoj/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+                        <group name="org.jboss.narayana.rts">
+                          <classfiles>
+                            <fileset dir="../rts/at/tx/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../rts/at/integration/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../rts/at/bridge/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../rts/at/tx/src/main/java"></fileset>
+                            <fileset dir="../rts/at/integration/src/main/java"></fileset>
+                            <fileset dir="../rts/at/bridge/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.common">
+                          <classfiles>
+                            <fileset dir="../common/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../common/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.stm">
+                          <classfiles>
+                            <fileset dir="../STM/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../STM/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.tools">
+                          <classfiles>
+                            <fileset dir="../tools/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../tools/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.jta.jta">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/jta/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/jta/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.jta.jdbc">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/jdbc/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/jdbc/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.jta.cdi">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/cdi/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/cdi/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.jta.jms">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/jms/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/jms/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.jts">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTS/jts/target/classes/" includes="**/*.class"></fileset>
+                            <fileset dir="../ArjunaJTS/orbportability/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../ArjunaJTS/jtax/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTS/jts/classes/"></fileset>
+                            <fileset dir="../ArjunaJTS/orbportability/classes"></fileset>
+                            <fileset dir="../ArjunaJTS/jtax/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.xts">
+                          <classfiles>
+                            <fileset dir="../XTS/bridge/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/byteman_support/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/recovery/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/sar/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/WS-C/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/WS-T/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/WSAS/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/WSCF/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../XTS/WSTX/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../XTS/bridge/src"></fileset>
+                            <fileset dir="../XTS/byteman_support/src/main/java"></fileset>
+                            <fileset dir="../XTS/recovery/src"></fileset>
+                            <fileset dir="../XTS/sar/src"></fileset>
+                            <fileset dir="../XTS/WS-C/dev/src"></fileset>
+                            <fileset dir="../XTS/WS-T/dev/src"></fileset>
+                            <fileset dir="../XTS/WSAS/classes"></fileset>
+                            <fileset dir="../XTS/WSCF/classes"></fileset>
+                            <fileset dir="../XTS/WSTX/classes"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.txbridge">
+                          <classfiles>
+                            <fileset dir="../txbridge/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../txbridge/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.compensations">
+                          <classfiles>
+                            <fileset dir="../compensations/target/classes" includes="**/*.class"></fileset>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../compensations/src/main/java"></fileset>
+                          </sourcefiles>
+                        </group>
+                      </structure>
+
+                      <html destdir="${project.build.directory}/coverage" footer="Code Coverage Report for JaCoCo ${project.version}" locale="en"></html>
+                      <csv destfile="${project.build.directory}/coverage/coverage.csv"></csv>
+                      <xml destfile="${project.build.directory}/coverage/coverage.xml"></xml>
+                    </report>
+
+                    <echo message="JUnit report"></echo>
+                    <mkdir dir="${project.build.directory}/junit"></mkdir>
+                    <junitreport todir="${project.build.directory}/junit">
+                      <fileset dir="../ArjunaCore/arjuna/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../ArjunaCore/txoj/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+
+                      <fileset dir="../rts/at/tx/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../rts/at/integration/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../rts/at/bridge/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../common/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../STM/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+
+                      <fileset dir="../ArjunaJTA/jta/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../ArjunaJTA/jdbc/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../ArjunaJTA/cdi/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../ArjunaJTA/jms/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../tools/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+
+                      <!--
+                      <fileset dir="../ArjunaJTS/jts/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      -->
+                      <fileset dir="../ArjunaJTS/jts/target/idlj-openjdk-surefire-reports" includes="**/*.xml"></fileset>
+                      <!--
+                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      -->
+                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-openjdk-surefire-reports" includes="**/*.xml"></fileset>
+                      <!--
+                      <fileset dir="../ArjunaJTS/jtax/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      -->
+
+                      <fileset dir="../XTS/localjunit/disabled-context-propagation/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../XTS/localjunit/unit/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+                      <fileset dir="../XTS/localjunit/WSTX11-interop/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+
+                      <fileset dir="../txbridge/target/${surefire.reports.directory}" includes="**/*.xml"></fileset>
+
+                      <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
+                        <param expression="${narayana.home.url}" name="narayana.url"></param>
+                      </report>
+                    </junitreport>
+                    <move file="${project.build.directory}/junit/junit-noframes.html" tofile="${project.build.directory}/junit/index.html"></move>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

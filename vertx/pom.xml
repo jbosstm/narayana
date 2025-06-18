@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <!--
+<!--
    Copyright The Narayana Authors
    SPDX short identifier: Apache-2.0
  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
     <version>7.2.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.vertx</groupId>
   <artifactId>narayana-vertx</artifactId>
   <packaging>pom</packaging>
   <name>Narayana: STM vertex</name>
   <description>STM vertex</description>
   <url>http://http://narayana.io</url>
+
+  <modules>
+    <module>module</module>
+    <module>shared</module>
+  </modules>
+
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -30,21 +38,16 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
- 
+
   <build>
     <plugins>
       <plugin>
-        <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
       </plugin>
     </plugins>
   </build>
-
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-    <sortpom.skip>true</sortpom.skip>
-  </properties>
 
   <profiles>
     <profile>
@@ -54,21 +57,16 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
             <executions>
               <execution>
                 <id>default-install</id>
                 <phase>install</phase>
               </execution>
             </executions>
-            <inherited>false</inherited>
           </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
-
-  <modules>
-    <module>module</module>
-    <module>shared</module>
-  </modules>
 </project>
