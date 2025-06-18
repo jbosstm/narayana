@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <!--
    Copyright The Narayana Authors
    SPDX short identifier: Apache-2.0
@@ -11,15 +12,19 @@
     <version>7.2.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.arjunacore</groupId>
   <artifactId>arjunacore-all</artifactId>
   <packaging>pom</packaging>
   <name>Narayana: Arjunacore</name>
   <description>Narayana: Arjunacore All</description>
+  <modules>
+    <module>arjuna</module>
+    <module>txoj</module>
+    <module>arjunacore</module>
+    <module>arjuna/services</module>
+  </modules>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <sortpom.skip>true</sortpom.skip>
   </properties>
 
   <dependencyManagement>
@@ -37,36 +42,30 @@
   <build>
     <plugins>
       <plugin>
-        <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
       </plugin>
     </plugins>
   </build>
-  <modules>
-    <module>arjuna</module>
-    <module>txoj</module>
-    <module>arjunacore</module>
-    <module>arjuna/services</module>
-  </modules>
-    <profiles>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-install-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>default-install</id>
-                      <phase>install</phase>
-                    </execution>
-                  </executions>
-                  <inherited>false</inherited>
-                </plugin>
-              </plugins>
-          </build>
-      </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
