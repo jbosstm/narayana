@@ -313,7 +313,7 @@ function build_narayana {
 
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
 
-  ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  ./build.sh -B -Pcommunity$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
 
   [ $? -eq 0 ] || fatal "narayana build failed"
 
