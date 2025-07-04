@@ -526,6 +526,11 @@
                 </execution>
               </executions>
             </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-gpg-plugin</artifactId>
+              <version>3.2.7</version>
+            </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
@@ -537,6 +542,19 @@
               <execution>
                 <id>default-install</id>
                 <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
               </execution>
             </executions>
           </plugin>
