@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 ### ====================================================================== ###
 ##                                                                          ##
 ##  This is the main entry point for the build system.                      ##
@@ -7,60 +7,20 @@
 ##  the correct version is being used with the correct configuration.       ##
 ##                                                                          ##
 ### ====================================================================== ###
+BASH_INTERPRETER=${BASH_INTERPRETER:-${SHELL}}
 
-# $Id: build.sh 105735 2010-06-04 19:45:13Z pgier $
-
-# Create the bpa if you can
-BPA=
-uname | grep Linux >> /dev/null
-if [ "$?" -ne "1" ]; then
-	uname -a | grep x86_64 >> /dev/null
-	if [ "$?" -ne "1" ]; then
-		BPA="-Dbpa=centos54x64"
-	else
-		BPA="-Dbpa=centos55x32"
-	fi
-  # This is required for the upgrade of g++ https://issues.jboss.org/browse/JBTM-1787
-  if [ -f /etc/fedora-release ]
-  then
-	uname -a | grep x86_64 >> /dev/null
-	if [ "$?" -ne "1" ]; then
-	    BPA="-Dbpa=fc18x64"
-	fi
-  fi
-fi
-
-ORIG_WORKING_DIR=`pwd`
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
 GREP="grep"
 ROOT="/"
 
-# Ignore user's MAVEN_HOME if it is set (M2_HOME is unsupported since Apache Maven 3.5.0)
-unset M2_HOME
-unset MAVEN_HOME
-
-JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]'| awk -F . '{if ($1==1) print $2; else print $1}')
-
-if [ $JAVA_VERSION -eq "9" ]; then
-  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
-  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
-  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.ws"
-  export MAVEN_OPTS
-fi
-
-if [ -z "$MAVEN_OPTS" ]
-then
-	if [ $JAVA_VERSION -ge "9" ]; then
-		MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m"
-	else
-    MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m"
-	fi
-	export MAVEN_OPTS
-fi
+# Ignore user's MAVEN_HOME if it is set
+M2_HOME=""
+MAVEN_HOME=""
 
 #  Default arguments
-MVN_OPTIONS="-B -s \"${DIRNAME}/.mvn/wrapper/settings.xml\" $BPA"
+#MVN_OPTIONS="-B -s \"${DIRNAME}/.mvn/wrapper/settings.xml\""
+MVN_OPTIONS=""
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
@@ -168,16 +128,13 @@ main() {
     #  Export some stuff for maven.
     export MVN MVN_OPTS MVN_GOAL
 
-    echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
-
-    # workaround in case 'mvn -f' is not supported
-    if [ "$PRESERVE_WORKING_DIR" = "true" ]; then cd "$ORIG_WORKING_DIR"; fi
+    echo "${BASH_INTERPRETER} $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
     #  Execute in debug mode, or simply execute.
     if [ "x$MVN_DEBUG" != "x" ]; then
-        eval /bin/sh -x $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS
+        eval "${BASH_INTERPRETER}" -x $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS
     else
-        eval exec $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS
+        eval exec ${BASH_INTERPRETER} $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS
     fi
 }
 
