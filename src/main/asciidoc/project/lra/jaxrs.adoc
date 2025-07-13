@@ -14,3 +14,7 @@ The load balancing algorithm is controlled by the value of a property called `lr
 * `round-robin`: Iterates over the set of coordinators.
 * `sticky`: Selects a single coordinator and keeps using it until it fails. Then, it selects another one.
 * `random`: Picks a random coordinator every time.
+
+If an invalid algorithm is configured then a request to start a new coordinator will return an https://www.rfc-editor.org/rfc/rfc9110.html#name-503-service-unavailable[HTTP 503, "Service Unavailable"] response code.
+
+When `round-robin` is selected and a coordinator isn't available then the next one in the list is tried. If the list is exhausted then an HTTP 503, "Service Unavailable" response code is returned.
