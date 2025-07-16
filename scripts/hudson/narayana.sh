@@ -341,6 +341,8 @@ function clone_as {
     [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
     [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
     [ -z "$AS_BRANCH" ] || echo "Using non-default AS_BRANCH: $AS_BRANCH"
+    [ -z "$AS_BRANCH" ] || [ -z "$NARAYANA_FORK_BRANCH_TO_REBASE_ON" ] || git pull --rebase jbosstm $NARAYANA_FORK_BRANCH_TO_REBASE_ON && [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+    [ -z "$AS_BRANCH" ] || [ -z "$NARAYANA_FORK_BRANCH_TO_REBASE_ON" ] || echo "Rebased AS_BRANCH on jbosstm/jboss-as $NARAYANA_FORK_BRANCH_TO_REBASE_ON"
 
     git fetch upstream
     echo "This is the JBoss-AS commit"
