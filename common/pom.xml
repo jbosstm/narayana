@@ -86,6 +86,9 @@
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -104,6 +107,9 @@
             <goals>
               <goal>test-jar-no-fork</goal>
             </goals>
+            <configuration>
+              <skipSource>${skipTests}</skipSource>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -29,11 +29,15 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>create-test-jar</id>
             <!-- create a test jar for running tests on a jakarta server
                          (see artifact localjunit-unit-tests-jakarta) -->
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>

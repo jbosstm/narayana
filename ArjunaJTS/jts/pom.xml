@@ -139,9 +139,13 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>create-test-jar</id>
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -201,6 +205,7 @@
               <goal>test-jar-no-fork</goal>
             </goals>
             <configuration>
+              <skipSource>${skipTests}</skipSource>
               <excludes>
                 <exclude>jbossts-properties.xml</exclude>
               </excludes>
