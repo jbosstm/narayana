@@ -22,7 +22,8 @@ We use a four step process for contributions:
 
 All files in this repository are subject to the Apache 2.0 license.
 
-By contributing to this project you agree to the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). The DCO was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution (we adopt the "CoreOS method" approach to using the DCO in which there is no per-commit signoff ceremony).
+By contributing to this project you agree to the Developer Certificate of Origin (DCO).
+This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution.
 
 There are copies of the [license](LICENSE) and [DCO](dco.txt) in the root directory of this repository.
 
