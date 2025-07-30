@@ -44,10 +44,6 @@ If you are building the "community" profile and are using a different maven inst
 
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/
 	
-The distribution is then available in:
-
-	./narayana-full/target/narayana-full-<VERSION>-bin.zip
-	
 The uber jar for the JDK ORB is available here:
 
 	./ArjunaJTS/narayana-jts-idlj/target/narayana-jts-idlj-<VERSION>.jar
