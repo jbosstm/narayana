@@ -577,7 +577,6 @@
                         <exclude name="**/blacktie/wildfly*/**"/>
                         <exclude name="**/blacktie/btadmin/**"/>
                         <exclude name="**/jboss-as/**"/>
-                        <exclude name="**/narayana-full/**"/>
                         <exclude name="**/qa/**"/>
                         <exclude name="**/tools/**"/>
                         <exclude name="**/apache-karaf*/**"/>

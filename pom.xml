@@ -705,9 +705,6 @@
     </profile>
     <profile>
       <id>community</id>
-      <modules>
-        <module>narayana-full</module>
-      </modules>
       <properties>
         <version.orson>0.5.0</version.orson>
         <version.tanukisoft>3.2.3</version.tanukisoft>
