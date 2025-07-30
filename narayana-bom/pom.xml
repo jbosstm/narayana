@@ -665,7 +665,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <profiles>
     <profile>
       <id>release</id>
@@ -673,12 +672,14 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
+            <artifactId>maven-gpg-plugin</artifactId>
             <executions>
               <execution>
-                <id>default-install</id>
-                <phase>install</phase>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
               </execution>
             </executions>
           </plugin>
