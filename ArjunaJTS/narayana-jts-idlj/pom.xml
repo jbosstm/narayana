@@ -112,6 +112,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <createSourcesJar>true</createSourcesJar>
+        </configuration>
         <executions>
           <execution>
             <goals>
@@ -157,34 +160,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <sources>
-                <source>../../common/classes</source>
-                <source>../../ArjunaCore/arjuna/classes</source>
-                <source>../../ArjunaCore/txoj/classes</source>
-                <source>../../ArjunaJTA/jta/classes</source>
-                <source>../../ArjunaJTA/jdbc/classes</source>
-                <source>../../ArjunaJTA/jms/src/main/java</source>
-                <source>../../ArjunaJTA/cdi/classes</source>
-                <source>../orbportability/classes</source>
-                <source>../jts/classes</source>
-                <source>../jtax/classes</source>
-                <!-- when adding any record here consider adding it for community profile as well -->
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <excludes>
@@ -213,46 +188,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <excludePackageNames>*.internal.*</excludePackageNames>
-              <failOnError>false</failOnError>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>codeCoverage</id>
       <build>
@@ -299,34 +234,6 @@
       </dependencies>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>add-source</id>
-                <goals>
-                  <goal>add-source</goal>
-                </goals>
-                <phase>generate-sources</phase>
-                <configuration>
-                  <sources>
-                    <source>../../common/classes</source>
-                    <source>../../ArjunaCore/arjuna/classes</source>
-                    <source>../../ArjunaCore/txoj/classes</source>
-                    <source>../../ArjunaJTA/jta/classes</source>
-                    <source>../../ArjunaJTA/jdbc/classes</source>
-                    <source>../../ArjunaJTA/jms/src/main/java</source>
-                    <source>../../ArjunaJTA/cdi/classes</source>
-                    <source>../orbportability/classes</source>
-                    <source>../jts/classes</source>
-                    <source>../jtax/classes</source>
-                    <source>../jts/services/classes</source>
-                  </sources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration combine.self="override">

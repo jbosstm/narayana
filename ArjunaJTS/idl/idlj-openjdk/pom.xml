@@ -49,10 +49,14 @@
         </configuration>
         <executions>
           <execution>
+            <id>create-test-jar</id>
             <!-- generate a test jar containing test CORBA stubs for use by the jts tests -->
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -113,6 +117,9 @@
             <goals>
               <goal>test-jar-no-fork</goal>
             </goals>
+            <configuration>
+              <skipSource>${skipTests}</skipSource>
+            </configuration>
           </execution>
         </executions>
       </plugin>

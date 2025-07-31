@@ -28,6 +28,8 @@
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
     <modular.jdk.args></modular.jdk.args>
+    <version.org.apache.ant>1.10.12</version.org.apache.ant>
+    <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -81,18 +83,44 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <release>17</release>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              <excludePackageNames>*.internal.*</excludePackageNames>
+              <additionalDependencies>
+                <additionalDependency>
+                  <groupId>io.smallrye.reactive</groupId>
+                  <artifactId>smallrye-reactive-converter-api</artifactId>
+                  <version>${version.smallrye-converter-api}</version>
+                </additionalDependency>
+                <additionalDependency>
+                  <groupId>org.apache.ant</groupId>
+                  <artifactId>ant</artifactId>
+                  <version>${version.org.apache.ant}</version>
+                </additionalDependency>
+              </additionalDependencies>
+            </configuration>
             <executions>
               <execution>
-                <id>default-install</id>
-                <phase>install</phase>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>

@@ -57,9 +57,13 @@
           <!-- create a test jar for running tests on a jakarta server
                          (see artifact localjunit-unit-tests) -->
           <execution>
+            <id>create-test-jar</id>
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -68,6 +72,7 @@
 
   <profiles>
     <profile>
+      <id>ibmjdk</id>
       <activation>
         <property>
           <name>java.vendor</name>
