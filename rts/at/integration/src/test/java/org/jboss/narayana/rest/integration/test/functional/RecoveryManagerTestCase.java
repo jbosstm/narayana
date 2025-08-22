@@ -24,7 +24,7 @@ public class RecoveryManagerTestCase {
     private static final String APPLICATION_ID = "org.jboss.narayana.rest.integration.test.functional.RecoveryManagerTestCase";
 
     @Test
-    public void testRecoveryWithoutDeserializer() {
+    public void testRecoveryWithoutDeserializer()  {
         final String participantId = new Uid().toString();
         final LoggingParticipant loggingParticipantBefore = new LoggingParticipant(new Prepared());
         loggingParticipantBefore.commit();

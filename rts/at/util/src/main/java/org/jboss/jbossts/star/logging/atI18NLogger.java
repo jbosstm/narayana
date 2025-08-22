@@ -122,9 +122,8 @@ public interface atI18NLogger {
     @Message(id = 27023, value = "Participant Exception while recreateParticipantInformation in Recovery Manager. '%s'")
     void warn_participantCreateParticipantsRecoveryManager(String cause, @Cause Throwable t);
 
-    @LogMessage(level = WARN)
     @Message(id = 27024, value = "Failure while persisting participant information. '%s'")
-    void warn_persistParticipantInformationRecoveryManager(String cause, @Cause Throwable t);
+    String warn_persistParticipantInformationRecoveryManager(String cause, @Cause Throwable t);
 
     @LogMessage(level = WARN)
     @Message(id = 27025, value = "Participant Exception while participant rollback in ParticipantResource. '%s'")

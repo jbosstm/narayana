@@ -33,6 +33,7 @@ import org.jboss.narayana.rest.integration.api.Vote;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
+
 /**
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
