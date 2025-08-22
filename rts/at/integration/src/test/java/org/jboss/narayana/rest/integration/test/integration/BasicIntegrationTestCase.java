@@ -11,6 +11,14 @@ import java.util.List;
 
 import jakarta.xml.bind.JAXBException;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
+import org.jboss.narayana.rest.integration.api.Aborted;
+import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
+import org.jboss.narayana.rest.integration.api.Prepared;
+import org.jboss.narayana.rest.integration.api.ReadOnly;
+import org.jboss.narayana.rest.integration.api.HeuristicType;
+import org.jboss.narayana.rest.integration.api.ParticipantException;
+
 import org.junit.Assert;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,11 +26,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
-import org.jboss.narayana.rest.integration.api.Aborted;
-import org.jboss.narayana.rest.integration.api.HeuristicType;
-import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
-import org.jboss.narayana.rest.integration.api.Prepared;
-import org.jboss.narayana.rest.integration.api.ReadOnly;
 import org.jboss.narayana.rest.integration.test.common.HeuristicParticipant;
 import org.jboss.narayana.rest.integration.test.common.LoggingParticipant;
 import org.jboss.narayana.rest.integration.test.common.LoggingVolatileParticipant;
@@ -204,7 +207,12 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
                     APPLICATION_ID, txSupport.getDurableParticipantEnlistmentURI(), p);
         }
 
-        ParticipantsManagerFactory.getInstance().reportHeuristic(lastParticipantid, HeuristicType.HEURISTIC_COMMIT);
+        try {
+            ParticipantsManagerFactory.getInstance().reportHeuristic(lastParticipantid, HeuristicType.HEURISTIC_COMMIT);
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
+        }
 
         final String txStatus = TxSupport.getStatus(txSupport.commitTx());
 
@@ -225,7 +233,12 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
         String lastParticipantid = ParticipantsManagerFactory.getInstance().enlist(
                 APPLICATION_ID, txSupport.getDurableParticipantEnlistmentURI(), loggingParticipant2);
 
-        ParticipantsManagerFactory.getInstance().reportHeuristic(lastParticipantid, HeuristicType.HEURISTIC_COMMIT);
+        try {
+            ParticipantsManagerFactory.getInstance().reportHeuristic(lastParticipantid, HeuristicType.HEURISTIC_COMMIT);
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
+        }
 
         System.out.println(ParticipantsContainer.getInstance().getParticipantInformation(lastParticipantid).getStatus());
 

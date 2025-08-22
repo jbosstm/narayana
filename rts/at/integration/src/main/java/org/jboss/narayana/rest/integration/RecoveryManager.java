@@ -30,13 +30,12 @@ import jakarta.ws.rs.core.Response;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.io.IOException;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
@@ -96,7 +95,8 @@ public final class RecoveryManager {
             // to identify the uid from the participant persisted into the object store in order to delete it later
             persistedParticipants.put(participantInformation.getId(), uid);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
         }
     }
 
@@ -104,7 +104,6 @@ public final class RecoveryManager {
         if (LOG.isTraceEnabled()) {
             LOG.trace("RecoveryManager.removeParticipantInformation: participantInformation=" + participantInformation);
         }
-
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String participantId = participantInformation.getId();
 
@@ -121,35 +120,35 @@ public final class RecoveryManager {
     private OutputObjectState getParticipantInformationOutputState(final ParticipantInformation participantInformation)
             throws IOException {
 
-        final Uid uid = new Uid(participantInformation.getId());
-        final OutputObjectState state = new OutputObjectState(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
+            final Uid uid = new Uid(participantInformation.getId());
+            final OutputObjectState state = new OutputObjectState(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
 
-        state.packString(participantInformation.getId());
-        state.packString(participantInformation.getApplicationId());
-        state.packString(participantInformation.getStatus());
-        state.packString(participantInformation.getRecoveryURL());
-        state.packBytes(getParticipantBytes(participantInformation.getParticipant()));
+            state.packString(participantInformation.getId());
+            state.packString(participantInformation.getApplicationId());
+            state.packString(participantInformation.getStatus());
+            state.packString(participantInformation.getRecoveryURL());
+            state.packBytes(getParticipantBytes(participantInformation.getParticipant()));
 
-        return state;
-    }
-
-    private byte[] getParticipantBytes(final Participant participant) throws IOException {
-        if (participant instanceof Serializable) {
-            return serializeParticipant((Serializable) participant);
-        } else if (participant instanceof PersistableParticipant) {
-            return ((PersistableParticipant) participant).getRecoveryState();
+            return state;
         }
+
+    private byte[] getParticipantBytes(final Participant participant) throws IOException  {
+            if (participant instanceof Serializable) {
+                return serializeParticipant((Serializable) participant);
+            } else if (participant instanceof PersistableParticipant) {
+                return ((PersistableParticipant) participant).getRecoveryState();
+           }
 
         // Shouldn't happen
         return new byte[] {};
     }
 
     private byte[] serializeParticipant(final Serializable participant) throws IOException {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(participant);
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(participant);
 
-        return byteArrayOutputStream.toByteArray();
+            return byteArrayOutputStream.toByteArray();
     }
 
     private boolean isRecoverableParticipant(final Participant participant) {
@@ -179,7 +178,7 @@ public final class RecoveryManager {
                 }
             } catch (ObjectStoreException e) {
                 RESTATLogger.atI18NLogger.warn_recoverParticipantsRecoveryManager(e.getMessage(), e);
-            } catch (IOException e) {
+            } catch(IOException e) {
                 RESTATLogger.atI18NLogger.warn_ioRecoverParticipantsRecoveryManager(e.getMessage(), e);
             }
         } else {
@@ -190,13 +189,13 @@ public final class RecoveryManager {
     private ParticipantInformation recreateParticipantInformation(final RecoveryStore recoveryStore, final Uid uid)
             throws ObjectStoreException, IOException {
 
-        final InputObjectState inputObjectState = recoveryStore.read_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
-        final String id = inputObjectState.unpackString();
+            final InputObjectState inputObjectState = recoveryStore.read_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
+            final String id = inputObjectState.unpackString();
 
-        if (ParticipantsContainer.getInstance().getParticipantInformation(id) != null) {
-            // Participant is already loaded.
-            return null;
-        }
+            if (ParticipantsContainer.getInstance().getParticipantInformation(id) != null) {
+                // Participant is already loaded.
+                return null;
+            }
 
         final String applicationId = inputObjectState.unpackString();
 
@@ -238,20 +237,20 @@ public final class RecoveryManager {
     private Participant recreateParticipant(final InputObjectState inputObjectState, final String applicationId)
             throws IOException {
 
-        final ParticipantDeserializer deserializer = deserializers.get(applicationId);
-        final byte[] participantBytes = inputObjectState.unpackBytes();
+            final ParticipantDeserializer deserializer = deserializers.get(applicationId);
+            final byte[] participantBytes = inputObjectState.unpackBytes();
 
-        Participant participant = deserializer.recreate(participantBytes);
+            Participant participant = deserializer.recreate(participantBytes);
 
-        if (participant == null) {
-            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(participantBytes);
-            final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            if (participant == null) {
+                final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(participantBytes);
+                final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
 
-            participant = deserializer.deserialize(objectInputStream);
+                participant = deserializer.deserialize(objectInputStream);
+            }
+
+            return participant;
         }
-
-        return participant;
-    }
 
     private boolean synchronizeParticipantUrlWithCoordinator(final ParticipantInformation participantInformation) {
         final String participantUrl = getParticipantUrl(participantInformation.getId());

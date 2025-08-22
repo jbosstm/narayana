@@ -11,15 +11,13 @@ import java.util.*;
 
 /**
  * Maintain performance data and check for regressions.
- *
  * Performance data and configuration is stored in a directory named by the system property {@link PerformanceProfileStore#BASE_DIRECTORY_PROPERTY}:
  * - PerformanceProfileStore.last holds the best performance run keyed by the name of the test
  * - PerformanceProfileStore.variance contains the variance for a test (keyed by test name) or, if not present, then the default variance
  *   (eg 1.1 indicates a variance of lest than 10%)
  * - PerformanceProfileStore.args contains any arguments required by a test keyed by test name with value a comma separated string
  *   (the configured values for arguments can be overridden by setting a system property called "testname.args" to the new value)
- *
- * To disable regression checks set the boolean property {@link PerformanceProfileStore#FAIL_ON_PERF_REGRESSION_PROP}
+  * To disable regression checks set the boolean property {@link PerformanceProfileStore#FAIL_ON_PERF_REGRESSION_PROP}
  * To reset performance data for a test set the boolean property {@link PerformanceProfileStore#RESET_NETRICS_PROP}
  */
 public class PerformanceProfileStore
