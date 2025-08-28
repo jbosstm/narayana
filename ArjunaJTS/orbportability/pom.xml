@@ -38,14 +38,16 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>common</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.openjdk-orb</groupId>
+      <artifactId>openjdk-orb</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -66,11 +68,6 @@
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.openjdk-orb</groupId>
-      <artifactId>openjdk-orb</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -100,75 +97,24 @@
         <directory>config</directory>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <configuration>
-              <excludes>
-                <exclude>**</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-testCompile</id>
-            <configuration>
-              <testExcludes>
-                <exclude>**</exclude>
-              </testExcludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration combine.self="override">
-              <skip>true</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests/classes</testSourceDirectory>
   </build>
 
   <profiles>
     <profile>
-      <id>jts-openjdk</id>
+      <id>testing</id>
       <activation>
         <property>
-          <name>!openjdk-disabled</name>
+          <name>!release</name>
         </property>
       </activation>
-
       <dependencies>
         <dependency>
-          <groupId>org.jboss.openjdk-orb</groupId>
-          <artifactId>openjdk-orb</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-openjdk</artifactId>
+          <groupId>org.jboss.narayana</groupId>
+          <artifactId>common</artifactId>
+          <classifier>tests</classifier>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -177,20 +123,13 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
             <executions>
               <execution>
-                <id>idlj-openjdk-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>idlj-openjdk-testCompile</id>
+                <id>default-testCompile</id>
                 <goals>
                   <goal>testCompile</goal>
                 </goals>
@@ -208,7 +147,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <executions>
               <execution>
-                <id>surefire-idlj-openjdk</id>
+                <id>default-test</id>
                 <goals>
                   <goal>test</goal>
                 </goals>
@@ -234,25 +173,6 @@
                     <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
                   </systemPropertyVariables>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
               </execution>
             </executions>
           </plugin>

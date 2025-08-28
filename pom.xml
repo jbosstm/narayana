@@ -169,6 +169,14 @@
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+
+    <!-- Nexus Settings -->
+    <nexus.repository.release>narayana</nexus.repository.release>
+    <nexus.repository.staging>narayana-staging</nexus.repository.staging>
+    <nexus.repository.url>https://repository.jboss.org/nexus/</nexus.repository.url>
+    <nexus.serverId>jboss-releases-repository</nexus.serverId>
+    <nexus.staging.tag>lra-${project.version}</nexus.staging.tag>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
     <skipMavenDeployMojo>false</skipMavenDeployMojo>
@@ -183,6 +191,7 @@
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.javadoc.plugin>3.5.0</version.javadoc.plugin>
     <version.maven.jandex-plugin>3.1.7</version.maven.jandex-plugin>
+    <version.org.apache.maven.plugins.maven-surefire-plugin>3.5.2</version.org.apache.maven.plugins.maven-surefire-plugin>
 
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
 
@@ -192,7 +201,7 @@
     <version.org.jacoco>0.8.12</version.org.jacoco>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.resteasy>6.2.5.Final</version.org.jboss.resteasy>
-    <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.7.0</version.org.sonatype.plugins.nexus-staging-maven-plugin>
+    <version.org.sonatype.plugins.nxrm3.plugin>1.0.7</version.org.sonatype.plugins.nxrm3.plugin>
     <version.quarkus-bom>3.0.1.Final</version.quarkus-bom>
     <version.quarkus-maven-plugin>3.0.1.Final</version.quarkus-maven-plugin>
     <version.sortpom>3.0.0</version.sortpom>
@@ -284,29 +293,9 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${version.org.sonatype.plugins.nexus-staging-maven-plugin}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <serverId>jboss-releases-repository</serverId>
-            <nexusUrl>https://repository.jboss.org/nexus/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            <skipNexusStagingDeployMojo>${skipNexusStagingDeployMojo}</skipNexusStagingDeployMojo>
-          </configuration>
-          <executions>
-            <execution>
-              <id>nexus-deploy</id>
-              <goals>
-                <goal>deploy</goal>
-              </goals>
-              <phase>deploy</phase>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
           <configuration>
             <argLine>${surefireArgLine}</argLine>
             <forkCount>1</forkCount>
@@ -324,6 +313,19 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nxrm3-maven-plugin</artifactId>
+          <version>${version.org.sonatype.plugins.nxrm3.plugin}</version>
+          <configuration>
+            <serverId>${nexus.serverId}</serverId>
+            <nexusUrl>${nexus.repository.url}</nexusUrl>
+            <repository>${nexus.repository.staging}</repository>
+            <tag>${nexus.staging.tag}</tag>
+            <sourceRepository>${nexus.repository.staging}</sourceRepository>
+            <destinationRepository>${nexus.repository.release}</destinationRepository>
+          </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
@@ -407,11 +409,6 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <inherited>false</inherited>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -507,36 +504,73 @@
   </build>
   <profiles>
     <profile>
-      <id>release</id>
+      <id>nexusStagingDeployment</id>
+      <activation>
+        <property>
+          <name>releaseStaging</name>
+        </property>
+      </activation>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-install-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-install</id>
-                  <phase>none</phase>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-              <version>3.2.7</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nxrm3-maven-plugin</artifactId>
+            <extensions>true</extensions>
             <executions>
               <execution>
-                <id>default-install</id>
-                <phase>install</phase>
+                <id>nexus-deploy</id>
+                <goals>
+                  <goal>staging-deploy</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <release>17</release>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              <excludePackageNames>*.internal.*</excludePackageNames>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -550,6 +584,22 @@
                   <goal>sign</goal>
                 </goals>
                 <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <phase>test-compile</phase>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
               </execution>
             </executions>
           </plugin>

@@ -69,84 +69,64 @@
         <directory>${project.basedir}/src/main/resources</directory>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-            </manifestEntries>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <id>create-test-jar</id>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>attach-test-sources</id>
-            <goals>
-              <goal>test-jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/DummyProperties.java</exclude>
-            <exclude>**/DummyEnvironmentBean.java</exclude>
-          </excludes>
-          <systemPropertyVariables>
-            <test_build_version>${buildNumber}</test_build_version>
-            <test_build_prop_file>${propertiesFileName}</test_build_prop_file>
-            <test_build_id>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</test_build_id>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests</testSourceDirectory>
   </build>
-
   <profiles>
     <profile>
-      <id>release</id>
+      <id>testing</id>
+      <activation>
+        <property>
+          <name>!release</name>
+        </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+                </manifestEntries>
+              </archive>
+            </configuration>
+            <executions>
+              <execution>
+                <id>create-test-jar</id>
+                <goals>
+                  <goal>test-jar</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
+            <artifactId>maven-source-plugin</artifactId>
             <executions>
               <execution>
-                <id>default-install</id>
-                <phase>install</phase>
+                <id>attach-test-sources</id>
+                <goals>
+                  <goal>test-jar-no-fork</goal>
+                </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/DummyProperties.java</exclude>
+                <exclude>**/DummyEnvironmentBean.java</exclude>
+              </excludes>
+              <systemPropertyVariables>
+                <test_build_version>${buildNumber}</test_build_version>
+                <test_build_prop_file>${propertiesFileName}</test_build_prop_file>
+                <test_build_id>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</test_build_id>
+              </systemPropertyVariables>
+            </configuration>
           </plugin>
         </plugins>
       </build>

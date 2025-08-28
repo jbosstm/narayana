@@ -18,7 +18,6 @@
   <name>Narayana: XTS</name>
   <description>Narayana: XTS</description>
   <modules>
-    <module>byteman_support</module>
     <module>WSAS</module>
     <module>WSAS/xts-test-servlet</module>
     <module>WS-C</module>
@@ -29,7 +28,6 @@
     <module>bridge</module>
     <module>sar</module>
     <module>jbossxts</module>
-    <module>localjunit</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -88,27 +86,16 @@
   </dependencies>
   <profiles>
     <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+      <id>testing</id>
+      <activation>
+        <property>
+          <name>!release</name>
+        </property>
+      </activation>
+      <modules>
+        <module>byteman_support</module>
+        <module>localjunit</module>
+      </modules>
     </profile>
   </profiles>
 </project>

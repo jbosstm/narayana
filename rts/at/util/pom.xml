@@ -84,65 +84,29 @@
         <configuration>
           <forceCreation>true</forceCreation>
           <includePom>true</includePom>
+          <defaultManifestFile></defaultManifestFile>
         </configuration>
-        <executions>
-          <execution>
-            <id>create_sources_jar</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
-      <id>release</id>
+      <id>testing</id>
+      <activation>
+        <property>
+          <name>!release</name>
+        </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
+            <artifactId>maven-jar-plugin</artifactId>
             <executions>
               <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <failOnError>false</failOnError>
-            </configuration>
-            <executions>
-              <execution>
-                <id>create_javadocs</id>
                 <goals>
-                  <goal>jar</goal>
+                  <goal>test-jar</goal>
                 </goals>
-                <phase>prepare-package</phase>
               </execution>
             </executions>
           </plugin>
