@@ -16,49 +16,7 @@
   <packaging>pom</packaging>
   <name>Narayana: ArjunaJTS idl parent</name>
   <description>Narayana: ArjunaJTS idl parent</description>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>jts-openjdk</id>
-      <activation>
-        <property>
-          <name>!openjdk-disabled</name>
-        </property>
-      </activation>
-      <modules>
-        <module>idlj-openjdk</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+  <modules>
+    <module>idlj-openjdk</module>
+  </modules>
 </project>

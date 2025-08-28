@@ -10,6 +10,7 @@
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
     <version>7.2.3.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.jboss.narayana</groupId>
   <artifactId>narayana-bom-test</artifactId>
@@ -22,7 +23,6 @@
     The BOM is intended for development purposes within Narayana.
   -->
   <properties>
-    <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
     <version.arquillian.weld-embedded>3.0.2.Final</version.arquillian.weld-embedded>
     <version.com.h2database>2.2.224</version.com.h2database>
@@ -40,7 +40,6 @@
     <version.log4j-core>2.19.0</version.log4j-core>
     <version.mariadb>1.2.2</version.mariadb>
     <version.mysql>8.2.0</version.mysql>
-    <version.org.apache.ant>1.10.12</version.org.apache.ant>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
     <!-- remark: this property is duplicated in the top level pom -->
@@ -214,18 +213,6 @@
         <groupId>org.jacoco</groupId>
         <artifactId>org.jacoco.agent</artifactId>
         <version>${version.org.jacoco}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.ant</groupId>
-        <artifactId>ant</artifactId>
-        <version>${version.org.apache.ant}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>ant-contrib</groupId>
-        <artifactId>ant-contrib</artifactId>
-        <version>${version.ant-contrib}</version>
         <scope>test</scope>
       </dependency>
 
@@ -457,29 +444,4 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>install</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
