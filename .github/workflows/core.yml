@@ -1,0 +1,101 @@
+name: core
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_call:
+    inputs:
+      pull_request_number:
+        description: 'Pull request number'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: true
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: 'Pull request number (optional)'
+        required: false
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: false
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test (optional)'
+        required: false
+        type: string
+    
+# Only run the latest job
+concurrency:
+  group: 'core @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  core-test:
+    strategy:
+      matrix:
+        java-version: [ 17, 21 ]
+    name: CORE test with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log run context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+          if [ ! -z "${{ inputs.pull_request_number }}" ]; then
+            echo "PR Number: #${{ inputs.pull_request_number }}"
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java-version }}
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository/*/*
+            !~/.m2/repository/org/jboss
+            !~/.m2/repository/org/wildfly
+          key: maven-${{ runner.os }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: CORE testing profile
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"  
+          WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: core-logs-jdk${{ matrix.java-version }}
+          path: |
+            **/*.*log*
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: warn
