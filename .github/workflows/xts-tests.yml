@@ -1,4 +1,4 @@
-name: CORE
+name: XTS
 
 on:
   push:
@@ -9,24 +9,24 @@ on:
     types:
       - completed
   workflow_dispatch:
-    
+
 # Only run the latest job
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
-  core-test:
+  xts-test:
     strategy:
       matrix:
         java-version: [ 17 ]
-    name: CORE test with JDK ${{ matrix.java-version }}
+    name: XTS test with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check for `testing/core` label
+      - name: Check for `testing/xts` label
         id: check-label
         run: |
           echo "should_skip=false" >> $GITHUB_OUTPUT
@@ -34,8 +34,8 @@ jobs:
             echo "Checking labels on PR #${{ github.event.pull_request.number }}..."
             LABELS=$(gh pr view ${{ github.event.pull_request.number }} --json labels --jq '.labels[].name')
             echo "Labels found: $LABELS"
-            if ! echo "$LABELS" | grep -q "^testing/core$"; then
-              echo "Label 'testing/core' not found. Skipping job."
+            if ! echo "$LABELS" | grep -q "^testing/xts$"; then
+              echo "Label 'testing/xts' not found. Skipping job."
               echo "should_skip=true" >> $GITHUB_OUTPUT
             fi
           fi
@@ -61,22 +61,23 @@ jobs:
           restore-keys: |
             maven-${{ runner.os }}-
 
-      - name: CORE testing profile
+      - name: XTS testing profile
         if: steps.check-label.outputs.should_skip != 'true'
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
+          WORKSPACE=$PWD PROFILE=XTS ./scripts/hudson/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: steps.check-label.outputs.should_skip != 'true' && always()
         with:
-          name: core-logs-jdk${{ matrix.java-version }}
+          name: xts-logs-jdk${{ matrix.java-version }}
           path: |
             **/*.*log*
-            **/ObjectStore*/**
+            **/ObjectStore*/**  
             **/tx-object-store/**
             **/*tx-object-store.zip
             **/target/*surefire-reports*/**
             **/target/*failsafe-reports*/**
+            XTS/localjunit/crash-recovery-tests/target/log/*
           if-no-files-found: error
