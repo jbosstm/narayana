@@ -9,10 +9,10 @@
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
     <version>7.2.3.Final-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>org.jboss.narayana</groupId>
-  <artifactId>narayana-bom</artifactId>
+  <artifactId>main-dependency-management</artifactId>
   <packaging>pom</packaging>
   <name>Narayana Bom</name>
   <description>Narayana BOM is for centralising dependency management for development purposes</description>
