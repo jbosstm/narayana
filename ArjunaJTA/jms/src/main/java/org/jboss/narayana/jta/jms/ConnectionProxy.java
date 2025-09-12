@@ -98,8 +98,16 @@ public class ConnectionProxy implements Connection {
         }
         if (transactionHelper.isTransactionAvailable()) {
             connectionCloseScheduled = true;
+
             Synchronization synchronization = new ConnectionClosingSynchronization(xaConnection);
-            transactionHelper.registerSynchronization(synchronization);
+            try {
+                // This may throw 'ARJUNA016083: Cannot register synchronization because the transaction is in aborted state'.
+                transactionHelper.registerSynchronization(synchronization);
+            } catch (Exception e) {
+                jtaLogger.logger.info("Could not register synchronization to close the connection, closing it immediately", e);
+                // If we cannot register synchronization, we need to close the connection now.
+                xaConnection.close();
+            }
 
             if (jtaLogger.logger.isTraceEnabled()) {
                 jtaLogger.logger.trace("Registered synchronization to close the connection: " + synchronization);

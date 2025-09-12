@@ -63,7 +63,7 @@ public class SessionProxy implements Session {
         }
         if (transactionHelper.isTransactionAvailable()) {
             sessionCloseScheduled = true;
-            
+
             transactionHelper.deregisterXAResource(xaSession.getXAResource());
 
             if (jtaLogger.logger.isTraceEnabled()) {
@@ -71,7 +71,14 @@ public class SessionProxy implements Session {
             }
 
             Synchronization synchronization = new SessionClosingSynchronization(xaSession);
-            transactionHelper.registerSynchronization(synchronization);
+            try {
+                // This may throw 'ARJUNA016083: Cannot register synchronization because the transaction is in aborted state'.
+                transactionHelper.registerSynchronization(synchronization);
+            } catch (Exception e) {
+                jtaLogger.logger.info("Could not register synchronization to close the session, closing it immediately", e);
+                // Since we could not register the synchronization, we need to close the session here and now.
+                xaSession.close();
+            }
 
             if (jtaLogger.logger.isTraceEnabled()) {
                 jtaLogger.logger.trace("Registered synchronization to close the session: " + synchronization);
