@@ -24,7 +24,9 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -139,4 +141,19 @@ public class ConnectionProxyTests {
         verify(xaConnectionMock, times(1)).close();
     }
 
+    @Test
+    public void shouldCloseConnectionWhenTxHelperInAbortedState() throws Exception {
+        when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
+
+        doThrow(new JMSException("Simulated ARJUNA016083 error"))
+                .when(transactionHelperMock)
+                .registerSynchronization(any(Synchronization.class));
+
+        Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);
+        connection.close();
+
+        verify(transactionHelperMock, times(1)).isTransactionAvailable();
+        verify(transactionHelperMock, times(1)).registerSynchronization(any(ConnectionClosingSynchronization.class));
+        verify(xaConnectionMock, times(1)).close();
+    }
 }

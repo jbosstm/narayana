@@ -5,6 +5,7 @@
 
 package org.jboss.narayana.jta.jms;
 
+import jakarta.jms.JMSException;
 import jakarta.jms.Session;
 import jakarta.jms.XASession;
 import jakarta.transaction.Synchronization;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,6 +61,23 @@ public class SessionProxyTests {
 
         // Will check if the correct session was registered for closing
         synchronizations.get(0).afterCompletion(0);
+
+        verify(transactionHelperMock, times(1)).isTransactionAvailable();
+        verify(transactionHelperMock, times(1)).deregisterXAResource(xaResourceMock);
+        verify(transactionHelperMock, times(1)).registerSynchronization(any(SessionClosingSynchronization.class));
+        verify(xaSessionMock, times(1)).close();
+    }
+
+    @Test
+    public void canCloseSessionWhenTxHelperInAbortedState() throws Exception {
+        when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
+        when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
+
+        doThrow(new JMSException("Simulated ARJUNA016083 error"))
+                .when(transactionHelperMock)
+                .registerSynchronization(any(Synchronization.class));
+
+        session.close();
 
         verify(transactionHelperMock, times(1)).isTransactionAvailable();
         verify(transactionHelperMock, times(1)).deregisterXAResource(xaResourceMock);
