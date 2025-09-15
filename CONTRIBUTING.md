@@ -70,7 +70,7 @@ See the [README](README.md) file in the root directory of the repository.
 
 We follow [Open source participation guidelines](https://www.redhat.com/en/resources/open-source-participation-guidelines-overview).
 
-We expect all contributors and users to follow our [Contributor Covenant](https://www.contributor-covenant.org/version/1/4/code-of-conduct/) when communicating through project channels. These include, but are not limited to: chat, issues, code.
+We expect all contributors and users to follow our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) when communicating through project channels. These include, but are not limited to: chat, issues, code.
 
 #### Coding Guidelines
 
