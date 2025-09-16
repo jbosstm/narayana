@@ -1,0 +1,73 @@
+
+= Interoperating With Other Transaction Models
+
+Narayana in general supports a number of different transaction models other than the one described in this book.
+Of particular importance are the standard ones supported by the standards, namely JTA and Web Services Transactions.
+
+== JTA Bridge
+
+=== Inbound Bridge
+
+REST-AT to JTA bridge (also called inbound bridge) allows JTA resources to be enlisted in REST-AT transaction.
+Therefore, tools such as JPA and JMS can be used by JAX-RS endpoints and their XA resources will participate in the REST-AT transaction together with RESTful participants.
+
+This functionality is provided by Wildfly RTS subsytem.
+Therefore, modular dependency on org.jboss.narayana.rts has to be defined in deployment's manifest file.
+In order to enable bridging, service writer has to annotate either JAX-RS resource class or specific JAX-RS resource method with one of two annotations: `jakarta.ejb.TransactionAttribute`, `jakarta.transaction.Transactional`.
+
+[source,java]
+----
+@Path("/")
+public class JAXRSResource {
+    @GET
+    public void get() {
+    // Do work witout JTA.
+    }
+
+    @POST
+    @TransactionAttribute
+    public void post() {
+    // Do work with JTA.
+    }
+}
+----
+
+[source,java]
+----
+@Path("/")
+@Transactional
+public class JAXRSResource {
+    @GET
+    public void get() {
+    // Do work with JTA.
+    }
+
+    @POST
+    public void post() {
+    // Do work with JTA.
+    }
+}
+----
+
+REST-AT transaction context does not provide timeout.
+When REST-AT transaction is bridged to JTA then the bridged JTA transaction is created with the default timeout defined by the container.
+
+=== Outbound Bridge
+
+Enabling RESTAT participants to participate in a JTA transaction.
+
+[WARNING]
+====
+Outbound bridging is not currently implemented
+====
+
+== Web Services Transactions
+
+WS includes two transaction models referred to as WSAT and WSBA.
+WSAT integration with JTA is documented in the Transaction Bridging section of the product guide (`http://narayana.io/docs/product/index.html#txbridge`).
+By using this bridge in conjunction with the RESTAT JTA bridge full interoperability between RESTAT and WSAT can be realised.
+
+[NOTE]
+====
+RESTAT outbound bridging is not currently supported so interoperability is one way only.
+====

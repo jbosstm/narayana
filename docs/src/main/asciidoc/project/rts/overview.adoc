@@ -1,0 +1,22 @@
+
+= Overview
+
+This guide covers the REST interfaces to the Narayana Transaction Manager.
+The actual protocol implemented by RESTAT described in this book is taken from the draft RESTAT specification https://github.com/jbosstm/documentation/blob/master/rts/docs/REST-Atomic_v2_draft_8_comments_sept_4.pdf[https://github.com/jbosstm/documentation/blob/master/rest-tx/docs/RESTAT-v2-latest.pdf] . The specification is still evolving but has reached a stability level such that it can be used in real world environments.
+
+Atomic transactions are a well-known technique for guaranteeing consistency in the presence of failures.
+The ACID properties of atomic transactions (Atomicity, Consistency, Isolation, Durability) ensure that even in complex business applications consistency of state is preserved, despite concurrent accesses and failures.
+This is extremely useful fault-tolerance technique, especially when multiple, possibly remote resources are involved.
+
+Consistency is especially important in a web application with dynamic servers.
+When users navigate a web application, they are viewing snapshots of the server state.
+If the snapshot is computed within a transaction, the state returned to the user is consistent.
+For many applications this is important for otherwise the inconsistent view of the data could be confusing to the user.
+Many developers have the incorrect perception that they do not need transactions if all they are doing is reading a database.
+However, if you are doing multiple reads and you want them to be consistent, then you need to do them within a transaction.
+
+Furthermore, even in the simplest of system, a single user environment where all operations are idempotent, retrying requires the capability to remember the list of participating resources as well as the operations that must be re-transmitted, potentially many times.
+As we shall see, fortunately this is an inherent part of a transaction system, provided in a reliable manner such that it can tolerate its own failures as well as those that occur elsewhere within the environment.
+
+Although the Web and REST have progressed well without the need for transactions there are a class of applications where the use of transactions, or at least atomicity, would be beneficial.
+To support this need, we have created a RESTful interface to the Narayana transaction manager.

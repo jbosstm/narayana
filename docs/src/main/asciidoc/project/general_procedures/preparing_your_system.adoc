@@ -1,0 +1,26 @@
+
+= Preparing Your System
+
+== Pre-Installation Steps
+
+Before installing the {productName} software, we recommend the following administrative steps be taken, assuming a default configuration for {productName}.
+
+[arabic]
+. Install the distribution into the required location.
++
+Typically, the distribution is extracted from a `.ZIP` file.
+. Specify the Location for the Object Store
++
+{productName} requires a minimum object store for storing the outcome of transactions in the event of system crashes.
+The location of this should be specified in the properties file using the `ObjectStoreEnvironmentBean.objectStoreDir` key or by using environment variable:
++
+[source,shell]
+----
+java –DObjectStoreEnvironmentBean.objectStoreDir =C:\temp foo.
+----
+. Optional: Specify the sub-directory within the Object Store root.
++
+By default, all object states will be stored within the `defaultStore` sub-directory of the object store root.
+For instance, if the object store root is `/usr/local/Arjuna/TransactionService/ObjectStore`, the subdirectory `/usr/local/Arjuna/TransactionService/ObjectStore/defaultStore/` is used.
++
+To change this subdirectory, set the `ObjectStoreEnvironmentBean.localOSRoot` or `com.arjuna.ats.arjuna.objectstore.localOSRoot` property variable accordingly.

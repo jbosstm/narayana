@@ -1,0 +1,12 @@
+
+= OSGi
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+:leveloffset: +1
+
+include::{projectSourceDir}/osgi/integration_with_karaf.adoc[]
+
+:leveloffset: -1

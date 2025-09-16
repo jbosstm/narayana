@@ -1,0 +1,260 @@
+
+= Overview
+:imagesdir: images
+
+A transaction is a unit of work that encapsulates multiple database actions such that either all the encapsulated actions fail or all succeed.
+
+Transactions ensure data integrity when an application interacts with multiple datasources.
+
+This chapter contains a description of the use of the ArjunaCore transaction engine and the _Transactional Objects for Java_ (TXOJ) classes and facilities.
+The classes mentioned in this chapter are the key to writing fault-tolerant applications using transactions.
+Thus, they are described and then applied in the construction of a simple application.
+The classes to be described in this chapter can be found in the `com.arjuna.ats.txoj` and `com.arjuna.ats.arjuna` packages.
+
+.Stand-Alone Transaction Manager
+[NOTE]
+====
+Although {productName} can be embedded in various containers, such as {appServer}, it remains a stand-alone transaction manager as well.
+There are no dependencies between the core {productName} and any container implementations.
+====
+
+== ArjunaCore: The Transaction Engine
+
+In keeping with the object-oriented view, the mechanisms needed to construct reliable distributed applications are presented to programmers in an object-oriented manner.
+Some mechanisms need to be inherited, for example, concurrency control and state management.
+Other mechanisms, such as object storage and transactions, are implemented as ArjunaCore objects that are created and manipulated like any other object.
+
+[NOTE]
+====
+When the manual talks about using persistence and concurrency control facilities it assumes that the Transactional Objects for Java (TXOJ) classes are being used.
+If this is not the case then the programmer is responsible for all of these issues.
+====
+
+ArjunaCore exploits object-oriented techniques to present programmers with a toolkit of Java classes from which application classes can inherit to obtain desired properties, such as persistence and concurrency control.
+These classes form a hierarchy, part of which is shown in <<_txcore_class_hierarchy>> and which will be described later in this document.
+
+[[_txcore_class_hierarchy]]
+.ArjunaCore Class Hierarchy
+image::core-txcore_class_hierarchy.png[align="center"]
+
+Apart from specifying the scopes of transactions, and setting appropriate locks within objects, the application programmer does not have any other responsibilities: _ArjunaCore_ and _TXOJ_ guarantee that transactional objects will be registered with, and be driven by, the appropriate transactions, and crash recovery mechanisms are invoked automatically in the event of failures.
+
+== Saving object states
+
+ArjunaCore needs to be able to remember the state of an object for several purposes.
+
+recovery::
+The state represents some past state of the object.
+
+persistence::
+The state represents the final state of an object at application termination.
+
+Since these requirements have common functionality they are all implemented using the same mechanism: the classes `InputObjectState` and `OutputObjectState`.
+The classes maintain an internal array into which instances of the standard types can be contiguously packed or unpacked using appropriate `pack` or `unpack` operations.
+This buffer is automatically resized as required should it have insufficient space.
+The instances are all stored in the buffer in a standard form called _network byte order_, making them machine independent.
+Any other architecture-independent format, such as XDR or ASN.1, can be implemented simply by replacing the operations with ones appropriate to the encoding required.
+
+== The object store
+
+Implementations of persistence can be affected by restrictions imposed by the Java SecurityManager.
+Therefore, the object store provided with ArjunaCore is implemented using the techniques of interface and implementation.
+The current distribution includes implementations which write object states to the local file system or database, and remote implementations, where the interface uses a client stub (proxy) to remote services.
+
+Persistent objects are assigned unique identifiers, which are instances of the `Uid` class, when they are created.
+These identifiers are used to identify them within the object store.
+States are read using the `read_committed` operation and written by the `write_committed` and `write_uncommitted` operations.
+
+== Recovery and persistence
+
+At the root of the class hierarchy is the class `StateManager`. `StateManager` is responsible for object activation and deactivation, as well as object recovery.
+Refer to <<statemanager_signature>> for the simplified signature of the class.
+
+[[statemanager_signature]]
+.Simplified signature of the `StateManager` class
+[source,java]
+----
+include::{projectSourceDir}/core/extras/StateManager-signature.java[]
+----
+
+Objects are assumed to be of three possible flavors.
+
+Recoverable::
+`StateManager` attempts to generate and maintain appropriate recovery information for the object.
+Such objects have lifetimes that do not exceed the application program that creates them.
+
+Recoverable and Persistent::
+The lifetime of the object is assumed to be greater than that of the creating or accessing application, so that in addition to maintaining recovery information, `StateManager` attempts to automatically load or unload any existing persistent state for the object by calling the `activate` or `deactivate` operation at appropriate times.
+
+Neither Recoverable nor Persistent::
+No recovery information is ever kept, nor is object activation or deactivation ever automatically attempted.
+
+If an object is `recoverable` or `recoverable and persistent`, then `StateManager` invokes the operations `save_state` while performing `deactivate`, and `restore_state` while performing `activate` at various points during the execution of the application.
+These operations must be implemented by the programmer since `StateManager` cannot detect user-level state changes.
+//(We are examining the automatic generation of default save_state and restore_state operations, allowing the programmer to override this when application specific knowledge can be used to improve efficiency.)
+This gives the programmer the ability to decide which parts of an object’s state should be made persistent.
+For example, for a spreadsheet it may not be necessary to save all entries if some values can simply be recomputed.
+The `save_state` implementation for a class `Example` that has integer member variables called A, B and C might be implemented as:
+
+.`save_state` Implementation
+[source,java]
+----
+include::{projectSourceDir}/core/extras/example-save_state.java[]
+----
+
+[NOTE]
+====
+it is necessary for all `save_state` and `restore_state` methods to call `super.save_state` and `super.restore_state`.
+This is to cater for improvements in the crash recovery mechanisms.
+====
+
+== The life cycle of a Transactional Object for Java
+
+A persistent object not in use is assumed to be held in a passive state, with its state residing in an object store and activated on demand.
+The fundamental life cycle of a persistent object in TXOJ is shown in link:#txoj-lifecycle[Life cycle of a persistent Object in TXOJ] .
+
+[[_txoj_lifecycle]]
+.Life cycle of a persistent Object in TXOJ
+image::core-txoj-lifecycle.png[align="center"]
+
+[NOTE]
+====
+During its lifetime, a persistent object may be made active then passive many times.
+====
+
+== The concurrency controller
+
+The concurrency controller is implemented by the class `LockManager`, which provides sensible default behavior while allowing the programmer to override it if deemed necessary by the particular semantics of the class being programmed.
+As with `StateManager` and persistence, concurrency control implementations are accessed through interfaces.
+As well as providing access to remote services, the current implementations of concurrency control available to interfaces include:
+
+Local disk/database implementation::
+Locks are made persistent by being written to the local file system or database.
+
+A purely local implementation::
+Locks are maintained within the memory of the virtual machine which created them.
+This implementation has better performance than when writing locks to the local disk, but objects cannot be shared between virtual machines.
+Importantly, it is a basic Java object with no requirements which can be affected by the SecurityManager.
+
+The primary programmer interface to the concurrency controller is via the `setlock` operation.
+By default, the runtime system enforces strict two-phase locking following a multiple reader, single writer policy on a per-object basis.
+However, as shown in <<_txcore_class_hierarchy>>, by inheriting from the `Lock` class, you can provide your own lock implementations with different lock conflict rules to enable type specific concurrency control.
+
+Lock acquisition is, of necessity, under programmer control, since just as `StateManager` cannot determine if an operation modifies an object, `LockManager` cannot determine if an operation requires a read or write lock.
+Lock release, however, is under control of the system and requires no further intervention by the programmer.
+This ensures that the two-phase property can be correctly maintained.
+
+[source,java]
+----
+include::{projectSourceDir}/core/extras/LockManager_class.java[]
+----
+
+The `LockManager` class is primarily responsible for managing requests to set a lock on an object or to release a lock as appropriate.
+However, since it is derived from `StateManager`, it can also control when some of the inherited facilities are invoked.
+For example, `LockManager` assumes that the setting of a write lock implies that the invoking operation must be about to modify the object.
+This may in turn cause recovery information to be saved if the object is recoverable.
+In a similar fashion, successful lock acquisition causes `activate` to be invoked.
+
+.This example class shows how to try to obtain a write lock on an object.
+[source,java]
+----
+include::{projectSourceDir}/core/extras/Example_extends_LockManager.java[]
+----
+
+== The transactional protocol engine
+
+The transaction protocol engine is represented by the `AtomicAction` class, which uses `StateManager` to record sufficient information for crash recovery mechanisms to complete the transaction in the event of failures.
+It has methods for starting and terminating the transaction, and, for those situations where programmers need to implement their own resources, methods for registering them with the current transaction.
+Because ArjunaCore supports sub-transactions, if a transaction is begun within the scope of an already executing transaction it will automatically be nested.
+
+You can use ArjunaCore with multi-threaded applications.
+Each thread within an application can share a transaction or execute within its own transaction.
+Therefore, all ArjunaCore classes are also thread-safe.
+
+.Relationships Between Activation, Termination, and Commitment
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/activation_termination_commitment.java[]
+----
+(i) Creation of bindings to persistent objects::
+This could involve the creation of stub objects and a call to remote objects.
+Here, we re-bind to an existing persistent object identified by `Name-A`, and a new persistent object.
+A naming system for remote objects maintains the mapping between object names and locations and is described in a later chapter.
+(ii) Start of the atomic transaction::
+(iii) Operation invocations::
+As a part of a given invocation, the object implementation is responsible to ensure that it is locked in read or write mode, assuming no lock conflict, and initialized, if necessary, with the latest committed state from the object store.
+The first time a lock is acquired on an object within a transaction the object’s state is acquired, if possible, from the object store.
+(iv) Commit of the top-level action::
+This includes updating of the state of any modified objects in the object store.
+(v) Breaking of the previously created bindings::
+====
+
+== The class hierarchy
+
+The principal classes which make up the class hierarchy of ArjunaCore are depicted below.
+
+* `StateManager`
+** `LockManager`
+*** User-Defined Classes
+** `Lock`
+*** User-Defined Classes
+** `AbstractRecord`
+*** `RecoveryRecord`
+*** `LockRecord`
+*** `RecordList`
+*** Other management record types
+* `AtomicAction`
+** `TopLevelTransaction`
+* `Input/OutputObjectBuffer`
+** `Input/OutputObjectState`
+* `ObjectStore`
+
+// Keeping this around in case the other way is hard to read StateManager
+// Basic naming, persistence and recovery control LockManager
+// Basic two-phase locking concurrency control service User-Defined Classes Lock
+// Standard lock type for multiple readers/single writer User-Defined Lock Classes AbstractRecord
+// Important utility class, similar to Resource RecoveryRecord
+// handles object recovery LockRecord
+// handles object locking RecordList
+// Intentions list other management record types AtomicAction
+// Implements transaction control abstraction TopLevelTransaction Input/OutputBuffer
+// Architecture neutral representation of an objects’ state Input/OutputObjectState
+// Convenient interface to Buffer ObjectStore
+// Interface to the object storage services
+
+Programmers of fault-tolerant applications will be primarily concerned with the classes `LockManager`, `Lock`, and `AtomicAction`. Other classes important to a programmer are `Uid` and `ObjectState`.
+
+Most ArjunaCore classes are derived from the base class `StateManager`, which provides primitive facilities necessary for managing persistent and recoverable objects.
+These facilities include support for the activation and de-activation of objects, and state-based object recovery.
+
+The class `LockManager` uses the facilities of `StateManager` and `Lock` to provide the concurrency control required for implementing the serializability property of atomic actions.
+The concurrency control consists of two-phase locking in the current implementation.
+The implementation of atomic action facilities is supported by `AtomicAction` and `TopLevelTransaction`.
+
+Consider a simple example.
+Assume that `Example` is a user-defined persistent class suitably derived from the `LockManager`. An application containing an atomic transaction `Trans` accesses an object called `O` of type `Example`, by invoking the operation `op1`, which involves state changes to `O`. The serializability property requires that a write lock must be acquired on `O` before it is modified.
+Therefore, the body of `op1` should contain a call to the `setlock` operation of the concurrency controller.
+
+.Simple Concurrency Control
+[source,java]
+----
+include::{projectSourceDir}/core/extras/simple_concurrency_control.java[]
+----
+
+=== Steps followed by the operation `setlock`
+
+The operation `setlock`, provided by the `LockManager` class, performs the following functions:
+
+* Check write lock compatibility with the currently held locks, and if allowed, continue.
+* Call the StateManager operation `activate`. `activate` will load, if not done already, the latest persistent state of `O` from the object store, then call the `StateManager` operation `modified`, which has the effect of creating an instance of either `RecoveryRecord` or `PersistenceRecord` for `O`, depending upon whether `O` was persistent or not.
+The Lock is a WRITE lock so the old state of the object must be retained prior to modification.
+The record is then inserted into the RecordList of Trans.
+* Create and insert a `LockRecord` instance in the `RecordList` of `Trans`.
+
+Now suppose that action `Trans` is aborted sometime after the lock has been acquired.
+Then the `rollback` operation of `AtomicAction` will process the `RecordList` instance associated with `Trans` by invoking an appropriate `Abort` operation on the various records.
+The implementation of this operation by the `LockRecord` class will release the WRITE lock while that of `RecoveryRecord` or `PersistenceRecord` will restore the prior state of `O`.
+
+It is important to realize that all of the above work is automatically being performed by ArjunaCore on behalf of the application programmer.
+The programmer need only start the transaction and set an appropriate lock; ArjunaCore and _TXOJ_ take care of participant registration, persistence, concurrency control and recovery.

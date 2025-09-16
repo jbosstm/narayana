@@ -1,0 +1,117 @@
+
+= Configuration options
+
+== Loading a configuration
+
+Each module of the system contains a `module propertyManager` class, which provides static getter methods for one or more `name EnvironmentBean` classes.
+An example is `com.arjuna.ats.arjuna.commmon.arjPropertyManager`.
+These environment beans are standard JavaBean containing properties for each configuration option in the system.
+Typical usage is of the form:
+
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/defaultTimeout.java[]
+----
+
+These beans are singletons, instantiated upon first access, using the following algorithm.
+
+.Procedure: Algorithm for environment bean instantiation
+. The properties are loaded and populated from a properties file named and located as follows:
+.. If the properties file name property `com.arjuna.ats.arjuna.common.propertiesFile` is set, its value is used as the file name.
+.. If not, the default file name `jbossts-properties.xml` is used.
+The definition of the used value can be found at Narayana distribution jar file under `META-INF/MANIFEST.MF` at property `arjuna-properties-file`.
+. The file thus named is searched for by, in order
+.. absolute path
+.. `user.dir`
+.. `user.home`
+.. `java.home`
+.. directories contained on the classpath
+.. a default file embedded in the product .jar file
++
+if you use Narayana dependency `org.jboss.narayana.jts:narayana-jts-idlj` you can check the default properties settings https://github.com/jbosstm/narayana/blob/master/ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-properties.xml[
+in the Narayana repository at github].
+. The file is treated as being of standard https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html[java.util.Properties xml format] and loaded accordingly.
+The `entry` names are of the form `EnvironmentBeanClass.propertyName`.
++
+An example is `<entrykey="CoordinatorEnvironmentBean.commitOnePhase">YES</entry>`
++
+In specific cases when you want to set properties on configuration beans other that the default bean instances the form is `EnvironmentBeanClass.<storeType>.propertyName`.
++
+An example is `<entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">` `com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry>`
++
+[NOTE]
+====
+Valid values for Boolean properties are case-insensitive, and may be one of `NO`/`YES`, `FALSE`/`TRUE`, `OFF`/`ON`.
+====
++
+In the case of properties that take multiple values, they are white-space-delimited.
++
+
+.Example recovery modules of Recovery Environment Bean
+[source,xml]
+----
+include::{productSourceDir}/development_guide/extras/EnvironmentBeans.xml[]
+----
+
+. After the file is loaded, it is cached and is not re-read until the JVM is restarted.
+Changes to the properties file require a restart in order to take effect.
+. After the properties are loaded, the EnvironmentBean is then inspected and, for each field, if the properties contains a matching key in the search order as follows, the `setter` method for that field is invoked with the value from the properties, or the system properties if different.
+** `Fully.Qualified.NameEnvironmentBean.propertyName`
++
+for example `com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean.commitOnePhase`
+** `NameEnvironmentBean.propertyName` (`this is the preferred form used in the properties file`)
++
+for example `CoordinatorEnvironmentBean.commitOnePhase`
+** the old `com.arjuna...` properties key defined at bean by annnotations `@PropertyPrefix` or `@FullPropertyName` ([replaceable]`deprecated, for backwards compatibility only`).
++
+for example `com.arjuna.ats.arjuna.coordinator.commitOnePhase`
+. The bean is then returned to the caller, which may further override values by calling setter methods.
+
+The implementation reads most bean properties only once, as the consuming component or class is instantiated.
+This usually happens the first time a transaction is run.
+As a result, calling `setter` methods to change the value of bean properties while the system is running typically has no effect, unless it is done prior to any use of the transaction system.
+Altered bean properties are not persisted back to the properties file.
+
+You can configure the system using a bean wiring system such as JBoss Microcontainer or Spring.
+Take care when instantiating beans, to obtain the singleton via the static getter (factory) method on the module property manager.
+Using a new bean instantiated with the default constructor is ineffective, since it is not possible to pass this configured bean back to the property management system.
+
+== ArjunaCore Options
+
+The canonical reference for configuration options is the Javadoc of the various `EnvironmentBean` classes.
+For ArjunaCore these are:
+
+* `com.arjuna.common.internal.util.logging.LoggingEnvironmentBean`
+* `com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean`
+* `com.arjuna.ats.txoj.common.TxojEnvironmentBean`
+* `com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean`
+* `com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean`
+* `com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean`
+* `com.arjuna.ats.arjuna.common.CoreEnvironmentBean`
+* `com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean`
+
+== {productName} JTA Configuration options
+
+The canonical reference for configuration options is the javadoc of the various EnvironmentBean classes.
+For {productName} JTA, these classes are the ones provided by ArjunaCore, as well as:
+
+* `com.arjuna.ats.jdbc.common.JDBCEnvironmentBean`
+* `com.arjuna.ats.jta.common.JTAEnvironmentBean`
+
+== {productName} JTS Options
+
+The canonical reference for configuration options is the javadoc of the various `EnvironmentBean` classes.
+For {productName} JTS these are the ones provided by ArjunaCore, as well as:
+
+* `com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean`
+* `com.arjuna.ats.jts.common.JTSEnvironmentBean`
+
+== {productName} WS-AT/WS-BA Options
+
+For {productName} WebService transaction protocols these are the ones provided by ArjunaCore, as well as:
+
+* `org.jboss.jbossts.xts.environment.WSCEnvironmentBean`
+* `org.jboss.jbossts.xts.environment.WSCFEnvironmentBean`
+* `org.jboss.jbossts.xts.environment.WSTEnvironmentBean`
+* `org.jboss.jbossts.xts.environment.XTSEnvironmentBean`
+* `org.jboss.jbossts.xts.environment.RecoveryEnvironmentBean`

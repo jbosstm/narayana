@@ -1,0 +1,12 @@
+
+:sectnums!:
+
+= Narayana Project Documentation
+
+include::{projectSourceDir}/fallback_content/legal_notice.adoc[]
+
+== Introduction
+
+The Narayana Project Documentation contains information on how to use Narayana to develop applications that use transaction technology to manage business processes.
+
+:sectnums:

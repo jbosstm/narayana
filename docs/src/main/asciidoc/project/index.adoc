@@ -1,0 +1,23 @@
+
+:toclevels: {toclevel}
+:doctype: book
+:sectnums:
+
+include::{projectSourceDir}/book_info.adoc[]
+
+:leveloffset: +1
+
+include::{projectSourceDir}/preface.adoc[]
+include::{projectSourceDir}/general_procedures/general_procedures.adoc[]
+include::{projectSourceDir}/core/core.adoc[]
+include::{projectSourceDir}/jta/jta.adoc[]
+include::{projectSourceDir}/jts/jts.adoc[]
+include::{projectSourceDir}/xts/xts.adoc[]
+include::{projectSourceDir}/lra/lra.adoc[]
+include::{projectSourceDir}/rts/rts.adoc[]
+include::{projectSourceDir}/stm/stm.adoc[]
+include::{projectSourceDir}/compensations/compensations.adoc[]
+include::{projectSourceDir}/osgi/osgi.adoc[]
+include::{projectSourceDir}/appendix/appendix.adoc[]
+
+:leveloffset: -1

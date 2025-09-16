@@ -1,0 +1,41 @@
+
+= Web Service Transaction Service (XTS) Management
+
+The basic building blocks of a transactional Web Services application include the application itself, the Web services that the application consumes, the Transaction Manager, and the transaction participants which support those Web services.
+Although it is likely that different developers will be responsible for each piece, the concepts are presented here so that you can see the whole picture.
+Often, developers produce services, or applications that consume services, and system administrators run the transaction-management infrastructure.
+
+== Transaction manager overview
+
+The transaction manager is a Web service which coordinates XTS transactions.
+It is the only software component in XTS that is designed to be run directly as a network service, rather than to support end-user code.
+The transaction manager runs as a JAXM request/response Web service.
+
+[NOTE]
+====
+When starting up an application server instance that has XTS transaction manager deployed within it, you may see various `error` messages in the console or log.
+For example, `16:53:38,850 ERROR [STDERR] Message Listener Service: started, message listener jndi name activationcoordinator`.
+These are for information purposes only and are not actual errors.
+====
+
+== Configuring the transaction manager
+
+You can configure the Transaction Manager and related infrastructure by using two properties files.
+The `standalone-xts.xml` file contains the common configuration options.
+More advanced options can be configured in the `xts-properties.xml_`.
+
+[NOTE]
+====
+The XTS module (`modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`)
+in the {appServer}
+includes the configuration file, `xts-properties.xml`,
+in the root of the jar.
+These properties can be edited and then
+re-packaged in the jar.
+The changes will take affect on next boot of the {appServer}.
+====
+
+== Deployment descriptors
+
+In general, changing the contents of the various deployment descriptors used by XTS is not necessary.
+However, if you do need to modify them they are all included in `modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`.

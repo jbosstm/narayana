@@ -1,0 +1,243 @@
+
+= Transactions
+
+A transaction is a unit of work that encapsulates multiple database actions such that that either all the encapsulated actions fail or all succeed.
+
+Transactions ensure data integrity when an application interacts with multiple datasources.
+
+== The Java Transaction API (Jakarta Transactions)
+
+The interfaces specified by the many transaction standards tend to be too low-level for most application programmers.
+Therefore, Sun Microsystems created the Java Transaction API (JTA), which specifies higher-level interfaces to assist in the development of distributed transactional applications.
+JTA was later renamed Jakarta Transactions and the specification is maintained at https://jakarta.ee/specifications/transactions.
+
+Note, these interfaces are still low-level.
+You still need to implement state management and concurrency for transactional applications.
+The interfaces are also optimized for applications which require XA resource integration capabilities, rather than the more general resources which other transactional APIs allow.
+
+With reference to Jakarta Transactions (https://jakarta.ee/specifications/transactions/), distributed transaction services typically involve a number of participants:
+
+[cols="1,1"]
+|===
+|application server
+|provides the infrastructure required to support the application run-time environment which includes transaction state management, such as an EJB server.
+|transaction manager
+|provides the services and management functions required to support transaction demarcation, transactional resource management, synchronization, and transaction context propagation.
+|resource manager
+|Using a _resource adapter_, provides the application with access to resources.
+The resource manager participates in distributed transactions by implementing a transaction resource interface used by the transaction manager to communicate transaction association, transaction completion and recovery.
+
+A resource adapter is used by an application server or client to connect to a Resource Manager.
+JDBC drivers which are used to connect to relational databases are examples of Resource Adapters.
+|communication resource manager
+|supports transaction context propagation and access to the transaction service for incoming and outgoing requests.
+|===
+
+From the point of view of the transaction manager, the actual implementation of the transaction services does not need to be exposed.
+You only need to define high-level interfaces to allow transaction demarcation, resource enlistment, synchronization and recovery process to be driven from the users of the transaction services.
+Jakarta Transactions is a high-level application interface that allows a transactional application to demarcate transaction boundaries, and also contains a mapping of the X/Open XA protocol.
+
+.Compatibility
+[IMPORTANT]
+====
+the Jakarta Transactions support provided by {productName} is compliant with the 1.1 specification.
+====
+
+== Introducing the API
+
+The Java Transaction API consists of three elements:
+
+* a high-level application transaction demarcation interface
+* a high-level transaction manager interface intended for application server
+* a standard Java mapping of the X/Open XA protocol intended for a transactional resource manager.
+
+All of the Jakarta Transactions classes and interfaces exist within the `jakarta.transaction` package, and the corresponding {productName} implementations within the `com.arjuna.ats.jta` package.
+Note that XA resource API classes are still part of the Java SE (https://jakarta.ee/specifications/transactions/2.0/jakarta-transactions-spec-2.0.html#relationship-to-other-java-apis)
+
+Each Xid created by {productName} needs a unique node identifier encoded within it, because {productName} can only recover transactions and states that match a specified node identifier.
+The node identifier to use should be provided to {productName} via the `CoreEnvironmentBean.nodeIdentifier` property.
+This value must be unique across your {productName} instances.
+The identifier is alphanumeric and limited to 10 bytes in length.
+If you do not provide a value, then {productName} generates one and reports the value via the logging infrastructure.
+
+[[usertransaction_definition]]
+== UserTransaction
+
+The `UserTransaction` interface provides applications with the ability to control transaction boundaries.
+It provides methods `begin`, `commit`, and `rollback` to operate on top-level transactions.
+
+Nested transactions are not supported, and method `begin` throws the exception `NotSupportedException` if the calling thread is already associated with a transaction.
+`UserTransaction` automatically associates newly created transactions with the invoking thread.
+
+To obtain a `UserTransaction`, call the static method `com.arjuna.ats.jta.UserTransaction.userTransaction()`.
+
+.Procedure: Selecting the local Jakarta Transactions Implementation
+. Set property `JTAEnvironmentBean.jtaTMImplementation` to `com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple `.
+. Set property `JTAEnvironmentBean.jtaUTImplementation` to `com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple`.
+
+== TransactionManager
+
+The `TransactionManager` interface allows the application server to control transaction boundaries on behalf of the application being managed.
+
+To obtain a `TransactionManager`, invoke the static method `com.arjuna.ats.jta.TransactionManager.transactionManager`.
+
+The `TransactionManager` maintains the transaction context association with threads as part of its internal data structure.
+A thread's transaction context may be `null` or it may refer to a specific global transaction.
+Multiple threads may be associated with the same global transaction.
+As noted in <<usertransaction_definition>>, nested transactions are not supported.
+
+Each transaction context is encapsulated by a Transaction object, which can be used to perform operations which are specific to the target transaction, regardless of the calling thread's transaction context.
+
+.`TransactionManager`Methods
+[cols="1,1"]
+|===
+|`begin`
+|Starts a new top-level transaction and associates the transaction context with the calling thread.
+If the calling thread is already associated with a transaction, exception `NotSupportedException` is thrown.
+|`getTransaction`
+|Returns the Transaction object representing the transaction context which is currently associated with the calling thread.
+You can use this object to perform various operations on the target transaction.
+|`commit`
+|Completes the transaction currently associated with the calling thread.
+After it returns, the calling thread is associated with no transaction.
+If `commit` is called when the thread is not associated with any transaction context, an exception is thrown.
+In some implementations, the `commit` operation is restricted to the transaction originator only.
+If the calling thread is not allowed to commit the transaction, an exception is thrown.
+{productName} does not currently impose any restriction on the ability of threads to terminate transactions.
+|`rollback`
+|Rolls back the transaction associated with the current thread.
+After the `rollback` method completes, the thread is associated with no transaction.
+|===
+
+In a multi-threaded environment, multiple threads may be active within the same transaction.
+If checked transaction semantics have been disabled, or the transaction times out, a transaction may terminated by a thread other than the one that created it.
+In this case, the creator usually needs to be notified.
+{productName} notifies the creator during operations `commit` or `rollback` by throwing exception `IllegalStateException`.
+
+== Suspend and resuming a transaction
+
+Jakarta Transactions supports the concept of a thread temporarily suspending and resuming transactions in order to perform non-transactional work.
+Call the `suspend` method to temporarily suspend the current transaction that is associated with the calling thread.
+The thread then operates outside of the scope of the transaction.
+If the thread is not associated with any transaction, a `null` object reference is returned.
+Otherwise, a valid `Transaction` object is returned.
+Pass the `Transaction` object to the `resume` method to reinstate the transaction context.
+
+The `resume` method associates the specified transaction context with the calling thread.
+If the transaction specified is not a valid transaction, the thread is associated with no transaction.
+if `resume` is invoked when the calling thread is already associated with another transaction, the `IllegalStateException` exception is thrown.
+
+.Using the `suspend`method
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/using_suspend_method.java[]
+----
+
+[NOTE]
+====
+{productName} allows a suspended transaction to be resumed by a different thread.
+This feature is not required by Jakarta Transactions, but is an important feature.
+====
+
+When a transaction is suspended, the application server must ensure that the resources in use by the application are no longer registered with the suspended transaction.
+When a resource is de-listed this triggers the Transaction Manager to inform the resource manager to disassociate the transaction from the specified resource object.
+When the application's transaction context is resumed, the application server must ensure that the resources in use by the application are again enlisted with the transaction.
+Enlisting a resource as a result of resuming a transaction triggers the Transaction Manager to inform the resource manager to re-associate the resource object with the resumed transaction.
+
+== The Transaction interface
+
+The `Transaction` interface allows you to perform operations on the transaction associated with the target object.
+Every top-level transaction is associated with one `Transaction` object when the transaction is created.
+
+.Uses of the `Transaction`object
+* enlist the transactional resources in use by the application.
+* register for transaction synchronization call backs.
+* commit or rollback the transaction.
+* obtain the status of the transaction.
+
+The `commit` and `rollback` methods allow the target object to be committed or rolled back.
+The calling thread does not need to have the same transaction associated with the thread.
+If the calling thread is not allowed to commit the transaction, the transaction manager throws an exception.
+At present {productName} does not impose restrictions on threads terminating transactions.
+
+Jakarta Transactions does not provide a means to obtain the transaction identifier.
+However, {productName} provides several ways to view the transaction identifier.
+Call method `toString` to print full information about the transaction, including the identifier.
+Alternatively you can cast the `jakarta.transaction.Transaction` instance to a `com.arjuna.ats.jta.transaction.Transaction`, then call either method `get_uid`, which returns an ArjunaCore `Uid` representation, or `getTxId`, which returns an `Xid` for the global identifier, i.e., no branch qualifier.
+
+== Resource enlistment
+
+Typically, an application server manages transactional resources, such as database connections, in conjunction with some resource adapter and optionally with connection pooling optimization.
+For an external transaction manager to coordinate transactional work performed by the resource managers, the application server must enlist and de-list the resources used in the transaction.
+These resources, called _participants_, are enlisted with the transaction so that they can be informed when the transaction terminates, by being driven through the two-phase commit protocol.
+
+As stated previously, Jakarta Transactions is much more closely integrated with the XA concept of resources than the arbitrary objects.
+For each resource the application is using, the application server invokes the `enlistResource` method with an `XAResource` object which identifies the resource in use.
+
+The enlistment request causes the transaction manager to inform the resource manager to start associating the transaction with the work performed through the corresponding resource.
+The transaction manager passes the appropriate flag in its `XAResource.start` method call to the resource manager.
+
+The `delistResource` method disassociates the specified resource from the transaction context in the target object.
+The application server invokes the method with the two parameters: the `XAResource` object that represents the resource, and a flag to indicate whether the operation is due to the transaction being suspended (`TMSUSPEND`), a portion of the work has failed (`TMFAIL`), or a normal resource release by the application (`TMSUCCESS`).
+
+The de-list request causes the transaction manager to inform the resource manager to end the association of the transaction with the target `XAResource`. The flag value allows the application server to indicate whether it intends to come back to the same resource whereby the resource states must be kept intact.
+The transaction manager passes the appropriate flag value in its `XAResource.end` method call to the underlying resource manager.
+
+== Transaction synchronization
+
+Transaction synchronization allows the application server to be notified before and after the transaction completes.
+For each transaction started, the application server may optionally register a `Synchronization` call-back object to be invoked by the transaction manager, which will be one of the following:
+
+[cols="1,1"]
+|===
+|`beforeCompletion`
+|Called before the start of the two-phase transaction complete process.
+This call is executed in the same transaction context of the caller who initiates the `TransactionManager.commit` or the call is executed with no transaction context if `Transaction.commit` is used.
+|`afterCompletion`
+|Called after the transaction completes.
+The status of the transaction is supplied in the parameter.
+This method is executed without a transaction context.
+
+NOTE: If an XAResource throws a RuntimeException, this method will not be called as the transaction has not and cannot complete.
+Please see JBTM-2148 for more details.
+|===
+
+== Transaction equality
+
+The transaction manager implements the `Transaction` object's `equals` method to allow comparison between the target object and another `Transaction` object.
+The `equals` method returns `true` if the target object and the parameter object both refer to the same global transaction.
+
+.Method `equals`
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/Transaction_Equality.java[]
+----
+
+== TransactionSynchronizationRegistry
+
+The `jakarta.transaction.TransactionSynchronizationRegistry` interface, added to the Jakarta Transactions API in version 1.1, provides for registering Synchronizations with special ordering behavior, and for storing key-value pairs in a per-transaction Map.
+Full details are available in the Jakarta Transactions API specification and javadoc.
+Here we focus on implementation specific behavior.
+
+.Accessing the `TransactionSynchronizationRegistry` in standalone environments
+====
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/TransactionSynchronizationRegistry_standalone.java[]
+----
+
+This is a stateless object and hence is cheap to instantiate.
+====
+
+.Accessing the TransactionSynchronizationRegistry via JNDI
+In application server environments, the standard JNDI name binding is `java:comp/TransactionSynchronizationRegistry`.
+
+Ordering of interposed Synchronizations is relative to other local Synchronizations only.
+In cases where the transaction is distributed over multiple JVMs, global ordering is not guaranteed.
+
+The per-transaction data storage provided by the `TransactionSynchronizationRegistry` methods `getResource` and `putResource` are non-persistent and thus not available in `Transactions` during crash recovery.
+When running integrated with an application server or other container, this storage may be used for system purposes.
+To avoid collisions, use an application-specific prefix on map keys, such as `put("myapp_"+key, value)`.
+The behavior of the `Map` on `Thread` s that have status `NO_TRANSACTION` or where the transaction they are associated with has been rolled back by another `Thread`, such as in the case of a timeout, is undefined.
+A `Transaction` can be associated with multiple `Thread`s.
+For such cases the `Map` is synchronized to provide thread safety.

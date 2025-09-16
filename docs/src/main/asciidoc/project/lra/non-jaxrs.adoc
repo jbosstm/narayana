@@ -1,0 +1,5 @@
+
+= Non JAX-RS services
+
+We also support POJO style participants, details of which are available in the specification and TCK available on the MP-LRA github repository https://github.com/eclipse/microprofile-lra
+

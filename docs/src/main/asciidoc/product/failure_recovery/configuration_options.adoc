@@ -1,0 +1,28 @@
+
+= Configuration Options
+
+== Recovery Protocol in OTS - Overview
+
+{productName} is highly configurable.
+For full details of the configuration mechanism used, see the Programmer's Guide.
+
+The following table shows the configuration features, with default values shown in italics.
+More details about each option can be found in the relevant sections of this document.
+
+[NOTE]
+====
+You need to prefix each property in this table with the string `com.arjuna.ats.arjuna.recovery`.
+The prefix has been removed for formatting reasons, and has been replaced by ...
+====
+
+[cols="1,1,1",options="header"]
+|===
+|Configuration Name|Possible Values|Description
+|`...periodicRecoveryPeriod`|120/any positive integer|Interval between recovery attempts, in seconds.
+|`...recoveryBackoffPeriod`|10/any positive integer|Interval between first and second recovery passes, in seconds.
+|`...periodicRecoveryInitilizationOffset`|0/any non-negative integer|Interval before first recovery pass, in seconds.
+|`...expiryScanInterval`|12/any integer|Interval between expiry scans, in hours. 0 disables scanning.
+Negative values postpone the first run.
+|`...transactionStatusManagerExpiryTime`|12/any positive integer|Interval after which a non-contactable process is considered dead.
+0 = never.
+|===

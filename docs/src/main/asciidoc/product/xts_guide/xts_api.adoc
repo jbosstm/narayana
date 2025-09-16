@@ -1,0 +1,538 @@
+
+[[sec_xts_api]]
+= The XTS API
+:imagesdir: images
+
+This chapter discusses the XTS API.
+You can use this information to write client and server applications which consume transactional Web Services and coordinate back-end systems.
+
+== Participants
+
+=== Overview
+
+The `participant` is the entity that performs the work pertaining to transaction management on behalf of the business services involved in an application.
+The Web service (in the example code, a theater booking system) contains some business logic to reserve a seat and inquire about availability, but it needs to be supported by something that maintains information in a durable manner.
+Typically this is a database, but it could be a file system, NVRAM, or other storage mechanism.
+
+Although the service may talk to the back-end database directly, it cannot commit or undo any changes, since committing and rolling back are ultimately under the control of a transaction.
+For the transaction to exercise this control, it must communicate with the database.
+In XTS, participant does this communication, as shown in <<fig_participant_backend_control>>.
+
+[[fig_participant_backend_control]]
+.Transactions, Participants, and Back-End Transaction Control
+image::xts-guide-fig-participant-backend-control.png[align="center"]
+
+==== Atomic Transaction
+
+[WARNING]
+====
+This section is relevant for WS-AT applications only if Raw XTS API is used.
+====
+
+All Atomic Transaction participants are instances of the <<ref_durable2pcparticipant>> or <<ref_volatile2pcparticipant>> .
+
+==== Business Activity
+
+All Business Activity participants are instances one or the other of the interfaces described in <<ref_businessagreementwithparticipantcompletion>> or <<ref_businessagreementwithcoordinatorcompletion>> interface.
+
+=== Participant Creation and Deployment
+
+The participant provides the plumbing that drives the transactional aspects of the service.
+This section discusses the specifics of Participant programming and usage.
+
+==== Implementing Participants
+
+Implementing a participant is a relatively straightforward task.
+However, depending on the complexity of the transactional infrastructure that the participant needs to manage, the task can vary greatly in complexity and scope.
+Your implementation needs to implement one of the interfaces found under `com.arjuna.wst`.
+
+==== Deploying Participants
+
+Transactional web services and transactional clients are regular Jakarta EE applications and can be deployed into the application server in the same way as any other Jakarta EE application.
+The XTS Subsystem exports all the client and web service API classes needed to manage transactions and enroll and manage participant web services.
+It provides implementations of all the WS-C and WS-T coordination services, not just the coordinator services.
+In particular, it exposes the client and web service participant endpoints which are needed to receive incoming messages originating from the coordinator.
+
+Normally, a transactional application client and the transaction web service it invokes will be deployed in different application servers.
+As long as XTS is enabled on each of these containers it will transparently route coordination messages from clients or web services to their coordinator and vice versa.
+When the client begins a transaction by default it creates a context using the coordination services in its local container.
+The context holds a reference to the local Registration Service which means that any web services enlisted in the transaction enrol with the coordination services in the same container.
+
+The coordinator does not need to reside in the same container as the client application.
+By configuring the client deployment appropriately it is possible to use the coordinator services co-located with one of the web services or even to use services deployed in a separate, dedicated container.
+See Chapter 8 Stand-Alone Coordination for details of how to configure a coordinator located in a different container to the client.
+
+[WARNING]
+====
+In previous releases, the XTS and Transaction Manager `.jar`, `.war` and configuration files needed to be bundled with the application.
+This deployment method is no longer supported in the {appServer} as XTS is pre-installed as a SubSystem.
+====
+
+== API for the Atomic Transaction Protocol
+
+[[ref_durable2pcparticipant]]
+=== `Durable2PCParticipant`
+
+All participants which support `Durable2PC` protocol have to implement `com.arjuna.wst.Durable2PCParticipant` interface.
+
+.`Durable2PCParticipant` Methods
+prepare::
+The participant should perform any work necessary, so that it can either `commit` or `roll back` the work performed by the Web service under the scope of the transaction.
+The implementation is free to do whatever it needs to in order to fulfill the implicit contract between it and the coordinator.
++
+The participant indicates whether it can `prepare` by returning an instance of <<ref_vote>>.
+
+`commit`::
+The participant should make its work permanent.
+How it accomplishes this depends upon its implementation.
+For instance, in the theater example, the reservation of the ticket is committed.
+If `commit` processing cannot complete, the participant should throw a `SystemException` error, potentially leading to a heuristic outcome for the transaction.
+
+`rollback`::
+The participant should undo its work.
+If `rollback` processing cannot complete, the participant should throw a `SystemException` error, potentially leading to a heuristic outcome for the transaction.
+
+`unknown`::
+This method has been deprecated and is slated to be removed from XTS in the future.
+
+`error`::
+In rare cases when recovering from a system crash, it may be impossible to complete or `roll back` a previously prepared participant, causing the `error` operation to be invoked.
+
+[[ref_volatile2pcparticipant]]
+=== `Volatile2PCParticipant`
+
+All participants which support `Volatile2PC` protocol have to implement `com.arjuna.wst.Volatile2PCParticipant` interface.
+
+.`Volatile2PCParticipant` Methods
+`prepare`::
+The participant should perform any work necessary to flush any volatile data created by the Web service under the scope of the transaction, to the system store.
+The implementation is free to do whatever it needs to in order to fulfill the implicit contract between it and the coordinator.
++
+The participant indicates whether it can `prepare` by returning an instance of <<ref_vote>>.
+
+`commit`::
+The participant should perform any cleanup activities required, in response to a successful transaction `commit`.
+These cleanup activities depend upon its implementation.
+For instance, it may flush cached backup copies of data modified during the transaction.
+In the unlikely event that `commit` processing cannot complete, the participant should throw a `SystemException` error.
+This will not affect the outcome of the transaction but will cause an error to be logged.
+This method may not be called if a crash occurs during `commit` processing.
+
+`rollback`::
+The participant should perform any cleanup activities required, in response to a transaction `abort`.
+In the unlikely event that `rollback` processing cannot complete, the participant should throw a `SystemException` error.
+This will not affect the outcome of the transaction but will cause an error to be logged.
+This method may not be called if a crash occurs during `commit` processing.
+
+`unknown`::
+This method is deprecated and will be removed in a future release of XTS.
+
+`error`::
+This method should never be called, since volatile participants are not involved in recovery processing.
+
+[[ref_vote]]
+=== Vote
+
+During the two-phase commit protocol, a participant is asked to vote on whether it can prepare to confirm the work that it controls.
+It must return an instance of one of the subtypes of `com.arjuna.wst.Vote`.
+
+.Subclasses of `com.arjuna.wst.Vote`
+`Prepared`::
+Indicates that the participant can prepare if the coordinator requests it.
+Nothing has been committed, because the participant does not know the final outcome of the transaction.
+
+`Aborted`::
+The participant cannot prepare, and has rolled back.
+The participant should not expect to get a second phase message.
+
+`ReadOnly`::
+The participant has not made any changes to state, and it does not need to know the final outcome of the transaction.
+Essentially the participant is resigning from the transaction.
+
+.Example Implementation of 2PC Participant's `prepare`method
+[source,java]
+----
+include::{productSourceDir}/xts_guide/extras/example-prepare-method.java[]
+----
+
+=== TXContext
+
+`com.arjuna.mw.wst.TxContext` is an opaque representation of a transaction context.
+It returns one of two possible values, as listed below.
+
+.TxContext Return Values
+`valid`::
+Indicates whether the contents are valid.
+
+`equals`::
+Can be used to compare two instances for equality.
+
+[[ref_usertransaction]]
+=== UserTransaction
+
+`com.arjuna.mw.wst11.UserTransaction` is the class that clients typically employ.
+Before a client can begin a new atomic transaction, it must first obtain a `UserTransaction` from the `UserTransactionFactory`.
+This class isolates the user from the underlying protocol-specific aspects of the XTS implementation.
+A `UserTransaction` does not represent a specific transaction.
+Instead, it provides access to an implicit per-thread transaction context, similar to the `UserTransaction` in the JTA specification.
+All of the `UserTransaction` methods implicitly act on the current thread of control.
+
+.`UserTransaction`Methods
+`begin`::
+Used to begin a new transaction and associate it with the invoking thread.
+
+.Parameters
+`timeout`::
+This optional parameter, measured in milliseconds, specifies a time interval after which the newly created transaction may be automatically rolled back by the coordinator
+
+.Exceptions
+`WrongStateException`::
+A transaction is already associated with the thread.
+`commit`::
+`Volatile2PC` and `Durable2PC` participants enrolled in the transaction are requested first to prepare and then to `commit` their changes.
+If any of the participants fails to prepare in the first phase then all other participants are requested to `abort`.
+
+.Exceptions
+`UnknownTransactionException`::
+No transaction is associated with the invoking thread.
+
+`TransactionRolledBackException`::
+The transaction was rolled back either because of a timeout or because a participant was unable to `commit`.
+`rollback`::
+Terminates the transaction.
+Upon completion, the `rollback` method disassociates the transaction from the current leaving it unassociated with any transactions.
+
+.Exceptions
+`UnknownTransactionException`::
+No transaction is associated with the invoking thread.
+
+=== UserTransactionFactory
+
+Call the `getUserTransaction` method to obtain a <<ref_usertransaction>> instance from a `UserTransactionFactory`.
+
+[[ref_transactionmanager]]
+=== TransactionManager
+
+Defines the interaction between a transactional web service and the underlying transaction service implementation.
+A `TransactionManager` does not represent a specific transaction.
+Instead, it provides access to an implicit per-thread transaction context.
+
+.Methods
+`currentTransaction`::
+Returns a `TxContext` for the current transaction, or null if there is no context.
+Use the `currentTransaction` method to determine whether a web service has been invoked from within an existing transaction.
+You can also use the returned value to enable multiple threads to execute within the scope of the same transaction.
+Calling the `currentTransaction` method does not disassociate the current thread from the transaction.
+
+`suspend`::
+Dissociates a thread from any transaction.
+This enables a thread to do work that is not associated with a specific transaction.
++
+The `suspend` method returns a `TxContext` instance, which is a handle on the transaction.
+
+`resume`::
+Associates or re-associates a thread with a transaction, using its `TxContext`.
+Prior to association or re-association, the thread is disassociated from any transaction with which it may be currently associated.
+If the `TxContext` is null, then the thread is associated with no transaction.
+In this way, the result is the same as if the `suspend` method were used instead.
+
+.Parameters
+txContext::
+A TxContext instance as return by `suspend`, identifying the transaction to be resumed.
+
+.Exceptions
+`UnknownTransactionException`::
+The transaction referred to by the `TxContext` is invalid in the scope of the invoking thread.
+`enlistForVolitaleTwoPhase`::
+Enroll the specified participant with the current transaction, causing it to participate in the `Volatile2PC` protocol.
+You must pass a unique identifier for the participant.
+
+.Parameters
+participant::
+An implementation of interface `Volatile2PCParticipant` whose prepare, `commit` and `abort` methods are called when the corresponding coordinator message is received.
+
+id::
+A unique identifier for the participant.
+The value of this String should differ for each enlisted participant.
+It should also be possible for a given identifier to determine that the participant belongs to the enlisting web service rather than some other web service deployed to the same container.
+
+.Exceptions
+UnknownTransactionException::
+No transaction is associated with the invoking thread.
+
+`WrongStateException`::
+The transaction is not in a state that allows participants to be enrolled.
+For instance, it may be in the process of terminating.
+`enlistForDurableTwoPhase`::
+Enroll the specified participant with the current transaction, causing it to participate in the `Durable2PC` protocol.
+You must pass a unique identifier for the participant.
+
+.Exceptions
+UnknownTransactionException::
+No transaction is associated with the invoking thread.
+
+`WrongStateException`::
+The transaction is not in a state that allows participants to be enrolled.
+For instance, it may be in the process of terminating.
+
+=== `TransactionManagerFactory`
+
+Use the `getTransactionManager` method to obtain a <<ref_transactionmanager>> from a `TransactionManagerFactory`.
+
+[[ref_wstxfeature]]
+=== WSTXFeature
+
+Use this JAX-WS feature to enable or disable WS-AT context propagation for specific port.
+Pass an instance of this feature when creating web service port.
+
+.Methods
+`WSTXFeature`::
+`WSTXFeature` created with default constructor will enable WS-AT context propagation.
+
+`WSTXFeature`::
+Parametrised constructor will either enabled or disable WS-AT context propagation.
+
+.Parameters
+`enabled`::
+Boolean value saying to either enable or disable WS-AT context propagation.
+[[ref_jtaoverwsatfeature]]
+=== JTAOverWSATFeature
+
+Use this JAX-WS feature to enable or disable JTA context propagation for specific port.
+Pass an instance of this feature when creating web service port.
+
+.Methods
+`JTAOverWSATFeature`::
+`JTAOverWSATFeature` created with default constructor will enable JTA context propagation.
+
+`JTAOverWSATFeature`::
+Parametrised constructor will either enabled or disable JTA context propagation.
+
+.Parameters
+`enabled`::
+Boolean value saying to either enable or disable JTA context propagation.
+
+== API for the Business Activity Protocol
+
+=== Compatibility
+
+Previous implementations of XTS locate the Business Activity Protocol classes in the `com.arjuna.mw.wst` package.
+In the current implementation, these classes are located in the `com.arjuna.mw.wst11` package.
+
+[[ref_businessagreementwithparticipantcompletion]]
+=== `BusinessAgreementWithParticipantCompletionParticipant`
+
+Participant which support business agreement with participant completion protocol have to implement `com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant` interface.
+
+.`BusinessAgreementWithParticipantCompletion` Methods
+`close`::
+The transaction has completed successfully.
+The participant has previously informed the coordinator that it was ready to complete.
+
+`cancel`::
+The transaction has canceled, and the participant should undo any work.
+The participant cannot have informed the coordinator that it has completed.
+
+`compensate`::
+The transaction has canceled.
+The participant previously informed the coordinator that it had finished work but could compensate later if required, and it is now requested to do so.
+If compensation cannot be performed, the participant should throw a `FaultedException` error, potentially leading to a heuristic outcome for the transaction.
+If compensation processing cannot complete because of a transient condition then the participant should throw a `SystemException` error, in which case the compensation action may be retried or the transaction may finish with a heuristic outcome.
+
+`status`::
+Return the status of the participant.
+
+`unknown`::
+This method is deprecated and will be removed a future XTS release.
+
+`error`::
+In rare cases when recovering from a system crash, it may be impossible to compensate a previously-completed participant.
+In such cases the `error` operation is invoked.
+
+[[ref_businessagreementwithcoordinatorcompletion]]
+=== `BusinessAgreementWithCoordinatorCompletion`
+
+Participant which support business agreement with coordinator completion protocol have to implement `com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant` interface.
+
+.`BusinessAgreementWithCoordinatorCompletion` Methods
+`close`::
+The transaction completed successfully.
+The participant previously informed the coordinator that it was ready to complete.
+
+`cancel`::
+The transaction canceled, and the participant should undo any work.
+
+`compensate`::
+The transaction canceled.
+The participant previously informed the coordinator that it had finished work but could compensate later if required, and it is now requested to do so.
+In the unlikely event that compensation cannot be performed the participant should throw a `FaultedException` error, potentially leading to a heuristic outcome for the transaction.
+If compensation processing cannot complete because of a transient condition, the participant should throw a `SystemException` error, in which case the compensation action may be retried or the transaction may finish with a heuristic outcome.
+
+`complete`::
+The coordinator is informing the participant all work it needs to do within the scope of this business activity has been completed and that it should make permananent any provisional changes it has made.
+
+`status`::
+Returns the status of the participant.
+
+`unknown`::
+This method is deprecated and will be removed in a future release of XTS.
+
+`error`::
+In rare cases when recovering from a system crash, it may be impossible to compensate a previously completed participant.
+In such cases, the `error` method is invoked.
+
+=== `BAParticipantManager`
+
+In order for the Business Activity protocol to work correctly, the participants must be able to autonomously notify the coordinator about changes in their status.
+Unlike the Atomic Transaction protocol, where all interactions between the coordinator and participants are instigated by the coordinator when the transaction terminates, the `BAParticipantManager` interaction pattern requires the participant to be able to talk to the coordinator at any time during the lifetime of the business activity.
+
+Whenever a participant is registered with a business activity, it receives a handle on the coordinator.
+This handle is an instance of interface `com.arjuna.wst11.BAParticipantManager`.
+
+.`BAParticipantManager` Methods
+exit::
+The participant uses the method `exit` to inform the coordinator that is has left the activity.
+It will not be informed when and how the business activity terminates.
+This method may only be invoked while the participant is in the `active` state (or the `completing` state, in the case of a participant registered for the `ParticipantCompletion` protocol).
+If it is called when the participant is in any other state, a `WrongStateException` error is thrown.
+An `exit` does not stop the activity as a whole from subsequently being closed or canceled/compensated, but only ensures that the exited participant is no longer involved in completion, close or compensation of the activity.
+
+completed::
+The participant has completed its work, but wishes to continue in the business activity, so that it will eventually be informed when, and how, the activity terminates.
+The participant may later be asked to compensate for the work it has done or learn that the activity has been closed.
+
+fault::
+The participant encountered an error during normal activation and has done whatever it can to compensate the activity.
+The `fault` method places the business activity into a mandatory `cancel-only` mode.
+The faulted participant is no longer involved in completion, close or compensation of the activity.
+
+[[ref_userbusinessactivity]]
+=== `UserBusinessActivity`
+
+`com.arjuna.wst11.UserBusinessActivity` is the class that most clients employ.
+A client begins a new business activity by first obtaining a `UserBusinessActivity` from the `UserBusinessActivityFactory`.
+This class isolates them from the underlying protocol-specific aspects of the XTS implementation.
+A `UserBusinessActivity` does not represent a specific business activity.
+Instead, it provides access to an implicit per-thread activity.
+Therefore, all of the `UserBusinessActivity` methods implicitly act on the current thread of control.
+
+.Methods
+`begin`::
+Begins a new activity, associating it with the invoking thread.
+
+.Parameters
+timeout::
+The interval, in milliseconds, after which an activity times out.
+Optional.
+
+.Exceptions
+`WrongStateException`::
+The thread is already associated with a business activity.
+`close`::
+First, all Coordinator Completion participants enlisted in the activity are requested to complete the activity.
+Next all participants, whether they enlisted for Coordinator or Participant Completion, are requested to close the activity.
+If any of the Coordinator Completion participants fails to complete at the first stage then all completed participants are asked to compensate the activity while any remaining uncompleted participants are requested to cancel the activity.
+
+.Exceptions
+`UnknownTransactionException`::
+No activity is associated with the invoking thread.
+
+`TransactionRolledBackException`::
+The activity has been cancelled because one of the Coordinator Completion participants failed to complete.
+This exception may also be thrown if one of the Participant Completion participants has not completed before the client calls close.
+`cancel`::
+Terminates the business activity.
+All Participant Completion participants enlisted in the activity which have already completed are requested to compensate the activity.
+All uncompleted Participant Completion participants and all Coordinator Completion participants are requested to cancel the activity.
+
+.Exceptions
+`UnknownTransactionException`::
+No activity is associated with the invoking thread.
+Any participants that previous completed are directed to compensate their work.
+
+=== UserBusinessActivityFactory
+
+Use the `getUserBusinessActivity` method to obtain a <<ref_userbusinessactivity>> instance from a `userBusinessActivityFactory`.
+
+[[ref_businessactivitymanager]]
+=== BusinessActivityManager
+
+`com.arjuna.mw.wst11.BusinessActivityManager` is the class that web services typically employ.
+Defines how a web service interacts with the underlying business activity service implementation.
+A `BusinessActivityManager` does not represent a specific activity.
+Instead, it provides access to an implicit per-thread activity.
+
+.Methods
+`currentTransaction`::
+Returns the `TxContext` for the current business activity, or `NULL` if there is no `TxContext`.
+The returned value can be used to enable multiple threads to execute within the scope of the same business activity.
+Calling the `currenTransaction` method does not dissociate the current thread from its activity.
+
+`suspend`::
+Dissociates a thread from any current business activity, so that it can perform work not associated with a specific activity.
+The `suspend` method returns a `TxContext` instance, which is a handle on the activity.
+The thread is then no longer associated with any activity.
+
+`resume`::
+Associates or re-associates a thread with a business activity, using its `TxContext`.
+Before associating or re-associating the thread, it is disassociated from any business activity with which it is currently associated.
+If the `TxContext` is `NULL`, the thread is disassociated with all business activities, as though the `suspend` method were called.
+
+.Parameters
+`txContext`::
+A TxContext instance as returned by `suspend`, identifying the transaction to be resumed.
+
+.Exceptions
+`UnknownTransactionException`::
+The business activity to which the `TxContext` refers is invalid in the scope of the invoking thread.
+`enlistForBusinessAgreementWithParticipantCompletion`::
+Enroll the specified participant with current business activity, causing it to participate in the `BusinessAgreementWithParticipantCompletion` protocol.
+A unique identifier for the participant is also required.
++
+The return value is an instance of BAParticipantManager which can be used to notify the coordinator of changes in the participant state.
+In particular, since the participant is enlisted for the Participant Completion protcol it is expected to call the completed method of this returned instance when it has completed all the work it expects to do in this activity and has made all its changes permanent.
+Alternatively, if the participant does not need to perform any compensation actions should some other participant fail it can leave the activity by calling the exit method of the returned `BAParticipantManager` instance.
+
+.Parameters
+participant::
+An implementation of interface `BusinessAgreementWithParticipantCompletionParticipant` whose `close`, `cancel`, and `compensate` methods are called when the corresponding coordinator message is received.
+
+`id`::
+A unique identifier for the participant.
+The value of this String should differ for each enlisted participant.
+It should also be possible for a given identifier to determine that the participant belongs to the enlisting web service rather than some other web service deployed to the same container.
+
+.Exceptions
+`UnknownTransactionException`::
+No transaction is associated with the invoking thread.
+
+`WrongStateException`::
+The transaction is not in a state where new participants may be enrolled, such as when it is terminating.
+`enlistForBusinessAgreementWithCoordinatorCompletion`::
+Enroll the specified participant with current activity, causing it to participate in the `BusinessAgreementWithCoordinatorCompletion` protocol.
+A unique identifier for the participant is also required.
++
+The return value is an instance of `BAParticipantManager` which can be used to notify the coordinator of changes in the participant state.
+Note that in this case it is an error to call the `completed` method of this returned instance.
+With the Coordinator Completion protocol the participant is expected to wait until its `completed` method is called before it makes all its changes permanent.
+Alternatively, if the participant determiens that it has no changes to make, it can leave the activity by calling the `exit` method of the returned `BAParticipantManager` instance.
+
+.Parameters
+participant::
+An implementation of interface `BusinessAgreementWithCoordinatorCompletionParticipant` whose completed, close, cancel and compensate methods are called when the corresponding coordinator message is received.
+
+`id`::
+A unique identifier for the participant.
+The value of this String should differ for each enlisted participant.
+It should also be possible for a given identifier to determine that the participant belongs to the enlisting web service rather than some other web service deployed to the same container.
+
+.Exceptions
+`UnknownTransactionException`::
+No transaction is associated with the invoking thread.
+
+`WrongStateException`::
+The transaction is not in a state where new participants may be enrolled, such as when it is terminating.
+
+=== `BusinessActivityManagerFactory`
+
+Use the `getBusinessActivityManager` method to obtain a <<ref_businessactivitymanager>> instance from a `BusinessActivityManagerFactory`.

@@ -1,0 +1,17 @@
+
+= Narayana Core
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+:leveloffset: +1
+
+include::{projectSourceDir}/core/overview.adoc[]
+include::{projectSourceDir}/core/using_txcore.adoc[]
+include::{projectSourceDir}/core/general_transaction_issues.adoc[]
+include::{projectSourceDir}/core/hints_and_tips.adoc[]
+include::{projectSourceDir}/core/constructing_a_transactional_objects_for_java_application.adoc[]
+include::{projectSourceDir}/core/failure_recovery.adoc[]
+
+:leveloffset: -1

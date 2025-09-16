@@ -1,0 +1,4 @@
+To upgrade to the latest version of the {productName} software, replace all currently used {productName} jars with their latest versions.
+However, before replacing the jars, ensure that all pending transactions are either completed or recovered.
+It is essential that the Object Store is empty before transitioning to a newer version of {productName}.
+This precaution is necessary because a newer version of {productName} may potentially break compatibility with older information stored in the Object Store, making that data unusable.

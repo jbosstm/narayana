@@ -1,0 +1,17 @@
+First Pass:
+< create a collection containing all transactions currently in the log >
+
+Second Pass:
+while < there are transactions in the collection >
+do
+ if < the intention list for the transaction still exists >
+ then
+   < create new transaction cached item >
+   < obtain the status of the transaction >
+ 
+   if < the transaction is not in progress (ie phase 2 has finished ) >
+   then
+     < replay phase two of the commit protocol >
+   endif.
+ endif.
+end while.

@@ -1,0 +1,174 @@
+
+= {parentProduct} interfaces for extending the OTS
+
+This chapter contains a description of the use of the {parentProduct} classes you can use to extend the OTS interfaces.
+These advanced interfaces are all written on top of the basic OTS engine described previously, and applications which use them run on other OTS implementations, only without the added functionality.
+
+.Features
+AtomicTransaction::
+Provides a more manageable interface to the OTS transaction than `CosTransactions::Current`. It automatically keeps track of transaction scope, and allows you to create nested top-level transactions in a more natural manner than the one provided by the OTS.
+
+Advanced subtransaction-Resource classes::
+Allow nested transactions to use a two-phase commit protocol.
+These Resources can also be ordered within {parentProduct}, enabling you to control the order in which `Resource` s are called during the commit or abort protocol.
+
+Implicit context propagation between client and server::
+Where available, {parentProduct} uses implicit context propagation between client and server.
+Otherwise, {parentProduct} provides an explicit interposition class, which simplifies the work involved in interposition.
+The {parentProduct} API, _Transactional Objects for Java (TXOJ)_, requires either explicit or implicit interposition.
+This is even true in a stand-alone mode when using a separate transaction manager.
+TXOJ is fully described in the _ArjunaCore Development Guide_.
+
+[NOTE]
+====
+the extensions to the `CosTransactions.idl` are located in the `com.arjuna.ArjunaOTS` package and the `ArjunaOTS.idl` file.
+====
+
+== Nested transactions
+
+The OTS implementation of nested transactions is extremely limited, and can lead to the generation of inconsistent results.
+One example is a scenario in which a sub-transaction coordinator discovers part of the way through committing that a resources cannot commit.
+It may not be able to tell the committed resources to abort.
+
+In most transactional systems which support sub-transactions, the sub-transaction commit protocol is the same as a top-level transaction’s.
+There are two phases, a `prepare` phase and a `commit` or `abort` phase.
+Using a multi-phase commit protocol avoids the above problem of discovering that one resources cannot commit after others have already been told to commit.
+The `prepare` phase generates consensus on the commit outcome, and the `commit` or `abort` phase enforces the outcome.
+
+{parentProduct} supports the strict OTS implementation of sub-transactions for those resources derived from `CosTransactions::SubtransactionAwareResource`.
+However, if a resource is derived from `ArjunaOTS::ArjunaSubtranAwareResource`, it is driven by a two-phase commit protocol whenever a nested transaction commits.
+
+.ArjunaSubtranAwareResource
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/ArjunaSubtranAwareResource.java[]
+----
+
+During the first phase of the commit protocol the `prepare_subtransaction` method is called, and the resource behaves as though it were being driven by a top-level transaction, making any state changes provisional upon the second phase of the protocol.
+Any changes to persistent state must still be provisional upon the second phase of the top-level transaction, as well.
+Based on the votes of all registered resources, {parentProduct} then calls either `commit_subtransaction` or `rollback_subtransaction`.
+
+[NOTE]
+====
+This scheme only works successfully if all resources registered within a given sub-transaction are instances of the `ArjunaSubtranAwareResource` interface, and that after a resource tells the coordinator it can prepare, it does not change its mind.
+====
+
+== Extended resources
+
+When resources are registered with a transaction, the transaction maintains them within a list, called the _intentions list_.
+At termination time, the transaction uses the intentions list to drive each resource appropriately, to commit or abort.
+However, you have no control over the order in which resources are called, or whether previously-registered resources should be replaced with newly registered resources.
+The {parentProduct} interface `ArjunaOTS::OTSAbstractRecord` gives you this level of control.
+
+.OTSAbstractRecord
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/OTSAbstractRecord.java[]
+----
+
+[cols="1,1"]
+|===
+|`typeId` |returns the record type of the instance. This is one of the values of the enumerated type `Record_type`.
+|`uid` |a stringified Uid for this record.
+|`propagateOnAbort` |by default, instances of `OTSAbstractRecord` should not be propagated to the parent transaction if the current transaction rolls back. By returning `TRUE`, the instance will be propagated.
+|`propagateOnCommit` |returning `TRUE` from this method causes the instance to be propagated to the parent transaction if the current transaction commits. Returning `FALSE` disables the propagation.
+|`saveRecord` |returning `TRUE` from this method causes {parentProduct} to try to save sufficient information about the record to persistent state during commit, so that crash recovery mechanisms can replay the transaction termination in the event of a failure. If `FALSE` is returned, no information is saved.
+|`merge` |used when two records need to merge together.
+|`alter` |used when a record should be altered.
+|`shouldAdd` |returns `true` ii the record should be added to the list, `false` if it should be discarded.
+|`shouldMerge` |returns `true` if the two records should be merged into a single record, `false` otherwise.
+|`shouldReplace` |returns `true` if the record should replace an existing one, `false` otherwise.
+|===
+
+When inserting a new record into the transaction’s intentions list, {parentProduct} uses the following algorithm:
+
+. if a record with the same type and uid has already been inserted, then the methods `shouldAdd`, and related methods, are invoked to determine whether this record should also be added.
+. If no such match occurs, then the record is inserted in the intentions list based on the `type` field, and ordered according to the uid.
+All of the records with the same type appear ordered in the intentions list.
+
+`OTSAbstractRecord` is derived from `ArjunaSubtranAwareResource`.
+Therefore, all instances of `OTSAbstractRecord` inherit the benefits of this interface.
+
+== AtomicTransaction
+
+In terms of the OTS, `AtomicTransaction` is the preferred interface to the OTS protocol engine.
+It is equivalent to `CosTransactions::Current`, but with more emphasis on easing application development.
+For example, if an instance of `AtomicTransaction` goes out of scope before it terminates, the transaction automatically rolls back.
+`CosTransactions::Current` cannot provide this functionality.
+When building applications using {parentProduct}, use `AtomicTransaction` for the added benefits it provides.
+It is located in the `com.arjuna.ats.jts.extensions.ArjunaOTS` package.
+
+.AtomicTransaction
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/AtomicTransaction.java[]
+----
+
+.AtomicTransaction's Methods
+[cols="1,1"]
+|===
+|`begin` |Starts an action
+|`commit` |Commits an action
+|`rollback` |Abort an action
+|===
+
+Transaction nesting is determined dynamically.
+Any transaction started within the scope of another running transaction is nested.
+
+The `TopLevelTransaction` class, which is derived from `AtomicTransaction`, allows creation of nested top-level transactions.
+Such transactions allow non-serializable and potentially non-recoverable side effects to be initiated from within a transaction, so use them with caution.
+You can create nested top-level transactions with a combination of the `CosTransactions::TransactionFactory` and the `suspend` and `resume` methods of `CosTransactions::Current`.
+However, the `TopLevelTransaction` class provides a more user-friendly interface.
+
+`AtomicTransaction` and `TopLevelTransaction` are completely compatible with `CosTransactions::Current`.
+You an use the two transaction mechanisms interchangeably within the same application or object.
+
+`AtomicTransaction` and `TopLevelTransaction` are similar to `CosTransactions::Current`.
+They both simplify the interface between you and the OTS.
+However, you gain two advantages by using `AtomicTransaction` or `TopLevelTransaction`.
+
+* The ability to create nested top-level transactions which are automatically associated with the current thread.
+When the transaction ends, the previous transaction associated with the thread, if any, becomes the thread’s current transaction.
+* Instances of `AtomicTransaction` track scope, and if such an instance goes out of scope before it is terminated, it is automatically aborted, along with its children.
+
+== Context propagation issues
+
+When using TXOJ in a distributed manner, {parentProduct} requires you to use interposition between client and object.
+This requirement also exists if the application is local, but the transaction manager is remote.
+In the case of implicit context propagation, where the application object is derived from `CosTransactions::TransactionalObject`, you do not need to do anything further. {parentProduct} automatically provides interposition.
+However, where implicit propagation is not supported by the ORB, or your application does not use it, you must take additional action to enable interposition.
+
+The class `com.arjuna.ats.jts.ExplicitInterposition` allows an application to create a local control object which acts as a local coordinator, fielding registration requests that would normally be passed back to the originator.
+This surrogate registers itself with the original coordinator, so that it can correctly participate in the commit protocol.
+The application thread context becomes the surrogate transaction hierarchy.
+Any transaction context currently associated with the thread is lost.
+The interposition lasts for the lifetime of the explicit interposition object, at which point the application thread is no longer associated with a transaction context.
+Instead, it is set to `null`.
+
+interposition is intended only for those situations where the transactional object and the transaction occur within different processes, rather than being co-located.
+If the transaction is created locally to the client, do not use the explicit interposition class.
+The transaction is implicitly associated with the transactional object because it resides within the same process.
+
+.ExplicitInterposition
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/ExplicitInterposition.java[]
+----
+
+A transaction context can be propagated between client and server in two ways: either as a reference to the client’s transaction Control, or explicitly sent by the client.
+Therefore, there are two ways in which the interposed transaction hierarchy can be created and registered.
+For example, consider the class Example which is derived from LockManager and has a method increment:
+
+.ExplicitInterposition Example
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/ExplicitInterposition_example.java[]
+----
+
+if the `Control` passed to the `register` operation of `ExplicitInterposition` is `null`, no exception is thrown.
+The system assumes that the client did not send a transaction context to the server.
+A transaction created within the object will thus be a top-level transaction.
+
+When the application returns, or when it finishes with the interposed hierarchy, the program should call `unregisterTransaction` to disassociate the thread of control from the hierarchy.
+This occurs automatically when the `ExplicitInterposition` object is garbage collected.
+However, since this may be after the transaction terminates, {parentProduct} assumes the thread is still associated with the transaction and issues a warning about trying to terminate a transaction while threads are still active within it.

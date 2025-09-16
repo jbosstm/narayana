@@ -1,0 +1,43 @@
+
+[[chap_integrate_with_karaf]]
+= Integrate with Karaf
+
+== Introduction
+
+The Narayana has been introduced in the Karaf 4.1.0-SNAPSHOT.
+You need to build from https://github.com/apache/karaf[https://github.com/apache/karaf].
+
+The narayana configuration file could be found in `<karaf-4.1.0-SNAPSHOT>/etc/org.jboss.nararayana.cfg`
+
+.Configuration
+[cols="1,1",options="header"]
+|===
+|Key |Value
+|ObjectStoreEnvironmentBean.objectStoreDir |$\{karaf.data}/narayana
+|ObjectStoreEnvironmentBean.communicationStore.objectStoreDir |$\{karaf.data}/narayana
+|HornetqJournalEnvironmentBean.storeDir |$\{karaf.data}/narayana/hornetq
+|===
+
+You could use the more keys in the `jbossts-properties.xml`
+
+== Quickstart
+
+You could build and run the https://github.com/jbosstm/quickstart/tree/master/karaf/osgi-jta[ Karaf osgi-jta Quicksart]
+
+== Admin Commands Support
+
+We support the following commands in the karaf console
+
+.Admin Command Cli
+[cols="1,1",options="header"]
+|===
+|Command |Description
+|narayana:refresh |Refresh the view of the object store
+|narayana:types |List record types
+|narayana:select type |Select a particular transaction type
+|narayana:ls [type] |List the transactions
+|narayana:attach id |Attach to a transaction log
+|narayana:detach id |Detach to the transaction log
+|narayana:forget idx |Move the specified heuristic participant back to the prepared list
+|narayana:delete idx |Delete the specified heuristic participant
+|===

@@ -1,0 +1,166 @@
+
+= Advanced transaction issues with ArjunaCore
+:imagesdir: images
+
+Atomic actions (transactions) can be used by both application programmers and class developers.
+Thus, entire operations (or parts of operations) can be made atomic as required by the semantics of a particular operation.
+This chapter will describe some of the more subtle issues involved with using transactions in general and ArjunaCore in particular.
+
+== Last resource commit optimization (LRCO)
+
+In some cases it may be necessary to enlist participants that are not two-phase commit aware into a two-phase commit transaction.
+If there is only a single resource then there is no need for two-phase commit.
+However, if there are multiple resources in the transaction, the _Last Resource Commit Optimization_ (LRCO) comes into play.
+It is possible for a single resource that is one-phase aware (i.e., can only commit or roll back, with no prepare), to be enlisted in a transaction with two-phase commit aware resources.
+This feature is implemented by logging the decision to commit after committing the one-phase aware participant: The coordinator asks each two-phase aware participant if they are able to prepare and if they all vote yes then the one-phase aware participant is asked to commit.
+If the one-phase aware participant commits successfully then the decision to commit is logged and then commit is called on each two-phase aware participant.
+A heuristic outcome will occur if the coordinator fails before logging its commit decision but after the one-phase participant has committed since each two-phase aware participant will eventually rollback (as required under _presumed `abort`_ semantics).
+This strategy delays the logging of the decision to commit so that in failure scenarios we have avoided a write operation.
+But this choice does mean that there is no record in the system of the fact that a heuristic outcome has occurred.
+
+In order to utilize the LRCO, your participant must implement the `com.arjuna.ats.arjuna.coordinator.OnePhase` interface and be registered with the transaction through the `BasicAction.add` operation.
+Since this operation expects instances of `AbstractRecord`, you must create an instance of `com.arjuna.ats.arjuna.LastResourceRecord` and give your participant as the constructor parameter.
+
+====
+.Class `com.arjuna.ats.arjuna.LastResourceRecord`
+[source,Java]
+----
+include::{projectSourceDir}/core/extras/LastResourceRecord.java[]
+----
+====
+
+== Heuristic outcomes
+
+In some situations the application thread may not want to be informed of heuristics during completion.
+However, it is possible some other component in the application, thread or admin may still want to be informed.
+Therefore, special participants can be registered with the transaction which are triggered during the Synchronization phase and given the true outcome of the transaction.
+We do not dictate a specific implementation for what these participants do with the information (e.g., OTS allows for the CORBA Notification Service to be used).
+
+To use this capability, create classes derived from the HeuristicNotification class and define the heuristicOutcome method to use whatever mechanism makes sense for your application.
+Instances of this class should be registered with the tranasction as Synchronizations.
+
+== Nested transactions
+
+There are no special constructs for nesting of transactions.
+If an action is begun while another action is running then it is automatically nested.
+This allows for a modular structure to applications, whereby objects can be implemented using atomic actions within their operations without the application programmer having to worry about the applications which use them, and whether or not the applications will use atomic actions as well.
+Thus, in some applications actions may be top-level, whereas in others they may be nested.
+Objects written in this way can then be shared between application programmers, and ArjunaCore will guarantee their consistency.
+
+If a nested action is aborted, all of its work will be undone, although strict two-phase locking means that any locks it may have obtained will be retained until the top-level action commits or aborts.
+If a nested action commits then the work it has performed will only be committed by the system if the top-level action commits.
+If the top-level action aborts then all of the work will be undone.
+
+The committing or aborting of a nested action does not automatically affect the outcome of the action within which it is nested.
+This is application dependent, and allows a programmer to structure atomic actions to contain faults, undo work, etc.
+
+== Asynchronously committing a transaction
+
+By default, the Transaction Service executes the `commit` protocol of a top-level transaction in a synchronous manner.
+All registered resources will be told to prepare in order by a single thread, and then they will be told to commit or rollback.
+A similar comment applies to the volatile phase of the protocol which provides a synchronization mechanism that allows an interested party to be notified before and after the transaction completes.
+This has several possible disadvantages:
+
+* In the case of many registered synchronizations, the `beforeSynchronization` operation can logically be invoked in parallel on each non interposed synchronization (and similary for the interposed synchronizations).
+The disadvantage is that if an “early” synchronization in the list of registered resource forces a rollback by throwing an unchecked exception, possibly many beforeCompletion operations will have been made needlessly.
+* In the case of many registered resources, the `prepare` operation can logically be invoked in parallel on each resource.
+The disadvantage is that if an “early” resource in the list of registered resource forces a rollback during `prepare`, possibly many prepare operations will have been made needlessly.
+* In the case where heuristic reporting is not required by the application, the second phase of the commit protocol (including any afterCompletion synchronizations) can be done asynchronously, since its success or failure is not important to the outcome of the transaction.
+
+Therefore, {productName} provides runtime options to enable possible threading optimizations.
+By setting the `CoordinatorEnvironmentBean.asyncBeforeSynchronization` environment variable to `YES`, during the `beforeSynchronization` phase a separate thread will be created for each synchronization registered with the transaction.
+By setting the `CoordinatorEnvironmentBean.asyncPrepare` environment variable to `YES`, during the `prepare` phase a separate thread will be created for each registered participant within the transaction.
+By setting `CoordinatorEnvironmentBean.asyncCommit` to `YES`, a separate thread will be created to complete the second phase of the transaction provided knowledge about heuristics outcomes is not required.
+By setting the `CoordinatorEnvironmentBean.asyncAfterSynchronization` environment variable to `YES`, during the `afterSynchronization` phase a separate thread will be created for each synchronization registered with the transaction provided knowledge about heuristics outcomes is not required.
+
+== Independent top-level transactions
+
+In addition to normal top-level and nested atomic actions, ArjunaCore also supports independent top-level actions, which can be used to relax strict serializability in a controlled manner.
+An independent top-level action can be executed from anywhere within another atomic action and behaves exactly like a normal top-level action.
+Its results are made permanent when it commits and will not be undone if any of the actions within which it was originally nested abort.
+
+.Independent Top-Level Action
+====
+image::core-independent_top_level_action.png[align="center"]
+A typical nesting of atomic actions, where action B is nested within action A.
+Although atomic action C is logically nested within action B (it had its Begin operation invoked while B was active) because it is an independent top-level action, it will commit or abort independently of the other actions within the structure.
+Because of the nature of independent top-level actions they should be used with caution and only in situations where their use has been carefully examined.
+====
+
+Top-level actions can be used within an application by declaring and using instances of the class `TopLevelTransaction`.
+They are used in exactly the same way as other transactions.
+
+== Transactions within `save_state`and `restore_state` methods
+
+Exercise caution when writing the `save_state` and `restore_state` operations to ensure that no atomic actions are started, either explicitly in the operation or implicitly through use of some other operation.
+This restriction arises due to the fact that ArjunaCore may invoke `restore_state` as part of its commit processing resulting in the attempt to execute an atomic action during the commit or abort phase of another action.
+This might violate the atomicity properties of the action being committed or aborted and is thus discouraged.
+
+====
+If we consider the xref:using_txcore.adoc#array-example[`Array` class] given previously, the `set` and `get` operations could be implemented as shown below.
+
+This is a simplification of the code, ignoring error conditions and exceptions.
+
+[source,java]
+----
+include::{projectSourceDir}/core/extras/array_set_method.java[]
+----
+
+[source,java]
+----
+include::{projectSourceDir}/core/extras/array_get_method.java[]
+----
+====
+
+== Garbage collecting objects
+
+Java objects are deleted when the garbage collector determines that they are no longer required.
+Deleting an object that is currently under the control of a transaction must be approached with caution since if the object is being manipulated within a transaction its fate is effectively determined by the transaction.
+Therefore, regardless of the references to a transactional object maintained by an application, ArjunaCore will always retain its own references to ensure that the object is not garbage collected until after any transaction has terminated.
+
+== Transaction timeouts
+
+By default, transactions live until they are terminated by the application that created them or a failure occurs.
+However, it is possible to set a timeout (in seconds) on a per-transaction basis such that if the transaction has not terminated before the timeout expires it will be automatically rolled back.
+
+In ArjunaCore, the timeout value is provided as a parameter to the `AtomicAction` constructor.
+If a value of `AtomicAction.NO_TIMEOUT` is provided (the default) then the transaction will not be automatically timed out.
+Any other positive value is assumed to be the timeout for the transaction (in seconds).
+A value of zero is taken to be a global default timeout, which can be provided by the property `CoordinatorEnvironmentBean.defaultTimeout`, which has a default value of 60 seconds.
+
+[NOTE]
+====
+Default timeout values for other {productName} components, such as JTS, may be different and you should consult the relevant documentation to be sure.
+====
+
+When a top-level transaction is created with a non-zero timeout, it is subject to being rolled back if it has not completed within the specified number of seconds. {productName} uses a separate reaper thread which monitors all locally created transactions, and forces them to roll back if their timeouts elapse.
+If the transaction cannot be rolled back at that point, the reaper will force it into a rollback-only state so that it will eventually be rolled back.
+
+By default this thread is dynamically scheduled to awake according to the timeout values for any transactions created, ensuring the most timely termination of transactions.
+It may alternatively be configured to awake at a fixed interval, which can reduce overhead at the cost of less accurate rollback timing.
+For periodic operation, change the `CoordinatorEnvironmentBean.txReaperMode` property from its default value of `DYNAMIC` to `PERIODIC` and set the interval between runs, in milliseconds, using the property `CoordinatorEnvironmentBean.txReaperTimeout`.
+The default interval in `PERIODIC` mode is `120000` milliseconds.
+
+[WARNING]
+====
+In earlier versions the `PERIODIC` mode was known as `NORMAL` and was the default behavior.
+The use of the configuration value `NORMAL` is deprecated and `PERIODIC` should be used instead if the old scheduling behavior is still required.
+====
+
+If a value of `0` is specified for the timeout of a top-level transaction, or no timeout is specified, then {productName} will not impose any timeout on the transaction, and the transaction will be allowed to run indefinitely.
+This default timeout can be overridden by setting the `CoordinatorEnvironmentBean.defaultTimeout` property variable when using to the required timeout value in seconds, when using ArjunaCore, ArjunaJTA or ArjunaJTS.
+
+[NOTE]
+====
+As of JBoss Transaction Service 4.5, transaction timeouts have been unified across all transaction components and are controlled by ArjunaCore.
+====
+
+=== Monitoring transaction timeouts
+
+If you want to be informed when a transaction is rolled back or forced into a rollback-only mode by the reaper, you can create a class that inherits from class `com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor` and overrides the `rolledBack` and `markedRollbackOnly` methods.
+When registered with the reaper via the `TransactionReaper.addListener` method, the reaper will invoke one of these methods depending upon how it tries to terminate the transaction.
+
+[NOTE]
+====
+The reaper will not inform you if the transaction is terminated (committed or rolled back) outside of its control, such as by the application.
+====

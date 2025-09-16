@@ -1,0 +1,10 @@
+
+= Introduction
+
+The notions explained here are to be considered as extensions of what has already been presented in the
+'Administration' section of link:#jta_introduction[JTA's Administration section].
+
+Since the release of {parentProduct} 4.1, the Web Services Transaction product has been merged into {parentProduct}. {parentProduct} is thus a single product that is compliant with all of the major distributed transaction standards and specifications.
+
+Knowledge of Web Services is not required to administer a {parentProduct} installation that only uses the CORBA/J2EE component, nor is knowledge of CORBA required to use the Web Services component.
+This, administrative tasks are separated when they touch only one component or the other.

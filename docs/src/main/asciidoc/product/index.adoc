@@ -1,0 +1,17 @@
+
+:toclevels: {toclevel}
+:doctype: book
+:sectnums:
+
+include::{productSourceDir}/book_info.adoc[]
+
+:leveloffset: +1
+
+include::{productSourceDir}/preface.adoc[]
+include::{productSourceDir}/transactions_overview/transactions_overview.adoc[]
+include::{productSourceDir}/failure_recovery/failure_recovery.adoc[]
+include::{productSourceDir}/development_guide/development_guide.adoc[]
+include::{productSourceDir}/xts_guide/xts_guide.adoc[]
+include::{productSourceDir}/txbridge_guide/txbridge_guide.adoc[]
+
+:leveloffset: -1

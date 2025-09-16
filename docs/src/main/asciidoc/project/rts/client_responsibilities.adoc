@@ -1,0 +1,136 @@
+
+[[client_responsibilities]]
+= Client Responsibilities
+
+The RESTAT client is responsible for creating and terminating transaction resources.
+
+== Starting a Transaction
+
+Performing a POST on the _transaction-manager_ URI with header as shown below will start a new transaction with a default timeout.
+A successful invocation returns a 201 HTTP status code and the Location header contains the URI of the newly created transaction resource, which we refer to as transaction-coordinator in the rest of this book.
+At least two related URLs will also be returned, one for use by the transaction terminator (typically referred to as the client) and one used for registering durable participation in the transaction (typically referred to as the server).
+These URIs are referred to as the transaction-terminator and _transaction-enlistment_ URIs, respectively.
+Although uniform URL structures are used in the examples, these linked URLs can be of arbitrary format.
+
+[source,html]
+----
+POST /transaction-manager HTTP/1.1
+From: foo@bar.com
+----
+
+The corresponding response would be:
+
+[source,html]
+----
+HTTP 1.1 201 Created
+Location: /transaction-coordinator/1234
+Link:</transaction-coordinator/1234/terminator>; rel=”terminator”,
+    </transaction-coordinator/1234/participant>; rel=”durable-participant”,
+    </transaction-coordinator/1234/vparticipant>; rel=”volatile-participant”
+----
+
+The lifetime of the transaction resource can be controlled by including a timeout in milliseconds in the body of the POST request
+
+[source,html]
+----
+POST /transaction-manager HTTP/1.1
+From: foo@bar.com
+Content-Type: text/plain
+Content-Length: --
+
+timeout=1000
+----
+
+Performing a HEAD on the _transaction-coordinator_ URI returns the same link information.
+
+Performing a DELETE on the _transaction-coordinator_ or _transaction-enlistment_ URIs are not allowed (and an attempt to do so will result in a 403 status code).
+
+== Obtaining The Transaction Status
+
+Performing a GET on the _transaction-coordinator_ URI returns the current status of the transaction:
+
+[source,html]
+----
+GET /transaction-coordinator/1234 HTTP/1.1
+Accept: application/txstatus
+----
+
+With an example response:
+
+[source,html]
+----
+HTTP/1.1 200 OK
+Content-Length: --
+Content-Type: application/txstatus
+Link:</transaction-coordinator/1234/terminator>; rel=”terminator”,
+    </transaction-coordinator/1234/participant>; rel=”durable-participant”,
+    </transaction-coordinator/1234/vparticipant>; rel=”volatile-participant”
+
+txstatus=TransactionActive
+----
+
+Additional information about the transaction, such as the number of participants and their individual URIs, is returned if the client specifies the application/txstatusext+xml media type.
+For full details of this extended media type please refer to the specification and to the xsd in the restat-util jar packaging ( https://github.com/jbosstm/narayana/tree/master/rts/at/util/src/main/resources/restat.xsd[https://github.com/jbosstm/narayana/tree/master/rts/at/util/src/main/resources/restat.xsd]).
+
+== Propagating the Context
+
+When making an invocation on a resource that needs to participate in a transaction, either the _transaction-coordinator_ URI or the _transaction-enlistment_ URI (`/transaction-coordinator/1234/participant` in the previous example) needs to be transmitted to the resource.
+Alternatively, if the client knows which endpoints the service will use to cancel or commit its work, it can do the registration and skip this requirement to propagate the context).
+If the context is to be propagated then the mechanism is private to the service writer but the following OPTIONAL approach is recommended:
+
+* The URI is passed as a Link header with the relevant service interaction.
+
+If the RESTAT user follows this convention then we can provide tools to the service writer to automate transaction handling.
+For example, if the client wishes to make a transactional service request then it should include a link to the URI used for enlisting into a transaction (which the client may have obtained when it first created the transaction) as follows:
+
+[source,html]
+----
+Link:</transaction-coordinator/1234/participant>; rel=”durable-participant”
+----
+
+or
+
+[source,html]
+----
+Link:</transaction-coordinator/1234>; rel=”transaction-coordinator”
+----
+
+and similarly if the client wants to pass the volatile participant URI to the invoked REST service.
+
+== Discovering Existing Transactions
+
+Performing a GET on the _transaction-manager_ URI with media type `application/txlist` returns a list of all _transaction-coordinator_ URIs known to the coordinator (active and in recovery).
+The returned response includes a link header with _rel_ attribute _statistics_ linking to a resource that contains statistical information such as the number of transactions that have committed and aborted.
+
+Performing a GET on the _transaction-manager_ URI with media type `application/txstatusext+xml` returns extended information about the transaction-manager resource such as how long it has been up and all _transaction-coordinator_ URIs.
+
+== Ending the Transaction
+
+The client can PUT a document containing the desired transaction status to the _transaction-terminator_ URI in order to control the outcome of the transaction.
+Upon termination, the resource and all associated resources are implicitly deleted.
+If the client wishes to commit the transaction it sends the following resource update request:
+
+[source,html]
+----
+PUT /transaction-coordinator/1234/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionCommitted
+----
+
+The response body contains the transaction outcome.
+The state of the transaction resource must be _TransactionActive_ for this operation to succeed otherwise a 412 status code is returned.
+
+The transaction may be told to rollback with the following PUT request:
+
+[source,html]
+----
+PUT /transaction-coordinator/1234/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionRolledBack
+----

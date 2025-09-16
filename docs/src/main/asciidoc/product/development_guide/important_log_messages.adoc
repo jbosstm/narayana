@@ -1,0 +1,68 @@
+
+= Important Log Messages
+
+The transaction manager can generate a lot of logging information when configured to log in trace level.
+Here is a list of some of the log messages to check for.
+
+== Transaction State Change
+
+The following table
+
+[cols="1,1"]
+|===
+|Transaction Begin|
+When a transaction begins the following code is executed:
+```
+com.arjuna.ats.arjuna.coordinator.BasicAction::Begin:1342
+
+tsLogger.logger.trace("BasicAction::Begin() for action-id "+ get_uid());
+```
+|Transaction Commit|
+When a transaction commits the following code is executed:
+```
+com.arjuna.ats.arjuna.coordinator.BasicAction::End:1342
+
+tsLogger.logger.trace("BasicAction::End() for action-id "+ get_uid());
+```
+|Transaction Rollback|
+When a transaction commits the following code is executed:
+```
+com.arjuna.ats.arjuna.coordinator.BasicAction::Abort:1575
+
+tsLogger.logger.trace("BasicAction::Abort() for action-id "+ get_uid());
+```
+|Transaction Timeout|
+When a transaction times out the following code is executed:
+```
+com.arjuna.ats.arjuna.coordinator.TransactionReaper::doCancellations:349
+
+tsLogger.logger.trace("Reaper Worker " + Thread.currentThread() + " attempting to cancel " + e._control.get_uid());
+```
+You will then see the same thread rolling back the transaction as shown above
+|===
+
+[IMPORTANT]
+====
+There are many more logging messages to check for, above are those that we are often asked about.
+====
+
+== Multi cause log message
+
+The following table shows some log messages that you may see with an explanation of alternate reasons
+
+[cols="1,1"]
+|===
+
+|INFO  `[com.arjuna.ats.arjuna] ObjectStore` record was deleted during restoration, users should not deleted records manually|
+
+If you manually deleted a transaction log then this applies to you - you deleted a transaction that was in flight and so may have caused a data integrity issue in so far as one of the resources may be committed and without the log you will not be able to infer this.
+
+If a transaction is committed at the same time as a resource adapter or remote server attempts recovery then you may see the message in the log due to intentional but unavoidable interaction between distributed transaction managers and the local recovery manager.
+
+The log message will indicate the path of the removed file something like:  ***/ShadowNoFileLockStore/defaultStore/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA/***: java.io.FileNotFoundException: ***/ShadowNoFileLockStore/defaultStore/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA/*** (No such file or directory)
+|===
+
+[IMPORTANT]
+====
+There are many more logging messages to check for, above are those that we are often asked about.
+====

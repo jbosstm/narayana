@@ -1,0 +1,159 @@
+
+= Transaction Processing Overview
+:imagesdir: images
+
+== Defining a transaction
+
+A transaction is a unit of work that encapsulates multiple database actions such that that either all the encapsulated actions fail or all succeed.
+
+Transactions ensure data integrity when an application interacts with multiple datasources.
+
+====
+.Practical Example
+If you subscribe to a newspaper using a credit card, you are using a transactional system.
+Multiple systems are involved, and each of the systems needs the ability to roll back its work, and cause the entire transaction to roll back if necessary.
+For instance, if the newspaper's subscription system goes offline halfway through your transaction, you don't want your credit card to be charged.
+If the credit card is over its limit, the newspaper doesn't want your subscription to go through.
+In either of these cases, the entire transaction should fail of any part of it fails.
+Neither you as the customer, nor the newspaper, nor the credit card processor, wants an unpredictable (indeterminate) outcome to the transaction.
+====
+
+This ability to roll back an operation if any part of it fails is what {parentProduct} is all about.
+This guide assists you in writing transactional applications to protect your data.
+
+"Transactions" in this guide refers to atomic transactions, and embody the "all-or-nothing" concept outlined above.
+Transactions are used to guarantee the consistency of data in the presence of failures.
+Transactions fulfill the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
+
+.ACID Properties
+Atomicity::
+The transaction completes successfully (commits) or if it fails (aborts) all of its effects are undone (rolled back).
+
+Consistency::
+Transactions produce consistent results and preserve application specific invariants.
+
+Isolation::
+Intermediate states produced while a transaction is executing are not visible to others.
+Furthermore, transactions appear to execute serially, even if they are actually executed concurrently.
+
+Durability::
+The effects of a committed transaction are never lost (except by a catastrophic failure).
+
+A transaction can be terminated in two ways: committed or aborted (rolled back).
+When a transaction is committed, all changes made within it are made durable (forced on to stable storage, e.g., disk).
+When a transaction is aborted, all of the changes are undone.
+Atomic actions can also be nested; the effects of a nested action are provisional upon the commit/abort of the outermost (top-level) atomic action.
+
+== Commit protocol
+
+A two-phase commit protocol guarantees that all of the transaction participants either commit or abort any changes made.
+<<_img_commit_protocol>> illustrates the main aspects of the commit protocol.
+
+* During phase 1, the action coordinator, `C`, attempts to communicate with all of the action participants, `A` and `B`, to determine whether they will commit or abort.
+* An abort reply from any participant acts as a veto, causing the entire action to abort.
+* Based upon these (lack of) responses, the coordinator chooses to commit or abort the action.
+* If the action will commit, the coordinator records this decision on stable storage, and the protocol enters phase 2, where the coordinator forces the participants to carry out the decision.
+The coordinator also informs the participants if the action aborts.
+* When each participant receives the coordinator’s phase-one message, it records sufficient information on stable storage to either commit or abort changes made during the action.
+* After returning the phase-one response, each participant who returned a commit response must remain blocked until it has received the coordinator’s phase-two message.
+* Until they receive this message, these resources are unavailable for use by other actions.
+If the coordinator fails before delivery of this message, these resources remain blocked.
+However, if crashed machines eventually recover, crash recovery mechanisms can be employed to unblock the protocol and terminate the action.
+
+[[_img_commit_protocol]]
+.Two-Phase Commit
+image::jts-img-2phase.png[]
+
+== Transactional proxies
+
+The action coordinator maintains a transaction context where resources taking part in the action need to be registered.
+Resources must obey the transaction commit protocol to guarantee ACID properties.
+Typically, the resource provides specific operations which the action can invoke during the commit/abort protocol.
+However, some resources may not be able to be transactional in this way.
+This may happen if you have legacy code which cannot be modified.
+Transactional proxies allow you to use these anomalous resources within an action.
+
+The proxy is registered with, and manipulated by, the action as though it were a transactional resource, and the proxy performs implementation specific work to make the resource it represents transactional.
+The proxy must participate within the commit and abort protocols.
+Because the work of the proxy is performed as part of the action, it is guaranteed to be completed or undone despite failures of the action coordinator or action participants.
+
+== Nested transactions
+
+Given a system that provides transactions for certain operations, you can combine them to form another operation, which is also required to be a transaction.
+The resulting transaction’s effects are a combination of the effects of its constituent transactions.
+This paradigm creates the concept of nested subtransactions, and the resulting combined transaction is called the enclosing transaction.
+The enclosing transaction is sometimes referred to as the parent of a nested (or child) transaction.
+It can also be viewed as a hierarchical relationship, with a top-level transaction consisting of several subordinate transactions.
+
+An important difference exists between nested and top-level transactions.
+
+The effect of a nested transaction is provisional upon the commit/roll back of its enclosing transactions.
+The effects are recovered if the enclosing transaction aborts, even if the nested transaction has committed.
+
+Sub-transactions are a useful mechanism for two reasons:
+
+fault-isolation::
+If a sub-transaction rolls back, perhaps because an object it is using fails, the enclosing transaction does not need to roll back.
+modularity::
+If a transaction is already associated with a call when a new transaction begins, the new transaction is nested within it.
+Therefore, if you know that an object requires transactions, you can them within the object.
+If the object’s methods are invoked without a client transaction, then the object’s transactions are top-level.
+Otherwise, they are nested within the scope of the client's transactions.
+Likewise, a client does not need to know whether an object is transactional.
+It can begin its own transaction.
+
+== The Object Transaction Service (OTS)
+
+The CORBA architecture, as defined by the OMG, is a standard which promotes the construction of interoperable applications that are based upon the concepts of distributed objects.
+The architecture principally contains the following components:
+
+Object Request Broker (ORB)::
+Enables objects to transparently send and receive requests in a distributed, heterogeneous environment.
+This component is the core of the OMG reference model.
+
+Object Services::
+A collection of services that support functions for using and implementing objects.
+Such services are necessary for the construction of any distributed application.
+The Object Transaction Service (OTS) is the most relevant to {productName}.
+
+Common Facilities::
+Other useful services that applications may need, but which are not considered to be fundamental.
+Desktop management and help facilities fit this category.
+
+The CORBA architecture allows both implementation and integration of a wide variety of object systems.
+In particular, applications are independent of the location of an object and the language in which an object is implemented, unless the interface the object explicitly supports reveals such details.
+As defined in the OMG CORBA Services documentation, _object services_ are defined as a collection of services (interfaces and objects) that support the basic functions for using and implementing objects.
+These services are necessary to construct distributed application, and are always independent of an application domain.
+The standards specify several core services including naming, event management, persistence, concurrency control and transactions.
+
+[NOTE]
+====
+The OTS specification allows, but does not require, nested transactions.
+{parentProduct} is a fully compliant version of the OTS version 1.1 draft 5, and support nested transactions.
+====
+
+The transaction service provides interfaces that allow multiple distributed objects to cooperate in a transaction, committing or rolling back their changes as a group.
+However, the OTS does not require all objects to have transactional behavior.
+An object's support of transactions can be none at all, for some operations, or fully.
+Transaction information may be propagated between client and server explicitly, or implicitly.
+You have fine-grained control over an object's support of transactions.
+If your objects supports partial or complete transactional behavior, it needs interfaces derived from interface `TransactionalObject`.
+
+The Transaction Service specification also distinguishes between recoverable objects and transactional objects.
+Recoverable objects are those that contain the actual state that may be changed by a transaction and must therefore be informed when the transaction commits or aborts to ensure the consistency of the state changes.
+This is achieved be registering appropriate objects that support the Resource interface (or the derived `SubtransactionAwareResource` interface) with the current transaction.
+Recoverable objects are also by definition transactional objects.
+
+In contrast, a simple transactional object does not necessarily need to be recoverable if its state is actually implemented using other recoverable objects.
+A simple transactional object does not need to participate the commit protocol used to determine the outcome of the transaction since it maintains no state information of its own.
+
+The OTS is a protocol engine that guarantees obedience to transactional behavior.
+It does not directly support all of the transaction properties, but relies on some cooperating services:
+
+[cols="1,1"]
+|===
+|Persistence/Recovery Service |Supports properties of atomicity and durability.
+|Concurrency Control Service |Supports the isolation properties.
+|===
+
+You are responsible for using the appropriate services to ensure that transactional objects have the necessary ACID properties.

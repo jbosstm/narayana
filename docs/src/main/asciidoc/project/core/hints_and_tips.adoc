@@ -1,0 +1,118 @@
+
+= Hints and tips
+
+== General
+
+=== Using transactions in constructors
+
+Examples throughout this manual use transactions in the implementation of constructors for new persistent objects.
+This is deliberate because it guarantees correct propagation of the state of the object to the object store.
+The state of a modified persistent object is only written to the object store when the top-level transaction commits.
+Thus, if the constructor transaction is top-level and it commits, the newly-created object is written to the store and becomes available immediately.
+If, however, the constructor transaction commits but is nested because another transaction that was started prior to object creation is running, the state is written only if all of the parent transactions commit.
+
+On the other hand, if the constructor does not use transactions, inconsistencies in the system can arise.
+For example, if no transaction is active when the object is created, its state is not saved to the store until the next time the object is modified under the control of some transaction.
+
+.Nested Transactions In Constructors
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/nested_transactions_in_constructors.java[]
+----
+
+The two objects are created outside of the control of the top-level action _A_ .
+_obj1_ is a new object.
+_obj2_ is an old existing object.
+When the `remember` operation of _obj2_ is invoked, the object will be activated and the `Uid` of _obj1_ remembered.
+Since this action commits, the persistent state of _obj2_ may now contain the `Uid` of _obj1_.
+However, the state of _obj1_ itself has not been saved since it has not been manipulated under the control of any action.
+In fact, unless it is modified under the control of an action later in the application, it will never be saved.
+If, however, the constructor had used an atomic action, the state of _obj1_ would have automatically been saved at the time it was constructed and this inconsistency could not arise.
+====
+
+=== `save_state` and `restore_state` methods
+
+ArjunaCore may invoke the user-defined `save_state` operation of an object at any time during the lifetime of an object, including during the execution of the body of the object’s constructor.
+This is particularly a possibility if it uses atomic actions.
+It is important, therefore, that all of the variables saved by `save_state` are correctly initialized.
+Exercise caution when writing the `save_state` and `restore_state` operations, to ensure that no transactions are started, either explicitly in the operation, or implicitly through use of some other operation.
+The reason for this restriction is that ArjunaCore may invoke `restore_state` as part of its commit processing.
+This would result in the attempt to execute an atomic transaction during the commit or abort phase of another transaction.
+This might violate the atomicity properties of the transaction being committed or aborted, and is thus discouraged.
+In order to support crash recovery for persistent objects, all `save_state` and `restore_state` methods of user objects must call `super.save_state` and `super.restore_state`.
+
+==== Packing objects
+
+All of the basic types of Java (`int`, `long`, etc.) can be saved and restored from an `InputObjectState` or `OutputObjectState` instance by using the pack and unpack routines provided by `InputObjectState` and `OutputObjectState`.
+However, packing and unpacking objects should be handled differently.
+This is because packing objects brings in the additional problems of aliasing.
+Aliasing happens when two different object references may point at the same item.
+For example:
+
+.Aliasing
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/aliasing.java[]
+----
+
+Here, both `s1` and `s2` point at the same string.
+A naive implementation of `save_state` might copy the string twice.
+From a `save_state` perspective this is simply inefficient.
+However, `restore_state` would unpack the two strings into different areas of memory, destroying the original aliasing information.
+The current version of ArjunaCore packs and unpacks separate object references.
+====
+
+=== Direct use of StateManager
+
+The examples throughout this manual derive user classes from `LockManager`. These are two important reasons for this.
+
+. Firstly, and most importantly, the serializability constraints of atomic actions require it.
+. It reduces the need for programmer intervention.
+
+However, if you only require access to ArjunaCore's persistence and recovery mechanisms, direct derivation of a user class from `StateManager` is possible.
+
+Classes derived directly from `StateManager` must make use of its state management mechanisms explicitly.
+These interactions are normally undertaken by `LockManager`.
+From a programmer's point of view this amounts to making appropriate use of the operations `activate`, `deactivate`, and `modified`, since `StateManager` 's constructors are effectively identical to those of `LockManager`.
+
+.`activate`
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/StateManager_activate_method.java[]
+----
+
+Activate loads an object from the object store.
+The object’s UID must already have been set via the constructor and the object must exist in the store.
+If the object is successfully read then restore_state is called to build the object in memory.
+Activate is idempotent so that once an object has been activated further calls are ignored.
+The parameter represents the root name of the object store to search for the object.
+A value of null means use the default store.
+====
+
+.`deactivate`
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/StateManager_deactivate_method.java[]
+----
+
+The inverse of activate.
+First calls save_state to build the compacted image of the object which is then saved in the object store.
+Objects are only saved if they have been modified since they were activated.
+The parameter represents the root name of the object store into which the object should be saved.
+A value of null means use the default store.
+====
+
+.`modified`
+====
+[source,java]
+----
+include::{projectSourceDir}/core/extras/StateManager_modified_method.java[]
+----
+
+Must be called prior to modifying the object in memory.
+If it is not called, the object will not be saved in the object store by `deactivate`.
+====

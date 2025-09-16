@@ -1,0 +1,21 @@
+
+= Selecting the JTA implementation
+
+Two variants of the JTA implementation are accessible through the same interface.
+These are:
+
+[cols="1,1"]
+|===
+|Purely local JTA |Only non-distributed JTA transactions are executed. This is the only version available with the {productName} distribution.
+|Remote, CORBA-based JTA |Executes distributed JTA transactions. This functionality is provided by the JTS distribution and requires a supported CORBA ORB. Consult the JTS Installation and Administration Guide for more information.
+|===
+
+Both of these implementations are fully compatible with the transactional JDBC driver.
+
+* Set the property `JTAEnvironmentBean.jtaTMImplementation` to value `com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple`.
+* Set the property `JTAEnvironmentBean.jtaUTImplementation` to value `com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple`.
+
+[NOTE]
+====
+These settings are the default values for the properties, so nothing needs to be changed to use the local implementation.
+====

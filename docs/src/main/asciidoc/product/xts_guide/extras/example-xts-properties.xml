@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    . . .
+    <!-- coordinator URL
+        the following entries are used in the client container only to
+        identify the URL used to address the ActivationCoordinator service.
+        This is the XTS service which is contacted when a begin operation
+        is invoked to start a  WS-AT or WS-BA transaction.
+
+        If a full URL is provide then it will be used as given.
+        Otherwise a URL will be constructed using any URL components
+        such as scheme, host etc which have been specified as properties
+        and defaulting any remaining unspecified properties.
+        if no URL or components are specified the URL defaults to that
+        of the local coordinator service.
+    -->
+
+    <!-- 1.1 properties : only set if you want to use a non-local coordinator
+    -->
+    <!--
+    <entry key="org.jboss.jbossts.xts11.coordinatorURL">http://localhost:8080/ws-c11/ActivationService</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.scheme">http</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.address">localhost</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.port">8080</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.path">ws-c11/ActivationService</entry>
+    -->
+</properties>

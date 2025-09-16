@@ -1,0 +1,47 @@
+
+:sectnums!:
+
+[appendix]
+= Core Class Definitions
+
+This appendix contains an overview of those classes that the application programmer will typically use.
+The aim of this appendix is to provide a quick reference guide to these classes for use when writing applications in ArjunaCore.
+For clarity only the public and protected interfaces of the classes will be given.
+
+.Class [class]``LockManager``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/LockManager_class.java[]
+----
+
+.Class [class]``StateManager``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/StateManager_class.java[]
+----
+
+.Classes [class]``OutputObjectState``and [class]``InputObjectState``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/OutputObjectState_class.java[]
+----
+
+.Classes [class]``OutputBuffer``and [class]``InputBuffer``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/OutputBuffer_class.java[]
+----
+
+.Class [class]``Uid``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/Uid_class.java[]
+----
+
+.Class [class]``AtomicAction``
+[source,java]
+----
+include::{projectSourceDir}/appendix/extras/AtomicAction_class.java[]
+----
+
+:sectnums:

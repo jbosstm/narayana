@@ -1,0 +1,16 @@
+
+= Long Running Actions (LRA)
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+:leveloffset: +1
+
+include::{projectSourceDir}/lra/overview.adoc[]
+include::{projectSourceDir}/lra/jaxrs.adoc[]
+include::{projectSourceDir}/lra/non-jaxrs.adoc[]
+include::{projectSourceDir}/lra/examples.adoc[]
+include::{projectSourceDir}/lra/integration.adoc[]
+
+:leveloffset: -1

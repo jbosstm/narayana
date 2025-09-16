@@ -1,0 +1,19 @@
+
+= XTS Guide
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+:experimental:
+
+:leveloffset: +1
+
+include::{productSourceDir}/xts_guide/introduction.adoc[]
+include::{productSourceDir}/xts_guide/getting_started.adoc[]
+include::{productSourceDir}/xts_guide/xts_api.adoc[]
+include::{productSourceDir}/xts_guide/stand_alone_coordination.adoc[]
+include::{productSourceDir}/xts_guide/participant_crash_recovery.adoc[]
+include::{productSourceDir}/xts_guide/web_service_transaction_management.adoc[]
+include::{productSourceDir}/xts_guide/quickstarts_overview.adoc[]
+
+:leveloffset: -1

@@ -1,0 +1,6 @@
+
+= Initializing {parentProduct} Applications
+
+{parentProduct} must be initialized correctly before any application object is created.
+To guarantee this, use the `initORB` and `create_POA` methods described in the _Orb Portability Guide_.
+Consult the Orb Portability Guide if you need to use the underlying `ORB_init` and `create_POA` methods provided by the ORB instead of the {parentProduct} methods.

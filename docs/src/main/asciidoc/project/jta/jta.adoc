@@ -1,0 +1,33 @@
+= JTA
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+== Administration
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jta/introduction.adoc[]
+include::{projectSourceDir}/jta/starting_and_stopping_transaction_manager.adoc[]
+include::{projectSourceDir}/jta/selecting_the_jta_implementation.adoc[]
+
+:leveloffset: -2
+
+== Development
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jta/jdbc.adoc[]
+include::{projectSourceDir}/jta/examples.adoc[]
+include::{projectSourceDir}/jta/using_jbossta_in_application_servers.adoc[]
+
+:leveloffset: -2
+
+== Installation
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jta/quick_start_to_jta.adoc[]
+
+:leveloffset: -2

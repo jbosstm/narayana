@@ -1,0 +1,38 @@
+
+= General Procedures
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+== Administration
+
+:leveloffset: +2
+
+include::{projectSourceDir}/general_procedures/general_introduction.adoc[]
+include::{projectSourceDir}/general_procedures/objectstore_management.adoc[]
+include::{projectSourceDir}/general_procedures/runtime_information.adoc[]
+include::{projectSourceDir}/general_procedures/failure_recovery_administration.adoc[]
+include::{projectSourceDir}/general_procedures/errors_and_exceptions.adoc[]
+
+:leveloffset: -2
+
+== Installation
+
+:leveloffset: +2
+
+include::{projectSourceDir}/general_procedures/preparing_your_system.adoc[]
+include::{projectSourceDir}/general_procedures/operating_system_services.adoc[]
+include::{projectSourceDir}/general_procedures/logging.adoc[]
+include::{projectSourceDir}/general_procedures/additional_jar_requirements.adoc[]
+include::{projectSourceDir}/general_procedures/setting_properties.adoc[]
+
+:leveloffset: -2
+
+== Upgrade
+
+:leveloffset: +2
+
+include::{projectSourceDir}/general_procedures/upgrade.adoc[]
+
+:leveloffset: -2

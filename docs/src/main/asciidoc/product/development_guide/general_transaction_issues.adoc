@@ -1,0 +1,111 @@
+
+= General Transaction Issues
+
+== Advanced transaction issues with ArjunaCore
+
+Atomic actions (transactions) can be used by both application programmers and class developers.
+Thus entire operations (or parts of operations) can be made atomic as required by the semantics of a particular operation.
+This chapter will describe some of the more subtle issues involved with using transactions in general and ArjunaCore in particular.
+
+Note: in the past ArjunaCore was also referred to as TxCore.
+
+=== Checking transactions
+
+In a multi-threaded application, multiple threads may be associated with a transaction during its lifetime, sharing the context.
+In addition, it is possible that if one thread terminates a transaction, other threads may still be active within it.
+In a distributed environment, it can be difficult to guarantee that all threads have finished with a transaction when it is terminated.
+By default, ArjunaCore will issue a warning if a thread terminates a transaction when other threads are still active within it.
+However, it will allow the transaction termination to continue.
+
+Other solutions to this problem are possible.
+One example would be to block the thread which is terminating the transaction until all other threads have disassociated themselves from the transaction context.
+Therefore, ArjunaCore provides the `com.arjuna.ats.arjuna.coordinator.CheckedAction` class, which allows the thread or transaction termination policy to be overridden.
+Each transaction has an instance of this class associated with it, and application programmers can provide their own implementations on a per transaction basis.
+
+.Class `CheckedAction`
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/CheckedAction.java[]
+----
+
+When a thread attempts to terminate the transaction and there are active threads within it, the system will invoke the `check` method on the transaction's _CheckedAction_ object.
+The parameters to the check method are:
+
+isCommit::
+Indicates whether the transaction is in the process of committing or rolling back.
+
+actUid::
+The transaction identifier.
+
+list::
+A list of all of the threads currently marked as active within this transaction.
+
+When `check` returns, the transaction termination will continue.
+Obviously the state of the transaction at this point may be different from that when `check` was called, e.g., the transaction may subsequently have been committed.
+
+A `CheckedAction` instance is created for each transaction.
+As mentioned above, the default implementation simply issues warnings in the presence of multiple threads active on the transaction when it is terminated.
+However, a different instance can be provided to each transaction in one of the following ways:
+
+* Use the `setCheckedAction` method on the `BasicAction` instance.
+* Define an implementation of the `CheckedActionFactory` interface, which has a single method `getCheckedAction` (`final Uid`txId`, `final String`actionType`) that returns a `CheckedAction`. The factory class name can then be provided to the Transaction Service at runtime by setting the `CoordinatorEnvironmentBean.checkedActionFactory` property.
+
+=== Gathering statistics
+
+By default, the Transaction Service does not maintain any history information about transactions.
+However, by setting the `CoordinatorEnvironmentBean.enableStatistics` property variable to `YES`, the transaction service will maintain information about the number of transactions created, and their outcomes.
+This information can be obtained during the execution of a transactional application via the `com.arjuna.ats.arjuna.coordinator.TxStats` class.
+
+.Class `TxStats`
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/TxStats.java[]
+----
+
+The class `ActionManager` gives further information about specific active transactions through the classes `getTimeAdded`, which returns the time (in milliseconds) when the transaction was created, and `inflightTransactions`, which returns the list of currently active transactions.
+
+=== Asynchronously committing a transaction
+
+By default, the Transaction Service executes the `commit` protocol of a top-level transaction in a synchronous manner.
+All registered resources will be told to prepare in order by a single thread, and then they will be told to commit or rollback.
+This has several possible disadvantages:
+
+* In the case of many registered resources, the `prepare` operating can logically be invoked in parallel on each resource.
+The disadvantage is that if an "early" resource in the list of registered resource forces a rollback during `prepare`, possibly many prepare operations will have been made needlessly.
+* In the case where heuristic reporting is not required by the application, the second phase of the commit protocol can be done asynchronously, since its success or failure is not important.
+
+Therefore, {productName} provides runtime options to enable possible threading optimisations.
+By setting the `CoordinatorEnvironmentBean.asyncPrepare` environment variable to `YES`, during the `prepare` phase a separate thread will be created for each registered participant within the transaction.
+By setting `CoordinatorEnvironmentBean.asyncCommit` to `YES`, a separate thread will be created to complete the second phase of the transaction if knowledge about heuristics outcomes is not required.
+
+=== Transaction Logs
+
+{productName} supports a number of different transaction log implementations.
+They are outlined below.
+
+==== The ActionStore
+
+This is the original version of the transaction log as provided in prior releases.
+It is simple but slow.
+Each transaction has an instance of its own log and they are all written to the same location in the file system
+
+==== The HashedActionStore
+
+This implementation is based on the `ActionStore` but the individual logs are striped across a number of sub-directories to improve performance.
+Check the Configuration Options table for how to configure the `HashedActionStore`.
+
+==== LogStore
+
+This implementation is based on a traditional transaction log.
+All transaction states within the same process (VM instance) are written to the same log (file), which is an append-only entity.
+When transaction data would normally be deleted, e.g., at the end of the transaction, a delete record is added to the log instead.
+Therefore, the log just keeps growing.
+Periodically a thread runs to prune the log of entries that have been deleted.
+
+A log is initially given a maximum capacity beyond which it cannot grow.
+Once this is reached the system will create a new log for transactions that could not be accommodated in the original log.
+The new log and the old log are pruned as usual.
+During the normal execution of the transaction system there may be an arbitrary number of log instances.
+These should be garbage collected by the system (or the recovery sub-system) eventually.
+
+Check the Configuration Options table for how to configure the LogStore.

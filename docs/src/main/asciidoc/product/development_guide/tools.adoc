@@ -1,0 +1,388 @@
+
+= Tools
+
+This chapter describes the various tools for managing transactions.
+
+== ObjectStore command-line browsers and editors
+
+There are currently three command-line editors for manipulating the ObjectStore.
+These tools are used to manipulate the lists of heuristic participants maintained by a transaction log.
+They allow a heuristic participant to be moved from that list back to the list of prepared participants so that transaction recovery may attempt to resolve them automatically.
+
+=== Browse and Manage Transactions Using an Application Server
+
+The {appServer} provides a command-line based Management CLI which supports the ability to browse and manipulate transaction records.
+This functionality is provided by the interaction between the Transaction Manager (TM) and the Management API of the application server.
+To start the CLI on a non-windows based OS type the following command in application server install directory:
+
+[source,shell]
+----
+./bin/jboss-cli.sh --connect controller=IP_ADDRESS
+----
+
+On Windows platforms use the jboss-cli.bat script
+
+The transaction manager stores information about each active transaction, and the participants involved in the transaction, in a persistent storage area called the _object store_ . The Management API exposes the object store as a resource called the `log-store` . An API operation called `probe` reads the transaction logs and creates a node in the management model corresponding to each log.
+These nodes can be inspected using the CLI.
+Transaction logs are transient, so these nodes quickly become out of date but you can call the `probe` command manually whenever you need to refresh the `log-store`.
+
+[[refresh_log_store]]
+.Refresh the Log Store
+
+This command refreshes the Log Store for server groups which use the profile `default` in a managed domain.
+For a standalone server, remove the `profile=default` from the command.
+
+[source,shell]
+----
+/subsystem=transactions/log-store=log-store/:probe
+----
+
+.View All Prepared Transactions
+To view all prepared transactions, first refresh the log store (see <<refresh_log_store>> ), then run the following command, which functions similarly to a filesystem `ls` command.
+
+----
+ls /subsystem=transactions/log-store=log-store/transactions
+----
+
+Each transaction is shown, along with its unique identifier.
+Individual operations can be run against an individual transaction (see <<manage_transaction>>).
+
+[[manage_transaction]]
+.Manage a Transaction
+
+View a transaction's attributes.::
+To view information about a transaction, such as its JNDI name, EIS product name and version, or its status, use the `:read-resource` CLI command.
++
+----
+/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:read-resource
+----
+
+View the participants of a transaction.::
+Each transaction log contains a child element called `participants`. Use the `read-resource` CLI command on this element to see the participants of the transaction.
+Participants are identified by their JNDI names (or some other unique identifier if the JNDI name is not available).
++
+----
+/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9/participants=java\:\/JmsXA:read-resource
+----
++
+The result may look similar to this:
++
+----
+{
+   "outcome" => "success",
+   "result" => {
+       "eis-product-name" => "HornetQ",
+       "eis-product-version" => "2.0",
+       "jndi-name" => "java:/JmsXA",
+       "status" => "HEURISTIC_HAZARD",
+       "type" => "/StateManager/AbstractRecord/XAResourceRecord"
+   }
+}
+----
++
+The outcome status shown here is in a `HEURISTIC_HAZARD` state and is eligible for recovery.
+Refer to <<recover_transaction_participant>> for more details.
+
+Delete a transaction.::
+Each transaction log supports a `:delete` operation, to delete the transaction log representing the transaction.
++
+----
+/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:delete
+----
++
+
+[WARNING]
+====
+If failures occur, transaction logs may remain in the object store until crash recovery facilities have resolved the transactions they represent.
+Therefore, it is very important that the contents of the object store are not deleted inadvertently, as this will make it impossible to resolve in-doubt transactions.
+In addition, if multiple users share the same object store, they must understand that it is not an exclusive resource, and not delete transaction logs without careful consideration.
+====
+
+Delete a transaction participant.::
+Each transaction log participant supports a `:delete` operation which will delete the participant log that represents the participant:
++
+----
+/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9/participants=0\:ffff7f000001\:-f30b80c\:58480e0a\:2c:delete
+----
++
+[WARNING]
+====
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system.
+However, this delete operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly.
+By default, if this forget call fails then the delete operation will still succeed.
+The system administrator may override this behaviour by setting a system property:
+
+----
+ObjectStoreEnvironmentBean.ignoreMBeanHeuristics
+----
+to the value false.
+====
+
+[[recover_transaction_participant]]
+Recover a transaction participant.::
+Each transaction participant log may support recovery via the `:recover` CLI command if it is in a heuristic state.
+
+Recovery of Heuristic Transactions and Participants
+
+* If the transaction participant's status is `HEURISTIC` or `HEURISTIC_HAZARD` or `HEURISTIC_MIXED` then the recover operation changes the state to `PREPARE` and triggers a recovery attempt by replaying the `commit` operation.
+If successful, the participant is removed from the transaction log.
+You can verify this by re-running the `:probe` operation on the `log-store` and checking that the participant is no longer listed.
+If this is the last participant, the transaction is also deleted.
+
+Refresh the status of a transaction which needs recovery.::
+If a transaction needs recovery, you can use the `:refresh` CLI command to be sure it still requires recovery, before attempting the recovery.
++
+----
+/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:refresh
+----
+
+=== Browse and Manage Transactions Using JMX
+
+Transaction logs may also be managed using https://docs.oracle.com/javase/7/docs/technotes/guides/jmx[JMX].
+Each transaction log record is instrumented as an MBean.
+Any JMX client may be used to manage logs using this mechanism.
+
+The JMX MBean for the object store contains one method and one attribute.
+The `probe` operation scans the object store creating JMX MBeans for the various log records contained in the store.
+The default behaviour is to only create MBeans for particular record types.
+If there is a need to view everything in the store then set the `ExposeAllRecordsAsMBeans` attribute to `true` Note that transaction logs are transient so these beans quickly become out of date and will not be refreshed automatically so you must invoke the `probe` operation again to get the current up to date list of MBeans.
+
+MBeans can be queried using the standard JMX query mechanism.
+ObjectStore Object Names are in the format:
+----
+domain:key-property-list
+----
+where domain is `jboss.jta` and key-property-list is a comma separated list of key=value pairs.
+
+.Object Name Keys
+[cols="1,1", options="header"]
+|===
+|Name|Meaning
+|itype|The transaction record type
+|uid|The unique id of the transaction record
+|puid|The unique id of a participant record
+|===
+
+.Transaction record
+[source,xml]
+----
+jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39
+----
+
+.A participant record within a transaction
+[source,xml]
+----
+jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39,puid= 0_ffff7f000001_-3a612f5d_53f63052_3c
+----
+
+.Manage a Transaction
+View a transaction's attributes.::
+To view information about a transaction or a transaction participant, such as its JNDI name, EIS product name and version, or its status, use a JMX client or alternatively use the JMX api:
++
+----
+
+// obtain connection to the MBean server
+MBeanServer mbs = ...
+
+// query all ObjectStore MBean instances
+ObjectName on = new ObjectName("jboss.jta:type=ObjectStore,*", null);
+Set<ObjectInstance> transactions = mbs.queryMBeans(on);
+
+// lookup the attribute names of an ObjectInstance
+MBeanInfo info = mbs.getMBeanInfo( oi.getObjectName() );
+MBeanAttributeInfo[] attributeArray = info.getAttributes();
+
+// find the values of the attributes of an ObjectInstance
+AttributeList attributes = mbs.getAttributes(oi.getObjectName(), attributeNames);
+----
+View the participants of a transaction.::
+A transaction log may contain one or more participants which can be viewed as MBeans using a JMX client or programmatically as follows:
++
+----
+ObjectInstance transaction = ... //
+ObjectName on = transaction.getObjectName();
+String participantQuery =  on + ",puid=*";
+Set<bjectInstance> participants = mbs.queryMBeans(new ObjectName(participantQuery), null)
+----
++
+For example the attributes of an XAResource record might look similar to:
++
+----
+"eis-product-name" => "HornetQ",
+"eis-product-version" => "2.0",
+"jndi-name" => "java:/JmsXA",
+"status" => "HEURISTIC_HAZARD",
+"type" => "/StateManager/AbstractRecord/XAResourceRecord"
+----
++
+The status attribute shown in this example is in a `HEURISTIC_HAZARD` state and is eligible for recovery.
+Refer to <<recover_transaction_participant_jmx>> for more details.
+
+Delete a transaction or transaction participant.::
+MBeans for transaction logs and participants contain a `remove` operation.
+Invoke this MBean operation to remove the record from the ObjectStore.
++
+[WARNING]
+====
+If failures occur, transaction logs may remain in the object store until crash recovery facilities have resolved the transactions they represent.
+Therefore, it is very important that the contents of the object store are not deleted inadvertently, as this will make it impossible to resolve in-doubt transactions.
+In addition, if multiple users share the same object store, they must understand that it is not an exclusive resource,
+
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system.
+However, this remove operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly.
+By default, if this forget call fails then the delete operation will still succeed.
+The system administrator may override this behaviour by setting a system property:
+
+----
+ObjectStoreEnvironmentBean.ignoreMBeanHeuristics
+----
+to the value false.
+====
+
+[[recover_transaction_participant_jmx]]
+Recover a transaction.::
+Transaction participants support recovery via the `clearHeuristic` operation.
+
+* Recovery of Heuristic Participants
+** If the transaction participant's status is `HEURISTIC` or `HEURISTIC_HAZARD` or `HEURISTIC_MIXED` then the clearHeuristic operation changes the state to `PREPARED`.
+** Subsequent runs of the recovery manager (periodic recovery) will try to replay the `commit` operation.
+If successful, the participant is removed from the transaction log.
+** You can verify the transaction is completed by re-running the `probe` operation on the `ObjectStore` MBean.
+If this is the last participant, the transaction will have been also deleted.
+
+=== LogEditor
+
+The LogEditor tool is started by executing the following command:
+
+[source,shell]
+----
+java -Dcom.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.objectStoreDir="path to file based object store" com.arjuna.ats.arjuna.tools.log.LogBrowser
+----
+
+This command works with the file based object store.
+If you want to work with the Hornetq store instead then you need to specify a different property for the location of the log store and you also need to explicity provide the class name of the Hornetq Object Store:
+
+[source,shell]
+----
+java -Dcom.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean.storeDir="directory path" -Dcom.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.objectStoreType="com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqObjectStoreAdaptor"
+----
+
+The tool supports the following options that can be provided on the command-line:
+
+.LogEditor Options
+[cols="1,1", options="header"]
+|===
+|Option|Description
+|-tx `id`|Specifies the transaction log to work on.
+|-type `name`|The transaction type to work on.
+|-dump|Print out the contents of the log identified by the other options.
+|-forget `index`|Move the specified target from the heuristic list to the prepared list.
+|-help|Print out the list of commands and options.
+|===
+
+=== LogBrowser
+
+The LogBrowser, invoked by calling `com.arjuna.ats.arjuna.tools.log.LogBrowser`, is similar to the LogEditor, but allows multiple log instances to be manipulated.
+It presents a shell-like interface, with the following options:
+
+.LogBrowserOptions
+[cols="1,1", options="header"]
+|===
+|Option|Description|
+ls [`type`]|List the logs for the specified type.
+If no type is specified, the editor must already be attached to the transaction type.
+|select [`type`]|Browse a specific transaction type.
+If already attached to a transaction type, you are detached from that type first.
+|attach `log`|Attach the console to the specified transaction log.
+If you are attached to another log, the command will fail.
+|detach|Detach the console from the current log.
+|forget `pid`|Move the specified heuristic participant back to the _prepared_ list.
+The console must be attached.
+|delete `pid`|Delete the specified heuristic participant.
+The console must be attached.
+|types|List the supported transaction types.
+|quit|Exit the console tool.
+|help|Print out the supported commands.
+|===
+
+== GUI Based Tools
+
+=== Embedded Console
+
+Transaction management is integrated into the {appServer}.
+
+=== Performance Graphing
+
+There is a transaction statistics graphing tool which can run standalone or inside a jconsole tab (jconsole is a tool for managing JVMs and is distributed with the reference JDK):
+
+The tool depends on the JFree graphing library.
+Download and unpack orson from http://www.jfree.org/orson.
+Set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
+If you intend to use the tool with jconsole you will also need to put the JDK tools and jconsole jars on the classpath:
+
+[source,shell]
+----
+export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/narayana-jta.jar>"
+----
+
+==== Standalone Usage
+
+[source,shell]
+----
+java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
+----
+
+(note that standalone usage does not require the JDK tools and jconsole jars)
+
+==== Usage with jconsole
+
+[source,shell]
+----
+jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana-jta.jar
+----
+
+This command will launch the jconsole GUI in which there will be an extra tab for displaying transaction performance statistics.
+
+== View Transaction Statistics using an Application Server
+
+If you are using the Transaction Manager (TM) inside the {appServer} and if the TM statistics are enabled, then you can view statistics about the TM and transaction subsystem using tools provide by the application server.
+
+You can view statistics either via the web-based Management Console or the command-line Management CLI.
+In the web-based Management Console, Transaction statistics are available via `menu:Runtime[Subsystem Metrics > Transactions]`.
+Transaction statistics are available for each server in a managed domain, as well.
+You can specify the server in the `Server` selection box at the top left.
+
+The following table shows each available statistic, its description, and the CLI command to view the statistic.
+
+.Transaction Subsystem Statistics
+[cols="1,1,1", options="header"]
+|===
+|Statistic|Description
+|CLI Command
+|Total
+|The total number of transactions processed by the TM on this server.
+|`/subsystem=transactions/:read-attribute(name=number-of-transactions,include-defaults=true)`
+|Committed
+|The number of committed transactions processed by the TM on this server.
+|`/subsystem=transactions/:read-attribute(name=number-of-committed-transactions,include-defaults=true)`
+|Aborted
+|The number of aborted transactions processed by the TM on this server.
+|`/subsystem=transactions/:read-attribute(name=number-of-aborted-transactions,include-defaults=true)`
+|Timed Out
+|The number of timed out transactions processed by the TM on this server.
+|`/subsystem=transactions/:read-attribute(name=number-of-timed-out-transactions,include-defaults=true)`
+|Heuristics
+|Not available in the Management Console.
+Number of transactions in a heuristic state.
+|`/subsystem=transactions/:read-attribute(name=number-of-heuristics,include-defaults=true)`
+|In-Flight Transactions
+|Not available in the Management Console.
+Number of transactions which have begun but not yet terminated.
+|`/subsystem=transactions/:read-attribute(name=number-of-inflight-transactions,include-defaults=true)`
+|Failure Origin - Applications
+|The number of failed transactions whose failure origin was an application.
+|`/subsystem=transactions/:read-attribute(name=number-of-application-rollbacks,include-defaults=true)`
+|Failure Origin - Resources
+|The number of failed transactions whose failure origin was a resource.
+|`/subsystem=transactions/:read-attribute(name=number-of-resource-rollbacks,include-defaults=true)`
+|===

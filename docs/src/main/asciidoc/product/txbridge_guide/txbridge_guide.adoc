@@ -1,0 +1,18 @@
+
+[[_txbridge]]
+= TXBridge Guide
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+:experimental:
+
+:leveloffset: +1
+
+include::{productSourceDir}/txbridge_guide/introduction.adoc[]
+include::{productSourceDir}/txbridge_guide/transaction_bridge_architecture.adoc[]
+include::{productSourceDir}/txbridge_guide/using_the_transaction_bridge.adoc[]
+include::{productSourceDir}/txbridge_guide/known_limitations.adoc[]
+include::{productSourceDir}/txbridge_guide/design_notes.adoc[]
+
+:leveloffset: -1

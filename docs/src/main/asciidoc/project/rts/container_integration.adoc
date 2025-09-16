@@ -1,0 +1,33 @@
+
+= Container Integration
+
+The RESTAT protocol described here is implemented as a JAX-RS service, deploys as a Servlet 3.0 application and depends on the Narayana TM as the back-end transaction engine.
+JAX-RS is the Java language support for building REST based applications - it is both an annotation-based API for defining resources and a run-time for mapping HTTP requests to Java methods.
+Thus any container supporting these two requirements (servlet 3.0 and the Narayana TM) can be used.
+
+== Deploying as a Wildfly Subsystem
+
+The RESTAT coordinator is integrated with the 8.0.0.Alpha3 and subsequent releases of the Wildfly application server ( http://www.wildfly.org/download/ ) as a subsystem (called RTS) so you do not have to explicitly deploy it.
+You do, however, need to start the application server using an optional server configuration:
+
+change directory to where the application server is installed
+* Linux
++
+----
+./bin/standalone.sh --server-config=../../docs/examples/configs/standalone-rts.xml
+----
+* Windows
++
+----
+bin\standalone.bat --server-config=..\..\docs\examples\configs\standalone-rts.xml
+----
+
+For this mode of deployment the _transaction-manager_ URI is http://<host>:<port>/rest-at-coordinator/tx/transaction-manager
+
+== Deploying into a Servlet Container
+
+For other versions of the application server you will need to deploy the coordinator as a war archive using the standard war deployment mechanism appropriate to your particular container.
+The archive is contained in the bin folder of the narayana download (restat-web.war).
+If you are building from source the archive is located in `rts/at/webservice/target/restat-web-<version>.war`.
+
+For this mode of deployment the _transaction-manager_ URI is `http://<host>:<port>/rest-tx/tx/transaction-manager`

@@ -1,0 +1,37 @@
+
+= ORB-specific Configurations
+
+== JacORB
+
+For JacORB to function correctly it needs a valid `jacorb.properties` or `.jacorb_properties` file in one of the following places, in searched order:
+
+. The classpath
+. The home directory of the user running the {parentProduct} Service.
+The home directory is retrieved using `System.getProperty(“user.home”);`
+. The current directory
+. The `lib/` directory of the JDK used to run your application.
+This is retrieved using `System.getProperty(“java.home”);`
+
+[NOTE]
+====
+A template `jacorb.properties` file is located in the JacORB installation directory.
+====
+
+Within the JacORB properties file there are two important properties which must be tailored to suit your application.
+
+* `jacorb.poa.thread_pool_max`
+* `jacorb.poa.thread_pool_min`
+
+These properties specify the minimum and maximum number of request processing threads that JacORB uses in its thread pool.
+If no threads are available, may block until a thread becomes available. For more information on configuring JacORB, refer to the JacORB documentation.
+
+[IMPORTANT]
+====
+JacORB includes its own implementation of the classes defined in the `CosTransactions.idl` file.
+Unfortunately these are incompatible with the version shipped with {parentProduct}.
+Therefore, the {parentProduct} jar files absolutely must appear in the CLASSPATH before any JacORB jars.
+====
+
+When running the recovery manager, it should always use the same well-known port for each machine on which it runs.
+Do not use the `OAPort` property provided by JacORB unless the recovery manager has its own `jacorb.properties` file or the property is provided on the command line when starting the recovery manager.
+If the recovery manager and other components of {parentProduct} share the same `jacorb.properties` file, use the `JTSEnvironmentBean.recoveryManagerPort` and `JTSEnvironmentBean.recoveryManagerAddress` properties.

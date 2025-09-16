@@ -1,0 +1,71 @@
+
+= Examples
+
+The quickstarts contained in the release bundles or in the quickstart repo (`https://github.com/jbosstm/quickstart`) contain examples of all the features provided by RESTAT.
+The unit tests in the source bundle are also a good resource for further examples.
+
+== Support For Java based Services
+
+For REST services written in Java there is a Utility class called org.jboss.jbossts.star.util.TxSupport in the source bundle (or is available at https://github.com/jbosstm/narayana ) which contains a variety of methods which help service writers to conform to the specification.
+The majority of the RESTAT quickstarts use this utility API.
+
+Alternatively, there is a RESTAT integration API for service writers.
+This API takes care of transaction enlistment and handles the responsibility for listening for transaction completion requests on HTTP endpoints from the transaction coordinator.
+Normally when a services wishes to join an existing transaction it sends a message to the coordinator containing HTTP endpoints on which it will be notified when the transaction progresses through its prepare and commit stages.
+The integration API simplifies this task and instead the service enlists a participant which implements a callback interface (`org.jboss.narayana.rest.integration.api.ParticipantsManager`).
+The API will then invoke the callback transparently (to the service) when the completion protocol begins executing.
+This makes managing participants much cleaner for the service writer.
+The service writer should implement the interface `org.jboss.narayana.rest.integration.api.Participant`:
+
+[source,java]
+----
+public interface Participant {
+    Vote prepare();
+    void commit() throws HeuristicException;
+    void commitOnePhase();
+    void rollback() throws HeuristicException;
+}
+----
+
+and register this implementation with the participant service manager:
+
+[source,java]
+----
+ParticipantsManagerFactory.getInstance().enlist(...);
+----
+
+The getInstance method on the `ParticipantsManagerFactory` returns an instance of the interface `ParticipantsManager` which is global to the (JAX-RS) application:
+
+[source,java]
+----
+public interface ParticipantsManager {
+    ...
+    String enlist(String applicationId,
+    String participantEnlistmentURL,
+    Participant participant);
+    void registerDeserializer(String applicationId,
+    ParticipantDeserializer deserializer);
+    void reportHeuristic(String participantId,
+    HeuristicType heuristicType);
+}
+----
+
+The participantEnlistmentURL in the enlist method corresponds to a running REST transaction which the service acquires during normal interactions with service clients.
+To register for completion callbacks the service writer registers an interface using the enlist method and passes in an implementation of Participant.
+For full details of this interface please refer to the javadoc for `org.jboss.narayana.rest.integration.api.ParticipantsManager`.
+
+[NOTE]
+====
+Now when a service client terminates a transaction the services' callback methods will be invoked by the RESTAT coordinator which may or may not be running locally (since these are distributed transactions).
+It is interesting to note that the wildfly application server is a modular container so subsystems and applications run in their own class loaders.
+In the event of failures a recovery system will need to recreate participant callback registrations in order to complete any pending transaction and therefore will no longer have access to the original class.
+The service writer must help the recovery system in this task via the registerDeserializer call.
+The final method on the interface (reportHeuristic) is to allow services to independently abort or commit work before being asked to via the callback interface.
+====
+
+For full details of this interface please refer to the javadoc for `org.jboss.narayana.rest.integration.api.ParticipantsManager`
+
+The accessibility of the `ParticipantsManagerFactory` from your application depends upon whether the container contains the RTS subsystem.
+Versions of the wildfly application server from `8.0.0.Alpha3` onwards contain this subsystem so your manifest should declare a dependency on it by adding the line "Dependencies: org.jboss.narayana.rts" to the `MANIFEST.MF` file in your archive.
+For other containers you should register the dependency programatically.
+The quickstarts contain examples of how to do this for the embedded Resteasy and Jersey JAX-RS containers (look for classes called JaxrsServer in the quickstart source for `rts/at/service/service2 and rts/at/recovery/recovery2`).

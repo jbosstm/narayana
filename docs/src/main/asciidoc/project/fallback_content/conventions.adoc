@@ -1,0 +1,163 @@
+
+= Document Conventions
+
+This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
+
+In PDF and paper editions, this manual uses typefaces drawn from the https://fedorahosted.org/liberation-fonts/[Liberation Fonts] set.
+The Liberation Fonts set is also used in HTML editions if the set is installed on your system.
+If not, alternative but equivalent typefaces are displayed.
+Note: Red Hat Enterprise Linux 5 and later includes the Liberation Fonts set by default.
+
+== Typographic Conventions
+
+Four typographic conventions are used to call attention to specific words and phrases.
+These conventions, and the circumstances they apply to, are as follows.
+
+`Mono-spaced Bold`
+
+Used to highlight system input, including shell commands, file names and paths.
+Also used to highlight keycaps and key combinations.
+For example:
+
+====
+To see the contents of the file _my_next_bestselling_novel_ in your current working directory, enter the `cat my_next_bestselling_novel` command at the shell prompt and press `Enter` to execute the command.
+====
+
+The above includes a file name, a shell command and a keycap, all presented in mono-spaced bold and all distinguishable thanks to context.
+
+Key combinations can be distinguished from keycaps by the hyphen connecting each part of a key combination.
+For example:
+
+[source,shell]
+----
+Press `Enter` to execute the command.
+
+Press
+// <keycombo>
+//   <keycap>Ctrl</keycap>
+//   <keycap>Alt</keycap>
+//   <keycap>F2</keycap>
+// </keycombo>
+ to switch to the first virtual terminal.
+Press
+// <keycombo>
+//   <keycap>Ctrl</keycap>
+//   <keycap>Alt</keycap>
+//   <keycap>F1</keycap>
+// </keycombo>
+ to return to your X-Windows session.
+----
+
+The first paragraph highlights the particular keycap to press.
+The second highlights two key combinations (each a set of three keycaps with each set pressed simultaneously).
+
+If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in ``mono-spaced bold``.
+For example:
+
+====
+File-related classes include `filesystem` for file systems, `file` for files, and `dir` for directories.
+Each class has its own associated set of permissions.
+====
+
+`Proportional Bold`
+
+This denotes words or phrases encountered on a system, including application names; dialog box text; labeled buttons; check-box and radio button labels; menu titles and sub-menu titles.
+For example:
+
+====
+Choose `Preferences > Mouse` from the main menu bar to launch `Mouse Preferences`.
+In the `Buttons tab`, click the `Left-handed mouse` check box and click `Close` to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
+
+To insert a special character into a `gedit` file, choose `Accessories > Character Map` from the main menu bar.
+Next, choose `Find` from the `Character Map` menu bar, type the name of the character in the `Search` field and click `Next`.
+The character you sought will be highlighted in the `Character Table`.
+Double-click this highlighted character to place it in the `Text to copy` field and then click the `Copy` button.
+Now switch back to your document and choose `Paste` from the `gedit` menu bar.
+====
+
+The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in proportional bold and all distinguishable by context.
+
+`Mono-spaced Bold Italic` or `Proportional Bold Italic`
+
+Whether mono-spaced bold or proportional bold, the addition of italics indicates replaceable or variable text.
+Italics denotes text you do not input literally or displayed text that changes depending on circumstance.
+For example:
+
+====
+To connect to a remote machine using ssh, type `ssh username@domain.name` at a shell prompt.
+If the remote machine is _example.com_ and your username on that machine is john, type `ssh john@example.com`.
+
+The `mount -o remount file-system` command remounts the named file system.
+For example, to remount the `/home file system`, the command is `mount -o remount /home`.
+
+To see the version of a currently installed package, use the `rpm -q package` command.
+It will return a result as follows: `package-version-release`.
+====
+
+Note the words in bold italics above -username, domain.name, file-system, package, version and release.
+Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
+
+Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term.
+For example:
+
+====
+This documentation uses _Asciidoc_.
+====
+
+== Pull-quote Conventions
+
+Terminal output and source code listings are set off visually from the surrounding text.
+
+Output sent to a terminal is set in `mono-spaced roman` and presented thus:
+
+----
+books        Desktop   documentation  drafts  mss    photos   stuff  svn
+books_tests  Desktop1  downloads      images  notes  scripts  svgs
+----
+
+Source-code listings are also set in `mono-spaced roman` but add syntax highlighting as follows:
+
+[source,java]
+----
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient {
+   public static void main(String args[]) throws Exception {
+       InitialContext iniCtx = new InitialContext();
+       Object         ref    = iniCtx.lookup("EchoBean");
+       EchoHome       home   = (EchoHome) ref;
+       Echo           echo   = home.create();
+
+       System.out.println("Created Echo");
+
+       System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+}
+----
+
+== Notes and Warnings
+
+Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
+
+.Note
+[NOTE]
+====
+Notes are tips, shortcuts or alternative approaches to the task at hand.
+Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+====
+
+.Important
+[IMPORTANT]
+====
+Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply.
+Ignoring a box labeled 'Important' will not cause data loss but may cause irritation and frustration.
+====
+
+.Warning
+[WARNING]
+====
+Warnings should not be ignored.
+Ignoring warnings will most likely cause data loss.
+====

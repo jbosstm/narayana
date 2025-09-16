@@ -1,0 +1,7 @@
+
+[[lra_integration]]
+= Runtime Integration
+
+To date we have only integrated with thorntail or standalone.
+The near term plan is to provide a quarkus extension and a WildFly subsystem for running coordinators and participants.
+

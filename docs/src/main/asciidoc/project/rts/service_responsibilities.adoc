@@ -1,0 +1,207 @@
+
+= Service Responsibilities
+
+Once a resource has the transaction or enlistment URI, it can register participation in the transaction (or, alternatively, as mentioned earlier it is possible for the client to register the service directly with the coordinator if it knows the services cancel and commit endpoints).
+Each participant must be uniquely identified to the transaction coordinator in order that the protocol can guarantee consistency and atomicity in the event of failure and recovery.
+The participant is free to use whatever URI structure it desires for uniquely identifying itself; in the rest of this manual we shall assume it is `/participant-resource` and refer to it as the _participant-resource_ URI.
+
+== Joining the Transaction
+
+=== Two Phase Aware Participants
+
+A participant is registered with the _transaction-coordinator_ using POST on the _participant-enlistment_ URI obtained when the transaction was originally created.
+The request must include two link headers: one to uniquely identify the participant to the coordinator and one to provide a terminator resource (referred to as the _participant-terminator_ URI) that the coordinator will use to terminate the participant.
+If the _rel_ attributes of the link are not participant and terminator the implementation will return 400.
+Note, the following URIs are only examples, and an implementation is free to use whatever structure/format it likes:
+
+[source,html]
+----
+POST /transaction-coordinator/1234/participant
+HTTP/1.1
+From: foo@bar.com
+Link:</participant-resource>; rel=”participant”,
+    </participant-resource/terminator>; rel=”terminator”
+
+Content-Length: 0
+----
+
+Performing a HEAD on the _participant-resource_ URI will return the terminator reference, as shown below:
+
+[source,html]
+----
+HEAD /participant-resource HTTP/1.1
+From: foo@bar.com
+
+HTTP/1.1 200 OK
+Link:</participant-resource/terminator>; rel=”terminator”
+----
+
+If the transaction is not _TransactionActive_ when registration is attempted, then the implementation returns a 412 status code.
+If the implementation has seen this participant URI before then it returns 400.
+Otherwise the operation is considered a success and the implementation will return 201 and uses the Location header to give a participant specific URI that the participant may use later during prepare or for recovery purposes.
+The lifetime of this URI is the same as the _transaction-coordinator_ URI.
+In the rest of this specification we shall refer to this as the _participant-recovery_ URI (not to be confused with the _participant-resource_ URI).
+An example response from the _transaction-coordinator_ to a successful enlistment request is:
+
+[source,html]
+----
+HTTP/1.1 201 Created
+Location: /participant-recovery/1234
+----
+
+=== Two Phase Unaware Participants
+
+In order for a participant to be enlisted with a transaction it must be transaction aware to fulfill the requirements placed on it to ensure data consistency in the presence of failures or concurrent access.
+However, it is not necessary that a participant be modified such that it has a terminator resource as outlined previously: it simply needs a way to tell the coordinator which resource(s) to communicate with when driving the two-phase protocol.
+This type of participant will be referred to as Two-Phase Unaware, though strictly speaking such a participant or service does need to understand the protocol as mentioned earlier.
+
+[NOTE]
+====
+enlisting two-phase unaware participants is not a mandatory requirement on service writers.
+====
+
+During enlistment a service must provide URIs for prepare, commit, rollback and optionally a commit-one-phase URI:
+
+[source,html]
+----
+POST /transaction-coordinator/1234/participant
+HTTP/1.1
+From: foo@bar.com
+Link:</participant-resource>; rel=”participant”,
+    </participant-resource/prepare>; rel=”prepare”,
+    </participant-resource/commit>; rel=”commit”,
+    </participant-resource/rollback>; rel=”rollback”,
+    </participant-resource/commit-one-phase>; rel=”commit-one-phase”
+
+Content-Length: 0
+----
+
+Performing a HEAD on a registered participant URI must return these references, as shown below:
+
+[source,html]
+----
+HEAD /participant-resource HTTP/1.1
+From: foo@bar.com
+
+HTTP/1.1 200 OK
+Link:</participant-resource/prepare>; rel=”prepare”,
+    </participant-resource/commit>; rel=”commit”,
+    </participant-resource/rollback>; rel=”rollback”,
+    </participant-resource/commit-one-phase>; rel=”commit-one-phase”
+----
+
+A service that registers a participant must therefore either define a terminator relationship for the participant or the relationships/resources needed for the two-phase commit protocol.
+
+=== Obtaining the Participant Status
+
+Performing an HTTP GET request on the _participant-resource_ URI must return the current status of the participant in the same way as for the _transaction-coordinator_ URI discussed earlier.
+Determining the status of a participant whose URI has been removed is similar to that discussed for the _transaction-coordinator_ URI:
+
+[source,html]
+----
+GET /participant-resource HTTP/1.1
+Accept: application/txstatus
+----
+
+With an example response:
+
+[source,html]
+----
+HTTP/1.1 200 OK
+Content-Length: --
+Content-Type: application/txstatus
+
+txstatus=TransactionActive
+----
+
+== Leaving the Transaction
+
+A participant can leave the transaction at any time by sending a DELETE request to the coordinator using the URI it obtained during registration (i.e., the _participant-recovery_ URI).
+Alternatively, it can respond to a prepare request from the coordinator with content body containing _txstatus=TransactionReadOnly_ (in which case the transaction coordinator will remove it from further participation in the transaction).
+Otherwise it is the participants responsibility to participate in the <<_2pc,transaction termination protocol>>.
+
+[[_2pc]]
+== Preparing and Committing Work
+
+The coordinator drives the participant through the two-phase commit protocol by sending a PUT request to the _participant-terminator_ URI, provided to the coordinator during enlistment, with the desired transaction outcome as the content ( _TransactionPrepared_, _TransactionCommitted_, _TransactionRolledBack_ or _TransactionCommittedOnePhase_).
+For instance, here is how the prepare phase would be driven:
+
+[source,html]
+----
+PUT /participant-resource/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionPrepared
+----
+
+If PUT is successful then the implementation returns 200.
+A subsequent GET on the URI will return the current status of the participant as described previously.
+It is not always necessary to enquire as to the status of the participant once the operation has been successful.
+
+If PUT fails, e.g., the participant cannot be prepared, then the service writer must return 409.
+Depending upon the point in the two-phase commit protocol where such a failure occurs the transaction will roll back, e.g., because we use presumed abort semantics, failures prior to the end of the prepare phase *always* result in a rollback.
+If the participant is not in the correct state for the requested operation, e.g., _TransactionPrepared_ when it has already been prepared, then the service writer will return 412.
+
+If the transaction coordinator receives any response other than 200 then the transaction *always* rolls back.
+
+After a request to change the resource state using _TransactionRolledBack_, _TransactionCommitted_ or _TransactionCommittedOnePhase_, any subsequent PUT request will return a 409 or 410 code.
+
+The usual rules of heuristic decisions apply here (i.e., the participant cannot forget the choice it made until it is told to by the coordinator).
+
+Performing a DELETE on the _participant-resource_ URI will cause the participant to forget any heuristic decision it made on behalf of the transaction.
+If the operation succeeds then 200 will be returned and the implementation will delete the resource; a subsequent PUT or GET request returns 410.
+Any other response means the coordinator will keep retrying.
+
+== Recovery
+
+In general it is assumed that failed actors in this protocol, i.e., coordinator or participants, will recover on the same URI as they had prior to the failure.
+HTTP provides a number of options to support temporary or permanent changes of address, including 301 (Moved Permanently) and 307 (Temporary Redirect), if the actor is unable to recover on the same URI then requests to the original endpoints should return an HTTP status code of 301 (Moved Permanently), 307 (Temporary Redirect) is also acceptable.
+
+However, sometimes it is possible that a participant may crash and recover on a different URI, e.g., the original machine is unavailable, or that for expediency it is necessary to move recovery to a different machine.
+In that case it may be the case that the transaction coordinator is unable to complete the transaction, even during recovery.
+As a result this protocol defines a way for a recovering server to update the information maintained by the coordinator on behalf of these participants.
+
+If the recovering participant uses the _participant-recovery_ URI returned by the coordinator during enlistment then a GET on the _participant-recovery_ URI will return the participant resource and terminator as link headers that the participant used during the original registration.
+
+Performing a PUT on the _participant-recovery_ URI will overwrite the old participant URI with the new one supplied.
+This operation is equivalent to re-enlisting the participant.
+This will also trigger off a recovery attempt on the associated transaction using the new participant URI.
+For example to update location URIs, a two phase aware participant would PUT the following document:
+
+[source,html]
+----
+PUT /participant-recovery/1234 HTTP/1.1
+From: foo@bar.com
+Link:</new-participant-resource>; rel=”participant”,
+</participant-resource/new-terminator>; rel=”terminator”
+
+Content-Length: 0
+----
+
+Similarly for a two phase unaware participant.
+
+If, after performing the PUT request to the _participant-recovery_ URI, the participant is not asked to complete (within an implementation dependent period) then the protocol requires that the participant re-issue the PUT request.
+
+== Pre- and Post- Two-Phase Commit Processing
+
+Most modern transaction processing systems allow the creation of participants that do not take part in the two-phase commit protocol, but are informed before it begins and after it has completed.
+They are called Synchronizations, and are typically employed to flush volatile (cached) state, which may be being used to improve performance of an application, to a recoverable object or database prior to the transaction committing.
+
+This additional protocol is accomplished by supporting an additional two-phase commit protocol that encloses the protocol already discussed.
+This will be termed the Volatile Two Phase Commit protocol, as the participants involved in it are not required to be durable for the purposes of data consistency, whereas the other protocol will be termed the Durable Two Phase Commit protocol.
+The coordinator will not record any durable information on behalf of Volatile participants.
+
+In this enclosing protocol the Volatile prepare phase executes prior to the Durable prepare.
+The _transaction-coordinator_ sends a PUT request to the registered _volatile-participant_: only if this prepare succeeds will the Durable protocol be executed.
+The _volatile-participant_ has to indicate success by returning a 200 status code (any other code indicates failure).
+If the Durable protocol completes then this may be communicated to the Volatile participants through the commit or rollback phases.
+In this case the _transaction-coordinator_ sends a PUT request to the registered _volatile-participant_ with the outcome in the request body (using content type _application/txstatus_).
+However, because the coordinator does not maintain any information about these participants and the Durable protocol has completed, this is a best-effort approach only, i.e., such participants should not assume they will be informed about the transaction outcome.
+If that is a necessity then they should register with the Durable protocol instead.
+
+The primary difference between the Volatile and Durable protocols is that there is no recovery associated with the Volatile protocol so enlistment of volatile participants does not return a _participant-recovery_ URI.
+In addition there can be no heuristic outcomes associated with the Volatile protocol.
+Once the Durable protocol has started no more registration in the Volatile protocol are allowed.
+And finally, there is no one-phase commit optimization for the Volatile protocol.
