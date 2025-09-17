@@ -82,7 +82,7 @@ maven BOM dependency used to encapsulate all the dependencies required by Naraya
      <dependencies>
        <dependency>
          <groupId>org.jboss.narayana</groupId>
-         <artifactId>narayana-bom</artifactId>
+         <artifactId>main-dependency-management</artifactId>
          <version>6.0.1.Final-SNAPSHOT</version>
          <type>pom</type>
          <scope>import</scope>

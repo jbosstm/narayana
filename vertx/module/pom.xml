@@ -74,7 +74,7 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana</groupId>
-        <artifactId>narayana-bom-test</artifactId>
+        <artifactId>test-dependency-management</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
