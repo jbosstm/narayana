@@ -1,10 +1,7 @@
 target
-.project
-.classpath
-.settings
+
 .checkstyle
-*.iml
-.idea
+
 jboss-as
 jboss-eap
 *.swp
@@ -17,7 +14,37 @@ wildfly-*/
 qa/ext/log4j.jar
 qa/ext/netty.jar
 qa/TaskImpl.properties
-.DS_Store
 ObjectStore/
 CosServices.cfg
 audit.log
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
