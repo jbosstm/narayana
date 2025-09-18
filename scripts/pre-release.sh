@@ -42,7 +42,7 @@ TEMP_WORKING_DIR=~/tmp/narayana/$CURRENT/sources/
 mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
-for REPO in documentation quickstart performance narayana
+for REPO in quickstart performance narayana
 do
     echo ""
     echo "=== TAGGING AND UPDATING $REPO ==="
