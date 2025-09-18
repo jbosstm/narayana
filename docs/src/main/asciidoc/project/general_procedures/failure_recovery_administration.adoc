@@ -1,0 +1,146 @@
+
+= Failure Recovery Administration
+
+The failure recovery subsystem of {productName} will ensure that results of a transaction are applied consistently to all resources affected by the transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity.
+In the case of machine (system) crash or network failure, the recovery will not take place until the system or network are restored, but the original application does not need to be restarted.
+Recovery responsibility is delegated to link:#recovery-manager[The Recovery Manager].
+Recovery after failure requires that information about the transaction and the resources involved survives the failure and is accessible afterward: this information is held in the `ActionStore`, which is part of the `ObjectStore`.
+
+[WARNING]
+====
+If the `ObjectStore` is destroyed or modified, recovery may not be possible.
+====
+
+Until the recovery procedures are complete, resources affected by a transaction that was in progress at the time of the failure may be inaccessible.
+For database resources, this may be reported as tables or rows held by “in-doubt transactions”.
+For _TransactionalObjects for Java_ resources, an attempt to activate the `Transactional Object` (as when trying to get a lock) will fail.
+
+[[recovery-manager]]
+== The Recovery Manager
+
+The failure recovery subsystem of {productName} requires that the stand-alone Recovery Manager process be running for each `ObjectStore` (typically one for each node on the network that is running {productName} applications).
+The `RecoveryManager` file is located in the {productName} JAR file within the package `com.arjuna.ats.arjuna.recovery.RecoveryManager`.
+To start the Recovery Manager issue the following command:
+
+====
+[source,shell]
+----
+java com.arjuna.ats.arjuna.recovery.RecoveryManager
+----
+
+If the `-test` flag is used with the Recovery Manager then it will display a `Ready` message when initialized, i.e.:
+
+[source,shell]
+----
+java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
+----
+====
+
+== Configuring the Recovery Manager
+
+The `RecoveryManager` reads the properties defined in the `jbossts-properties.xml` file.
+
+A default version of `jbossts-properties.xml` is supplied with the distribution.
+This can be used without modification, except possibly the debug tracing fields, as shown in <<recovery_manager_output>>.
+
+[[recovery_manager_output]]
+== Output
+
+It is likely that installations will want to have some form of output from the `RecoveryManager`, to provide a record of what recovery activity has taken place.
+`RecoveryManager` uses the logging mechanism provided by _jboss logging_, which provides a high level interface that hides differences that exist between existing logging APIs such Jakarta log4j or JDK logging API.
+
+The configuration of _jboss logging_ depends on the underlying logging framework that is used, which is determined by the availability and ordering of alternatives on the classpath.
+Please, consult the _jboss logging_ documentation for details.
+Each log message has an associated log Level, that gives the importance and urgency of a log message.
+The set of possible Log Levels, in order of least severity, and highest verbosity, is:
+
+. `TRACE`
+. `DEBUG`
+. `INFO`
+. `WARN`
+. `ERROR`
+. `FATAL`
+
+Messages describing the start and the periodical behavior made by the `RecoveryManager` are output using the `INFO` level.
+If other debug tracing is wanted, the finer debug or trace levels should be set appropriately.
+
+Setting the normal recovery messages to the `INFO` level allows the `RecoveryManager` to produce a moderate level of reporting.
+If nothing is going on, it just reports the entry into each module for each periodic pass.
+To disable `INFO` messages produced by the Recovery Manager, the logging level could be set to the higher level of `ERROR`, which means that the `RecoveryManager` will only produce `ERROR`, `WARNING`, or `FATAL` messages.
+
+== Periodic Recovery
+
+The `RecoveryManager` scans the `ObjectStore` and other locations of information, looking for transactions and resources that require, or may require recovery.
+The scans and recovery processing are performed by recovery modules.
+These recovery modules are instances of classes that implement the `com.arjuna.ats.arjuna.recovery.RecoveryModule` interface.
+Each module has responsibility for a particular category of transaction or resource.
+The set of recovery modules used is dynamically loaded, using properties found in the `RecoveryManager` property file.
+
+// Rewrite this as a procedure
+The interface has two methods: `periodicWorkFirstPass` and `periodicWorkSecondPass`.
+At an interval defined by property `com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod`, the `RecoveryManager` calls the first pass method on each property, then waits for a brief period, defined by property `com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod`.
+Next, it calls the second pass of each module.
+Typically, in the first pass, the module scans the relevant part of the `ObjectStore` to find transactions or resources that are in-doubt.
+An in-doubt transaction may be part of the way through the commitment process, for instance.
+On the second pass, if any of the same items are still in-doubt, the original application process may have crashed, and the item is a candidate for recovery.
+
+An attempt by the `RecoveryManager` to recover a transaction that is still progressing in the original process is likely to break the consistency.
+Accordingly, the recovery modules use a mechanism, implemented in the `com.arjuna.ats.arjuna.recovery.TransactionStatusManager` package, to check to see if the original process is still alive, and if the transaction is still in progress.
+The `RecoveryManager` only proceeds with recovery if the original process has gone, or, if still alive, the transaction is completed.
+If a server process or machine crashes, but the transaction-initiating process survives, the transaction completes, usually generating a warning.
+Recovery of such a transaction is the responsibility of the `RecoveryManager`.
+
+It is clearly important to set the interval periods appropriately.
+The total iteration time will be the sum of the `periodicRecoveryPeriod` and `recoveryBackoffPeriod` properties, and the length of time it takes to scan the stores and to attempt recovery of any in-doubt transactions found, for all the recovery modules.
+The recovery attempt time may include connection timeouts while trying to communicate with processes or machines that have crashed or are inaccessible.
+There are mechanisms in the recovery system to avoid trying to recover the same transaction indefinitely.
+The total iteration time affects how long a resource will remain inaccessible after a failure. – `periodicRecoveryPeriod` should be set accordingly.
+Its default is 120 seconds.
+The `recoveryBackoffPeriod` can be comparatively short, and defaults to 10 seconds.
+Its purpose is mainly to reduce the number of transactions that are candidates for recovery and which thus require a call to the original process to see if they are still in progress.
+
+[NOTE]
+====
+In previous versions of {productName}, there was no contact mechanism, and the back-off period needed to be long enough to avoid catching transactions in flight at all.
+From 3.0, there is no such risk.
+====
+
+Two recovery modules, implementations of the `com.arjuna.ats.arjuna.recovery.RecoveryModule` interface, are supplied with {productName}.
+These modules support various aspects of transaction recovery, including JDBC recovery.
+It is possible for advanced users to create their own recovery modules and register them with the Recovery Manager.
+The recovery modules are registered with the `RecoveryManager` using `RecoveryEnvironmentBean.recoveryModuleClassNames`.
+These will be invoked on each pass of the periodic recovery in the sort-order of the property names – it is thus possible to predict the ordering, but a failure in an application process might occur while a periodic recovery pass is in progress.
+The default Recovery Extension settings are:
+
+[source,xml]
+----
+include::{projectSourceDir}/general_procedures/extras/default_recovery_extension_settings.xml[]
+----
+
+== Expired Entry Removal
+
+The operation of the recovery subsystem cause some entries to be made in the `ObjectStore` that are not removed in normal progress.
+The `RecoveryManager` has a facility for scanning for these and removing items that are very old.
+Scans and removals are performed by implementations of the `com.arjuna.ats.arjuna.recovery.ExpiryScanner` interface.
+These implementations are loaded by giving the class names as the value of a property `RecoveryEnvironmentBean.expiryScannerClassNames`.
+The `RecoveryManager` calls the `scan()` method on each loaded Expiry Scanner implementation at an interval determined by the property `RecoveryEnvironmentBean.expiryScanInterval`.
+This value is given in hours, and defaults to 12hours.
+An `expiryScanInterval` value of zero suppresses any expiry scanning.
+If the value supplied is positive, the first scan is performed when `RecoveryManager` starts.
+If the value is negative, the first scan is delayed until after the first interval, using the absolute value.
+
+The kinds of item that are scanned for expiry are:
+
+// Why is this presented as a list?
+TransactionStatusManager items::
+One `TransactionStatusManager` item is created by every application process that uses {productName}.
+It contains the information that allows the `RecoveryManager` to determine if the process that initiated the transaction is still alive, and its status.
+The expiry time for these items is set by the property `com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime`, expressed in hours.
+The default is 12, and 0 (zero) means never to expire.The expiry time should be greater than the lifetime of any single processes using {productName} .
+
+The Expiry Scanner properties for these are:
+
+[source,xml]
+----
+include::{projectSourceDir}/general_procedures/extras/expiry_scanner_properties.xml[]
+----

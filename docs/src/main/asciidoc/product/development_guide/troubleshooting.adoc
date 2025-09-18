@@ -1,0 +1,138 @@
+
+= Troubleshooting
+:imagesdir: images
+
+This chapter covers issues that you may hit when developing applications with {productName}.
+
+== WS-BA Participant-Completion Race Condition
+
+The WS-BA participant-completion protocol has a benign race condition that, in unusual circumstances, can cause some Business Activities to be cancelled that would have otherwise been able to close.
+This is safe as no inconsistency arrises, but it can be annoying for users.
+This section explains why this can happen, under what conditions, and what you can do to tolerate it.
+
+=== What's happening, in a nutshell
+
+Imagine a scenario where the client begins a business activity and then invokes a Web service.
+If the Web service uses participant completion, it will notify the coordinator when it has completed its work and then return control to the client.
+This notification is asynchronous, so it's possible that the client will then ask the coordinator to close the activity before the coordinator processes (or even receives) the completed notification from the participant.
+In this situation the coordinator will cancel the activity as not all participants (from its perspective) have completed their work.
+As a result all completed participants are compensated (including, eventually, the participant with the late 'completed' notification) and the client receives a `TransactionRolledBackException`.
+
+=== When is it most likely to happen?
+
+Typically this happens when the client, coordinator and participant are running inside the same VM.
+This scenario is unlikely to happen in production, but can happen regularly during development where a single VM is used to keep things simple.
+
+=== How do I know if this is affecting my application?
+
+If the client is occasionally receiving a `TransactionRolledbackException` when calling `UserBusinessActivity#close()`, but none of the machines involved in running the transaction have crashed, you could be affected by this.
+Especially if you are running the client, coordinator and participant(s) in the same server.
+
+The following log message will help you identify this issue:
+
+.Example Environment Bean
+[source]
+----
+WARN [com.arjuna.mw.wstx] (TaskWorker-2) ARJUNA045062: Coordinator cancelled the activity
+----
+
+This is only an indication that you are seeing this issue as the coordinator can elect to cancel the activity for other reasons.
+For example, network problems might mean the coordinator cannot tell the web service to close the activity.
+
+=== Why can't it be avoided?
+
+For the protocol to avoid this issue, it would need to make the complete message synchronous, throttling throughput by slowing down both the participant and coordinator and holding sockets open for longer.
+
+=== What can the application do to tolerate this?
+
+A real, distributed deployment will rarely see this problem because communication latency between client, participant and coordinator will dominate the race condition.
+Even if it does happen your application should tolerate it.
+Transaction rollbacks and activity cancelations are inevitable in a distributed environment and can happen for many reasons.
+When handling `TransactionRolledBack` exceptions you can either retry the Transaction/Activity or notify the caller of the failure.
+What you choose to do will depend on the requirements of your application.
+
+=== Why exactly does this happen?
+
+First consider the following client code:
+
+.Client Code Example
+[source,java]
+----
+UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
+uba.begin();
+myWebServiceClient.invoke();
+uba.close();
+----
+
+The client code is very simple, it just begins a business activity, invokes a Web service and then closes the business activity.
+The Web service uses the Participant-Completion protocol and so notifies the coordinator of completion just before returning control to the client.
+
+Here's a diagram showing the pertinent message exchanges that occur under a normal situation.
+
+[[_fig_pcp_race_success]]
+.Successful close of activity
+image::development-guide-fig-pcp-race-success.png[align="center"]
+
+The messages are numbered to indicate the order in which they are sent:
+
+* `1.request`.
+This represents the application request made by the client.
+* `2.completed`.
+After the participant has completed its work, it notifies the coordinator that it has completed.
+* `3.response`.
+This represents the response to the client's application request.
+* `4.close`.
+The client notifies the coordinator that it wishes to close the activity.
+It then waits for a `closed` or failure response from the coordinator.
+* `5a.close` and `5b.closed`.
+The coordinator has processed the `2.completed` message so can close the activity.
+It starts by sending the `close` message to the participant and waits for the `closed` response as confirmation.
+These two messages are asynchronous.
+* `6.closed`.
+The coordinator now has all `closed` acknowledgments so notifies the client that the activity successfully `closed`.
+
+Messages '2.completed' and '4.close' are asynchronous (or 'one way' in Web services parlance) so effectively, there is a race condition with the following competing parties:
+
+* `Party 1`. The completed message `2.completed`.
+* `Party 2`. The response `3.response` followed by `4.close`.
+
+When running in the same VM, or on a low latency network, `3.response` will be sent very quickly.
+This is because it is simply travelling on the HTTP response over an already open socket.
+This just leaves messages `2.completed` and `4.close` which will take much longer relative to `3.response`.
+To understand this, lets take a look at what happens when an asynchronous Web service call is made:
+
+. The client sends the message to the Web service.
+. The server-side SOAP stack uses an existing thread from a pool dedicated to receiving SOAP messages.
+. As the service is asynchronous, the message will be passed to another thread to be processed.
+. The receiving thread will now return the HTTP response.
+
+The race condition occurs because steps 1-3 can happen relatively quickly in a single VM, and thus it's likely that both messages 2 and 4, will be waiting to be processed at the same time.
+The order in which they are processed is dependent on the implementation of the thread pool and is also at the mercy of thread scheduling in the VM, so it's possible that either could be processed first.
+
+This race condition is much less likely to happen in a distributed environment as the network costs will be significantly higher.
+As a result message `3.response` will take long enough to send, so as to give message `2.completed` enough of a head start.
+But it is still possible so the client application must be coded defensively to catch and handle a `TransactionRollbackException`.
+The client code ought to be doing this anyway to deal with server crashes.
+
+The following diagram shows what messages are exchanged when the race condition occurs.
+Notice that the activity ends in a consistent state.
+
+.Failure to close the activity
+image::development-guide-fig-pcp-race-failure.png[align="center"]
+
+Messages 1-3 are omitted from the following explanation as they are the same as in the success case.
+
+* `4.close`.
+This message is processed by the coordinator before message `2.completed`
+* `5a.cancel`.
+The coordinator has not yet processed the `2.completed` message so cannot close the activity.
+The coordinator then sends a 'cancel' message to the participant as it thinks it has not yet completed.
+This message and subsequent retires, are dropped by the participant as they are not valid for a completed participant.
+* `5b.compensate`/`5c.compensated`.
+After one or more unacknowledged `cancel` messages, the coordinator switches to sending `compensate` messages which will cause the participant to compensate the work.
+The participant acknowledges with a `compensated` reply.
+* 6. Transaction rolledback exception.
+The coordinator notifies the client that the activity failed to close.
+
+As you can see from the steps above, when this race condition arises, any work done by participants is compensated and the client is notified of the outcome.
+Thus a consistent outcome is achieved.

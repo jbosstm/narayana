@@ -1,0 +1,21 @@
+
+= Starting and Stopping the Transaction Manager
+
+By default, the transaction manager starts up in an active state such that new transactions can be created immediately.
+If you wish to have more control over this it is possible to set the `CoordinatorEnvironmentBean.startDisabled` configuration option to `YES` and in which case no transactions can be created until the transaction manager is enabled via a call to method `TxControl.enable`).
+
+It is possible to stop the creation of new transactions at any time by calling method `TxControl.disable`.
+Transactions that are currently executing will not be affected.
+By default, recovery will be allowed to continue and the transaction system will still be available to manage recovery requests from other instances in a distributed environment.
+(See the Failure Recovery Guide for further details).
+However, if you wish to disable recovery as well as remove any resources it maintains, then you can pass `true` to method `TxControl.disable`; the default is to use `false`.
+
+If you wish to shut the system down completely then it may also be necessary to terminate the background transaction reaper (see the Programmers Guide for information about what the reaper does).
+In order to do this you may want to first prevent the creation of new transactions (if you are not creating transactions with timeouts then this step is not necessary) using method `TxControl.disable`.
+Then you should call method `TransactionReaper.terminate`.
+This method takes a Boolean parameter: if `true` then the method will wait for the normal timeout periods associated with any transactions to expire before terminating the transactions; if `false` then transactions will be forced to terminate (rollback or have their outcome set such that they can only ever rollback) immediately.
+
+[NOTE]
+====
+if you intend to restart the recovery manager later after having terminated, it then you MUST use the `TransactionReapear.terminate` method with asynchronous behavior set to `false`.
+====

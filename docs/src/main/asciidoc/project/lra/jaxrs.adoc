@@ -1,0 +1,20 @@
+
+= JAX-RS services
+
+Primary support is for JAX-RS based services to participate in transactional Long Running Actions (LRAs).
+Full details are available in the MP-LRA specification document https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc.
+Also look in the xref:examples.adoc#lra_examples[examples section] below and in the MP-LRA TCK.
+
+== Configuring the location of the Coordinator and Load Balancer when starting new Long Running Actions
+
+Services should be configured with a comma separated list of URLs of coordinators using a property called `lra.coordinator.urls`, and if unset then `http://localhost:8080/lra-coordinator` will be used. When a service starts a new LRA one of the URLs will be chosen according to the configured load balancing strategy, the default is to choose one in a "round robin" fashion. Note that the chosen coordinator must be available for the lifetime of the LRA (or restarted on the same endpoint, with access to the same object store, if it fails). The https://smallrye.io/smallrye-stork/latest[Smallry Stork service discovery and client-side load-balancing framework] is used to support a static list of coordinators and load balancing strategies.
+
+The load balancing algorithm is controlled by the value of a property called `lra.coordinator.lb-method`. The property supports the following values (refer to the Stork documentation for more detail about the various algorithms):
+
+* `round-robin`: Iterates over the set of coordinators.
+* `sticky`: Selects a single coordinator and keeps using it until it fails. Then, it selects another one.
+* `random`: Picks a random coordinator every time.
+
+If an invalid algorithm is configured then a request to start a new coordinator will return an https://www.rfc-editor.org/rfc/rfc9110.html#name-503-service-unavailable[HTTP 503, "Service Unavailable"] response code.
+
+When `round-robin` is selected and a coordinator isn't available then the next one in the list is tried. If the list is exhausted then an HTTP 503, "Service Unavailable" response code is returned.

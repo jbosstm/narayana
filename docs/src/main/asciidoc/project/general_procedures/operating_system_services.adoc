@@ -1,0 +1,114 @@
+
+= Operating System Services
+
+== Microsoft Windows Server
+
+Four scripts, located in the `Services\bin\windows` folder, install and uninstall the recovery manager and transaction server services.
+
+====
+.Installation Scripts for Microsoft Windows
+Recovery Manager Service::
+`InstallRecoveryManagerService-NT.bat`
+Transaction Server::
+`InstallTransactionServiceService-NT.bat`
+====
+
+====
+.Uninstallation Scripts for Microsoft Windows
+Recovery Manager Service::
+`UninstallRecoveryManagerService-NT.bat`
+Transaction Server::
+`UninstallTransactionServerService-NT.bat`
+====
+
+[NOTE]
+====
+Each of the scripts requires administrative privileges.
+====
+
+After running any of the scripts, a status message indicates success or failure.
+
+== Linux / UNIX
+
+=== Installing Services in Linux/UNIX:
+
+. Log into the system with `root` privileges.
++
+The installer needs these privileges to create files in `/etc`.
+. Change to `JBOSS_HOME/services/installer` directory.
++
+`JBOSS_HOME` refers to the directory where you extracted {productName}.
+. Set the `JAVA_HOME` variable, if necessary.
++
+Set the `JAVA_HOME` variable to the base directory of the JVM the service will use.
+The `base directory` is the directory above `bin/java`.
++
+.. Bash: `export JAVA_HOME="/opt/java"`
++
+CSH: `setenv JAVA_HOME="/opt/java"`
+. Run the installer script.
++
+`./install_service.sh`
+. The start-up and shut-down scripts are installed.
++
+Information similar to the output below is displayed.
++
+[source,text]
+----
+Adding $JAVA_HOME (/opt/java) to $PATH in
+/opt/arjuna/ats-3.2/services/bin/solaris/recoverymanagerservice.sh
+Adding $JAVA_HOME (/opt/java) to $PATH in
+/opt/arjuna/ats-3.2/services/bin/solaris/transactionserverservice.sh
+Installing shutdown scripts into /etc/rcS.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Installing shutdown scripts into /etc/rc0.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Installing shutdown scripts into /etc/rc1.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Installing shutdown scripts into /etc/rc2.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Installing startup scripts into /etc/rc3.d:
+S98recoverymanagerservice
+S99transactionserverservice
+----
++
+The start-up and shut-down scripts are installed for each run-level.
+Depending on your specific operating system, you may need to explicitly enable the services for automatic start-up.
+
+=== Uninstalling Services in Linux/UNIX
+
+. Log into the system with `root` privileges.
++
+The installer needs these privileges to delete files in `/etc`.
+. Change to `JBOSS_HOME/services/installer` directory.
++
+`JBOSS_HOME` refers to the directory where you extracted {productName}.
+. Run the installation script with the `-u` option.
++
+`./install_services.sh -u`
+. The start-up and shut-down scripts are removed.
++
+Messages like the ones below indicate that the start-up and shut-down scripts have been removed successfully.
++
+[source,shell]
+----
+Removing startup scripts from /etc/rc3.d:
+S98recoverymanagerservice
+S99transactionserverservice
+Removing shutdown scripts from /etc/rcS.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Removing shutdown scripts from /etc/rc0.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Removing shutdown scripts from /etc/rc1.d:
+K01recoverymanagerservice
+K00transactionserverservice
+Removing shutdown scripts from /etc/rc2.d:
+K01recoverymanagerservice
+K00transactionserverservice
+----

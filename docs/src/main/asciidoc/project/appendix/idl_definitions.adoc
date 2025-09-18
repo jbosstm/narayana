@@ -1,0 +1,22 @@
+
+:sectnums!:
+
+[appendix]
+= IDL definitions
+
+Because of differences between ORBs, and errors in certain ORBs, the idl available with {parentProduct} may differ from that shown below.
+You should always inspect the idl files prior to implementation to determine what, if any, differences exist.
+
+.CosTransactions.idl
+[source,C]
+----
+include::{projectSourceDir}/appendix/extras/CosTransactions.idl[]
+----
+
+.ArjunaOTS.IDL
+[source,C]
+----
+include::{projectSourceDir}/appendix/extras/ArjunaOTS.idl[]
+----
+
+:sectnums:

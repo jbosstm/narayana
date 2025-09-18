@@ -1,0 +1,18 @@
+
+= Development Guide
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+:leveloffset: +1
+
+include::{productSourceDir}/development_guide/transactions.adoc[]
+include::{productSourceDir}/development_guide/the_resource_manager.adoc[]
+include::{productSourceDir}/development_guide/general_transaction_issues.adoc[]
+include::{productSourceDir}/development_guide/tools.adoc[]
+include::{productSourceDir}/development_guide/configuration_options.adoc[]
+include::{productSourceDir}/development_guide/important_log_messages.adoc[]
+include::{productSourceDir}/development_guide/troubleshooting.adoc[]
+
+:leveloffset: -1

@@ -543,6 +543,9 @@
           <name>release</name>
         </property>
       </activation>
+      <modules>
+        <module>docs</module>
+      </modules>
       <build>
         <plugins>
           <plugin>

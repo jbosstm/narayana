@@ -1,0 +1,8 @@
+
+= ORB-specific configuration
+
+== JacORB
+
+Take care to use only the patched version of JacORB shipped with {parentProduct}.
+Correct functioning of the transaction system, particularly with regard to crash recovery, is unlikely to work with an unpatched JacORB.
+For each deployment of JacORB, ensure that the `jacorb.implname` in the `jacorb.properties` file is unique.

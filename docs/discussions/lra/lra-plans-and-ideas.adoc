@@ -1,0 +1,30 @@
+= Narayana LRA - research and development ideas
+
+This document aims to gather ideas on future research and development for Narayana LRA implementation
+(particularly when LRA 1.0 is out).
+This is meant to be a living document for brainstorming and further discussions in the team.
+Feel free to add your points, create PR and discuss.
+
+== Research and development ideas
+
+== HA LRA
+
+Longer standing goal to make LRA more cloud native. First there is need to clarify what should be the design approach.
+Some ideas have already been captured in JIRA:
+
+https://issues.redhat.com/browse/JBTM-2959 Allow different LRA coordinators to share an object store
+https://issues.redhat.com/browse/JBTM-2997 Ensure that any LRA coordinator instance can control any LRA
+
+
+== Messaging protocols
+
+It would be good to work not just with the HTTP (REST API) but being able to communicate first over new point-to-point protocols (e.g. gRPC) and second with async message broker “bus” (e.g. Apache Kafka).
+
+== Integration with Debezium
+
+The Debezium project comes with a proof of concept of saga pattern on top of the outbox pattern. It would be good to integrate the effort with LRA.
+
+== Serverless LRA
+
+Integration with Funqy in quarkus to provide a way for serverless functions to be plugged into LRA processing.
+

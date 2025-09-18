@@ -1,0 +1,1 @@
+com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule com.arjuna.ats.internal.txoj.recovery.TORecoveryModule

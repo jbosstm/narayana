@@ -1,0 +1,172 @@
+
+= Getting Started
+
+== EnableXTS on {appServer}
+
+XTS, which is the Web Services component of {productName}, provides WS-AT and WS-BA support for Web Services hosted on the {appServer}.
+XTS is available as an optional SubSystem, enabled using the `standalone-xts.xml` configuration.
+
+.Procedure: Starting {appServer} with XTS Enabled
+. Change to the {appServer} directory:
++
+`cd $JBOSS_HOME`
+. Copy the example XTS configuration into the configurations directory:
++
+`cp docs/examples/configs/standalone-xts.xml standalone/configuration`
+. Start {appServer}, specifying the xts configuration:
++
+Linux:
++
+`bin/standalone.sh --server-config=standalone-xts.xml`
++
+Windows:
++
+`bin\standalone.bat --server-config=standalone-xts.xml`
+
+== Working With WS-AT
+
+[[ref_createwsatclient]]
+=== Creating Client Applications
+
+XTS integrates WS-AT transactions with JTA.
+To invoke a web service inside a WS-AT transaction, simply start a new JTA transaction and invoke the web service.
+By default, XTS will create a WS-AT context and pass it with your request.
+See our quickstarts for an example: xref:quickstarts_overview.adoc#ref_wsatmultiservice[WS-AT Multi-Service] and xref:quickstarts_overview.adoc#ref_wsatmultihop[WS-AT Multi-Hop]
+
+[[ref_createwsatservice]]
+=== Creating Transactional Web Services
+
+Similarly to the client-side, the service-side is also integrated with JTA.
+To make your web service WS-AT compliant, annotate your web service class or method with the EJB 3 `jakarta.ejb.TransactionAttribute` annotation or the JTA `jakarta.transaction.Transactional annotation`.
+XTS will automatically translate WS-AT context, received with the request, to JTA.
+See our quickstarts for an example: xref:quickstarts_overview.adoc#ref_wsatmultiservice[WS-AT Multi-Service] and xref:quickstarts_overview.adoc#ref_wsatmultihop[WS-AT Multi-Hop]
+
+=== Using Raw XTS API
+
+Sometimes more control is needed over the client and the server applications.
+Also JTA transactions are not always wanted in the application.
+In such case it is possible to create client and service applications using the Raw XTS API.
+
+[WARNING]
+====
+This is not a recommended way to work with WS-AT.
+Please take a look at <<ref_createwsatclient>> and <<ref_createwsatservice>> for the recommended and easier XTS usage for WS-AT applications.
+====
+
+==== Creating Client Applications
+
+There are two aspects to a client application using Raw XTS, the transaction declaration aspects, and the business logic.
+The business logic includes the invocation of Web Services.
+
+Transaction declaration aspects are handled automatically with the XTS client API.
+This API provides simple transaction directives such as `begin`, `commit`, and `rollback`, which the client application can use to initialize, manage, and terminate transactions.
+Internally, this API uses SOAP to invoke operations on the various WS-C and WS-AT services, in order to create a coordinator and drive the transaction to completion.
+
+===== User Transactions
+
+A client uses the `UserTransactionFactory` and `UserTransaction` classes to create and manage WS-AT transactions.
+These classes provide a simple API which operates in a manner similar to the JTA API.
+A WS-AT transaction is started and associated with the client thread by calling the `begin` method of the `UserTransaction` class.
+The transaction can be committed by calling the `commit` method, and rolled back by calling the `rollback` method.
+
+More complex transaction management, such as suspension and resumption of transactions, is supported by the `TransactionManagerFactory` and `TransactionManager` classes.
+
+Full details of the WS-AT APIs are provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
+
+[[ref_wsatrawcreatingtransactionalwebservices]]
+==== Creating Transactional Web Services
+
+The two parts to implementing a Web service using XTS are the transaction management and the business logic.
+
+The bulk of the transaction management aspects are organized in a clear and easy-to-implement model by means of the XTS's _Participant API_, provides a structured model for negotiation between the web service and the transaction coordinator.
+It allows the web service to manage its own local transactional data, in accordance with the needs of the business logic, while ensuring that its activities are in step with those of the client and other services involved in the transaction.
+Internally, this API uses SOAP to invokes operations on the various WS-C and WS-AT services, to drive the transaction to completion.
+
+A _participant_ is a software entity which is driven by the transaction manager on behalf of a Web service.
+When a web service wants to participate in a particular transaction, it must enroll a participant to act as a proxy for the service in subsequent negotiations with the coordinator.
+The participant implements an API appropriate to the type of transaction it is enrolled in, and the participant model selected when it is enrolled.
+For example, a `Durable2PC` participant, as part of a WS-Atomic Transaction, implements the `Durable2PCParticipant` interface.
+The use of participants allows the transactional control management aspects of the Web service to be factored into the participant implementation, while staying separate from the rest of the Web service's business logic and private transactional data management.
+
+The creation of participants is not trivial, since they ultimately reflect the state of a Web service's back-end processing facilities, an aspect normally associated with an enterprise's own IT infrastructure.
+Implementations must use one of the following interfaces: `com.arjuna.wst11.Durable2PCParticipant`, `com.arjuna.wst11.Volatile2PCParticipant`.
+
+A full description of XTS's participant features is provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
+
+== Working With WS-BA
+
+=== Creating Client Applications
+
+There are two aspects to a client application using XTS, the transaction declaration aspects, and the business logic.
+The business logic includes the invocation of Web Services.
+
+Transaction declaration aspects are handled automatically with the XTS client API.
+This API provides simple transaction directives such as `begin`, `close`, and `cancel`, which the client application can use to initialize, manage, and terminate transactions.
+Internally, this API uses SOAP to invoke operations on WS-BA services, in order to create a coordinator and drive the transaction to completion.
+
+==== Business Activities
+
+A client creates and manages Business Activities using the `UserBusinessActivityFactory` and `UserBusinessActivity` classes.
+A WS-BA activity is started and associated with the client thread by calling the `begin` method of the `UserBusinessActivity` class.
+A client can terminate a business activity by calling the `close` method, and cancel it by calling the `cancel` method.
+
+If any of the Web Services invoked by the client register for the `BusinessActivityWithCoordinatorCompletion` protocol, the client can call the `completed` method before calling the `close` method, to notify the services that it has finished making service invocations in the current activity.
+
+More complex business activity management, such as suspension and resumption of business activities, is supported by the `BusinessActivityManagerFactory` and `BusinessActivityManager` classes.
+
+Full details of the WS-BA APIs are provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
+
+=== Creating Transactional Web Services
+
+The theory behind creating WS-BA web services is similar to the WS-AT Raw API <<ref_wsatrawcreatingtransactionalwebservices>>.
+However, different participant classes are used: `com.arjuna.wst11.BusinessAgreementWithParticipantCompletionParticipant` , or `com.arjuna.wst11.BusinessAgreementWithCoordinatorCompletionParticipant`.
+
+A full description of XTS's participant features is provided in xref:xts_api.adoc#sec_xts_api[the XTS API].
+
+=== New Compensating Transactions API
+
+There is a new Compensating Transactions API available to work with WS-BA applications.
+Please consult our quickstarts how to use it: xref:quickstarts_overview.adoc#ref_compensationsnontransactionalresource[non-transactional resource with compensating transactions API] and xref:quickstarts_overview.adoc#ref_compensationstravelagent[travel agent with compensating transactions API]
+
+[[ref_transactioncontextpropagation]]
+== Configuration of The Transaction Context Propagation
+
+You can enable transaction propagation for all Web service calls that are invoked within a JTA, WS-AT or WS-BA transaction.
+This is done with the `default-context-propagation` property in the XTS subsystem config of the `standalone-xts.xml`.
+
+As this is enabled by default (for `standalone-xts.xml`), calls to all Web services that support WS-AT or WS-BA will automatically receive the transaction context allowing them to participate in the distributed transaction.
+
+The transaction context is simply ignored if the service does not support WS-AT or WS-BA.
+This is done by setting `MustUnderstand="false"` on the `CoordinationContext` SOAP header.
+Unfortunately, this may cause issues when invoking WS-AT or WS-BA enabled Web services on other vendors' application servers.
+This is because the WS-Coordination specification states that `MustUnderstand` must be set to true.
+If you are affected by this issue, you will need to explicitly enable the transaction propagation for every port.
+
+The default context propagation policy can also be overridden on a per Web Service port basis.
+This allows the developer to easily state which Web Service clients must and must-not propagate the transaction context.
+This is done through the standard JAX-WS WebServiceFeature facility.
+A JAX-WS `WebServiceFeature` allows meta-information to be added to a port that describe cross-cutting behaviour, such as logging, security or compression.
+In our case we use the xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] and xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] features.
+
+xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] states that any JTA, WS-AT, or WS-BA transactions should be distributed via calls on this client.
+This feature is recommended to use, if you have a JTA transactions which should be propagated.
+
+xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] states that any WS-AT or WS-BA transaction should be distributed via calls on this client.
+You should use this feature, if you use Raw XTS or WS-BA APIs.
+
+Calls to the service will fail if the Web service does not support WS-AT or WS-BA (in this case, XTS sets `MustUnderstand=true` on the `CoordinationContext` SOAP header as the developer has explicitly stated that it is required).
+
+The developer may also state that the transaction must-not be distributed over calls to this Web service.
+This is done by setting the xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] or xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] feature to disabled.
+
+The use of xref:xts_api.adoc#ref_jtaoverwsatfeature[JTAOverWSATFeature] and xref:xts_api.adoc#ref_wstxfeature[WSTXFeature] overrides whatever default context propagation is set to in the `standalone-xts.xml`.
+
+== Summary
+
+This chapter gives a high-level overview of each of the major software pieces used by the Web Services transactions component of {productName}.
+The Web Services transaction manager provided by {productName} is the hub of the architecture and is the only piece of software that user-level software does not bind to directly.
+XTS provides header-processing infrastructure for use with Web Services transactions contexts for both client applications and Web Services.
+XTS provides a simple interface for developing transaction participants, along with the necessary document-handling code.
+
+This chapter is only an overview, and does not address the more difficult and subtle aspects of programming Web Services.
+For fuller explanations of the components, please continue reading.

@@ -1,0 +1,43 @@
+
+= Using {productName} in application servers
+
+{appServer} is discussed here.
+Refer to the documentation for your application server for differences.
+
+== Configuration
+
+When {productName} runs embedded in {appServer}, the transaction subsystem is configured primarily through the `jboss-cli` configuration tool, which overrides properties read from the default properties file embedded in the `.jar` file.
+
+.Common configuration attributes
+[cols="1,1"]
+|===
+|default-timeout |The default transaction timeout to be used for new transactions. Specified as an integer in seconds.
+|enable-statistics |This determines whether or not the transaction service should gather statistical information. This information can then be viewed using the `TransactionStatistics` MBean. Specified as a Boolean. The default is to not gather this information.
+|===
+
+See the `jboss-cli` tool and the {appServer} administration and configuration guide for further information.
+
+== Logging
+
+To make {parentProduct} logging semantically consistent with {appServer}, the `TransactionManagerService` modifies the level of some log messages, by overriding the value of the `LoggingEnvironmentBean.loggingFactory` property in the `jbossts-properties.xml` file.
+Therefore, the value of this property has no effect on the logging behavior when running embedded in {appServer}.
+By forcing use of the `log4j_releveler` logger, the TransactionManagerService changes the level of all `INFO` level messages in the transaction code to `DEBUG`.
+Therefore, these messages do not appear in log files if the filter level is `INFO`.
+All other log messages behave as normal.
+
+== The services
+
+The `TransactionManager` bean provides transaction management services to other components in {appServer}.
+There are two different version of this bean and they require different configuration.
+Use `jboss-cli` to select JTA or JTS mode.
+
+== Ensuring transactional context is propagated to the server
+
+You can coordinate transactions from a coordinator which is not located within the {appServer}, such as when using transactions created by an external OTS server.
+To ensure the transaction context is propagated via JRMP invocations to the server, the transaction propagation context factory needs to be explicitly set for the JRMP invoker proxy.
+This is done as follows:
+
+[source,java]
+----
+JRMPInvokerProxy.setTPCFactory(new com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager());
+----

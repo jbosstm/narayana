@@ -1,0 +1,78 @@
+
+= Stand-Alone Coordination
+
+== Introduction
+
+By default, coordination contexts are obtained from the local coordinator.
+Therefore, WS-AT transactions or WS-BA activities created by a locally-deployed client application are supplied with a context which identifies the Registration Service running on the client's machine.
+Any Web Services invoked by the client are coordinated by the Transaction Protocol services running on the client's host.
+This is the case whether the Web Services are running locally or remotely.
+Such a configuration is called _local coordination_.
+
+You can reconfigure this setting globally for all clients, causing context creation requests to be redirected to an Activation Coordinator Service running on a remote host.
+Normally, the rest of the coordination process is executed from the remote host.
+This configuration is called _stand-alone coordination_.
+
+.Reasons for Choosing a Stand-Alone Coordinator
+* Efficiency: if a client application invokes Web Services on a remote {appServer}, coordinating the transaction from the remote server might be more efficient, since the protocol-specific messages between the coordinator and the participants do not need to travel over the network.
+* Reliability: if the coordinator service runs on a dedicated host, there is no danger of failing applications or services affecting the coordinator and causing failures for unrelated transactions.
+* A third reason might be to use a coordination service provided by a third party vendor.
+
+== Configuring the Activation Coordinator
+
+The simplest way to configure a stand-alone coordinator is to provide a complete URL for the remote coordinator.
+This can be done by changing the 'url' property of the 'xts-environment' element of the XTS Subsystem configuration in the `standalone-xts.xml`.
+<<example_xts_subsystem.xml>> shows the snippet of XML that you should change.
+
+[[example_xts_subsystem.xml]]
+.Example `standalone-xts.xml` configuration settings
+[source,xml]
+----
+include::{productSourceDir}/xts_guide/extras/example-xts-subsystem.xml[]
+----
+
+The XTS module (`_modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar`) in the {appServer} includes a configuration file, `xts-properties.xml`, in the root of the jar.
+These properties can be edited and then re-packaged in the jar.
+The changes will take affect on next boot of the {appServer}.
+<<example_xts_properties.xml>> shows a fragment of this file which details the options for changing the coordinator URL.
+
+[[example_xts_properties.xml]]
+.Example _xts-properties.xml_configuration settings
+[source,xml]
+----
+include::{productSourceDir}/xts_guide/extras/example-xts-properties.xml[]
+----
+
+You can also specify the individual elements of the URL using the properties `coordinator.scheme`, `coordinator.address`, and so forth.
+These values only apply when the `coordinator.url` is not set.
+The URL is constructed by combining the specified values with default values for any missing elements.
+This is particularly useful for two specific use cases.
+
+. The first case is where the client is expected to use an XTS coordinator deployed in another {appServer}.
+If, for example, this {appServer} is bound to address `10.0.1.99` , setting property `coordinator.address` to `10.0.1.99` is normally all that is required to configure the coordinator URL to identity the remote {appServer}'s coordination service.
+If the Web service on the remote {appServer} were reset to `9090` then it would also be necessary to set property `coordinator.port` to this value.
+. The second common use case is where communications between client and coordinator, and between participant and coordinator, must use secure connections.
+If property `coordinator.scheme` is set to value `https`, the client's request to begin a transaction is sent to the coordinator service over a secure https connection.
+The XTS coordinator and participant services will ensure that all subsequent communications between coordinator and client or coordinator and web services also employ secure https connections.
+Note that this requires configuring the trust stores in the {appServer} running the client, coordinator and participant web services with appropriate trust certificates.
+
+[NOTE]
+====
+The property names have been abbreviated in order to fit into the table.
+They should each start with prefix `org.jboss.jbossts.xts11.coordinator`.
+====
+
+.Command-Line Options Passed with the `-DParameter`, Ordered by Priority
+[cols="1,1,1",options="header"]
+|===
+|Category|Property|Format
+|Absolute URL|
+[var]`$$...$$coordinatorURL`
+|http://coord.host:coord.port/ws-c11/ActivationService
+|Coordinator Scheme, Host, Port, and Path
+|`$$...$$coordinator.scheme`,
+`$$...$$coordinator.address`,
+`$$...$$coordinator.port`,
+`$$...$$coordinator.path`,
+|`http`, `server.bind.address`, `jboss.web.bind.port`
+|===

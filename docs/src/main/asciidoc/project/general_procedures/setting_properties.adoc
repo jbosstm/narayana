@@ -1,0 +1,37 @@
+
+
+[[_chap_jbossjta_installation_guide_test_chapter]]
+= Setting Properties
+
+{productName} has been designed to be highly configurable at runtime through the use of various property attributes.
+Although these attributes can be provided at runtime on the command line, it may be more convenient to specify them through a single properties file or via `setter` methods on the beans.
+At runtime, {productName} looks for the file `jbossts-properties.xml`, in a specific search order.
+
+[arabic]
+// which system property?
+. A location specified by a system property, allowing the normal search path to be overridden.
+. The directory from which the application was executed.
+. The home directory of the user that launched {productName}.
+// Is that like $JAVA_HOME?
+. `java.home`
+. The `CLASSPATH`, which normally includes the installation's `etc/` directory.
+. A default set of properties embedded in the `JAR` file.
+
+Where properties are defined in both the system properties by using the `-D` switch, and in the properties file, the value from the system property takes precedence.
+This facilitates overriding individual properties easily on the command line.
+
+The properties file uses `java.uil.Properties` XML format, for example:
+
+[source,xml]
+----
+<entry key="CoordinatorEnvironmentBean.asyncCommit">NO</entry>
+<entyr key="ObjectStoreEnvironmentBean.objectStoreDir">/var/ObjectStore</entry>
+----
+
+You can override the name of the properties file at runtime by specifying a new file using the `com.arjuna.ats.arjuna.common.propertiesFile` attribute variable.
+
+[NOTE]
+====
+Unlike earlier releases, there is no longer one properties file name per module.
+These properties file name key is now global for all {parentProduct} components in the JVM.
+====

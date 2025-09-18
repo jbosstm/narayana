@@ -1,0 +1,136 @@
+
+= Using the Transaction Bridge
+
+== Introduction
+
+This section describes how to use the transaction bridge in your applications.
+It is recommended you first read the preceding chapters for a theoretical background in the way the bridge functions.
+
+== Enabling
+
+TXBridge is integrated with the XTS subsystem of the {appServer}.
+The XTS subsystem is enabled using the `standalone-xts.xml` configuration
+
+.Procedure: Starting {appServer} with XTS Enabled
+. Change to the {appServer} directory:
++
+`cd $JBOSS_HOME`
+. Copy the example XTS configuration into the configurations directory:
++
+`cp docs/examples/configs/standalone-xts.xml standalone/configuration`
+. Start {appServer}, specifying the xts configuration:
++
+Linux:
++
+`bin/standalone.sh --server-config=standalone-xts.xml`
++
+Windows:
++
+`bin\standalone.bat --server-config=standalone-xts.xml`
+
+== Inbound Bridging
+
+To use the inbound bridge, register the JAX-WS handler into the handler chain of any Web Service as follows:
+
+.Registering the `handler` for Inbound Bridging
+[source,xml]
+----
+include::{productSourceDir}/txbridge_guide/extras/inboundbridging.xml[]
+----
+
+The web service may then operate as though running in the scope of a JTA transaction, as indeed it is.
+For example, it can call (or indeed simply be) an EJB3 business logic method annotated with `@TansactionAttribute(TransactionAttributeType.MANDATORY)`.
+
+Note that the handlers expect a WS-AT transaction context to be present on all inbound invocations.
+If you wish deploy your service in such a way as to make transactional invocation optional, you must expose it though two different endpoints, one transactional and one not, with the handlers registered only on the former.
+This limitation may be addressed in future versions.
+
+If WS-AT transaction context contains transaction timeout then the bridged JTA transaction is created with this timeout.
+If the context does not provide the information then the bridged JTA transaction is created with the default timeout defined by the container.
+
+== Outbound Bridging
+
+To use the outbound bridge, register the JAX-WS handler into the handler chain of any Web Service client application as follows:
+
+.Registering the `handler` for Outbound Bridging
+[source,xml]
+----
+include::{productSourceDir}/txbridge_guide/extras/outboundbridging.xml[]
+----
+
+The web service client may then make calls to web service implementations that expect to be invoked in the scope of a WS-AT transaction.
+
+Note that the handlers expect a JTA transaction context to be present on the client thread used to make the outbound web service invocation.
+If the context is not always present, different stubs must be used for the transactional and non-transactional cases and the handler chain registered only on the former.
+This limitation may be addressed in future versions.
+
+== Loops and Diamonds
+
+In distributed environments that utilize transaction bridging, it is possible to construct arrangements of servers such that a transaction context passes though more than one interposition.
+These can give rise to some undesirable issues, including locking and performance problems.
+
+A simple case would be a loop in which a JTA transaction context is bridged outbound to a WS-AT context, passed though one or more remote servers and inflowed back to the original server through an inbound bridge.
+This may result in a new subordinate JTA context, rather than reuse of the existing parent context in the original server.
+
+This situation has two main observable effects.
+Firstly, the parent JTA transaction and indirectly subordinate JTA transaction are considered distinct and `XAResources` may not be shared between them.
+In most cases this will cause isolation between the transactions, such that they do not share locks or see eachother's changes.
+This may cause deadlocks in the application.
+Secondly, performance will be poor relative to reuse of the original context, particularly if the interposition chain becomes long.
+
+A similar problem exists where a transaction context is propagated from a single source to a single destination server via two or more separate routes, the abstract paths forming a diamond shape.
+In such case the intermediate nodes operate independently and will bridge the original context to two separate interposed contexts.
+To the destination server these will appear unrelated, rather than as representations of the same transaction.
+Thus instead of recombining into a single shared transaction context at the destination, they will behave as different transactions, giving rise once again to potential deadlock and performance issues.
+
+These problems may be partially addressed by having a shared context mapping service available on the network, which each bridge consults when working with a previously unseen transaction context for the first time.
+Using such a mechanism, bridge instances may identify transactions for which an established mapping already exists and reuse that relationship rather than creating a new one.
+
+This shared service model does however cause some issues of its own with regard to performance and availability.
+It is not currently implemented.
+Therefore, users are urged to be cautious when constructing distributed applications.
+Whilst location abstraction is sometimes desirable, is is important to maintain a clear understanding of the deployment relationships between transactional components in the system.
+
+== Distributed JTA and the JTS
+
+The JavaEE transaction engine in {productName} comes in two varieties.
+These are the local only JTA, which does not support propagation of transaction context or transaction control calls between JVMs and the JTAX, which provides the JTA API implemented by a JTS engine that does support distributed usage.
+
+{appServer}
+
+uses the local JTA implementation by default, but can be reconfigured to use the JTS via the JTA API, such that it supports distributed transactions without requiring any changes to business applications.
+
+In environments requiring transaction propagation of JTA transactions, it is feasible to use either the JTS or an outbound and inbound bridge pair to achieve this.
+In the former case the transport is RMI/IIOP for the transaction control and RMI/IIOP or JRMP for the transactional business logic calls.
+In the latter case the transport is Web Services for both transaction control and business logic.
+
+From a transaction management perspective the JTS solution is preferred, due to simplicity (no protocol mapping is needed), maturity ({productName} JTS was the world's first JTS implementation and has been extensively used and tested in production environments) and performance (binary vs. xml).
+
+It is possible to use transactions that propagate context on some calls via JTS and on others via Web Services, such as a client invoking both EJBs via RMI/IIOP and Web services with WS-AT context.
+In such cases it's possible for a transaction to have multiple representations that the infrastructure cannot determine are related, even if they actually represent different contexts in the same interposition hierarchy.
+Care must therefore be taken to avoid the problems described previously in 'Loops and Diamonds'.
+
+== Logging
+
+The transaction bridge uses the jboss-logging system.
+When running inside {appServer}, logging is configured via logging subsystem's configuration in `standalone-xts.xml` file.
+To enable full logging for the transaction bridge, which may be useful for debug purposes, the following logger should be added:
+
+.Configuring Transaction Bridge Logging
+[source,xml]
+----
+include::{productSourceDir}/txbridge_guide/extras/txbridgelogging.xml[]
+----
+
+Note that the transaction bridge is a thin layer on top of the XTS and JTA/JTS components of {productName}, and that it also interacts with other parts of the application server.
+To gain a comprehensive understanding of the system's operation, it may be necessary to enable verbose logging for some of these other components also.
+The {productName} logging system is discussed in detail in the accompanying documentation set, but for ease of reference the following may be used to enable verbose logging:
+
+.Configuring verbose logging
+[source,xml]
+----
+include::{productSourceDir}/txbridge_guide/extras/verboselogging.xml[]
+----
+
+Note also that deployment ordering issues can result in {productName} components, including the transaction bridge, becoming active before the logging system is fully configured.
+In such cases a default logging level may apply during startup, resulting in some more detailed debug messages being missed.

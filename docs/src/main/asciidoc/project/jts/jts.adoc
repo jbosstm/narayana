@@ -1,0 +1,44 @@
+
+= JTS
+:doctype: book
+:sectnums:
+:toc: {toc}
+:icons: {icons}
+
+== Administration
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jts/introduction.adoc[]
+include::{projectSourceDir}/jts/ots_java_ee_transaction_service_management.adoc[]
+include::{projectSourceDir}/jts/orb_specific_configurations.adoc[]
+include::{projectSourceDir}/jts/initializing_jbossts_applications.adoc[]
+
+:leveloffset: -2
+
+== Development
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jts/overview.adoc[]
+include::{projectSourceDir}/jts/jbossts_basics.adoc[]
+include::{projectSourceDir}/jts/ots.adoc[]
+include::{projectSourceDir}/jts/constructing_an_ots_application.adoc[]
+include::{projectSourceDir}/jts/jbossts_interface.adoc[]
+include::{projectSourceDir}/jts/example.adoc[]
+include::{projectSourceDir}/jts/trailmap.adoc[]
+include::{projectSourceDir}/jts/failure_recovery.adoc[]
+include::{projectSourceDir}/jts/jta_and_jts.adoc[]
+include::{projectSourceDir}/jts/orb_specific_dev_configurations.adoc[]
+
+:leveloffset: -2
+
+== ORB Portability
+
+:leveloffset: +2
+
+include::{projectSourceDir}/jts/orb_portability_introduction.adoc[]
+include::{projectSourceDir}/jts/orb_portability_api.adoc[]
+include::{projectSourceDir}/jts/quick_start_to_jts_ots.adoc[]
+
+:leveloffset: -2

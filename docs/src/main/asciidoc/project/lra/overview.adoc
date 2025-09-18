@@ -1,0 +1,15 @@
+
+= Overview
+
+This guide describes the Naryana implementation, or Naryana LRA for short, of the MicroProfile LRA specification https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc The specification introduces annotations and APIs for services to coordinate long running activities whilst still maintaining loose coupling and doing so in such a way as to guarantee a globally consistent outcome without the need to take locks on data for extended periods.
+The specification has similarities to WS-BA except that it uses a simplified compensation model and as such it can expose certain failure conditions that are not present in WS-BA.
+Please refer to https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc#the-model for details of the state model used by the LRA specification.
+
+The basic idea is to group a collection of compensatable JAX-RS service interactions within a context, called a Long Running Action (LRA).
+The context is propagated on JAX-RS service requests and responses using a JAX-RS header.
+The implementation automatically adds the header to requests and responses before and after service method invocation (using JAX-RS filters as an implementation technique).
+An attribute of the @LRA annotation determines how the LRA is started and/or ended.
+
+A service may join the context by, in the case of a JAX-RS resource, providing REST endpoints (via annotations) that the implementation should invoke when the LRA is later closed or cancelled.
+The specification is transactional in the sense that all the endpoints involved in the interaction are informed about the decision to close or cancel the context regardless of system failures.
+

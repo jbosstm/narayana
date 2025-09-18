@@ -1,0 +1,4 @@
+
+= Additional JAR Requirements
+
+To use all of the facilities available within {productName}, you need to add all of the JAR files contained in the `lib/` directory of the distribution to the `CLASSPATH`.

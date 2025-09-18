@@ -1,0 +1,73 @@
+
+= Quickstarts Overview
+
+There are multiple quickstarts provided on Narayana GitHub repository which should give you a better understanding of how to use our software.
+This chapter will give you a brief overview where to find them and what technologies they demonstrate.
+
+[[ref_wsatmultiservice]]
+== WS-AT Multi-Service
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//XTS/wsat-jta-multi_service
+
+This quickstart uses JTA to manage WS-AT applications.
+The quickstart is composed of a client (the test) and two Web services (`FirstServiceAT` and `SecondServiceAT`).
+Both services are invoked by the test from within the same JTA transaction.
+
+The Client begins a JTA transaction and then invokes an operation on each service.
+Transaction context propagation is enabled by default.
+Therefore XTS automatically bridges the JTA transaction to a WS-AT transaction before each invocation is made.
+
+Each service uses JPA to persist its data (the value of a counter).
+Therefore, the service class is annotated with `jakarta.ejb.TransactionAttribute` which tells XTS to automatically bridge WS-AT transaction to JTA.
+
+[[ref_wsatmultihop]]
+== WS-AT Multi-Hop
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//XTS/wsat-jta-multi_hop
+
+This quickstart uses JTA to manage WS-AT applications.
+The quickstart is composed of a client (the test) and two Web services (`FirstServiceAT` and `SecondServiceAT`).
+
+The Client begins a JTA transaction and then invokes an operation on `FirstServiceAT`.
+Transaction context propagation is enabled by default.
+Therefore XTS automatically bridges the JTA transaction to a WS-AT transaction before the invocation is made.
+
+`FirstServiceAT` uses JPA to persist its data.
+Therefore, the service class is annotated with `jakarta.ejb.TransactionAttribute` which tells XTS to automatically bridge WS-AT transaction to JTA.
+The `FirstServiceAT` Web Service updates some local data and then invokes the `SecondServiceAT` Web services.
+
+Similarly, to when invoking `FirstServiceAT`, the JTA transaction is bridged to a WS-AT transaction when invoking `SecondServiceAT`.
+`SecondServiceAT` also uses JPA for persistence, so the incoming WS-AT transaction is again bridged to JTA.
+
+== XTS with SSL
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//XTS/ssl
+
+This example walks you through the steps required to setup two servers (client and server) that communicate via Web services over a secure connection.
+The example show how this can be done for WS-Atomic Transaction, but the same applies for WS Business Activity.
+
+== Raw XTS API Demo
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//XTS/raw-xts-api-demo
+
+This example demonstrates the whole range of XTS possibilities, including WS-AT and WS-BA.
+
+This example uses the Raw XTS API.
+It is only recommended for scenarios where the WS-AT to JTA integration is not appropriate; or where the Compensating Transactions API support for WS-BA is not appropriate.
+
+[[ref_compensationsnontransactionalresource]]
+== Non-transactional Resource with Compensating Transactions API
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//compensating-transactions/non-transactional_resource
+
+This example demonstrates the simple use case of our API for developing applications that use Compensating Transactions.
+It shows how a non-transactional activity (such as sending an email, or printing a document) can be coordinated in a compensating transaction.
+
+[[ref_compensationstravelagent]]
+== Travel Agent with Compensating Transactions API
+
+Quickstart URL: https://github.com/jbosstm/quickstart/tree//compensating-transactions/travel-agent
+
+This example demonstrates the more complex use case of our API for developing applications that use Compensating Transactions.
+It shows how a long running compensating transaction can be composed of a series of short-running ACID transactions.
+The example also involves multiple organisations and forms a distributed transaction over Web Services.

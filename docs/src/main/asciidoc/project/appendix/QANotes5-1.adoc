@@ -1,0 +1,634 @@
+
+:sectnums!:
+
+[appendix]
+= QA Testsuite
+
+In the source git repository we maintain a testsuite for integration testing.
+
+== JDBCResources 01 & 02
+
+=== Overview
+
+* Tests
+** JDBC Support
+* Series
+** JTSResources01: Implicit context propagation
+** JTSResources02: Explicit context propagation
+* Sub-series
+** _ibmdb2_jndi
+** _mssqlserver_jndi
+** _mysql_jndi
+** _oracle_thin_jndi
+** _pgsql_jndi
+** _sybase_jndi
+
+=== JDBCResources 01 & 02 Summary
+
+* Building blocks:
+** Interfaces: 1
+** Implementations: 2
+** Servers: 2
+** Setups: 2
+** Clients: 16
+** Outcomes: 4
+** Cleanups: 1
+* Tests:
+** Configurations: 32
+
+=== JDBCResources 01 & 02 Interfaces
+
+* InfoTable
+** insert(in string name, in string value)
+** update(in string name, in string value)
+** select(in string name, out string value)
+** delete(in string name)
+
+=== JDBCResources 01 & 02 Implementations
+
+* JDBCInfoTableImpl01
+** Creates a single JDBC connection for all operations
+* JDBCInfoTableImpl02
+** Creates a JDBC connection per operation
+
+=== JDBCResources 01 & 02 Server
+
+* Server01: 1 x JDBCInfoTableImpl01
+* Server02: 1 x JDBCInfoTableImpl02
+
+=== JDBCResources 01 & 02 Setups
+
+* Setup01
+** Creates Table InfoTable (Name VARCHAR(64), Value VARCHAR(64))
+*** Inserts 10 entries ("Name_’X’", "Value_’X’") [Where X is 0 … 9]
+* Setup02
+** Creates Table InfoTable (Name VARCHAR(64), Value VARCHAR(64))
+*** Inserts 10 entries ("Name_’X’", "Value_’X’") [Where X is 0 … 9]
+
+=== JDBCResources 01 & 02 Clients
+
+* Client01
+** Obtains an InfoTable object
+** Inserts 10 entries, no transaction
+** Verify existence of inserted entries, no transaction
+* Client02
+** Obtains an InfoTable object
+** Inserts 10 entries, within transaction
+** Verify existence of inserted entries, within transaction
+* Client03
+** Obtains an InfoTable object
+** Inserts 10 entries, within transaction
+** Update entry, with transaction which rolls back
+** Verify existence of inserted entries, within transaction
+* Client04
+** Obtains an InfoTable object
+** Inserts 10 entries, within transaction
+** Delete entry, with transaction which rolls back
+** Verify existence of inserted entries, within transaction
+* Client05
+** Obtains an InfoTable object
+** Inserts 10 entries, within transaction
+** Update entry, within transaction
+** Update same entry with old value, no transaction
+** Verify existence of inserted entries, within transaction
+* Client06
+** Obtains an InfoTable object
+** Inserts 10 entries, within transaction
+** Update entry, no transaction
+** Update same entry with old value, within transaction
+** Verify existence of inserted entries, within transaction
+* Client07
+** Obtains two InfoTable objects
+** Update 10 entries, split alternatively, over each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** No transaction
+* Client08
+** Obtains two InfoTable objects
+** Update 10 entries, split alternatively, over each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction
+* Client09
+** Obtains two InfoTable objects
+** Update 10 entries, split alternatively, over each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, per update
+* Client10
+** Obtains two InfoTable objects
+** Update 10 entries, split alternatively, over each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, which rolls back
+* Client11
+** Obtains two InfoTable objects
+** Update 10 entries, split alternatively, over each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, per update, which rolls back
+* Client12
+** Obtains two InfoTable objects
+** Update 10 entries, in each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** No transaction
+* Client13
+** Obtains two InfoTable objects
+** Update 10 entries, in each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction
+* Client14
+** Obtains two InfoTable objects
+** Update 10 entries, in each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, per update
+* Client15
+** Obtains two InfoTable objects
+** Update 10 entries, in each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, which rolls back
+* Client16
+** Obtains two InfoTable objects
+** Update 10 entries, in each object
+*** Name_’X’", "Value_’9-X’") [Where X is 0 … 9]
+*** Within transaction, per update, which rolls back
+
+=== JDBCResources 01 & 02 Outcomes
+
+* Outcome01
+** Verify existence and values of inserted entries
+* Outcome02
+** Verify existence and values [reverse] of inserted entries
+* Outcome03
+** Verify existence and values of inserted entries, in two InfoTables
+* Outcome04
+** Verify existence and values [reverse] of inserted entries, in two InfoTables
+
+=== JDBCResources 01 & 02 Cleanups
+
+* Cleanup01
+** Drops Table "InfoTable"
+
+=== JDBCResources 01 & 02 Configurations
+
+* Test001: 1 x Server01 + 1 x Client01
+* Test002: 1 x Server01 + 1 x Client02
+* Test003: 1 x Server01 + 1 x Client03
+* Test004: 1 x Server01 + 1 x Client04
+* Test005: 1 x Server01 + 1 x Client05
+* Test006: 1 x Server01 + 1 x Client06
+* Test007: 1 x Server02 + 1 x Client01
+* Test008: 1 x Server02 + 1 x Client02
+* Test009: 1 x Server02 + 1 x Client03
+* Test010: 1 x Server02 + 1 x Client04
+* Test011: 1 x Server02 + 1 x Client05
+* Test012: 1 x Server02 + 1 x Client06
+* Test013: 2 x Server01 + 1 x Client07 + Outcome02
+* Test014: 2 x Server01 + 1 x Client08 + Outcome02
+* Test015: 2 x Server01 + 1 x Client09 + Outcome02
+* Test016: 2 x Server01 + 1 x Client10 + Outcome01
+* Test017: 2 x Server01 + 1 x Client11 + Outcome01
+* Test018: 2 x Server02 + 1 x Client07 + Outcome02
+* Test019: 2 x Server02 + 1 x Client08 + Outcome02
+* Test020: 2 x Server02 + 1 x Client09 + Outcome02
+* Test021: 2 x Server02 + 1 x Client10 + Outcome01
+* Test022: 2 x Server02 + 1 x Client11 + Outcome01
+* Test023: 2 x Server01 + 1 x Client12 + Outcome04
+* Test024: 2 x Server01 + 1 x Client13 + Outcome04
+* Test025: 2 x Server01 + 1 x Client14 + Outcome04
+* Test026: 2 x Server01 + 1 x Client15 + Outcome03
+* Test027: 2 x Server01 + 1 x Client16 + Outcome03
+* Test028: 2 x Server02 + 1 x Client12 + Outcome04
+* Test029: 2 x Server02 + 1 x Client13 + Outcome04
+* Test030: 2 x Server02 + 1 x Client14 + Outcome04
+* Test031: 2 x Server02 + 1 x Client15 + Outcome03
+* Test032: 2 x Server02 + 1 x Client16 + Outcome03
+
+== JDBCResources 03 & 04
+
+=== Overview
+
+* Tests
+** JDBC Support – Conflict over resource
+** May fail: Depending on DB’s behaviour
+* Series
+** JTSResources03: Implicit context propagation
+** JTSResources04: Explicit context propagation
+* Sub-series
+** _ibmdb2_jndi
+** _mssqlserver_jndi
+** _mysql_jndi
+** _oracle_thin_jndi
+** _pgsql_jndi
+** _sybase_jndi
+
+=== JDBCResources 03 & 04 Summary
+
+* Building blocks:
+** Interfaces: 1
+** Implementations: 2
+** Servers: 2
+** Setups: 1
+** Clients: 1
+** Outcomes: 1
+** Cleanups: 1
+* Tests:
+** Configurations: 4
+
+=== JDBCResources 03 & 04 Interfaces
+
+* NumberTable
+** get(in string name, out long value)
+** set(in string name, in long value)
+** increase(in string name)
+
+=== JDBCResources 03 & 04 Implementations
+
+* JDBCNumberTableImpl01
+** Creates a single JDBC connection for all operations
+* JDBCNumberTableImpl02
+** Creates a JDBC connection per operation
+
+=== JDBCResources 03 & 04 Server
+
+* Server01: 1 x JDBCNumberTableImpl01
+* Server02: 1 x JDBCNumberTableImpl02
+
+=== JDBCResources 03 & 04 Setups
+
+* Setup01
+** Creates Table NumberTable
+*** Name VARCHAR(64), Value INTEGER)
+** Inserts n entries
+*** Name_’X’", "0") [Where X is 0 … n - 1]
+
+=== JDBCResources 03 & 04 Clients
+
+* Client01
+** Operation
+*** Obtains an NumberTable object
+*** Begin transaction
+*** Gets Values for "Name_0" and "Name_1"
+*** Increase value associated with "Name_0"
+*** Sleeps 15 sec.
+*** Increase value associated with "Name_1"
+*** Gets Values for "Name_0" and "Name_1"
+*** Commit(true) transaction
+** Passes if:
+*** New values are the same, and equals old values plus one, or
+*** InvocationException thrown with Reason "ReasonCantSerializeAccess"
+
+=== JDBCResources 03 & 04 Outcomes
+
+* Outcome01
+** Verify first n entries (0 … n - 1) have value n
+
+=== JDBCResources 03 & 04 Cleanups
+
+* Cleanup01
+** Drops Table "NumberTable"
+
+=== JDBCResources 03 & 04 Configurations
+
+* Test01: 1 x Server01 + 2 x Client01 + Outcome01
+* Test02: 2 x Server01 + 2 x Client01 + Outcome01
+* Test03: 1 x Server02 + 2 x Client01 + Outcome01
+* Test04: 2 x Server02 + 2 x Client01 + Outcome01
+
+== CurrentTests
+
+=== Overview
+
+* Tests
+** Test Current interface
+** Close to "Unit Tests"
+
+=== CurrentTests01 Summary
+
+* Building blocks:
+** Interfaces: 0
+** Implementations: 0
+** Servers: 0
+** Clients: 34
+** Outcomes: 0
+* Tests:
+** Configurations: 34
+** TestXX.java maps to Test0XX.conf
+
+=== CurrentTests Clients
+
+* Tests 01 through 16: Complete transaction and then check that a further operation throws NoTransaction:
+* Test17
+
+.Tests 01 through 16
+[cols="1,1,1,1,1", options="header"]
+|===
+|Op To Check | None | begin commit(true) | begin commit(false) | begin rollback
+
+|commit(true)
+|Test01
+|Test05
+|Test09
+|Test13
+
+|commit(false)
+|Test02
+|Test06
+|Test10
+|Test14
+
+|rollback()
+|Test03
+|Test07
+|Test11
+|Test15
+
+|rollback_only()
+|Test04
+|Test08
+|Test12
+|Test16
+|===
+
+** Create a series if 1000 transactions, terminated with commit(true)
+** Checks all names (get_transaction_name) are unique
+* Test18
+** Create a series if 1000 transactions, terminated with commit(false)
+** Checks all names (get_transaction_name) are unique
+* Test19
+** Create a series if 1000 transactions, terminated with rollback()
+** Checks all names (get_transaction_name) are unique
+* Test20
+** Create and suspends 1000 transactions
+** Resumes transactions in series
+** Checks names (get_transaction_name) correspond
+* Test21
+** Preamble: None
+** Checks if suspend return null, then not transaction
+* Test22
+** Preamble: begin(), commit(true)
+** Checks if suspend return null, then not transaction
+* Test23
+** Preamble: begin(), commit(false)
+** Checks if suspend return null, then not transaction
+* Test24
+** Preamble: begin(), rollback()
+** Checks if suspend return null, then not transaction
+* Test25
+** Checks resume(null) does not throw InvalidControl
+* Test26
+** Checks that resume() of transaction terminated with commit(true) throws InvalidControl
+* Test27
+** Checks that resume() of transaction terminated with commit(false) throws InvalidControl
+* Test28
+** Checks that resume() of transaction terminated with rollback() throws InvalidControl
+* Test29
+** Preamble: None
+** Checks that get_status() when no transaction returns StatusNoTransaction
+* Test30
+** Preamble: begin(), commit(true)
+** Checks that get_status() when no transaction returns StatusNoTransaction
+* Test31
+** Preamble: begin(), commit(false)
+** Checks that get_status() when no transaction returns StatusNoTransaction
+* Test32
+** Preamble: begin(), rollback()
+** Checks that get_status() when no transaction returns StatusNoTransaction
+* Test33
+** Checks that get_status() when in transaction returns StatusActive
+* Test34
+** Checks that get_status() when in transaction marked roll back only returns StatusMarkedRollback
+
+== OTSServer
+
+=== Overview
+
+* Tests
+** Tests OTSServer (a TransactionFactory interface implementation)
+** Test001 to Test006 (Test003 to Test006 requires "DYNAMIC") - ClientXX.java maps to Test0XX.conf
+** Test007 to Test012 - ClientXX.java maps to Test0XX.conf with args 1000
+** Test013 to Test016 - Client13: x1, x2 with args 4 250 and x3, x4 with args 4 100
+** Test017 to Test020 - Client13: x1, x2 with args 4 250 and x3, x4 with args 4 100
+
+=== OTSServer Summary
+
+* Building blocks:
+** Interfaces: 0
+** Implementations: 0
+** Servers: 1 (OTS_Server)
+** Clients: 14
+** Outcomes: 0
+* Tests:
+** Configurations: 20
+
+=== OTSServer Clients
+
+* Test01
+** Creates a transaction via transactionFactory.create(0)
+** Check its status is StatusActive
+** Check commit(true) does not throw exception
+* Test02
+** Creates a transaction via transactionFactory.create(0)
+** Check its status is StatusActive
+** Check rollback() does not throw exception
+* Test03
+** Creates a transaction via transactionFactory.create(4)
+** Check its status is StatusRolledBack, after 8 seconds
+* Test04
+** Creates a transaction via transactionFactory.create(4)
+** Check commit(true) throws INVALID_TRANSACTION or BAD_OPERATION, after 8 seconds
+* Test05
+** Creates a transaction via transactionFactory.create(4)
+** Check commit(false) throws INVALID_TRANSACTION or BAD_OPERATION, after 8 seconds
+* Test06
+** Creates a transaction via transactionFactory.create(4)
+** Check commit(true) throws INVALID_TRANSACTION or BAD_OPERATION, after 8 seconds
+* Test07
+** Creates a transaction via transactionFactory.create(0)
+** Check its status is StatusActive
+** Check commit(true) does not throw exception, repeat n times
+* Test08
+** Creates a transaction via transactionFactory.create(0)
+** Check its status is StatusActive
+** Check commit(false) does not throw exception, repeat n times
+* Test09
+** Creates a transaction via transactionFactory.create(0)
+** Check its status is StatusActive
+** Check rollback() does not throw exception, repeat n times
+* Test10
+** Creates a transaction via transactionFactory.create(0), repeat n times
+** Check each status is StatusActive
+** Check each commit(true) does not throw exception
+* Test11
+** Creates a transaction via transactionFactory.create(0), repeat n times
+** Check each status is StatusActive
+** Check each commit(false) does not throw exception
+* Test12
+** Creates a transaction via transactionFactory.create(0), repeat n times
+** Check each status is StatusActive
+** Check each rollback() does not throw exception
+* Test13
+** Create n threads which does m times
+*** Creates a transaction via transactionFactory.create(0)
+*** Check its status is StatusActive
+*** Checks commit(true), commit(false), rollback(), alternatively, does not throw an exception
+* Test14
+** Create n threads which does
+*** Creates a transaction via transactionFactory.create(0) m times
+*** Check each status is StatusActive
+*** Checks each commit(true), commit(false), rollback(), alternatively, does not throw an exception
+
+== AITResources
+
+=== Overview
+
+* AIT
+** Advanced(/Arjuna) Integrated(/Interface) Transactions
+** Transactional Objects for Java
+* Series
+** AITResources01: Implicit context propagation
+** AITResources02: Explicit context propagation
+* Tests
+** Transaction Engine
+** AIT support
+** Context propagation
+** Memory problems
+
+=== AITResources 01 & 02 Summary
+
+* Building blocks:
+** Interfaces: 2 (Counter & PingPong)
+** Implementations: 4 (3 Counter, 1 PingPong)
+** Servers: 10
+** Clients: 17
+** Outcomes: 2
+* Tests:
+** Functional: 44
+** Memory: 14
+** Configurations: 58
+
+=== AITResources Interfaces
+
+* Counter
+** get()
+** set()
+** increase()
+** getMemory()
+* PingPong
+** hit(count, ping, pong)
+*** If count != 0, call hit on ping, with count-1, and ping and pong swapped
+*** If count == 0, increase a value in object
+** bad_hit(count, bad_count, ping, pong)
+*** similar to hit(), except if bad_count == 0, abort transaction
+** get()
+** getMemory()
+
+=== AITResources Implementations
+
+* AITCounterImpl01 - Operations create [nested] transactions (AtomicTransaction)
+* AITCounterImpl02 - Operations create [nested] transactions (OTS.current)
+* AITCounterImpl03 - Operations do not create transactions
+* AITPingPongImpl01 - Operations create [nested] transactions (AtomicTransaction)
+
+=== AITResources Server
+
+* Server01: 1 x AITCounterImpl01
+* Server02: 4 x AITCounterImpl01
+* Server03: 1 x AITCounterImpl02
+* Server04: 4 x AITCounterImpl02
+* Server05: 1 x AITCounterImpl01, 1 x AITCounterImpl02
+* Server06: 2 x AITCounterImpl01, 2 x AITCounterImpl02
+* Server07: 1 x AITPingPongImpl01
+* Server08: 2 x AITPingPongImpl01
+* Server09: 1 x AITCounterImpl03
+* Server10: 4 x AITCounterImpl03
+
+=== AITResources Clients
+
+* Client01
+** Performs 1000 increase(), no client transaction
+** Does get() to check counter value now 1000
+* Client02
+** Performs 1000 increase(), each with own transaction
+** Transactions are alternatively committed/rolled back
+** Does get() to check counter value now 500
+* Client03
+** Memory check version of Client01
+* Client04
+** Memory check version of Client02
+* Client05
+** Performs 10 hit(), with count 0,1,2 … 9, ping and pong same, no client transaction
+** Does get() to check value now 10
+* Client06
+** Performs 10 hit(), with count 0,1,2 … 9, ping and pong different, no client transaction
+** Does get(), on both ping and pong, to check values are now 5
+* Client07
+** Memory check version of Client05
+* Client08
+** Memory check version of Client06
+* Client09
+** Performs 1000 successful increase(), no client transaction
+* Client10
+** Performs 10 bad_hit(), with count 0,1,2 … 9, for each bad_count 0 … count, ping and pong same, no client transaction
+** Does get() to check value now 0
+* Client11
+** Performs 10 bad_hit(), with count 0,1,2 … 9 , for each bad_count 0 … count, ping and pong different, no client transaction
+** Does get(), on both ping and pong, to check values are now 0
+* Client12
+** Memory check version of Client10
+* Client13
+** Memory check version of Client11
+* Client14
+** Creates n threads, which each performs m successful increase(), no client transaction
+** Does get() to check counter value now n * m
+* Client15
+** Memory check version of Client14
+* Client16
+** Creates n threads, which each performs m successful increase(), each with own transaction, commits if increase() was successful, rolls bask if increase() was unsuccessful
+** Does get() to check counter value now n * m
+* Client17
+** Memory check version of Client16
+
+=== AITResources Outcomes
+
+* Outcome01
+* Checks if a counter has an "expected value"
+* Outcome02
+* Checks if two counters has an "expected value"
+
+=== AITResources Memory Tests
+
+* General form:
+** Perform test pattern (reduced)
+*** Make sure all classes loaded
+*** Caches full
+** Get memory of all Clients and Servers
+*** Repeat: run GC, get memory until no further decreases
+** Perform test pattern
+** Get memory of all Clients and Servers
+*** Repeat: run GC, get memory until no further decreases
+** Perform check
+
+== CrashRecovery
+
+=== CrashRecovery Summary
+
+* CrashRecovery01
+** Tests replay_completion (Implicit context propagation)
+* CrashRecovery02 (_1: One resource & _2: Two resource)
+** Tests behaviour server crash (Implicit context propagation)
+* CrashRecovery03
+** Tests replay_completion called with null (Implicit context propagation)
+* CrashRecovery04
+** Tests replay_completion (Explicit context propagation)
+* CrashRecovery05 (_1: One resource & _2: Two resource)
+** Tests behaviour server crash (Explicit context propagation)
+* CrashRecovery06
+** Tests replay_completion called with null (Explicit context propagation)
+* CrashRecovery07
+** Tests behaviour client crash (Implicit context propagation)
+* CrashRecovery08
+** Tests behaviour client crash (Explicit context propagation)
+* CrashRecovery09
+** Tests automatic TO (AIT) resource initiated crash recovery (Implicit context propagation)
+** Not supported by system, if passes caused by recovery manager initiated crash recovery ]
+* CrashRecovery10
+** Tests automatic TO (AIT) resource initiated crash recovery (Explicit context propagation)
+** Not supported by system, if passes caused by recovery manager initiated crash recovery ]
+
+:sectnums:

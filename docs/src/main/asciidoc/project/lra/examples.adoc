@@ -1,0 +1,110 @@
+
+[[lra_examples]]
+= Examples
+
+== LRA Quickstart Examples
+
+There are some quickstarts with README.md files for using LRAs in the quickstart repository: https://github.com/jbosstm/quickstart/tree/master/rts/lra-examples and https://github.com/jbosstm/quickstart/tree/master/rts/lra
+
+== Participating in Long Running Actions
+
+The following code snippet shows the basic steps for writing service methods (and associated participant resource) that will result in the registration of a participant in a new or an existing LRA.
+
+[source,java]
+----
+@LRA(value = LRA.Type.REQUIRED, // if there is no incoming context a new one is created
+     cancelOn = {
+         Response.Status.INTERNAL_SERVER_ERROR // cancel on a 500 code
+     },
+     cancelOnFamily = {
+         Response.Status.Family.CLIENT_ERROR // cancel on any 4xx code
+     },
+     end = false) // the LRA will continue to run when the method finishes
+@Path("/book")
+@POST
+public Response bookTrip(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId,
+                         @HeaderParam(LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentLRA) {
+    if (parentLRA != null) { // is the context nested
+          // code which is sensitive to executing with a nested context goes here
+    }
+    ...
+}
+
+@LRA(LRA.Type.MANDATORY, // requires an active context before method can be executed
+     end = true) // end the LRA started by the bookTrip method
+@Path("/confirm")
+@PUT
+public Booking confirmTrip(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId,
+                           @HeaderParam(LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentLRA,
+                           Booking booking) throws BookingException {
+    if (parentLRA != null) { // is the context nested
+          // code which is sensitive to executing with a nested context goes here
+    }
+    // lookup data associated with the incoming LRA (lraId)
+    ...
+}
+
+@Complete
+@Path("/complete")
+@PUT
+public Response completeWork(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId)
+{
+    /*
+     * Free up resources allocated in the context of the LRA identified by the
+     * value in the injected JAX-RS header.
+     *
+     * Since there is no @Status method in this class, completeWork MUST be
+     * idempotent and MUST return the status.
+     */
+    return Response.ok(ParticipantStatus.Completed.name()).build();
+}
+
+@Compensate
+@Path("/compensate")
+@PUT
+public Response compensateWork(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId)
+{
+    /*
+     * The LRA identified by the value in the injected JAX-RS header was
+     * cancelled so the business logic should compensate for any actions
+     * that have been performed while running in its context.
+     *
+     * Since there is no @Status method in this class, compensateWork MUST be
+     * idempotent and MUST return the status
+    */
+    return Response.ok(ParticipantStatus.Compensated.name()).build();
+}
+----
+
+== Making JAX-RS Invocations from JAX-RS Resource Methods
+
+According to the specification the LRA context (https://download.eclipse.org/microprofile/microprofile-lra-2.0-RC1/microprofile-lra-spec-2.0-RC1.html#_setting_the_context_on_outgoing_jax_rs_requests) is implicitly propagated to outgoing requests.
+The Narayana implementation enforces this requirement by storing the LRA context with the thread used to service the incoming request and then reading it if the service methods makes outgoing requests and adds the context to the outgoing headers.
+Although exhaustive testing of the implementation indicates that this requirement is met there is still a concern because the JAX-RS specification does not mandate that the same thread is used for the incoming and outgoing requests.
+We therefore recommend that the service writer explicitly set the context on outgoing requests as shown in the following code snippet:
+
+[source,java]
+----
+    @LRA(value = LRA.Type.REQUIRED)
+    @PUT
+    public Response addContextHeader(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+        // some business logic
+
+        // create an invocation builder for a remote service
+        Invocation.Builder builder = ClientBuilder.newClient()
+            .target(context.getBaseUri())
+            .path(resource)
+            .path(path)
+            .request();
+
+        // explicitly set the context
+        builder.header(LRA_HTTP_CONTEXT_HEADER, lraId); // lraId must be valid
+
+        Response response = builder.put(Entity.text("bodyText"));
+
+        // more business logic
+
+        return Response.ok().entity(lraId.toASCIIString()).build();
+    }
+    ...
+----

@@ -1,0 +1,103 @@
+
+= Design Notes
+
+== General Points
+
+This section records key design points relating to the bridge implementation.
+The target audience for this section is software engineers maintaining or extending the transaction bridge implementation.
+It is unlikely to contain material useful to users, except in so far as they wish to contribute to the project.
+An in-depth knowledge of {productName} internals may be required to make sense of some parts of this appendix.
+
+The `txbridge` is written as far as possible as a user application layered on top of the JTA and XTS implementations.
+It accesses these underlying components through standard or supported APIs as far as possible.
+For example, `XAResource` is favored over `AbstractRecord`, the JCA standard `XATerminator` is used for driving subordinates and so on.
+This facilitates modularity and portability.
+
+It follows that functionality required by the bridge should first be evaluated for inclusion in one of the underlying modules, as experience has shown it is often also useful for other user applications.
+For example, improvements to allows subordinate termination code portability between JTA and JTS, and support for subordinate crash recovery have benefited from this approach.
+The `txbridge` remains a thin layer on top of this functionality, containing only purpose specific code.
+
+The 'loops and diamonds' problem boils down to providing deterministic, bi-directional 1:1 mapping between an Xid (which is fixed length) and a WS-AT context (which is unbounded length in the spec, although bounded for instances created by the XTS).
+Consistent hashing techniques get you so far with independent operation, but the only 100% solution is to have a shared service on the network providing the mapping lookup.
+Naturally this then becomes a single point of failure as well as a scalability issue.
+For some scenarios it may be possible to use interceptors to propagate the Xid on the web services call as extra data, instead of trying to reproduce the mapping at the other end.
+Unfortunately XA does not provide for this kind of extensibility, although CORBA does, leading to the possibility of solving the issue without a centralized approach in mixed JTS+WS-AT environments.
+
+Requiring a tx context on all calls is a bit limiting, but JBossWS native lacks a WS-Policy implementation.
+Things may change with the move to CXF.
+This is really a wider issue with XTS, not just the bridge.
+
+== Crash Recovery Considerations
+
+As usual with transactions, it's the crash recovery that provides for the most complexity.
+Recovery for the inbound and outbound sides is handled independently.
+Because of event ordering between recovery modules (JTA, XTS), it requires two complete cycles to resolve some of these crash recovery situations.
+
+=== Inbound Crash Recovery
+
+An inbound transaction involves at least four log writes.
+Top down (i.e. in reverse order of log creation) these are: The WS-AT coordinator log (assumed here to be XTS, but may be 3rd party), the XTS Participant log in the receiving server, the JCA Subordinate transaction log and at least one XA Resource Manager log (which are 3rd party e.g. Oracle).
+
+There is no separate log created by the `txbridge`.
+The XTS Participant log inlines the Serializable `BridgeDurableParticipant` via its writeObject method.
+Recorded state includes its identity (the Xid) and the identity of the separately logged JTA subordinate tx (a Uid).
+
+XTS is responsible for the top level coordinator log.
+{productName} is responsible for the JTA subordinate tx log and 3rd party RMs are each responsible for their own.
+
+The following situations may exist at recovery time, according to the point in time at which the crash occurred:
+
+RM log only: In this case, the `InboundBridgeRecoveryManager`'s `XAResourceOrphanFilter` implementation will be invoked via {productName} `XARecoveryModule`, will recognize the orphaned Xids by their formatId (which they inherit from the JCA subordinate, which the `txbridge` previously created with a specially constructed inflowed Xid) and will vote to have the `XARecoveryModule` roll them back as no corresponding JCA subordinate log exists, so presumed abort applies.
+
+RM log and JTA subordinate tx log: The `InboundBridgeRecoverytManager`'s scan of indoubt subordinate JTA transactions identifies the JTA subordinate as being orphaned and rolls it back, which in turn causes the rollback of the RM's `XAResource`.
+
+RM log, JTA subordinate log and XTS Participant log: XTS is responsible for detecting that the Participant is orphaned (by re-sending Prepared to the Coordinator and receiving 'unknown tx' back) and initiating rollback under the presumed abort convention.
+
+WS-AT coordinator log and all downstream logs: The coordinator re-sends Commit to the Participant and the transaction completes.
+
+=== Outbound Crash Recovery
+
+An outbound transaction involves log writes for the JTA parent transaction and the XTS `BridgeWrapper` coordinator.
+There is not a separate log created by the `txbridge`.
+The JTA tx log inlines the Serializable `BridgeXAResource` via its writeObject method.
+Recorded state includes the JTA tx id and `BridgeWrapper` id String.
+In addition a Web Service participating in the subordinate transaction will create a log.
+Assuming it's XTS, the participant side log will inline any `Serializable Durable2PCParticipant`, effectively forming the RM log.
+
+The following situations may exist at recovery time, according to the point in time at which the crash occurred:
+
+RM log (i.e. XTS Participant log, inlining `Serializable Durable2PCParticipant`) only: XTS is responsible for detecting that the Participant is orphaned (its direct parent, the subordinate coordinator, is missing) and rolling it back.
+The bridge recovery code is not involved – XTS recovery deserializes and drives any app DurableParticipants directly.
+
+RM log and XTS subordinate log: The `DurableParticipant`(s) (i.e. client side) and XTS subordinate coordinator / `BridgeWrapper` (i.e. server side) and reinstantiated by XTS.
+The `BridgeWrapper`, being subordinate to a missing parent, must be identified and explicitly rolledback by the bridge recovery code.
+The bridge recovery manager is itself a RecoveryModule, thus invoked periodically to perform this task.
+It identified its own `BridgeWrapper` instance from amongst all those awaiting recovery by means of an id prefix specific to the `txbridge` code.
+See `JBTM-725` for further details.
+
+RM log, XTS subordinate log and JTA parent log (with inlined `BridgeXAResource`): Top down recovery by the JTA recovery module drives tx to completion, taking the normal JTA parent->`BridgeXAResource`->XTS subordinate->`DurableParticipant` path.
+Note that if the bridge is the only `XAResource` in the parent, the JTA must have 1PC commit optimization disabled or it won't write a log for recovery.
+
+== Test framework
+
+The test suite for the `txbridge` is split along two axis.
+Firstly, the inbound and outbound sides of the bridge have their own test suites in a parallel code package hierarchy.
+These are largely mirrors, containing tests which have matching intent but different implementation details.
+Secondly, the tests are split between those for normal execution and those for crash recovery.
+
+The tests use a framework consisting of a basic servlet acting as client (the code pre-dates the availability of XTS lightweight client), a basic web service as server and a set of utility classes implementing the appropriate interfaces (`Participant`/`Synchronization`/`XAResource`).
+These classes contain the bare minimum of test logic.
+In order to make the tests as easy to understand and modify as possible, an attempt is made to capture the entirety of the test logic within the junit test function instead of splitting it over the framework classes.
+To facilitate this, extensive use is made of byteman and its associated dtest library, which provides basic distributed mock-like execution tracing and configuration.
+You probably need to take a detour and read the dtest docs before proceeding further.
+
+The basic tests all follow the same pattern: make a call through the bridge, following different logic paths in each test, and verify that the test resources see the expected method calls.
+For example, in a test that runs a transaction successfully, expect to see commit called on enlisted resources and rollback not called.
+For a test that configures the prepare to fail, expect to see rollback called and commit not called.
+The tests verify behavior in the presence of 'expected' errors e.g. prepare failures, but generally don't cover unexpected failures e.g. exceptions thrown from commit.
+
+Test normal execution targets in the `tests/build.xml` assume the server is started manually with byteman installed and has XTS, `txbridge` and the test artifacts deployed.
+Note that it also contains targets that may be called to achieve the last of these steps.
+
+The crash rec tests start (and subsequently restart) the server automatically, but assume the that XTS, `txbridge` and the test artifacts are deployed.
+To manage the server they need to be provided with `JBOSS_HOME` and `JAVA_HOME` values in the `build.xml`.

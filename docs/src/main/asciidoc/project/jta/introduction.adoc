@@ -1,0 +1,5 @@
+
+[[jta_introduction]]
+= Introduction
+
+The notions explained here are to be considered as extensions of what has already been presented in the link:#important_points_for_administrators[General Procedures' Administration section].

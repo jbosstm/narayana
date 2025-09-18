@@ -1,0 +1,21 @@
+
+= JTA and JTS
+
+== Distributed JTA
+
+This guide describes how to use the JTA interfaces for purely local transactions.
+This is a high-performance implementation, but you can only use it to execute transactions within the same process.
+If you need support for distributed transactions, the JTA needs to use the JTS.
+Another advantage of this approach is interoperability with other JTS-compliant transaction systems.
+
+[NOTE]
+====
+If you use the JTS and JTA interfaces to manage the same transactions, the JTA needs to be configured to be aware of the JTS.
+Otherwise, local transactions will be unaware of their JTS counterparts.
+====
+
+You need to do this configuration manually, because some applications may be using {parentProduct} in a purely local manner, or may need to differentiate between transactions managed by JTS and JTA.
+
+.Procedure: Making the JTA interfaces JTS-aware
+. Set `JTAEnvironmentBean.jtaTMImplementation` to `com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple`.
+. Set `JTAEnvironmentBean.jtaUTImplementation` to `com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple`.

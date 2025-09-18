@@ -1,0 +1,44 @@
+
+:sectnums!:
+
+[appendix]
+[[_transaction_statuses]]
+= REST-AT Transaction Statuses
+
+Resources return the following status values in response to GET requests on the appropriate `transaction-coordinator` or `participant-resource` URI:
+
+TransactionRollbackOnly::
+the status of the endpoint is that it will roll back eventually.
+TransactionRollingBack::
+the endpoint is in the process of rolling back.
+If the recipient has already rolled back then it must return a 410 error code.
+TransactionRolledBack::
+the endpoint has rolled back.
+TransactionCommitting::
+the endpoint is in the process of committing.
+This does not mean that the final outcome will be Committed.
+If the recipient has already committed then it must return a 410 error code.
+TransactionCommitted::
+the endpoint has committed.
+TransactionCommittedOnePhase::
+the recipient has committed the transaction without going through a prepare phase.
+If the recipient has previously been asked to prepare then it must return a 412 error code.
+If the recipient has already terminated, then it must return a 410 error code.
+TransactionHeuristicRollback::
+all of the participants rolled back when they were asked to commit.
+TransactionHeuristicCommit::
+all of the participants committed when they were asked to rollback.
+TransactionHeuristicHazard::
+some of the participants rolled back, some committed and the outcome of others is indeterminate.
+TransactionHeuristicMixed::
+some of the participants rolled back whereas the remainder committed.
+TransactionPreparing::
+the endpoint is preparing.
+TransactionPrepared::
+the endpoint has prepared.
+TransactionActive::
+the transaction is active, i.e., has not begun to terminate.
+TransactionStatusUnknown::
+the status of the transaction is unknown
+
+:sectnums:

@@ -1,0 +1,211 @@
+
+= Constructing an OTS application
+
+== Important notes for {parentProduct}
+
+=== Initialization
+
+{parentProduct} must be correctly initialized before you create any application object.
+To guarantee this, use the `initORB` and POA methods described in the _Orb Portability Guide_.
+Consult _the Orb Portability Guide_ if you need direct use of the `ORB_init` and `create_POA` methods provided by the underlying ORB.
+
+=== Implicit context propagation and interposition
+
+If you need implicit context propagation and interposition, initialize {parentProduct} correctly before you create any objects.
+You can only use implicit context propagation on an ORB which supports filters and interceptors, or the `CosTSPortability` interface.
+You can set `OTS_CONTEXT_PROP_MODE` to `CONTEXT` or `INTERPOSITION`, depending on which functionality you need.
+If you are using the {parentProduct} API, you need to use interposition.
+
+== Writing applications using the raw OTS interfaces
+
+.Steps to participate in an OTS transaction
+* Create `Resource` and `SubtransactionAwareResource` objects for each object which will participate within the transaction or sub-transaction.
+These resources manage the persistence, concurrency control, and recovery for the object.
+The OTS invokes these objects during the prepare, commit, or abort phase of the transaction or sub-transaction, and the Resources perform the work of the application.
+* Register `Resource` and `SubtransactionAwareResource` objects at the correct time within the transaction, and ensure that the object is only registered once within a given transaction.
+As part of registration, a `Resource` receives a reference to a `RecoveryCoordinator`.
+This reference must be made persistent, so that the transaction can recover in the event of a failure.
+* Correctly propagate resources such as locks to parent transactions and `SubtransactionAwareResource` objects.
+* Drive the crash recovery for each resource which was participating within the transaction, in the event of a failure.
+
+The OTS does not provide any `Resource` implementations.
+You need to provide these implementations.
+The interfaces defined within the OTS specification are too low-level for most situations. {parentProduct} is designed to make use of raw _Common Object Services (COS)_ interfaces, but provides a higher-level API for building transactional applications and framework.
+This API automates much of the work involved with participating in an OTS transaction.
+
+== Transaction context management
+
+If you use implicit transaction propagation, ensure that appropriate objects support the `TransactionalObject` interface.
+Otherwise, you need to pass the transaction contexts as parameters to the relevant operations.
+
+=== A transaction originator: indirect and implicit
+
+.Indirect and implicit transaction originator
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/indirect_and_implicit.java[]
+----
+
+A transaction originator uses indirect context management and implicit transaction propagation.
+`txn_crt` is a pseudo object supporting the `Current` interface.
+The client uses the `begin` operation to start the transaction, which becomes implicitly associated with the originator’s thread of control.
+
+The program commits the transaction associated with the client thread.
+The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
+
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/indirect_and_implicit_close.java[]
+----
+
+=== Transaction originator: direct and explicit
+
+.Direct and explicit transaction originator
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/direct_and_explicit.java[]
+----
+
+This transaction originator uses direct context management and explicit transaction propagation.
+The client uses a factory object supporting the `CosTransactions::TransactionFactory` interface to create a new transaction, and uses the returned `Control` object to retrieve the `Terminator` and `Coordinator` objects.
+
+The client issues requests, some of which involve transactional objects.
+This example uses explicit propagation of the context.
+The `Control` object reference is passed as an explicit parameter of the request.
+It is declared in the OMG IDL of the interface.
+
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/direct_and_explicit_client_requests.java[]
+----
+
+The transaction originator uses the `Terminator` object to commit the transaction.
+The `report_heuristics` argument is set to `false`, so the Transaction Service makes no reports about possible heuristic decisions.
+
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/direct_and_explicit_commit.java[]
+----
+
+== Implementing a transactional client
+
+The `commit` operation of `Current` or the `Terminator` interface takes the `boolean` `report_heuristics` parameter.
+If the `report_heuristics` argument is `false`, the commit operation can complete as soon as the `Coordinator` makes the decision to commit or roll back the transaction.
+The application does not need to wait for the `Coordinator` to complete the commit protocol by informing all the participants of the outcome of the transaction.
+This can significantly reduce the elapsed time for the commit operation, especially where participant `Resource` objects are located on remote network nodes.
+However, no heuristic conditions can be reported to the application in this case.
+
+Using the `report_heuristics` option guarantees that the commit operation does not complete until the `Coordinator` completes the commit protocol with all `Resource` objects involved in the transaction.
+This guarantees that the application is informed of any non-atomic outcomes of the transaction, through one of the exceptions `HeuristicMixed` or `HeuristicHazard`.
+However, it increases the application-perceived elapsed time for the commit operation.
+
+== Implementing a recoverable server
+
+A Recoverable Server includes at least one transactional object and one resource object, each of which have distinct responsibilities.
+
+=== Transactional object
+
+The transactional object implements the transactional object's operations and registers a `Resource` object with the `Coordinator`, so that the Recoverable Server's resources, including any necessary recovery, can commit.
+
+The `Resource` object identifies the involvement of the Recoverable Server in a particular transaction.
+This requires a `Resource` object to only be registered in one transaction at a time.
+Register a different `Resource` object for each transaction in which a recoverable server is concurrently involved.
+A transactional object may receive multiple requests within the scope of a single transaction.
+It only needs to register its involvement in the transaction once.
+The `is_same_transaction` operation allows the transactional object to determine if the transaction associated with the request is one in which the transactional object is already registered.
+
+The `hash_transaction` operations allow the transactional object to reduce the number of transaction comparisons it has to make.
+All `Coordinators` for the same transaction return the same hash code.
+The `is_same_transaction` operation only needs to be called on `Coordinators` with the same hash code as the `Coordinator` of the current request.
+
+=== Resource object
+
+A `Resource` object participates in the completion of the transaction, updates the resources of the Recoverable Server in accordance with the transaction outcome, and ensures termination of the transaction, including across failures.
+
+=== Reliable servers
+
+A _Reliable Server_ is a special case of a Recoverable Server.
+A Reliable Server can use the same interface as a Recoverable Server to ensure application integrity for objects that do not have recoverable state.
+In the case of a Reliable Server, the transactional object can register a `Resource` object that replies `VoteReadOnly` to `prepare` if its integrity constraints are satisfied.
+It replies `VoteRollback` if it finds a problem.
+This approach allows the server to apply integrity constraints which apply to the transaction as a whole, rather than to individual requests to the server.
+
+=== Examples
+
+.Reliable server
+====
+[source,C]
+----
+include::{projectSourceDir}/jts/extras/reliable_server.java[]
+----
+====
+
+.Transactional object
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/transactional_object.java[]
+----
+
+== Failure models
+
+The Transaction Service provides atomic outcomes for transactions in the presence of application, system or communication failures.
+From the viewpoint of each user object role, two types of failure are relevant:
+
+* A local failure, which affects the object itself.
+* An external failure, such as failure of another object or failure in the communication with an object.
+
+The transaction originator and transactional server handle these failures in different ways.
+
+=== Transaction originator
+
+Local failure::
+If a Transaction originator fails before the originator issues `commit`, the transaction is rolled back.
+If the originator fails after issuing commit and before the outcome is reported, the transaction can either commit or roll back, depending on timing.
+In this case, the transaction completes without regard to the failure of the originator.
+
+External failure::
+Any external failure which affects the transaction before the originator issues `commit` causes the transaction to roll back.
+The standard exception `TransactionRolledBack` is raised in the originator when it issues `commit`.
++
+If a failure occurs after commit and before the outcome is reported, the client may not be informed of the outcome of the transaction.
+This depends on the nature of the failure, and the use of the `report_heuristics` option of `commit`.
+For example, the transaction outcome is not reported to the client if communication between the client and the `Coordinator` fails.
++
+A client can determine the outcome of the transaction by using method `get_status` on the `Coordinator`.
+However, this is not reliable because it may return the status `NoTransaction`, which is ambiguous.
+The transaction could have committed and been forgotten, or it could have rolled back and been forgotten.
++
+An originator is only guaranteed to know the transaction outcome in one of two ways.
++
+* if its implementation includes a `Resource` object, so that it can participate in the two-phase commit procedure.
+* The originator and `Coordinator` must be located in the same failure domain.
+
+=== Transactional server
+
+Local failure::
+If the Transactional Server fails, optional checks by a Transaction Service implementation may make the transaction to roll back.
+Without such checks, whether the transaction rolls back depends on whether the commit decision is already made, such as when an unchecked client invokes `commit` before receiving all replies from servers.
+
+External failure::
+Any external failure affecting the transaction during the execution of a Transactional Server causes the transaction to be rolled back.
+If the failure occurs while the transactional object’s method is executing, the failure has no effect on the execution of this method.
+The method may terminate normally, returning the reply to its client.
+Eventually the `TransactionRolledBack` exception is returned to a client issuing `commit`.
+
+Recoverable server::
+Behavior of a recoverable server when failures occur is determined by the two phase commit protocol between the `Coordinator` and the recoverable server’s `Resource` object.
+
+== Summary
+
+When you develop OTS applications which use the raw OTS interfaces, be aware of the following items:
+
+* Create `Resource` and `SubtransactionAwareResource` objects for each object which will participate within the transaction or sub-transaction.
+These resources handle the persistence, concurrency control, and recovery for the object.
+The OTS invokes these objects during the prepare, commit, and abort phases of the transaction or sub-transaction, and the `Resources` then perform all appropriate work.
+* Register `Resource` and `SubtransactionAwareResource` objects at the correct time within the transaction, and ensure that the object is only registered once within a given transaction.
+As part of registration, a `Resource` receives a reference to a `RecoveryCoordinator`, which must be made persistent so that recovery can occur in the event of a failure.
+* For nested transactions, make sure that any propagation of resources, such as locks to parent transactions, are done correctly.
+You also need to manage propagation of `SubtransactionAwareResource` objects to parents.
+* in the event of failures, drive the crash recovery for each `Resource` which participates within the transaction.
+
+The OTS does not provide any `Resource` implementations.

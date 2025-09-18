@@ -1,0 +1,201 @@
+
+= The Resource Manager
+
+== The `XAResource` interface
+
+Some transaction specifications and systems define a generic resource which can be used to register arbitrary resources with a transaction, the JTA is much more XA-specific.
+Interface `javax.transaction.xa.XAResource` is a Java mapping of the XA interface.
+The `XAResource` interface defines the contract between a `ResourceManager` and a `TransactionManager` in a distributed transaction processing environment.
+A resource adapter for a `ResourceManager` implements the `XAResource` interface to support association of a top-level transaction to a resource such as a relational database.
+
+The `XAResource` interface can be supported by any transactional resource adapter designed to be used in an environment where transactions are controlled by an external transaction manager, such a database management system.
+An application may access data through multiple database connections.
+Each database connection is associated with an `XAResource` object that serves as a proxy object to the underlying `ResourceManager` instance.
+The transaction manager obtains an `XAResource` for each `ResourceManager` participating in a top-level transaction.
+The `start` method associates the transaction with the resource, and the `end` method disassociates the transaction from the resource.
+
+The `ResourceManager` associates the transaction with all work performed on its data between invocation of `start` and `end` methods.
+At transaction commit time, these transactional `ResourceManager` s are informed by the transaction manager to prepare, commit, or roll back the transaction according to the two-phase commit protocol.
+
+For better Java integration, the `XAResource` differs from the standard `XA` interface in the following ways:
+
+* The resource adapter implicitly initializes the `ResourceManager` when the resource (the connection) is acquired.
+There is no equivalent to the `xa_open` method of the interface `XA`.
+* `Rmid` is not passed as an argument.
+Each `Rmid` is represented by a separate `XAResource` object.
+* Asynchronous operations are not supported, because Java supports multi-threaded processing and most databases do not support asynchronous operations.
+* Error return values caused by the transaction manager's improper handling of the `XAResource` object are mapped to Java exceptions via the `XAException` class.
+* The DTP concept of Thread of Control maps to all Java threads that are given access to the `XAResource` and `Connection` objects.
+For example, it is legal for two different threads to perform the `start` and `end` operations on the same `XAResource` object.
+
+=== Extended `XAResource` control
+
+By default, whenever an `XAResource` object is registered with a JTA-compliant transaction service, there is no way to manipulate the order in which it is invoked during the two-phase commit protocol, with respect to other `XAResource` objects.
+{productName}, however, provides support for controlling the order via the two interfaces `com.arjuna.ats.jta.resources.StartXAResource` and `com.arjuna.ats.jta.resources.EndXAResource`.
+By inheriting your `XAResource` instance from either of these interfaces, you control whether an instance of your class is invoked first or last, respectively.
+
+[NOTE]
+====
+Only one instance of each interface type may be registered with a specific transaction.
+====
+
+The _ArjunaCore Development Guide_ discusses the _Last Resource Commit optimization (LRCO)_, whereby a single resource that is only one-phase aware, and does not support the `prepare` phase, can be enlisted with a transaction that is manipulating two-phase aware participants.
+This optimization is also supported within the {productName}.
+
+In order to use the LRCO, your `XAResource` implementation must extend the `com.arjuna.ats.jta.resources.LastResourceCommitOptimisation` marker interface.
+A marker interface is an interface which provides no methods.
+When enlisting the resource via method `Transaction.enlistResource`, {productName} ensures that only a single instance of this type of participant is used within each transaction.
+Your resource is driven last in the commit protocol, and no invocation of method `prepare` occurs.
+
+By default an attempt to enlist more than one instance of a `LastResourceCommitOptimisation` class will fail and false will be returned from `Transaction.enlistResource`.
+This behavior can be overridden by setting the `com.arjuna.ats.jta.allowMultipleLastResources` to true.
+However, before doing so you should read the section on enlisting multiple one-phase aware resources.
+
+[IMPORTANT]
+====
+You need to disable interposition support to use the LCRO in a distributed environment.
+You can still use implicit context propagation.
+====
+
+==== Enlisting multiple one-phase-aware resources
+
+One-phase commit is used to process a single one-phase aware resource, which does not conform to the two-phase commit protocol.
+You can still achieve an atomic outcome across resources, by using the LRCO, as explained earlier.
+
+Multiple one-phase-aware resources may be enlisted in the same transaction.
+One example is when a legacy database runs within the same transaction as a legacy JMS implementation.
+In such a situation, you cannot achieve atomicity of transaction outcome across multiple resources, because none of them enter the `prepare` state.
+They commit or roll back immediately when instructed by the transaction coordinator, without knowledge of other resource states and without a way to undo if subsequent resources make a different choice.
+This can result in data corruption or heuristic outcomes.
+
+You can approach these situations in two different ways:
+
+* Wrap the resources in compensating transactions.
+See the _XTS Transactions Development Guide_ for details.
+* Migrate the legacy implementations to two-phase aware equivalents.
+
+If neither of these options is viable, {productName} support enlisting multiple one-phase aware resources within the same transaction, using LRCO, which is discussed in the _ArjunaCore Development Guide_ in detail.
+
+[WARNING]
+====
+Even when this support is enabled, {productName} issues a warning when it detects that the option has been enabled: You have chosen to enable multiple last resources in the transaction manager.
+This is transactionally unsafe and should not be relied upon.
+Another warning is issued when multiple one-phase aware resources are enlisted within a transaction: This is transactionally unsafe and should not be relied on.
+
+To override the above-mentioned warning at runtime, set the `CoreEnvironmentBean.disableMultipleLastResourcesWarning` property to `true`.
+You will see a warning that you have done this when {productName} starts up and see the warning about enlisting multiple one-phase resources only the first time it happens, but after that no further warnings will be output.
+You should obviously only consider changing the default value of this property (false) with caution.
+====
+
+== Opening a resource manager
+
+The X/Open `XA` interface requires the transaction manager to initialize a resource manager, using method `xa_open`, before invoking any other of the interface's methods.
+JTA requires initialization of a resource manager to be embedded within the resource adapter that represents the resource manager.
+The transaction manager does not need to know how to initialize a resource manager.
+It only informs the resource manager about when to start and end work associated with a transaction and when to complete the transaction.
+The resource adapter opens the resource manager when the connection to the resource manager is established.
+
+== Closing a resource manager
+
+The resource adapter closes a resource manager as a result of destroying the transactional resource.
+A transaction resource at the resource adapter level is comprised of two separate objects:
+
+* An `XAResource` object that allows the transaction manager to start and end the transaction association with the resource in use and to coordinate transaction completion process.
+* A connection object that allows the application to perform operations on the underlying resource, such as JDBC operations on an RDBMS.
+
+Once opened, the resource manager is kept open until the resource is released explicitly.
+When the application invokes the connection's `close` method, the resource adapter invalidates the connection object reference that was held by the application and notifies the application server about the close.
+The transaction manager invokes the `XAResource.end` method to disassociate the transaction from that connection.
+
+The close notification triggers the application server to perform any necessary cleanup work and to mark the physical XA connection as free for reuse, if connection pooling is in place.
+
+== Thread of control
+
+The X/Open `XA` interface specifies that the transaction-association-related _xa_ calls must be invoked from the same thread context.
+This _thread-of-control_ requirement does not apply to the object-oriented component-based application run-time environment, in which application threads are dispatched dynamically as methods are invoked.. Different threads may use the same connection resource to access the resource manager if the connection spans multiple method invocation.
+Depending on the implementation of the application server, different threads may be involved with the same `XAResource` object.
+The resource context and the transaction context operate independent of thread context.
+This creates the possibility of different threads invoking the `start` and `end` methods.
+
+If the application server allows multiple threads to use a single `XAResource` object and the associated connection to the resource manager, the application server must ensure that only one transaction context is associated with the resource at any point of time.
+Thus the `XAResource` interface requires the resource managers to support the two-phase commit protocol from any thread context.
+
+== Transaction association
+
+A transaction is associated with a transactional resource via the `start` method and disassociated from the resource via the `end` method.
+The resource adapter internally maintains an association between the resource connection object and the `XAResource` object.
+At any given time, a connection is associated with zero or one transaction.
+JTA does not support nestedtransactions, so attempting to invoke the `start` method on a thread that is already associated with a transaction is an error.
+
+The transaction manager can Interleave multiple transaction contexts using the same resource, as long as methods `start` and `end` are invoked properly for each transaction context switch.
+Each time the resource is used with a different transaction, the method `end` must be invoked for the previous transaction that was associated with the resource, and method `start` must be invoked for the current transaction context.
+
+== Externally controlled connections
+
+For a transactional application whose transaction states are managed by an application server, its resources must also be managed by the application server so that transaction association is performed properly.
+If an application is associated with a transaction, the application must not perform transactional work through the connection without having the connection's resource object already associated with the global transaction.
+The application server must ensure that the `XAResource` object in use is associated with the transaction, by invoking the `Transaction.enlistResource` method.
+
+If a server-side transactional application retains its database connection across multiple client requests, the application server must ensure that before dispatching a client request to the application thread, the resource is enlisted with the application's current transaction context.
+This implies that the application server manages the connection resource usage status across multiple method invocations.
+
+== Resource sharing
+
+When the same transactional resource is used to interleave multiple transactions, the application server must ensure that only one transaction is enlisted with the resource at any given time.
+To initiate the transaction commit process, the transaction manager is allowed to use any of the resource objects connected to the same resource manager instance.
+The resource object used for the two-phase commit protocol does not need to have been involved with the transaction being completed.
+
+The resource adapter must be able to handle multiple threads invoking the `XAResource` methods concurrently for transaction commit processing.
+This is illustrated in <<resource_sharing_example>> .
+
+[[resource_sharing_example]]
+.Resource sharing example
+====
+[source,java]
+----
+include::{productSourceDir}/development_guide/extras/resource_sharing_example.java[]
+----
+
+A transactional resource _r1_.
+Global transaction _xid1_ is started and ended with r1.
+Then a different global transaction _xid2_ is associated with _r1_.
+Meanwhile, the transaction manager may start the two phase commit process for _xid1_ using _r1_ or any other transactional resource connected to the same resource manager.
+The resource adapter needs to allow the commit process to be executed while the resource is currently associated with a different global transaction.
+====
+
+== Local and global transactions
+
+The resource adapter must support the usage of both local and global transactions within the same transactional connection.
+Local transactions are started and coordinated by the resource manager internally.
+The `XAResource` interface is not used for local transactions.
+When using the same connection to perform both local and global transactions, the following rules apply:
+
+* The local transaction must be committed or rolled back before a global transaction is started in the connection.
+* The global transaction must be disassociated from the connection before any local transaction is started.
+
+== Transaction timeouts
+
+You can associate timeout values with transactions in order to control their lifetimes.
+If the timeout value elapses before a transaction terminates, by committing or rolling back, the transaction system rolls it back.
+The `XAResource` interface supports a `setTransactionTimeout` operation, which allows the timeout associated with the current transaction to be propagated to the resource manager and if supported, overrides any default timeout associated with the resource manager.
+Overriding the timeout can be useful when long-running transactions may have lifetimes that would exceed the default, and using the default timeout would cause the resource manager to roll back before the transaction terminates, and cause the transaction to roll back as well.
+
+If You do not explicitly set a timeout value for a transaction, or you use a value of `0`, an implementation-specific default value may be used.
+In {productName}, property value `CoordinatorEnvironmentBean.defaultTimeout` represents this implementation-specific default, in seconds.
+The default value is 60 seconds.
+A value of `0` disables default transaction timeouts.
+
+Unfortunately, imposing the same timeout as the transaction on a resource manager is not always appropriate.
+One example is that your business rules may require you to have control over the lifetimes on resource managers without allowing that control to be passed to some external entity.
+{productName} supports an all-or-nothing approach to whether or not method `setTransactionTimeout` is called on `XAResource` instances.
+
+If the `JTAEnvironmentBean.xaTransactionTimeoutEnabled` property is set to `true`, which is the default, it is called on all instances.
+Otherwise, use the `setXATransactionTimeoutEnabled` method of `com.arjuna.ats.jta.common.Configuration` .
+
+== Dynamic registration
+
+Dynamic registration is not supported in `XAResource`. There are two reasons this makes sense.
+
+* In the Java component-based application server environment, connections to the resource manager are acquired dynamically when the application explicitly requests a connection.
+These resources are enlisted with the transaction manager on an as-needed basis.
+* If a resource manager needs to dynamically register its work to the global transaction, you can implement this at the resource adapter level via a private interface between the resource adapter and the underlying resource manager.

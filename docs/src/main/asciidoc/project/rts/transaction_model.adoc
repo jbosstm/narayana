@@ -1,0 +1,46 @@
+
+= Transaction Model
+:imagesdir: images
+
+The REST Atomic Transaction (RESTAT) model uses a traditional two-phase commit protocol with the following optimizations:
+
+* Presumed rollback: the transaction coordinator need not record information about the participants in stable storage until it decides to commit, i.e., until after the prepare phase has completed successfully.
+A definitive answer that a transaction does not exist can be used to infer that it rolled back.
+* One-phase: if the coordinator discovers that only a single participant is registered then it may omit the prepare phase.
+* Read-only: a participant that is responsible for a service that did not modify any transactional data during the course of the transaction can indicate to the coordinator during prepare that it is a read-only participant and the coordinator can omit it from the second phase of the commit protocol.
+
+[[_architecture]]
+== Architecture
+
+The diagram below illustrates the various resources defined within the RESTAT protocol.
+We shall discuss each of these in the following sections.
+
+.Architecture
+image::rts-architecture.png[align="center"]
+
+These components are enumerated below and discussed in the following sections:
+
+* Transaction Manager: this is a factory resource that is responsible for creating new transactions.
+Once created, the transaction manager has no further role to play in the life of the transaction.
+* Transaction Coordinator: this is a specific resource for the transaction.
+It drives the two-phase commit protocol and manages interactions with participants.
+* Client: the user of transactions.
+* Service: a transaction-aware service that performs work that may need to be coordinated with other such services elsewhere.
+* Participant: a resource that manages the state changes performed by the service in the context of a transaction.
+The participant is driven through two-phase commit by the coordinator.
+
+== State Transitions
+
+A transaction coordinator and two-phase participant go through the state transitions shown:
+
+.StateTransitions
+image::rts-state_transitions.png[align="center"]
+
+As such, all of the resources in the protocol have statuses that can be represented as one of these values.
+Asking a resource to change its state from, say, Active to Committed, may drive it through all of the intermediate states and as a result trigger protocol specific events, such as driving the two-phase commit protocol.
+
+== The Transaction Manager Resource
+
+The transaction manager is represented by a URI (referred to as the _transaction-manager_ URI).
+It enables clients to create new transaction resources and to query the list of current transactions.
+The actual URI depends upon how RESTAT is deployed and will be discussed later.

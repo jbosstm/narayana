@@ -1,0 +1,176 @@
+
+= Example
+:imagesdir: images
+
+This example illustrates the concepts and the implementation details for a simple client/server example using implicit context propagation and indirect context management.
+
+== The basic example
+
+This example only includes a single unit of work within the scope of the transaction.
+Consequently, only a one-phase commit is needed.
+
+The client and server processes are both invoked using the `implicit propagation` and `interposition` command-line options.
+
+For the purposes of this worked example, a single method implements the `DemoInterface` interface.
+This method is used in the DemoClient program.
+
+.idl interface
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/example-idl-interface.java[]
+----
+
+=== Example implementation of the interface
+
+This section deals with the pieces needed to implement the example interface.
+
+==== Resource
+
+The example overrides the methods of the `Resource` implementation class.
+The `DemoResource` implementation includes the placement of `System.out.println` statements at judicious points, to highlight when a particular method is invoked.
+
+Only a single unit of work is included within the scope of the transaction.
+Therefore, the `prepare` or `commit` methods should never be invoked, but the `commit_one_phase` method should be invoked.
+
+.DemoResource
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/example-DemoResource.java[]
+----
+
+==== Transactional implementation
+
+At this stage, the _Demo.idl_ has been processed by the ORB's idl compiler to generate the necessary client and server package.
+
+Line 14 returns the transactional context for the `Current` pseudo object.
+After obtaining a `Control` object, you can derive the Coordinator object (line 16).
+
+Lines 17 and 19 create a resource for the transaction, and then inform the ORB that the resource is ready to receive incoming method invocations.
+
+Line 20 uses the `Coordinator` to register a `DemoResource` object as a participant in the transaction.
+When the transaction terminates, the resource receives requests to commit or rollback the updates performed as part of the transaction.
+
+.Transactional implementation
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/transactional-implementation.java[]
+----
+
+==== Server implementation
+
+First, you need to to initialize the ORB and the POA.
+Lines 10 through 14 accomplish these tasks.
+
+The servant class `DemoImplementation` contains the implementation code for the `DemoInterface` interface.
+The servant services a particular client request.
+Line 16 instantiates a servant object for the subsequent servicing of client requests.
+
+Once a servant is instantiated, connect the servant to the POA, so that it can recognize the invocations on it, and pass the invocations to the correct servant.
+Line 18 performs this task.
+
+Lines 20 through to 21 registers the service through the default naming mechanism.
+More information about the options available can be found in the ORB Portability Guide.
+
+If this registration is successful, line 23 outputs a `sanity check` message.
+
+Finally, line 25 places the server process into a state where it can begin to accept requests from client processes.
+
+.DemoServer
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/DemoServer.java[]
+----
+
+After the server compiles, you can use the command line options defined below to start a server process.
+By specifying the usage of a filter on the command line, you can override settings in the _TransactionService.properties_ file.
+
+[NOTE]
+====
+if you specify the interposition filter, you also imply usage of implicit context propagation.
+====
+
+==== Client implementation
+
+The client, like the server, requires you to first initialize the ORB and the POA.
+Lines 14 through 18 accomplish these tasks.
+
+After a server process is started, you can obtain the object reference through the default publication mechanism used to publish it in the server.
+This is done in lines 20 and 21.
+Initially the reference is an instance of `Object`.
+However, to invoke a method on the servant object, you need to narrow this instance to an instance of the `DemoInterface` interface.
+This is shown in line 21.
+
+Once we have a reference to this servant object, we can start a transaction (line 23), perform a unit of work (line 25) and commit the transaction (line 27).
+
+.DemoClient
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/DemoClient.java[]
+----
+
+==== Sequence diagram
+
+The sequence diagram illustrates the method invocations that occur between the client and server.
+The following aspects are important:
+
+* You do not need to pass the transactional context as a parameter in method `work`, since you are using implicit context propagation.
+* Specifying the use of interposition when the client and server processes are started, by using appropriate filters and interceptors, creates an interposed coordinator that the servant process can use, negating any requirement for cross-process invocations.
+The interposed coordinator is automatically registered with the root coordinator at the client.
+* The resource that commits or rolls back modifications made to the transactional object is associated, or registered, with the interposed coordinator.
+* The `commit` invocation in the client process calls the root coordinator.
+The root coordinator calls the interposed coordinator, which in turn calls the `commit_one_phase` method for the resource.
+
+.Sequence Diagram
+image::jts-sequence-diagram.png[]
+
+==== Interpretation of output
+
+The server process first stringifies the servant instance, and writes the servant IOR to a temporary file.
+The first line of output is the sanity check that the operation was successful.
+
+In this simplified example, the coordinator object has only a single registered resource.
+Consequently, it performs a `commit_one_phase` operation on the resource object, instead of performing a `prepare` operation, followed by a `commit` or `rollback`.
+
+The output is identical, regardless of whether implicit context propagation or interposition is used, since interposition is essentially performance aid.
+Ordinarily, you may need to do a lot of marshaling between a client and server process.
+
+.Server output
+====
+----
+Object reference written to file
+commit_one_phase called
+----
+====
+
+== Default settings
+
+These settings are defaults, and you can override them at run-time by using property variables, or in the properties file in the `etc/` directory of the installation.
+
+* Unless a CORBA object is derived from `CosTransactions::TransactionalObject`,you do not need to propagate any context.
+In order to preserve distribution transparency, {parentProduct} defaults to always propagating a transaction context when calling remote objects, regardless of whether they are marked as transactional objects.
+You can override this by setting the `com.arjuna.ats.jts.alwaysPropagateContext` property variable to `NO`.
+* If an object is derived from `CosTransactions::TransactionalObject`, and no client context is present when an invocation is made, {parentProduct} transmits a null context.
+Subsequent transactions begun by the object are top-level.
+If a context is required, then set the `com.arjuna.ats.jts.needTranContext` property variable to `YES`, in which case {parentProduct} raises the _TransactionRequired_ exception.
+* {parentProduct} needs a persistent object store, so that it can record information about transactions in the event of failures.
+If all transactions complete successfully, this object store has no entries.
+The default location for this must be set using the `ObjectStoreEnvironmentBean.objectStoreDir` variable in the properties file.
+* If you use a separate transaction manager for `Current`, its location is obtained from the _CosServices.cfg_ file.
+_CosServices.cfg_ is located at runtime by the `OrbPortabilityEnvironmentBean` properties `initialReferencesRoot` and `initialReferencesFile`.
+The former is a directory, defaulting to the current working directory.
+The latter is a file name, relative to the directory.
+The default value is `CosServices.cfg` .
+* Checked transactions are not enabled by default.
+This means that threads other than the transaction creator may terminate the transaction, and no check is made to ensure all outstanding requests have finished prior to transaction termination.
+To override this, set the `JTSEnvironmentBean.checkedTransactions` property variable to `YES`.
+* {empty}
++
+
+[NOTE]
+====
+As of {parentProduct} 4.5, transaction timeouts are unified across all transaction components and are controlled by ArjunaCore.
+The old JTS configuration property com.arjuna.ats.jts.defaultTimeout still remains but is deprecated.
+====
++
+if a value of `0` is specified for the timeout of a top-level transaction, or no timeout is specified, {parentProduct} does not impose any timeout on the transaction.
+To override this default timeout, set the `CoordinatorEnvironmentBean.defaultTimeout` property variable to the required timeout value in seconds.

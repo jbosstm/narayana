@@ -1,0 +1,27 @@
+
+= Errors and Exceptions
+
+This section covers the types and causes of errors and exceptions which may be thrown or reported during a transactional application.
+
+====
+.Errors and Exceptions
+
+`NO_MEMORY`::
+The application has run out of memory, and has thrown an `OutOfMemoryError` exception.
+{productName} has attempted to do some cleanup, by running the garbage collector, before re-throwing the exception.
+This is probably a transient problem and retrying the invocation should succeed.
+
+`com.arjuna.ats.arjuna.exceptions.FatalError`::
+An error has occurred, and the error is of such severity that the transaction system must shut down.
+Prior to this error being thrown the transaction service ensures that all running transactions have rolled back.
+If an application catches this error, it should tidy up and exit.
+If further work is attempted, application consistency may be violated.
+
+`com.arjuna.ats.arjuna.exceptions.ObjectStoreError`::
+An error occurred while the transaction service attempted to use the object store.
+Further forward progress is not possible.
+====
+
+Object store warnings about access problems on states may occur during the normal execution of crash recovery.
+This is the result of multiple concurrent attempts to perform recovery on the same transaction.
+It can be safely ignored.

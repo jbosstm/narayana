@@ -1,0 +1,199 @@
+
+= ORB Portability API
+
+== Using the ORB and OA
+
+The `ORB` class shown below provides a uniform way of using the ORB.
+There are methods for obtaining a reference to the ORB, and for placing the application into a mode where it listens for incoming connections.
+There are also methods for registering application-specific classes to be invoked before or after ORB initialisation.
+Note, some of the methods are not supported on all ORBs, and in this situation, a suitable exception will be thrown.
+The ORB class is a factory class which has no public constructor.
+To create an instance of an ORB you must call the getInstance method passing a unique name as a parameter.
+If this unique name has not been passed in a previous call to `getInstance` you will be returned a new ORB instance.
+Two invocations of getInstance made with the same unique name, within the same JVM, will return the same ORB instance.
+
+._ORB.java_
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/ORB.java[]
+----
+
+We shall now describe the various methods of the ORB class.
+
+* `initORB`: given the various parameters, this method initialises the ORB and retains a reference to it within the ORB class.
+This method should be used in preference to the raw ORB interface since the {parentProduct} requires a reference to the ORB.
+If this method is not used, setOrb must be called prior to using {parentProduct}.
+* `orb`: this method returns a reference to the ORB.
+After shutdown is called this reference may be null.
+* `shutdown`: where supported, this method cleanly shuts down the ORB.
+Any pre- and post- ORB shutdown classes which have been registered will also be called.
+See the section titled ORB and OA Initialisation.
+This method must be called prior to application termination.
+It is the application programmer's responsibility to ensure that no objects or threads continue to exist which require access to the ORB.
+It is ORB implementation dependant whether outstanding references to the ORB remain useable after this call.
+* `addAttribute`: this method allows the application to register classes with {parentProduct} which will be called either before, or after the ORB has been initialised.
+See the section titled ORB and OA Initialisation.
+If the ORB has already been initialised then the attribute object will not be added, and false will be returned.
+* `run`: these methods place the ORB into a listening mode, where it waits for incoming invocations.
+
+The OA classes shown below provide a uniform way of using Object Adapters (OA).
+There are methods for obtaining a reference to the OA.
+There are also methods for registering application-specific classes to be invoked before or after OA initialisation.
+Note, some of the methods are not supported on all ORBs, and in this situation, a suitable exception will be thrown.
+The OA class is an abstract class and provides the basic interface to an Object Adapter.
+It has two sub-classes `RootOA` and `ChildOA`, these classes expose the interfaces specific to the root Object Adapter and a child Object Adapter respectively.
+From the `RootOA` you can obtain a reference to the `RootOA` for a given ORB by using the static method get`RootOA`.
+To create a `ChildOA` instance use the createPOA method on the `RootOA`.
+
+._OA.java_
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/OA.java[]
+----
+
+We shall now describe the various methods of the OA class.
+
+* `initPOA`: this method activates the POA, if this method is called on the `RootPOA` the POA with the name `RootPOA` will be activated.
+* `createPOA`: if a child POA with the specified name for the current POA has not already been created then this method will create and activate one, otherwise `AdapterAlreadyExists` will be thrown.
+This method returns a `ChildOA` object.
+* `initOA`: this method calls the initPOA method and has been retained for backwards compatibility.
+* `rootPoa`: this method returns a reference to the root POA.
+After destroy is called on the root POA this reference may be null.
+* `poa`: this method returns a reference to the POA.
+After destroy is called this reference may be null.
+* `destroy`: this method destroys the current POA, if this method is called on a `RootPOA` instance then the root POA will be destroyed along with its children.
+* `shutdown`: this method shuts down the POA.
+* `addAttribute`: this method allows the application to register classes with {parentProduct} which will be called either before or after the OA has been initialised.
+
+See below.
+If the OA has already been initialised then the attribute object will not be added, and false will be returned.
+
+=== ORB and OA Initialisation
+
+It is possible to register application-specific code with the ORB portability library which can be executed either before or after the ORB or OA are initialised.
+Application programs can inherit from either `com.arjuna.orbportability.orb.Attribute` or `com.arjuna.orbportability.oa.Attribute` and pass these instances to the addAttribute method of the ORB/OA classes respectively:
+
+._Attribute.java_
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/Attribute.java[]
+----
+
+By default, the `postORBInit/postOAInit` methods return true, which means that any instances of derived classes will be invoked after either the ORB or OA have been initialised.
+By redefining this to return false, a particular instance will be invoked before either the ORB or OA have been initialised.
+
+When invoked, each registered instance will be provided with the exact String parameters passed to the initialise method for the ORB/OA.
+
+=== ORB and OA shutdown
+
+It is possible to register application-specific code (via the `addPreShutdown/addPostShutdown` methods) with the ORB portability library which will be executed prior to, or after, shutting down the ORB.
+The pre/post interfaces which are to be registered have a single work method, taking no parameters and returning no results.
+When the ORB and OA are being shut down (using `shutdown/destroy` ), each registered class will have its work method invoked.
+
+._Shutdown.java_
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/Shutdown.java[]
+----
+
+=== Specifying the ORB to use
+
+JDK releases from 1.2.2 onwards include a minimum ORB implementation from Sun.
+If using such a JDK in conjunction with another ORB it is necessary to tell the JVM which ORB to use.
+This happens by specifying the `org.omg.CORBA.ORBClass` and `org.omg.CORBA.ORBSingletonClass` properties.
+The ORB Portability classes will ensure that these properties are automatically set when required, i.e., during ORB initialisation.
+Of course, it is still possible to specify these values explicitly (and necessary if not using the ORB initialisation methods).
+
+[NOTE]
+if you do not use the ORB Portability classes for ORB initialisation then it will still be necessary to set these properties.
+
+The ORB portability library attempts to detect which ORB is in use, it does this by looking for the ORB implementation class for each ORB it supports.
+This means that if there are classes for more than one ORB in the classpath the wrong ORB can be detected.
+Therefore, it is best to only have one ORB in your classpath.
+If it is necessary to have multiple ORBs in the classpath then the property `OrbPortabilityEnvironmentBean.orbImplementation` must be set to the value specified in the table below.
+
+[cols="1,1",options="header"]
+|===
+|ORB |Property Value
+|JacORB v2 |`com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0`
+|JDK miniORB |`com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4`
+|===
+
+=== Initialisation code
+
+The {parentProduct} requires specialised code to be instantiated before and after the ORB and the OA are initialised.
+This code can be provided at runtime through the use of `OrbPortabilityEnvironmentBean.orbInitializationProperties`.
+This mechanism is also available to programmers who can register arbitrary code which the ORB Portability will guarantee to be instantiated either before or after ORB/OA initialisation.
+For each application (and each execution of the same application) the programmer can simultaneously provide multiple Java classes which are instantiated before and after the ORB and or OA is initialised.
+There are few restrictions on the types and numbers of classes which can be passed to an application at execution time.
+All classes which are to be instantiated must have a public default constructor, i.e., a constructor which takes no parameters.
+The classes can have any name.
+The property names used must follow the format specified below:
+
+* `com..orbportability.orb.PreInit` – this property is used to specify a global pre-initialisation routine which will be run before any ORB is initialised.
+* `com..orbportability.orb.PostInit` – this property is used to specify a global post-initialisation routine which will be run after any ORB is initialised.
+* `com..orbportability.orb.<ORB NAME>.PreInit` – this property is used to specify a pre-initialisation routine which will be run when an ORB with the given name is initialised.
+* `com..orbportability.orb.<ORB NAME>.PostInit` – this property is used to specify a post-initialisation routine which will be run after an ORB with the given name is initialised.
+* `com..orbportability.oa.PreInit` – this property is used to specify a global pre-initialisation routine which will be run before any OA is initialised.
+* `com..orbportability.oa.PostInit` – this property is used to specify a global post-initialisation routine which will be run after any OA is initialised,
+* `com..orbportability.oa.<ORB NAME>.PreInit` – this property is used to specify a pre-initialisation routine which will be run before an OA with the given name is initialised
+* `com..orbportability.oa.<ORB NAME>.PostInit` – this property is used to specify a pre-initialisation routine which will be run after an OA with the given name is initialised
+
+Pre and post initialisation can be arbitrarily combined, for example:
+
+[source,shell]
+----
+java –DorbPortabilityEnvironmentBean.orbInitializationProperties=”com..orbportability.orb.PreInit=org.foo.AllORBPreInit
+  com..orbportability.orb.MyORB.PostInit=org.foo.MyOrbPostInit
+  com..orbportability.oa.PostInit=orb.foo.AllOAPostInit” org.foo.MyMainClass
+----
+
+=== Locating Objects and Services
+
+Locating and binding to distributed objects within CORBA can be ORB specific.
+For example, many ORBs provide implementations of the naming service, whereas some others may rely upon proprietary mechanisms.
+Having to deal with the many possible ways of binding to objects can be a difficult task, especially if portable applications are to be constructed.
+ORB Portability provides the Services class in order to provide a more manageable, and portable binding mechanism.
+The implementation of this class takes care of any ORB specific locations mechanisms, and provides a single interface to a range of different object location implementations.
+
+._Services.java_
+[source,java]
+----
+include::{projectSourceDir}/jts/extras/Services.java[]
+----
+
+There are currently several different object location and binding mechanisms supported by Services (not all of which are supported by all ORBs, in which case a suitable exception will be thrown):
+
+. _RESOLVE_INITIAL_REFERENCES_: if the ORB supported `resolve_initial_references`, then Services will attempt to use this to locate the object.
+. _NAME_SERVICE_: Services will contact the name service for the object.
+The name service will be located using `resolve_initial_references`.
+. _CONFIGURATION_FILE_: as described in the Using the OTS Manual, the {parentProduct} supports an initial reference file where references for specific services and objects can be stored and used at runtime.
+The file, `CosServices.cfg`, consists of two columns: the service name (in the case of the OTS server TransactionService) and the IOR, separated by a single space.
+`CosServices.cfg` is located at runtime by the `OrbPortabilityEnvironmentBean` properties `initialReferencesRoot` (a directory, defaulting to the current working directory) and `initialReferencesFile` (a name relative to the directory, `CosServices.cfg` by default).
+. _FILE_ : object IORs can be read from, and written to, application-specific files.
+The service name is used as the file name.
+. _NAMED_CONNECT_ : some ORBs support proprietary location and binding mechanisms.
+. _BIND_CONNECT_ : some ORBs support the bind operation for locating services.
+
+We shall now describe the various methods supported by the Services class:
+
+* _getService_: given the name of the object or service to be located (serviceName), and the type of mechanism to be used (mechanism), the programmer must also supply location mechanism specific parameters in the form of params.
+If the name service is being used, then params[0] should be the String kind field.
+* _getService_: the second form of this method does not require a location mechanism to be supplied, and will use an ORB specific default.
+The default for each ORB is shown in Table 2.
+* _registerService_: given the object to be registered, the name it should be registered with, and the mechanism to use to register it, the application programmer must specify location mechanism specific parameters in the form of params.
+If the name service is being used, then params[0] should be the String kind field.
+
+=== ORB location mechanisms
+
+The following table summarises the different location mechanisms that ORB Portability supports for each ORB via the Services class:
+
+[cols=",",options="header",]
+|===
+|Location Mechanism |ORB
+|CONFIGURATION_FILE |All available ORBs
+|FILE |All available ORBs
+|BIND_CONNECT |None
+|===
+
+If a location mechanism isn't specified then the default is the configuration file.
