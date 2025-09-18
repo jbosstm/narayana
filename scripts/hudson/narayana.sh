@@ -165,7 +165,7 @@ function init_test_options {
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "PERFORMANCE" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!PERF* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!PERFORMANCE* ]]; then
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 COMPENSATIONS_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=1
@@ -870,7 +870,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 if [[ -z $PROFILE ]]; then
     comment_on_pull "All tests passed - Job complete $BUILD_URL"
-elif [[ $PROFILE == "PERF" ]]; then
+elif [[ $PROFILE == "PERFORMANCE" ]]; then
     comment_on_pull "$PROFILE profile job finished $BUILD_URL"
 else
     comment_on_pull "$PROFILE profile tests passed - Job complete $BUILD_URL"
