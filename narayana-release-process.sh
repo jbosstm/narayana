@@ -77,26 +77,12 @@ if [ ! $SNAPSHOT ]; then
   echo "This script is only interactive at the very end now, press enter to continue"
   read
 
-  cd ~/tmp/narayana/$CURRENT/sources/documentation/
-  git checkout $CURRENT
-  if [[ $? != 0 ]]
-  then
-    echo 1>&2 documentation: Tag '$CURRENT' did not exist
-    exit
-  fi
-
   if [ ! -v DONOTDELETELOCALM2REPO ]; then
     rm -rf $PWD/localm2repo
   else
     echo "Not deleting existing $PWD/localm2repo as requested"
   fi
 
-  ./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
-  if [[ $? != 0 ]]
-  then
-    echo 1>&2 Could not clean install documentation
-    exit
-  fi
   cd -
   cd ~/tmp/narayana/$CURRENT/sources/narayana/
   git checkout $CURRENT
@@ -105,7 +91,7 @@ if [ ! $SNAPSHOT ]; then
     echo 1>&2 narayana: Tag '$CURRENT' did not exist
     exit
   fi
-  
+
   # uploaded artifacts go straight live without the ability to close the repo at the end, so the install is done to verify that the build will work
   ./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Dorson.jar.location=$ORSON_PATH -DskipTests -Pcommunity -Drelease -DreleaseStaging
   if [[ $? != 0 ]]; then
