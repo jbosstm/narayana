@@ -2,6 +2,8 @@ name: CORE
 
 on:
   push:
+    branches:
+      - 'main'
   pull_request:
     types: [ opened, edited, synchronize, ready_for_review, labeled, unlabeled, reopened ]
   workflow_dispatch:
