@@ -49,11 +49,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>test-utils</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
       <scope>provided</scope>
@@ -199,6 +194,13 @@
           <name>!release</name>
         </property>
       </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana</groupId>
+          <artifactId>test-utils</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>

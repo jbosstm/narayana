@@ -113,7 +113,6 @@
   <modules>
     <module>boms/main</module>
     <module>boms/test</module>
-    <module>tools</module>
     <module>ext</module>
     <module>common</module>
     <module>ArjunaCore</module>
@@ -607,6 +606,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>testing</id>
+      <activation>
+        <property>
+          <name>!release</name>
+        </property>
+      </activation>
+      <modules>
+        <module>tools</module>
+      </modules>
     </profile>
     <profile>
       <id>codeCoverage</id>
