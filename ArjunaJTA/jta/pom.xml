@@ -146,12 +146,6 @@
       <artifactId>jnpserver</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>test-utils</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -402,6 +396,11 @@
           <groupId>org.jboss.narayana</groupId>
           <artifactId>common</artifactId>
           <classifier>tests</classifier>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana</groupId>
+          <artifactId>test-utils</artifactId>
           <scope>test</scope>
         </dependency>
       </dependencies>

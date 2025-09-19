@@ -113,7 +113,6 @@
   <modules>
     <module>boms/main</module>
     <module>boms/test</module>
-    <module>tools</module>
     <module>ext</module>
     <module>common</module>
     <module>ArjunaCore</module>
@@ -175,7 +174,7 @@
     <nexus.repository.staging>narayana-staging</nexus.repository.staging>
     <nexus.repository.url>https://repository.jboss.org/nexus/</nexus.repository.url>
     <nexus.serverId>jboss-releases-repository</nexus.serverId>
-    <nexus.staging.tag>lra-${project.version}</nexus.staging.tag>
+    <nexus.staging.tag>narayana-${project.version}</nexus.staging.tag>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
@@ -607,6 +606,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>testing</id>
+      <activation>
+        <property>
+          <name>!release</name>
+        </property>
+      </activation>
+      <modules>
+        <module>tools</module>
+      </modules>
     </profile>
     <profile>
       <id>codeCoverage</id>

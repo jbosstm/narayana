@@ -14,9 +14,6 @@
   <artifactId>test-utils</artifactId>
   <name>Narayana: Test Utilities</name>
   <url>http://maven.apache.org</url>
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

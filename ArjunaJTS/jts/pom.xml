@@ -71,11 +71,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>test-utils</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -164,6 +159,11 @@
           <groupId>org.jboss.narayana</groupId>
           <artifactId>common</artifactId>
           <classifier>tests</classifier>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana</groupId>
+          <artifactId>test-utils</artifactId>
           <scope>test</scope>
         </dependency>
         <dependency>
