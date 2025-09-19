@@ -77,7 +77,7 @@ if [ ! $SNAPSHOT ]; then
   echo "This script is only interactive at the very end now, press enter to continue"
   read
 
-  if [ ! -v DONOTDELETELOCALM2REPO ]; then
+  if [ -z "${DONOTDELETELOCALM2REPO}" ]; then
     rm -rf $PWD/localm2repo
   else
     echo "Not deleting existing $PWD/localm2repo as requested"
@@ -92,12 +92,18 @@ if [ ! $SNAPSHOT ]; then
     exit
   fi
 
+  ORSON_PATH=$PWD/ext/
+
   # uploaded artifacts go straight live without the ability to close the repo at the end, so the install is done to verify that the build will work
   ./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Dorson.jar.location=$ORSON_PATH -DskipTests -Pcommunity -Drelease -DreleaseStaging
   if [[ $? != 0 ]]; then
     echo 1>&2 Could not install narayana
     exit
   fi
+fi
+
+if [ -z "${ORSON_PATH}" ]; then
+  ORSON_PATH=$PWD/ext/
 fi
 
 # It is important in the deploy step that, if you are deploying, you provide a reference to your settings file as the ./build.sh overrides the default settings file discovery of Maven.
