@@ -73,38 +73,37 @@ public final class RecoveryManager {
             recoverParticipants();
         }
     }
-
-    public void persistParticipantInformation(final ParticipantInformation participantInformation) {
+       /*
+       *  Participant implementations must implement either {@link PersistableParticipant} or {@link java.io.Serializable}
+        * @param participantInformation
+        * @throw ParticipantException
+        */
+    public void persistParticipantInformation(final ParticipantInformation participantInformation) throws ParticipantException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("RecoveryManager.persistParticipantInformation: participantInformation=" + participantInformation);
         }
-
         if (!isRecoverableParticipant(participantInformation.getParticipant())) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("RecoveryManager.persistParticipantInformation: participant is not recoverable");
             }
-
             return;
         }
-
         try {
             final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
             final OutputObjectState state = getParticipantInformationOutputState(participantInformation);
             final Uid uid = new Uid(participantInformation.getId());
-
             recoveryStore.write_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE, state);
             // to identify the uid from the participant persisted into the object store in order to delete it later
             persistedParticipants.put(participantInformation.getId(), uid);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
         }
     }
-
-    public void removeParticipantInformation(final ParticipantInformation participantInformation) {
+      public void removeParticipantInformation(final ParticipantInformation participantInformation) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("RecoveryManager.removeParticipantInformation: participantInformation=" + participantInformation);
         }
-
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String participantId = participantInformation.getId();
 

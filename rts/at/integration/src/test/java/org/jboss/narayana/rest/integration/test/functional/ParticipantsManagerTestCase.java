@@ -4,18 +4,17 @@
  */
 package org.jboss.narayana.rest.integration.test.functional;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import org.jboss.jbossts.star.logging.RESTATLogger;
+import org.jboss.narayana.rest.integration.api.*;
 import org.junit.Assert;
 
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
-import org.jboss.narayana.rest.integration.api.HeuristicType;
-import org.jboss.narayana.rest.integration.api.Participant;
-import org.jboss.narayana.rest.integration.api.ParticipantsManager;
-import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
-import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.test.common.LoggingParticipant;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +53,12 @@ public final class ParticipantsManagerTestCase {
         final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(participantId);
         participantInformation.setStatus(TxStatus.TransactionPrepared.name());
 
-        participantsManager.reportHeuristic(participantId, HeuristicType.HEURISTIC_ROLLBACK);
+        try {
+            participantsManager.reportHeuristic(participantId, HeuristicType.HEURISTIC_ROLLBACK);
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
+        }
 
         Assert.assertEquals(TxStatus.TransactionHeuristicRollback.name(), participantInformation.getStatus());
     }
