@@ -167,15 +167,6 @@
         <scope>test</scope>
       </dependency>
 
-      <!-- Narayana full -->
-      <!-- This dependency should be removed in JBTM-3056 -->
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-test-servlet</artifactId>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-
       <!-- qa -->
 
       <dependency>
