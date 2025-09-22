@@ -25,6 +25,7 @@
     <org.asciidoctor.asciidoctor-maven-plugin>3.0.0</org.asciidoctor.asciidoctor-maven-plugin>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.sortpom>3.2.0</version.sortpom>
+    <skip.release>true</skip.release>
   </properties>
 
   <build>
@@ -77,67 +78,4 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>release</id>
-      <activation>
-        <property>
-          <name>release</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <!-- Don't install - nothing to do. -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-install</id>
-                <phase>none</phase>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!-- Don't sign - nothing to do. -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-          <!-- Don't deploy -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>releaseStaging</id>
-      <activation>
-        <property>
-          <name>releaseStaging</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <!-- Don't deploy -->
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nxrm3-maven-plugin</artifactId>
-            <configuration>
-              <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

@@ -29,6 +29,9 @@
     <module>sar</module>
     <module>jbossxts</module>
   </modules>
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

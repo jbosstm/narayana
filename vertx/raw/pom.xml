@@ -20,6 +20,7 @@
     <narayana.version>${project.version}</narayana.version>
     <vertx.version>3.5.4</vertx.version>
     <jboss-logging.version>3.1.4.GA</jboss-logging.version>
+    <skip.release>true</skip.release>
   </properties>
 
   <dependencies>
@@ -59,13 +60,6 @@
     java -jar
     -->
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>

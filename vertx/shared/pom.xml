@@ -23,6 +23,7 @@
     <main.verticle>ClientVerticle</main.verticle>
     <narayana.version>${project.version}</narayana.version>
     <vertx.version>3.9.15</vertx.version>
+    <skip.release>true</skip.release>
   </properties>
 
   <dependencies>
@@ -72,13 +73,6 @@
         java -jar
         -->
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -155,17 +149,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>staging</id>
-      <repositories>
-        <repository>
-          <id>staging</id>
-          <url>https://oss.sonatype.org/content/repositories/iovertx-3295</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
-
 </project>

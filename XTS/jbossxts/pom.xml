@@ -16,6 +16,10 @@
   <name>Narayana: XTS jbossxts</name>
   <description>Narayana: XTS jbossxts</description>
 
+  <properties>
+    <skip.release>false</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
