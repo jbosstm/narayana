@@ -138,22 +138,6 @@
           <skipIfEmpty>true</skipIfEmpty>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-testResources</id>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-            <phase>process-test-resources</phase>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
