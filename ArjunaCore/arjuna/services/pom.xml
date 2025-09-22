@@ -15,16 +15,10 @@
   <packaging>jar</packaging>
   <name>Narayana: ArjunaCore arjuna services</name>
   <description>Narayana: ArjunaCore arjuna services</description>
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
     <sourceDirectory>${sourceDirACS}</sourceDirectory>
   </build>
   <profiles>

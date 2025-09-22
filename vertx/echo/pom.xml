@@ -16,6 +16,7 @@
   <properties>
     <narayana.version>${project.version}</narayana.version>
     <vertx.version>3.5.4</vertx.version>
+    <skip.release>true</skip.release>
   </properties>
 
 
@@ -38,13 +39,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.5</version>
         <configuration>
@@ -57,5 +51,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

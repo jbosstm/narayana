@@ -16,6 +16,10 @@
   <name>Narayana: XTS byteman_support</name>
   <description>Reusable Byteman rules for xts</description>
 
+  <properties>
+    <skip.release>false</skip.release>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
