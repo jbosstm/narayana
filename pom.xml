@@ -179,6 +179,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
     <skip.release>false</skip.release>
+    <skip.maven-deploy-plugin>false</skip.maven-deploy-plugin>
     <!-- Sortpom is enabled by default, but it could be disabled in sub-modules setting sortpom.skip = true -->
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
@@ -501,15 +502,11 @@
           <name>releaseStaging</name>
         </property>
       </activation>
+      <properties>
+        <skip.maven-deploy-plugin>true</skip.maven-deploy-plugin>
+      </properties>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nxrm3-maven-plugin</artifactId>
@@ -611,7 +608,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-deploy-plugin</artifactId>
             <configuration>
-              <skip>${skip.release}</skip>
+              <skip>${skip.maven-deploy-plugin}</skip>
             </configuration>
           </plugin>
         </plugins>
