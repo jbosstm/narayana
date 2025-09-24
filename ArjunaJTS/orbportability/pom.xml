@@ -18,6 +18,7 @@
   <properties>
     <idlj.boot.args></idlj.boot.args>
     <surefireArgLine></surefireArgLine>
+    <skip.release>true</skip.release>
   </properties>
 
   <dependencyManagement>

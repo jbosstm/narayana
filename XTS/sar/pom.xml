@@ -17,6 +17,7 @@
   <description>Narayana: XTS sar</description>
   <properties>
     <buildType>11</buildType>
+    <skip.release>true</skip.release>
   </properties>
 
   <dependencies>

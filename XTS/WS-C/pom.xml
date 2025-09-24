@@ -16,6 +16,10 @@
   <name>Narayana: XTS WS-C</name>
   <description>Narayana: XTS WS-C (wsc11)</description>
 
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>

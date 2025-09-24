@@ -16,6 +16,10 @@
   <name>Narayana: XTS WSAS</name>
   <description>Narayana: XTS WSAS</description>
 
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
