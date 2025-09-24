@@ -16,6 +16,10 @@
   <name>Narayana: XTS WS-T</name>
   <description>Narayana: XTS WS-T (wst11)</description>
 
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>

@@ -16,6 +16,10 @@
   <name>Narayana: XTS bridge</name>
   <description>Narayana: XTS bridge</description>
 
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>

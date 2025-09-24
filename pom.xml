@@ -113,6 +113,7 @@
   <modules>
     <module>boms/main</module>
     <module>boms/test</module>
+    <module>tools</module>
     <module>ext</module>
     <module>common</module>
     <module>ArjunaCore</module>
@@ -178,8 +179,8 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
-    <skip.release>false</skip.release>
     <skip.maven-deploy-plugin>false</skip.maven-deploy-plugin>
+    <skip.release>false</skip.release>
     <!-- Sortpom is enabled by default, but it could be disabled in sub-modules setting sortpom.skip = true -->
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
@@ -621,9 +622,6 @@
           <name>!release</name>
         </property>
       </activation>
-      <modules>
-        <module>tools</module>
-      </modules>
     </profile>
     <profile>
       <id>codeCoverage</id>

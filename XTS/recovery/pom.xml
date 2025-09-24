@@ -16,6 +16,10 @@
   <name>Narayana: XTS recovery</name>
   <description>Narayana: XTS recovery</description>
 
+  <properties>
+    <skip.release>true</skip.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>

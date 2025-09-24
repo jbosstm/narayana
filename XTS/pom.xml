@@ -18,6 +18,7 @@
   <name>Narayana: XTS</name>
   <description>Narayana: XTS</description>
   <modules>
+    <module>byteman_support</module>
     <module>WSAS</module>
     <module>WS-C</module>
     <module>WSCF</module>
@@ -28,9 +29,6 @@
     <module>sar</module>
     <module>jbossxts</module>
   </modules>
-  <properties>
-    <skip.release>true</skip.release>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -95,7 +93,6 @@
         </property>
       </activation>
       <modules>
-        <module>byteman_support</module>
         <module>localjunit</module>
       </modules>
     </profile>
