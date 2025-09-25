@@ -23,7 +23,7 @@ fi
 echo "Proceeding..."
 
 set -e
-TEMP_WORKING_DIR=~/tmp/narayana/$CURRENT/sources/
+TEMP_WORKING_DIR="~/tmp/narayana/*/sources/"
 mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
@@ -34,6 +34,6 @@ do
   echo ""
 
   cd $REPO
-  git push origin $BRANCH --tags || fatal
+  git push origin main --tags || fatal
   cd ..
 done

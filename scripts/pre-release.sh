@@ -23,6 +23,7 @@ NEXT="${NEXT}-SNAPSHOT"
 
 echo "This script will:"
 echo "================="
+echo "Remove the ~/tmp folder"
 echo "Tag $CURRENT"
 echo "Update Narayana $BRANCH to $NEXT"
 echo ""
@@ -38,6 +39,7 @@ fi
 echo "Proceeding..."
 
 set -e
+rm -rf ~/tmp
 TEMP_WORKING_DIR=~/tmp/narayana/$CURRENT/sources/
 mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
