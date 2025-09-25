@@ -25,6 +25,7 @@
 
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
+    <skip.release>true</skip.release>
   </properties>
 
   <dependencyManagement>
