@@ -5,7 +5,11 @@
 
 package io.narayana.perf;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 public class Averager {
     public static void main(String[] args) {

@@ -4,6 +4,10 @@
  */
 package org.jboss.narayana.rest.integration.api;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+
+import java.io.IOException;
+
 /**
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -61,6 +65,6 @@ public interface ParticipantsManager {
      * @param participantId Participant ID received after enlisting participant to the transaction.
      * @param heuristicType Type of the heuristic.
      */
-    void reportHeuristic(String participantId, HeuristicType heuristicType);
+    void reportHeuristic(String participantId, HeuristicType heuristicType) throws ObjectStoreException, IOException;
 
 }
