@@ -5,8 +5,23 @@
 
 package io.narayana.perf;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Enumeration;
+
+
+
+
 
 public class RegressionChecker {
     public final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
