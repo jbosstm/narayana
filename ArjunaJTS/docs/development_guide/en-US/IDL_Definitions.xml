@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<appendix>
+  <title>IDL definitions</title>
+  <para>
+    Because of differences between ORBs, and errors in certain ORBs, the idl available with JBossTS may differ from that
+    shown below. You should always inspect the idl files prior to implementation to determine what, if any, differences
+    exist.
+  </para>
+  <example>
+    <title>CosTransactions.idl</title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/CosTransactions.idl" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+  
+  <example>
+    <title>ArjunaOTS.IDL</title>
+    <programlisting role="JAVA" language="Java"><xi:include href="extras/ArjunaOTS.idl" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+</appendix>
+

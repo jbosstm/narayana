@@ -1,0 +1,3 @@
+<logger category="com.arjuna">
+  <level name="ALL" />
+</logger>

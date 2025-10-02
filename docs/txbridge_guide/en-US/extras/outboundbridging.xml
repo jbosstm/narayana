@@ -1,0 +1,12 @@
+<handler-chain>
+  <protocol-bindings>##SOAP11_HTTP</protocol-bindings>
+  <handler>
+    <handler-name>TransactionBridgeHandler</handler-name>
+    <handler-class>org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler</handler-class>
+  </handler>
+
+  <handler>
+    <handler-name>WebServicesTxContextHandler</handler-name>
+    <handler-class>com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor</handler-class>
+  </handler>
+</handler-chain>

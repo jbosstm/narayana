@@ -1,0 +1,359 @@
+########################################################################
+#
+# byteman script used to ensure that core transaction reaper tests can
+# sequence various operations which normally depend upon waiting around
+# for the reaper thread and reaper worker thread to be scheduled.
+#
+
+#########################################################################
+# rules to control progress of the transaction reaper thread
+#
+
+# for each possible point at which a client may want to pause the
+# reaper check if a rendezvous has been set up and if so make the
+# reaper rendezvous twice so the client can latch it and then unleash it
+
+# rendezvous before checking the reaper element queue
+
+RULE pause transaction reaper 1
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT SYNCHRONIZE
+BIND NOTHING
+IF isRendezvous("reaper1", 2)
+DO debug("reaper1"),
+   rendezvous("reaper1"),
+   debug("reaper1"),
+   rendezvous("reaper1")
+ENDRULE
+
+# rendezvous and set a flag to record which reaper element is about to be timed out
+# if a client enables this rendezvous then it must also check and clear the flag
+RULE track next element to be processed
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT SYNCHRONIZE 2
+BIND NOTHING
+IF isRendezvous("reaper element", 2)
+DO debug("reaper element"),
+   flag($reaperElement._control),
+   rendezvous("reaper element"),
+   debug("reaper element"),
+   rendezvous("reaper element")
+ENDRULE
+
+# rendezvous before processing a timed out reaper element
+
+RULE pause transaction reaper 2
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT READ _status
+BIND NOTHING
+IF isRendezvous("reaper2", 2)
+DO debug("reaper2"),
+   rendezvous("reaper2"),
+   debug("reaper2"),
+   rendezvous("reaper2")
+ENDRULE
+
+# rendezvous before queueing in the worker queue a timed out reaper element tagged for cancellation
+
+RULE pause transaction reaper 3
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT CALL add 2
+BIND NOTHING
+IF isRendezvous("reaper3", 2)
+DO debug("reaper3"),
+   rendezvous("reaper3"),
+   debug("reaper3"),
+   rendezvous("reaper3")
+ENDRULE
+
+# rendezvous before rescheduling checkup on a timed out reaper element tagged for cancellation
+
+RULE pause transaction reaper 4
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT CALL add 3
+BIND NOTHING
+IF isRendezvous("reaper4", 2)
+DO debug("reaper4"),
+   rendezvous("reaper4"),
+   debug("reaper4"),
+   rendezvous("reaper4")
+ENDRULE
+
+# rendezvous before interrupting a timed out reaper element tagged for cancellation
+
+RULE pause transaction reaper 5
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT CALL interrupt
+BIND NOTHING
+IF isRendezvous("reaper5", 2)
+DO debug("reaper5"),
+   rendezvous("reaper5"),
+   debug("reaper5"),
+   rendezvous("reaper5")
+ENDRULE
+
+# rendezvous before setting a worker thread to be a zombie
+
+RULE pause transaction reaper 6
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT WRITE _status 3
+BIND NOTHING
+IF isRendezvous("reaper6", 2)
+DO debug("reaper6"),
+   rendezvous("reaper6"),
+   debug("reaper6"),
+   rendezvous("reaper6")
+ENDRULE
+
+# rendezvous before calling prevent commit on a reaper element tagged cancel interrupted
+
+RULE pause transaction reaper 7
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT WRITE _status 3
+BIND NOTHING
+IF isRendezvous("reaper7", 2)
+DO debug("reaper7"),
+   rendezvous("reaper7"),
+   debug("reaper7"),
+   rendezvous("reaper7")
+ENDRULE
+
+#########################################################################
+# rules to control progress of the transaction reaper worker thread
+#
+
+# for each possible point at which a client may want to pause the
+# reaper worker thread check if a rendezvous has been set up and if so
+# make the reaper worker rendezvous twice so the client can latch it and
+# then unleash it
+
+# rendezvous before removing an element from the reaper element queue
+
+RULE pause transaction reaper worker 1
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD doCancellations
+AT SYNCHRONIZE
+BIND NOTHING
+IF isRendezvous("reaperworker1", 2)
+DO debug("reaperworker1"),
+   rendezvous("reaperworker1"),
+   debug("reaperworker1"),
+   rendezvous("reaperworker1")
+ENDRULE
+
+# rendezvous before marking an element as CANCEL
+
+RULE pause transaction reaper worker 2
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD doCancellations
+AT SYNCHRONIZE 2
+BIND NOTHING
+IF isRendezvous("reaperworker2", 2)
+DO debug("reaperworker2"),
+   rendezvous("reaperworker2"),
+   debug("reaperworker2"),
+   rendezvous("reaperworker2")
+ENDRULE
+
+# rendezvous before calling cancel on an element
+
+RULE pause transaction reaper worker 3
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD doCancellations
+AT CALL cancel
+BIND NOTHING
+IF isRendezvous("reaperworker3", 2)
+DO debug("reaperworker3"),
+   rendezvous("reaperworker3"),
+   debug("reaperworker3"),
+   rendezvous("reaperworker3")
+ENDRULE
+
+# rendezvous before calling prevent_commit on an element
+
+RULE pause transaction reaper worker 4
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD doCancellations
+AT CALL prevent_commit
+BIND NOTHING
+IF isRendezvous("reaperworker4", 2)
+DO debug("reaperworker4"),
+   rendezvous("reaperworker4"),
+   debug("reaperworker4"),
+   rendezvous("reaperworker4")
+ENDRULE
+
+#########################################################################
+#  rules to track and flag actions by the reaper and reaper worker
+
+RULE ReaperTestCase2 flag interrupt
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AFTER CALL interrupt
+BIND NOTHING
+IF TRUE
+DO debug("reaper called interrupt on " + $reaperElement),
+   flag("interrupted")
+ENDRULE
+
+RULE ReaperTestCase2 flag zombie
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AFTER WRITE _zombieCount
+BIND NOTHING
+IF TRUE
+DO debug("reaper incremented zombie count " + $reaperElement),
+   flag("zombied")
+ENDRULE
+
+#########################################################################
+#
+# rules appropriate to specific tests
+
+#########################################################################
+# ReaperMonitorTest wants remote control of the reaper thread
+#
+
+RULE ReaperMonitorTest reaper remote control
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperMonitorTest
+METHOD test()
+AT CALL TransactionReaper.insert
+BIND NOTHING
+IF TRUE
+DO createRendezvous("reaper1", 2, true)
+ENDRULE
+
+# ReaperMonitorTest wants to delay the reaper check until it has inserted
+# a reapable
+
+RULE ReaperMonitorTest unlatch reaper thread
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperMonitorTest
+METHOD test()
+AFTER CALL TransactionReaper.insert
+BIND NOTHING
+IF TRUE
+DO debug("reaper1"),
+   rendezvous("reaper1"),
+   # ensure timed out
+   delay(1000),
+   debug("reaper1"),
+   rendezvous("reaper1")
+ENDRULE
+
+#########################################################################
+# ReaperTestCaseControl provides methods used by its three
+# ReaperTestCase<N> subclasses to enable, disable and trigger rule
+# activity during the course of the test.
+
+RULE ReaperTestCaseControl enable trigger rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD enableRendezvous(Object, boolean)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO createRendezvous($1, 2, $2)
+ENDRULE
+
+RULE ReaperTestCaseControl disable trigger rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD disableRendezvous(Object)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO deleteRendezvous($1, 2)
+ENDRULE
+
+# if the supplied string matches a known rendezvous then trigger it
+
+RULE ReaperTestCaseControl rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD triggerRendezvous(Object)
+AT ENTRY
+BIND thread = Thread.currentThread()
+IF isRendezvous($1, 2)
+DO debug("" + $1 + " " + thread),
+   rendezvous($1),
+   return
+ENDRULE
+
+RULE ReaperTestCaseControl rendezvous 2
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD triggerRendezvous(Object)
+AT ENTRY
+BIND NOTHING
+IF NOT isRendezvous($1, 2)
+DO throw RuntimeException("invalid rendezvous for trigger " + $1)
+ENDRULE
+
+# trigger a delay
+
+RULE ReaperTestCaseControl wait
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD triggerWait(int)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO debug("wait " + $1),
+   delay($1),
+   return
+ENDRULE
+
+RULE ReaperTestCaseControl check and clear
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCaseControl
+METHOD checkAndClearFlag(Object)
+AT ENTRY
+BIND value = flagged($1)
+IF TRUE
+DO debug("setAndClear(" + $1 + ") => " + value),
+   clear($1),
+   return value
+ENDRULE
+
+#########################################################################
+# ReaperTestCase wants to ensure that the reaper is single stepped
+# through processing of inserted reaper elements
+#
+
+# debug tracing rules
+# RULE ReaperTestCase trace element remove
+# CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+# METHOD doCancellations
+# AT CALL removeElement
+# BIND NOTHING
+# IF TRUE
+# DO debug("removing reapable " + $e)
+# ENDRULE
+
+# RULE ReaperTestCase trace element add
+# CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+# METHOD check
+# AT CALL List.add
+# BIND NOTHING
+# IF TRUE
+# DO debug("adding reapable " + $e)
+# ENDRULE
+
+#########################################################################
+# ReaperTestCase3 wants the reaper and reaper worker threads to
+# be suspended until it has reset the timeouts for the reapables
+# to zero forcing them to be cancelled early
+#
+
+RULE ReaperTestCase3 unlatch reaper and reaper worker
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD shutdown
+AT CALL wait
+BIND NOTHING
+IF TRUE
+DO debug("removing latches on reaper and reaper worker"),
+   deleteRendezvous("reaper1", 2),
+   deleteRendezvous("reaperworker1", 2)   
+ENDRULE
