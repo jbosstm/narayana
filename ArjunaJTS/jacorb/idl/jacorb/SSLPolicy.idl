@@ -1,0 +1,31 @@
+/* 
+ * SSLPolicy definition
+ *
+ * $Id: SSLPolicy.idl,v 1.1 2004-10-21 14:39:43 francisco Exp $ 
+ */ 
+
+#ifndef __SSL_IDL
+#define __SSL_IDL
+
+#include <orb.idl>
+            
+module org {
+module jacorb {
+module ssl {
+
+    const CORBA::PolicyType SSL_POLICY_TYPE = 101;
+
+    enum SSLPolicyValue
+    {
+        SSL_NOT_REQUIRED,
+        SSL_REQUIRED
+    };
+
+    local interface SSLPolicy : CORBA::Policy 
+    {
+        readonly attribute SSLPolicyValue value;
+    };
+
+};
+};
+};
