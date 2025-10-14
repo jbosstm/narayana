@@ -133,5 +133,12 @@ public class UidUnitTest
         assertTrue(uid.greaterThan(minUid));
         assertTrue(maxUid.greaterThan(minUid));
         assertTrue(maxUid.greaterThan(uid));
+
+        // check the min/max string and file string forms
+
+        assertEquals("-8000000000000000:-8000000000000000:-80000000:-80000000:-80000000", minUid.stringForm());
+        assertEquals("7fffffffffffffff:7fffffffffffffff:7fffffff:7fffffff:7fffffff", maxUid.stringForm());
+        assertEquals("-8000000000000000_-8000000000000000_-80000000_-80000000_-80000000", minUid.fileStringForm());
+        assertEquals("7fffffffffffffff_7fffffffffffffff_7fffffff_7fffffff_7fffffff", maxUid.fileStringForm());
     }
 }
