@@ -119,8 +119,16 @@ public class PeriodicRecovery extends Thread {
     /**
      * initiate termination of the periodic recovery thread and stop any subsequent scan requests from proceeding.
      * <p>
-     * this switches the recovery operation mode to TERMINATED. if a scan is in progress when this method is called
-     * and has not yet started phase 2 of its scan it will be forced to return before completing phase 2.
+     * this switches the recovery operation mode to {@code TERMINATED}.
+     * The main consequences are:
+     * <ul>
+     *     <li>If a scan is in progress when this method is called and has not yet started phase 2 of its scan, it will be forced to return before completing phase 2</li>
+     *     <li>If a suspension attempt is in progress when this method is called:</li>
+     *     <ul>
+     *         <li>The first point above still applies</li>
+     *         <li>This method takes precedence over the suspension attempt, which will be interrupted</li>
+     *     </ul>
+     * </ul>
      *
      * @param async false if the calling thread should wait for any in-progress scan to complete before returning
      */
@@ -206,19 +214,25 @@ public class PeriodicRecovery extends Thread {
             if (currentMode == Mode.ENABLED && waitForWorkLeftToDo) {
 
                 doScanningWait();
-                doWork();
-
                 /*
+                 * At this point, _currentStatus is guaranteed to be INACTIVE.
+                 * Since _stateLock is still held by this thread, no other scan can start.
+                 *
                  * Now, it is finally possible to start checking if there are transactions that
                  * are still in need of recovery (or resolution, in case of heuristics).
+                 * A do-while loop make sure that at least one extra recovery scan is carried out.
                  */
-                while (_workLeftToDo) {
-                    try {
-                        _stateLock.wait();
-                    } catch (InterruptedException e) {
-                        // we can ignore this exception
-                    }
-                }
+                do {
+                    /*
+                     * A thread waiting via doPeriodicWait() may be notified and wake up
+                     * in the middle of a recovery scan. To address this, the calling thread
+                     * must immediately invoke doScanningWait(), which forces it to wait until
+                     * the current scan is finished. Once doScanningWait() completes,
+                     * the thread can safely resume execution.
+                     */
+                    doPeriodicWait();
+                    doScanningWait();
+                } while (getMode() == Mode.ENABLED && _workLeftToDo);
             }
 
             // only switch and kick everyone if we are currently ENABLED

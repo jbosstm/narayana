@@ -19,7 +19,7 @@
 RULE setwaitForWorkLeftToDoFlag
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan(boolean,boolean)
-AT INVOKE doWork
+AFTER INVOKE doScanningWait
 IF TRUE
 DO debug("[PeriodicRecovery] Setting waitForWorkLeftToDoFlag to true"),
    flag("waitForWorkLeftToDoFlag")

@@ -5,15 +5,29 @@
 ########################################################################
 
 ########################################################################
+# Rule to record the first invocation of doScanningWait in
+# PeriodicRecovery.suspendScan(boolean,boolean)
+#########################################################################
+
+RULE skipFirstCallToDoScanningWait
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan(boolean,boolean)
+AFTER INVOKE doScanningWait
+IF TRUE
+DO debug("[PeriodicRecovery] Recorded first invocation of doScanningWait..."),
+   flag("doScanningWaitFlag")
+ENDRULE
+
+########################################################################
 # Rule to fail PeriodicRecovery.suspendScan(boolean,boolean) when
-# PeriodicRecovery._workLeftToDo is set to true after doWork
-# gets invoked
+# PeriodicRecovery._workLeftToDo is set to true after the second call to
+# doScanningWait gets executed
 #########################################################################
 
 RULE failSuspendScan
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan(boolean,boolean)
-AFTER INVOKE doWork
-IF $this._workLeftToDo
+AFTER INVOKE doScanningWait
+IF $this._workLeftToDo && flagged("doScanningWaitFlag")
 DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] _workLeftToDo was true while it should have been false")
 ENDRULE

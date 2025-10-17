@@ -11,7 +11,7 @@
 RULE startCounting
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan(boolean,boolean)
-AFTER INVOKE doWork
+AFTER INVOKE doScanningWait
 IF $this._workLeftToDo
 DO debug("[PeriodicRecovery] allowing byteman to start counting recovery cycles..."),
    flag("startCounting")
@@ -39,7 +39,7 @@ RULE failIfTooManyRecoveryCycles
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
 METHOD suspendScan(boolean,boolean)
 AT READ _workLeftToDo
-IF readCounter("recoveryCycles") > 1
+IF readCounter("recoveryCycles") > 2
 DO throw RuntimeException("[Thrown from Byteman script - PeriodicRecovery] too many recovery cycles (i.e. " +
     readCounter("recoveryCycles") + "), " +
     "the Recovery Manager should have been suspended already.")
