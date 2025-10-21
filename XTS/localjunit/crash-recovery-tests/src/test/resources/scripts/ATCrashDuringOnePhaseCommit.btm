@@ -257,7 +257,7 @@ ENDRULE
 #    traceln("log", "commit sent for coordinator engine " + identifier)
 # DO traceln("log", "JVM exit"),
 #    debug("!!!killing JVM!!!"),
-#    killJVM()
+#    java.lang.Shutdown.halt(-1)
 # ENDRULE
 
 #######################################################################
@@ -314,7 +314,7 @@ IF (NOT recovered)
    traceln("log", "commit received for participant engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -433,5 +433,5 @@ BIND NOTHING
 IF TRUE
 DO debug("!!!killing JVM!!!"),
    traceln("log", "JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE

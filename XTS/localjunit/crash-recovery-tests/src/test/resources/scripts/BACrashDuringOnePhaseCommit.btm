@@ -336,7 +336,7 @@ ENDRULE
 #    debug("sent close message for participant completion engine " + identifier),
 #    traceln("log", "JVM exit"),
 #    debug("!!!killing JVM!!!"),
-#    killJVM()
+#    java.lang.Shutdown.halt(-1)
 # ENDRULE
 
 #######################################################################
@@ -360,7 +360,7 @@ ENDRULE
 #    debug("sent close message for coordinator completion engine " + identifier),
 #    traceln("log", "JVM exit"),
 #    debug("!!!killing JVM!!!"),
-#    killJVM()
+#    java.lang.Shutdown.halt(-1)
 # ENDRULE
 
 #######################################################################
@@ -383,7 +383,7 @@ DO traceln("log", "received close message for participant completion participant
    debug("received close message for participant completion participant " + identifier),
    traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -403,7 +403,7 @@ DO traceln("log", "received close message for coordinator completion participant
    debug("received close message for coordinator completion participant " + identifier),
    traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -699,7 +699,7 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -715,6 +715,6 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 

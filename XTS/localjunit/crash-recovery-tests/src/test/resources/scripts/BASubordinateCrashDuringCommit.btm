@@ -376,7 +376,7 @@ IF (NOT recovered)
    debug("close on non-recovered CC coordinator engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -396,7 +396,7 @@ IF (NOT recovered)
    debug("close on non-recovered PC coordinator engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -947,7 +947,7 @@ BIND action : BasicAction = $0,
 IF countDown("exit countdown")
 DO traceln("log", "JVM exit after removing both transactions"),
    debug("JVM exit after removing both transactions"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################

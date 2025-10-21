@@ -436,7 +436,7 @@ IF (NOT recovered)
    debug("close on non-recovered participant completion engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -456,7 +456,7 @@ IF (NOT recovered)
 DO traceln("log", "JVM exit"),
    debug("close on non-recovered coordinator completion engine " + identifier),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -689,5 +689,5 @@ IF TRUE
 DO traceln("log", "removed committed activity " + uid),
    debug("removed committed transaction " + uid),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
