@@ -217,7 +217,7 @@ IF (NOT recovered)
    debug("commit on non-recovered coordinator engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -326,5 +326,5 @@ IF TRUE
 DO traceln("log", "removed committed transaction " + uid),
    debug("removed committed transaction " + uid),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE

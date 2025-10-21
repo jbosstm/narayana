@@ -402,7 +402,7 @@ BIND NOTHING
 IF TRUE
 DO traceln("log", "JVM exit"),
    debug("JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -651,7 +651,7 @@ BIND action : BasicAction = $0,
 IF readCounter("participant deletes") == 3
 DO traceln("log", "JVM exit"),
    debug("JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
@@ -667,7 +667,7 @@ IF incrementCounter("participant deletes") == 3 &&
    flagged("tx removed")
 DO traceln("log", "JVM exit"),
    debug("JVM exit"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################

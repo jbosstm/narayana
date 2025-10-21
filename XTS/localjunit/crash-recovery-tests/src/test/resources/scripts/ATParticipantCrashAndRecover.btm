@@ -201,7 +201,7 @@ IF (NOT recovered)
    traceln("log", "commit on non-recovered participant engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
-   killJVM()
+   java.lang.Shutdown.halt(-1)
 ENDRULE
 
 #######################################################################
