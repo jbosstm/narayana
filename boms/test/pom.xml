@@ -43,7 +43,7 @@
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.7.0.Final</version.org.jboss.arquillian.core>
     <!-- remark: this property is duplicated in the top level pom -->
-    <version.org.jboss.byteman>4.0.22</version.org.jboss.byteman>
+    <version.org.jboss.byteman>4.0.25</version.org.jboss.byteman>
     <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
     <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
     <version.org.jboss.weld>5.0.1.Final</version.org.jboss.weld>
