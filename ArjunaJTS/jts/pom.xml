@@ -19,8 +19,8 @@
     <!-- This module builds a jar holding a set of Sun orb's IDL stubs -->
     <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
     <idlj.boot.args></idlj.boot.args>
-    <surefireArgLine></surefireArgLine>
     <skip.release>true</skip.release>
+    <surefireArgLine></surefireArgLine>
   </properties>
 
   <dependencyManagement>

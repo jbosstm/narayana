@@ -22,8 +22,8 @@
     <!--main.verticle>io.vertx.example.HelloWorldVerticle</main.verticle>-->
     <main.verticle>ClientVerticle</main.verticle>
     <narayana.version>${project.version}</narayana.version>
-    <vertx.version>3.9.15</vertx.version>
     <skip.release>true</skip.release>
+    <vertx.version>3.9.15</vertx.version>
   </properties>
 
   <dependencies>
