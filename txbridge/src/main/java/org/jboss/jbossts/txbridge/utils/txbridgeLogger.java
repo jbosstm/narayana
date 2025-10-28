@@ -5,8 +5,6 @@
 
 package org.jboss.jbossts.txbridge.utils;
 
-import java.lang.invoke.MethodHandles;
-
 import org.jboss.logging.Logger;
 
 /**
@@ -17,6 +15,5 @@ import org.jboss.logging.Logger;
 public class txbridgeLogger
 {
     public static final Logger logger = Logger.getLogger("org.jboss.jbossts.txbridge");
-    public static final txbridgeI18NLogger i18NLogger = Logger.getMessageLogger(MethodHandles.lookup(),
-            txbridgeI18NLogger.class, "org.jboss.jbossts.txbridge");
+    public static final txbridgeI18NLogger i18NLogger = Logger.getMessageLogger(txbridgeI18NLogger.class, "org.jboss.jbossts.txbridge");
 }

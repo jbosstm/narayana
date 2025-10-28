@@ -123,7 +123,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-annotations</artifactId>
+      <artifactId>jboss-logging-processor</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
