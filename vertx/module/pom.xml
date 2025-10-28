@@ -25,7 +25,6 @@
   <name>Project - mod-stm</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <jboss-logging.version>3.1.4.GA</jboss-logging.version>
     <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
 
     <!--Plugin versions-->
@@ -50,23 +49,10 @@
     in your mod.json to be automatically pulled in during packaging and added inside your module. Doing this means your
     module won't download and install those dependencies at run-time when they're first requested. -->
     <vertx.pullInDeps>false</vertx.pullInDeps>
-    <vertx.version>3.5.4</vertx.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-dependencies</artifactId>
-        <version>${vertx.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging</artifactId>
-        <version>${jboss-logging.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.jboss.narayana.stm</groupId>
         <artifactId>stm</artifactId>

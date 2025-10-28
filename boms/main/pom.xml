@@ -71,6 +71,7 @@
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
     <version.sun.jdk>jdk</version.sun.jdk>
     <version.tanukisoft>3.2.3</version.tanukisoft>
+    <version.vertx>5.0.5</version.vertx>
   </properties>
 
   <dependencyManagement>
@@ -424,6 +425,30 @@
         <groupId>org.jboss.narayana.stm</groupId>
         <artifactId>stm</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-core</artifactId>
+        <version>${version.vertx}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-hazelcast</artifactId>
+        <version>${version.vertx}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-core</artifactId>
+        <version>${version.vertx}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-unit</artifactId>
+        <version>${version.vertx}</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>

@@ -20,10 +20,9 @@ package org.jboss.stm;
  */
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 
 import org.jboss.stm.annotations.Transactional;
+import org.jboss.logging.Logger;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
@@ -40,7 +39,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
  */
 
 public class STMVerticle extends AbstractVerticle {
-    private Logger logger = LoggerFactory.getLogger(STMVerticle.class);
+    private Logger logger = Logger.getLogger(STMVerticle.class);
 
     public STMVerticle ()
     {
