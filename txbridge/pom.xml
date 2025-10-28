@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-processor</artifactId>
+      <artifactId>jboss-logging-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -146,6 +146,19 @@
   <build>
     <pluginManagement>
       <plugins>
+        <!-- Adding annotationProcessor to add generated logger implementations to compiler -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging-processor</artifactId>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+        </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>

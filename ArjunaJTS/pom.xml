@@ -63,6 +63,19 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Adding annotationProcessor to add generated logger implementations to compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <annotationProcessorPath>
+              <groupId>org.jboss.logging</groupId>
+              <artifactId>jboss-logging-processor</artifactId>
+            </annotationProcessorPath>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
