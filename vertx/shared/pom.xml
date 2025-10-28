@@ -23,21 +23,18 @@
     <main.verticle>ClientVerticle</main.verticle>
     <narayana.version>${project.version}</narayana.version>
     <skip.release>true</skip.release>
-    <vertx.version>3.9.15</vertx.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>${vertx.version}</version>
     </dependency>
 
     <!-- Add hazelcast deps if you want it clusterable -->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-hazelcast</artifactId>
-      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.stm</groupId>

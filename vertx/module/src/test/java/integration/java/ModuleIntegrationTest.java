@@ -8,13 +8,11 @@ package integration.java;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 
 import io.vertx.test.core.VertxTestBase;
 import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 
+import org.jboss.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -27,7 +25,7 @@ import org.junit.Test;
  */
 public class ModuleIntegrationTest extends VertxTestBase {
 
-  private Logger logger = LoggerFactory.getLogger(ModuleIntegrationTest.class);
+  private Logger logger = Logger.getLogger(ModuleIntegrationTest.class);
 
   @Test
   //public void testPing(TestContext context) {
