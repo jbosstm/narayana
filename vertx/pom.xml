@@ -21,6 +21,8 @@
   <modules>
     <module>module</module>
     <module>shared</module>
+    <module>raw</module>
+    <module>echo</module>
   </modules>
 
   <properties>

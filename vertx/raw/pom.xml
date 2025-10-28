@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <!--
+<!--
    Copyright The Narayana Authors
    SPDX short identifier: Apache-2.0
  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jboss.narayana.vertx</groupId>
+  <parent>
+    <groupId>org.jboss.narayana.vertx</groupId>
+    <artifactId>narayana-vertx</artifactId>
+    <version>7.3.1.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
   <artifactId>stm-error-demo</artifactId>
-  <version>7.3.1.Final-SNAPSHOT</version>
 
   <properties>
     <!-- the main class -->
     <exec.mainClass>SharedHammer</exec.mainClass>
     <narayana.version>${project.version}</narayana.version>
-    <jboss-logging.version>3.1.4.GA</jboss-logging.version>
     <skip.release>true</skip.release>
   </properties>
 
@@ -65,10 +66,10 @@
         <version>2.3</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -80,8 +81,7 @@
                   <resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
                 </transformer>
               </transformers>
-              <artifactSet>
-              </artifactSet>
+              <artifactSet></artifactSet>
               <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
             </configuration>
           </execution>
