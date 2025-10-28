@@ -32,7 +32,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-processor</artifactId>
+      <artifactId>jboss-logging-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

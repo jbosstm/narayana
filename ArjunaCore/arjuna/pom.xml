@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-processor</artifactId>
+      <artifactId>jboss-logging-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
     <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
