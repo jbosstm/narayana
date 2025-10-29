@@ -303,36 +303,40 @@ public class Uid implements Cloneable, Serializable
        // no need to synchronize since object is immutable
 
        if (_stringForm == null) {
-          long[] hostAddr = this.hostAddr;
-          long hostAddr0 = hostAddr[0];
-          long hostAddr1 = hostAddr[1];
-          int process = this.process;
-          int sec = this.sec;
-          int other = this.other;
-          int hostAddr0Chars = Utility.hexCharsOf(hostAddr0);
-          int hostAddr1Chars = Utility.hexCharsOf(hostAddr1);
-          int processChars = Utility.hexCharsOf(process);
-          int secChars = Utility.hexCharsOf(sec);
-          int otherChars = Utility.hexCharsOf(other);
-          int totalChars = hostAddr0Chars + hostAddr1Chars + processChars + secChars + otherChars + 4; // 4 break chars
-          byte[] asciiBytes = new byte[totalChars];
-          int pos = 0;
-          Utility.toHexChars(hostAddr0, asciiBytes, pos, hostAddr0Chars);
-          pos += hostAddr0Chars;
-          asciiBytes[pos++] = (byte) Uid.breakChar;
-          Utility.toHexChars(hostAddr1, asciiBytes, pos, hostAddr1Chars);
-          pos += hostAddr1Chars;
-          asciiBytes[pos++] = (byte) Uid.breakChar;
-          Utility.toHexChars(process, asciiBytes, pos, processChars);
-          pos += processChars;
-          asciiBytes[pos++] = (byte) Uid.breakChar;
-          Utility.toHexChars(sec, asciiBytes, pos, secChars);
-          pos += secChars;
-          asciiBytes[pos++] = (byte) Uid.breakChar;
-          Utility.toHexChars(other, asciiBytes, pos, otherChars);
-          _stringForm = new String(asciiBytes, 0, 0, totalChars);
+          _stringForm = stringForm(breakChar);
        }
        return _stringForm;
+    }
+
+    public String stringForm(byte breakChar) {
+       long[] hostAddr = this.hostAddr;
+       long hostAddr0 = hostAddr[0];
+       long hostAddr1 = hostAddr[1];
+       int process = this.process;
+       int sec = this.sec;
+       int other = this.other;
+       int hostAddr0Chars = Utility.hexCharsOf(hostAddr0);
+       int hostAddr1Chars = Utility.hexCharsOf(hostAddr1);
+       int processChars = Utility.hexCharsOf(process);
+       int secChars = Utility.hexCharsOf(sec);
+       int otherChars = Utility.hexCharsOf(other);
+       int totalChars = hostAddr0Chars + hostAddr1Chars + processChars + secChars + otherChars + 4; // 4 break chars
+       byte[] asciiBytes = new byte[totalChars];
+       int pos = 0;
+       Utility.toHexChars(hostAddr0, asciiBytes, pos, hostAddr0Chars);
+       pos += hostAddr0Chars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(hostAddr1, asciiBytes, pos, hostAddr1Chars);
+       pos += hostAddr1Chars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(process, asciiBytes, pos, processChars);
+       pos += processChars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(sec, asciiBytes, pos, secChars);
+       pos += secChars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(other, asciiBytes, pos, otherChars);
+       return new String(asciiBytes, 0, 0, totalChars);
     }
 
     /**
@@ -342,11 +346,7 @@ public class Uid implements Cloneable, Serializable
 
     public String fileStringForm ()
     {
-        return Utility.longToHexString(hostAddr[0]) + Uid.fileBreakChar
-                + Utility.longToHexString(hostAddr[1]) + Uid.fileBreakChar
-                + Utility.intToHexString(process) + Uid.fileBreakChar
-                + Utility.intToHexString(sec) + Uid.fileBreakChar
-                + Utility.intToHexString(other);
+       return stringForm(fileBreakChar);
     }
     
     /**
@@ -763,9 +763,9 @@ public class Uid implements Cloneable, Serializable
    private static final AtomicReferenceFieldUpdater<Uid, byte[]> BYTE_FORM_UPDATER =
          AtomicReferenceFieldUpdater.newUpdater(Uid.class, byte[].class, "_byteForm");
 
-    private static final char breakChar = ':';
+    private static final byte breakChar = ':';
 
-    private static final char fileBreakChar = '_';
+    private static final byte fileBreakChar = '_';
 
     private static final Uid NIL_UID = new Uid("0:0:0:0:0");
 
