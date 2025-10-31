@@ -78,6 +78,92 @@ public class Utility
         return val;
     }
 
+   private static final byte[] HEX_DIGITS;
+
+   static {
+      // each byte contains 2 hex digits
+      HEX_DIGITS = new byte[16];
+      HEX_DIGITS[0] = (byte) '0';
+      HEX_DIGITS[1] = (byte) '1';
+      HEX_DIGITS[2] = (byte) '2';
+      HEX_DIGITS[3] = (byte) '3';
+      HEX_DIGITS[4] = (byte) '4';
+      HEX_DIGITS[5] = (byte) '5';
+      HEX_DIGITS[6] = (byte) '6';
+      HEX_DIGITS[7] = (byte) '7';
+      HEX_DIGITS[8] = (byte) '8';
+      HEX_DIGITS[9] = (byte) '9';
+      HEX_DIGITS[10] = (byte) 'a';
+      HEX_DIGITS[11] = (byte) 'b';
+      HEX_DIGITS[12] = (byte) 'c';
+      HEX_DIGITS[13] = (byte) 'd';
+      HEX_DIGITS[14] = (byte) 'e';
+      HEX_DIGITS[15] = (byte) 'f';
+   }
+
+   /**
+    * Determine the number of hex chars needed to represent the given int
+    * value. This is at least 1.
+    *
+    * @param value the int value
+    * @return the number of hex chars needed to represent the value
+    */
+   public static int hexCharsOf(int value) {
+      int nonZeroBits = Integer.SIZE - Long.numberOfLeadingZeros(value);
+      // each hex char represents 4 bits: align the non-zero bits to the next multiple of 4 and divide by 4
+      return Math.max(((nonZeroBits + 3) >> 2), 1);
+   }
+
+   /**
+    * Convert a int to hex chars. The byte array must be big enough to hold
+    * the expected number of hex chars. See {@link #hexCharsOf(int)} to determine
+    * the number of hex chars needed.
+    *
+    * @param value            the int value to convert
+    * @param ascii            the byte array to hold the hex chars
+    * @param offset           the offset into the byte array to start writing
+    * @param expectedHexChars the expected number of hex chars to write
+    */
+   public static void toHexChars(int value, byte[] ascii, int offset, int expectedHexChars) {
+      for (int i = expectedHexChars - 1; i >= 0; i--) {
+         int digit = value & 0xF;
+         ascii[offset + i] = HEX_DIGITS[digit];
+         value >>>= 4;
+      }
+   }
+
+   /**
+    * Determine the number of hex chars needed to represent the given long
+    * value. This is at least 1.
+    *
+    * @param value the long value
+    * @return the number of hex chars needed to represent the value
+    */
+   public static int hexCharsOf(long value) {
+      int nonZeroBits = Long.SIZE - Long.numberOfLeadingZeros(value);
+      // each hex char represents 4 bits: align the non-zero bits to the next multiple of 4 and divide by 4
+      return Math.max(((nonZeroBits + 3) >> 2), 1);
+   }
+
+   /**
+    * Convert a long to hex chars. The byte array must be big enough to hold
+    * the expected number of hex chars. See {@link #hexCharsOf(long)} to determine
+    * the number of hex chars needed.
+    *
+    * @param value            the long value to convert
+    * @param ascii            the byte array to hold the hex chars
+    * @param offset           the offset into the byte array to start writing
+    * @param expectedHexChars the expected number of hex chars to write
+    */
+   public static void toHexChars(long value, byte[] ascii, int offset, int expectedHexChars) {
+      for (int i = expectedHexChars - 1; i >= 0; i--) {
+         int digit = (int) (value & 0xF);
+         ascii[offset + i] = HEX_DIGITS[digit];
+         value >>>= 4;
+      }
+   }
+
+
     /**
      * Convert a long to a hex String.
      */

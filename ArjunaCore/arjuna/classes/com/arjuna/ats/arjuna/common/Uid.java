@@ -4,16 +4,15 @@
  */
 package com.arjuna.ats.arjuna.common;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteOrder;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -89,14 +88,22 @@ public class Uid implements Cloneable, Serializable
         
         try
         {
-            ByteArrayInputStream ba = new ByteArrayInputStream(byteForm);
-            DataInputStream ds = new DataInputStream(ba);
-            
-            hostAddr[0] = ds.readLong();
-            hostAddr[1] = ds.readLong();
-            process = ds.readInt();
-            sec = ds.readInt();
-            other = ds.readInt();
+
+           if (byteForm.length < UID_SIZE) {
+              throw new IllegalArgumentException("byteForm too small: " + byteForm.length);
+           }
+           long hostAddr0 = (long) BE_LONG_ARRAY_VIEW.get(byteForm, 0);
+           long hostAddr1 = (long) BE_LONG_ARRAY_VIEW.get(byteForm, 8);
+           int process = (int) BE_INT_ARRAY_VIEW.get(byteForm, 16);
+           int sec = (int) BE_INT_ARRAY_VIEW.get(byteForm, 20);
+           int other = (int) BE_INT_ARRAY_VIEW.get(byteForm, 24);
+
+           long[] hostAddr = this.hostAddr;
+           hostAddr[0] = hostAddr0;
+           hostAddr[1] = hostAddr1;
+           this.process = process;
+           this.sec = sec;
+           this.other = other;
             
             _valid = true;
         }
@@ -292,18 +299,44 @@ public class Uid implements Cloneable, Serializable
         strm.print("<Uid:" + this.toString() + ">");
     }
 
-    public String stringForm ()
-    {
-        // no need to synchronize since object is immutable
+    public String stringForm () {
+       // no need to synchronize since object is immutable
 
-        if (_stringForm == null)
-            _stringForm = Utility.longToHexString(hostAddr[0]) + Uid.breakChar
-                    + Utility.longToHexString(hostAddr[1]) + Uid.breakChar
-                    + Utility.intToHexString(process) + Uid.breakChar
-                    + Utility.intToHexString(sec) + Uid.breakChar
-                    + Utility.intToHexString(other);
+       if (_stringForm == null) {
+          _stringForm = stringForm(breakChar);
+       }
+       return _stringForm;
+    }
 
-        return _stringForm;
+    public String stringForm(byte breakChar) {
+       long[] hostAddr = this.hostAddr;
+       long hostAddr0 = hostAddr[0];
+       long hostAddr1 = hostAddr[1];
+       int process = this.process;
+       int sec = this.sec;
+       int other = this.other;
+       int hostAddr0Chars = Utility.hexCharsOf(hostAddr0);
+       int hostAddr1Chars = Utility.hexCharsOf(hostAddr1);
+       int processChars = Utility.hexCharsOf(process);
+       int secChars = Utility.hexCharsOf(sec);
+       int otherChars = Utility.hexCharsOf(other);
+       int totalChars = hostAddr0Chars + hostAddr1Chars + processChars + secChars + otherChars + 4; // 4 break chars
+       byte[] asciiBytes = new byte[totalChars];
+       int pos = 0;
+       Utility.toHexChars(hostAddr0, asciiBytes, pos, hostAddr0Chars);
+       pos += hostAddr0Chars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(hostAddr1, asciiBytes, pos, hostAddr1Chars);
+       pos += hostAddr1Chars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(process, asciiBytes, pos, processChars);
+       pos += processChars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(sec, asciiBytes, pos, secChars);
+       pos += secChars;
+       asciiBytes[pos++] = breakChar;
+       Utility.toHexChars(other, asciiBytes, pos, otherChars);
+       return new String(asciiBytes, 0, 0, totalChars);
     }
 
     /**
@@ -313,11 +346,7 @@ public class Uid implements Cloneable, Serializable
 
     public String fileStringForm ()
     {
-        return Utility.longToHexString(hostAddr[0]) + Uid.fileBreakChar
-                + Utility.longToHexString(hostAddr[1]) + Uid.fileBreakChar
-                + Utility.intToHexString(process) + Uid.fileBreakChar
-                + Utility.intToHexString(sec) + Uid.fileBreakChar
-                + Utility.intToHexString(other);
+       return stringForm(fileBreakChar);
     }
     
     /**
@@ -336,19 +365,24 @@ public class Uid implements Cloneable, Serializable
         
         if (_byteForm == null)
         {
-            ByteArrayOutputStream ba = new ByteArrayOutputStream(UID_SIZE);
-            DataOutputStream ds = new DataOutputStream(ba);
-            
-            try
+
+
+            long[] hostAddr = this.hostAddr;
+            int process = this.process;
+            int sec = this.sec;
+            int other = this.other;
+           try
             {
-                ds.writeLong(hostAddr[0]);
-                ds.writeLong(hostAddr[1]);
-                ds.writeInt(process);
-                ds.writeInt(sec);
-                ds.writeInt(other);
-                //_byteForm = stringForm().getBytes(StandardCharsets.UTF_8);
-                
-                _byteForm = ba.toByteArray();
+
+               long hostAddr0 = hostAddr[0];
+               long hostAddr1 = hostAddr[1];
+               byte[] newByteForm = new byte[UID_SIZE];
+               BE_LONG_ARRAY_VIEW.set(newByteForm, 0, hostAddr0);
+               BE_LONG_ARRAY_VIEW.set(newByteForm, 8, hostAddr1);
+               BE_INT_ARRAY_VIEW.set(newByteForm, 16, process);
+               BE_INT_ARRAY_VIEW.set(newByteForm, 20, sec);
+               BE_INT_ARRAY_VIEW.set(newByteForm, 24, other);
+               BYTE_FORM_UPDATER.lazySet(this, newByteForm);
             }
             catch (final Throwable ex) {
                 tsLogger.i18NLogger.warn_common_Uid_getbytes(ex);
@@ -722,9 +756,16 @@ public class Uid implements Cloneable, Serializable
 
     private static volatile int initTime;
 
-    private static final char breakChar = ':';
+   private static final VarHandle BE_LONG_ARRAY_VIEW = MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
 
-    private static final char fileBreakChar = '_';
+   private static final VarHandle BE_INT_ARRAY_VIEW = MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
+
+   private static final AtomicReferenceFieldUpdater<Uid, byte[]> BYTE_FORM_UPDATER =
+         AtomicReferenceFieldUpdater.newUpdater(Uid.class, byte[].class, "_byteForm");
+
+    private static final byte breakChar = ':';
+
+    private static final byte fileBreakChar = '_';
 
     private static final Uid NIL_UID = new Uid("0:0:0:0:0");
 
