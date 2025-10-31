@@ -17,6 +17,10 @@ concurrency:
 
 jobs:
   core-test:
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: write
     strategy:
       matrix:
         java-version: [ 17 ]
@@ -24,7 +28,10 @@ jobs:
     timeout-minutes: 120
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout PR Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Check for `testing/core` label
         id: check-label
