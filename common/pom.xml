@@ -81,10 +81,10 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
               <annotationProcessorPaths>
-                <path>
+                <annotationProcessorPath>
                   <groupId>org.jboss.logging</groupId>
                   <artifactId>jboss-logging-processor</artifactId>
-                </path>
+                </annotationProcessorPath>
               </annotationProcessorPaths>
             </configuration>
           </plugin>
