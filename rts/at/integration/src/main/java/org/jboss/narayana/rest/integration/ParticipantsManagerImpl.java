@@ -110,7 +110,7 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
     }
 
     @Override
-    public void reportHeuristic(String participantId, HeuristicType heuristicType) {
+    public void reportHeuristic(String participantId, HeuristicType heuristicType)  {
         if (LOG.isTraceEnabled()) {
             LOG.trace("ParticipantsManagerImpl.reportHeuristic: participantId=" + participantId + ", heuristicType="
                     + heuristicType);

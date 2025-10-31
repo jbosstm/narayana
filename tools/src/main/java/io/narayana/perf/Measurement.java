@@ -31,7 +31,7 @@ public class Measurement<T> implements Serializable {
     private int numberOfWarmupCalls = 0; //number of iterations before starting the measurement
     private String info;
 
-    RegressionChecker config; // holds file based measurment data
+    RegressionChecker config; // holds file based  measurment data
 
     private T context;
     private final Set<T> contexts = new HashSet<T>();
@@ -204,7 +204,7 @@ public class Measurement<T> implements Serializable {
      *
      * A worker may cancel a measurement by invoking this method on the Measurement object it was
      * passed in its @see Worker#doWork(T, int, Measurement) method
-     * @param reason the reason for the cancelation
+     * @param reason the reason for the cancellation
      * @param mayInterruptIfRunning if false then any running calls to @see Worker#doWork will be allowed to finish
      *                              before the the measurement is cancelled.
      */

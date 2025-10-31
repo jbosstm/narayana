@@ -4,7 +4,6 @@
  */
 
 package io.narayana.perf;
-
 import java.util.*;
 
 public class Averager {

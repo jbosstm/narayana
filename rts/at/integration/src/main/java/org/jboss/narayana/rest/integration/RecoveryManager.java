@@ -5,7 +5,6 @@
 package org.jboss.narayana.rest.integration;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -30,7 +29,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -74,7 +73,7 @@ public final class RecoveryManager {
         }
     }
 
-    public void persistParticipantInformation(final ParticipantInformation participantInformation) {
+    public void persistParticipantInformation(final ParticipantInformation participantInformation) throws ParticipantException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("RecoveryManager.persistParticipantInformation: participantInformation=" + participantInformation);
         }
@@ -96,15 +95,15 @@ public final class RecoveryManager {
             // to identify the uid from the participant persisted into the object store in order to delete it later
             persistedParticipants.put(participantInformation.getId(), uid);
         } catch (Exception e) {
-            RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
         }
     }
 
-    public void removeParticipantInformation(final ParticipantInformation participantInformation) {
+      public void removeParticipantInformation(final ParticipantInformation participantInformation) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("RecoveryManager.removeParticipantInformation: participantInformation=" + participantInformation);
         }
-
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String participantId = participantInformation.getId();
 
@@ -112,44 +111,59 @@ public final class RecoveryManager {
             try {
                 recoveryStore.remove_committed(new Uid(participantId), PARTICIPANT_INFORMATION_RECORD_TYPE);
                 persistedParticipants.remove(participantId);
-            } catch (ObjectStoreException ose) {
-                RESTATLogger.atI18NLogger.warn_failureRemovingParticipantObjectStore("Failure while removing participant information from the object store.", ose);
+            } catch (Exception e) {
+                String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+                throw new ParticipantException(msg, e);
             }
         }
     }
 
     private OutputObjectState getParticipantInformationOutputState(final ParticipantInformation participantInformation)
-            throws IOException {
+            throws ParticipantException {
+        try {
+            final Uid uid = new Uid(participantInformation.getId());
+            final OutputObjectState state = new OutputObjectState(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
 
-        final Uid uid = new Uid(participantInformation.getId());
-        final OutputObjectState state = new OutputObjectState(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
+            state.packString(participantInformation.getId());
+            state.packString(participantInformation.getApplicationId());
+            state.packString(participantInformation.getStatus());
+            state.packString(participantInformation.getRecoveryURL());
+            state.packBytes(getParticipantBytes(participantInformation.getParticipant()));
 
-        state.packString(participantInformation.getId());
-        state.packString(participantInformation.getApplicationId());
-        state.packString(participantInformation.getStatus());
-        state.packString(participantInformation.getRecoveryURL());
-        state.packBytes(getParticipantBytes(participantInformation.getParticipant()));
-
-        return state;
+            return state;
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
+        }
     }
 
-    private byte[] getParticipantBytes(final Participant participant) throws IOException {
-        if (participant instanceof Serializable) {
-            return serializeParticipant((Serializable) participant);
-        } else if (participant instanceof PersistableParticipant) {
-            return ((PersistableParticipant) participant).getRecoveryState();
+        private byte[] getParticipantBytes(final Participant participant) throws ParticipantException {
+        try {
+            if (participant instanceof Serializable) {
+                return serializeParticipant((Serializable) participant);
+            } else if (participant instanceof PersistableParticipant) {
+                return ((PersistableParticipant) participant).getRecoveryState();
+            }
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
         }
 
         // Shouldn't happen
         return new byte[] {};
     }
 
-    private byte[] serializeParticipant(final Serializable participant) throws IOException {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(participant);
+    private byte[] serializeParticipant(final Serializable participant) throws ParticipantException {
+        try {
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(participant);
 
-        return byteArrayOutputStream.toByteArray();
+            return byteArrayOutputStream.toByteArray();
+        } catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
+        }
     }
 
     private boolean isRecoverableParticipant(final Participant participant) {
@@ -177,10 +191,9 @@ public final class RecoveryManager {
                         }
                     }
                 }
-            } catch (ObjectStoreException e) {
-                RESTATLogger.atI18NLogger.warn_recoverParticipantsRecoveryManager(e.getMessage(), e);
-            } catch (IOException e) {
-                RESTATLogger.atI18NLogger.warn_ioRecoverParticipantsRecoveryManager(e.getMessage(), e);
+            } catch (Exception e) {
+                String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+                throw new ParticipantException(msg, e);
             }
         } else {
             LOG.warn("Participants cannot be loaded from the object store, because base URL was not set.");
@@ -188,15 +201,14 @@ public final class RecoveryManager {
     }
 
     private ParticipantInformation recreateParticipantInformation(final RecoveryStore recoveryStore, final Uid uid)
-            throws ObjectStoreException, IOException {
+            throws Exception {
 
-        final InputObjectState inputObjectState = recoveryStore.read_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
-        final String id = inputObjectState.unpackString();
-
-        if (ParticipantsContainer.getInstance().getParticipantInformation(id) != null) {
-            // Participant is already loaded.
-            return null;
-        }
+            final InputObjectState inputObjectState = recoveryStore.read_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
+            final String id = inputObjectState.unpackString();
+            if (ParticipantsContainer.getInstance().getParticipantInformation(id) != null) {
+                // Participant is already loaded.
+                return null;
+            }
 
         final String applicationId = inputObjectState.unpackString();
 
@@ -236,21 +248,25 @@ public final class RecoveryManager {
     }
 
     private Participant recreateParticipant(final InputObjectState inputObjectState, final String applicationId)
-            throws IOException {
+            throws ParticipantException {
 
-        final ParticipantDeserializer deserializer = deserializers.get(applicationId);
-        final byte[] participantBytes = inputObjectState.unpackBytes();
+        try {
+            final ParticipantDeserializer deserializer = deserializers.get(applicationId);
+            final byte[] participantBytes = inputObjectState.unpackBytes();
 
-        Participant participant = deserializer.recreate(participantBytes);
+            Participant participant = deserializer.recreate(participantBytes);
 
-        if (participant == null) {
-            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(participantBytes);
-            final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            if (participant == null) {
+                final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(participantBytes);
+                final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
 
-            participant = deserializer.deserialize(objectInputStream);
+                participant = deserializer.deserialize(objectInputStream);
+            }
+            return participant;
+        }catch (Exception e) {
+            String msg = RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
+            throw new ParticipantException(msg, e);
         }
-
-        return participant;
     }
 
     private boolean synchronizeParticipantUrlWithCoordinator(final ParticipantInformation participantInformation) {
