@@ -44,10 +44,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <annotationProcessorPaths>
-            <annotationProcessorPath>
+            <path>
               <groupId>org.jboss.logging</groupId>
               <artifactId>jboss-logging-processor</artifactId>
-            </annotationProcessorPath>
+            </path>
           </annotationProcessorPaths>
         </configuration>
       </plugin>
