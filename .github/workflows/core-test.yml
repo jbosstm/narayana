@@ -30,13 +30,26 @@ jobs:
         id: check-label
         run: |
           echo "should_skip=false" >> $GITHUB_OUTPUT
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "Checking labels on PR #${{ github.event.pull_request.number }}..."
-            LABELS=$(gh pr view ${{ github.event.pull_request.number }} --json labels --jq '.labels[].name')
-            echo "Labels found: $LABELS"
-            if ! echo "$LABELS" | grep -q "^testing/core$"; then
-              echo "Label 'testing/core' not found. Skipping job."
-              echo "should_skip=true" >> $GITHUB_OUTPUT
+
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            echo "Triggered by 'workflow_run'. Checking associated PR..."
+
+            PR_NUMBER=$(jq -r '.workflow_run.pull_requests[0].number' "$GITHUB_EVENT_PATH")
+
+            if [[ "$PR_NUMBER" == "null" || -z "$PR_NUMBER" ]]; then
+              echo "Warning: 'workflow_run' event did not contain a PR number. Running job by default."
+            else
+              echo "Checking labels on PR #${PR_NUMBER}..."
+              LABELS=$(gh pr view ${PR_NUMBER} --json labels --jq '.labels[].name')
+              echo "Labels found: $LABELS"
+
+              # If 'testing/core' label is NOT found, set 'should_skip=true'
+              if ! echo "$LABELS" | grep -q "^testing/core$"; then
+                echo "Label 'testing/core' not found. Skipping job."
+                echo "should_skip=true" >> $GITHUB_OUTPUT
+              else
+                echo "Label 'testing/core' found. Proceeding with job."
+              fi
             fi
           fi
         env:
