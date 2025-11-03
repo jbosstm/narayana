@@ -1,0 +1,66 @@
+name: dispatcher
+
+on:
+  pull_request:
+    types: [ opened, edited, synchronize, ready_for_review, reopened ]
+
+jobs:
+  dispatcher:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      pull-requests: read
+      contents: read
+
+    steps:
+      - name: Parse PR description and trigger workflows
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const prBody = pr.body || "";
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            if (!prBody) {
+              core.info('PR body is empty. No test will be started.');
+              return;
+            }
+
+            if (prBody.includes('NO_TEST')) {
+              core.info('PR description contains `NO_TEST`. Skipping testing axes.');
+              return;
+            }
+            
+            const workflowMap = {
+              'CORE': 'core.yml',
+              'AS_TESTS': 'as_tests.yml',
+              'RTS': 'rts.yml',
+              'JACOCO': 'jacoco.yml',
+              'XTS': 'xts.yml',
+              'QA_JTA': 'qa_jta.yml',
+              'QA_JTS_OPENJDKORB': 'qa_jts.yml',
+            };
+
+            // Convert "! AXIS" to "!AXIS"
+            const processedBody = prBody.replace(/!\s+/g, '!');
+            // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
+            const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
+
+            for (const [axis, workflowFile] of Object.entries(workflowMap)) {
+              if (tokens.has(axis) && !tokens.has(`!${axis}`)) {
+                core.info(`Detected axis ${axis}. Triggering ${workflowFile}...`);
+                await github.rest.actions.createWorkflowDispatch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: workflowFile,
+                  ref: pr.head.ref,
+                  inputs: {
+                    pull_request_number: pr.number.toString(),
+                    pull_request_ref: pr.head.ref
+                  }
+                });
+              } else {
+                core.info(`Axis ${axis} not requested or explicitly negated.`);
+              }
+            }

@@ -1,13 +1,17 @@
-name: CORE
+name: core
 
 on:
   push:
     branches:
       - 'main'
-  workflow_run:
-    workflows: [ Labeler ]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      pull_request_number:
+        required: true
+        type: number
+      pull_request_ref:
+        required: true
+        type: string
   workflow_dispatch:
     
 # Only run the latest job
@@ -19,16 +23,25 @@ jobs:
   core-test:
     strategy:
       matrix:
-        java-version: [ 17 ]
+        java-version: [ 17, 21, 25 ]
     name: CORE test with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Check for `testing/core` label
-        id: check-label
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Log run context
         run: |
+<<<<<<< Updated upstream:.github/workflows/core.yml
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+          if [ ! -z "${{ inputs.pull_request_number }}" ]; then
+            echo "PR Number: #${{ inputs.pull_request_number }}"
+=======
           echo "should_skip=false" >> $GITHUB_OUTPUT
 
           if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
@@ -51,19 +64,16 @@ jobs:
                 echo "Label 'testing/core' found. Proceeding with job."
               fi
             fi
+>>>>>>> Stashed changes:.github/workflows/core-test.yml
           fi
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Set up JDK ${{ matrix.java-version }}
-        if: steps.check-label.outputs.should_skip != 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ matrix.java-version }}
 
       - name: Cache Maven dependencies
-        if: steps.check-label.outputs.should_skip != 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -75,14 +85,12 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: CORE testing profile
-        if: steps.check-label.outputs.should_skip != 'true'
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
           WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: steps.check-label.outputs.should_skip != 'true' && always()
         with:
           name: core-logs-jdk${{ matrix.java-version }}
           path: |
@@ -92,4 +100,4 @@ jobs:
             **/*tx-object-store.zip
             **/target/*surefire-reports*/**
             **/target/*failsafe-reports*/**
-          if-no-files-found: error
+          if-no-files-found: warn
