@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.jboss.narayana.xts</groupId>
     <artifactId>xts-all</artifactId>
-    <version>7.3.2.Final</version>
+    <version>7.3.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>wstx11</artifactId>
