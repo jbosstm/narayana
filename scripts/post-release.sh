@@ -23,7 +23,7 @@ fi
 echo "Proceeding..."
 
 set -e
-TEMP_WORKING_DIR="~/tmp/narayana/*/sources/"
+TEMP_WORKING_DIR="$HOME/tmp/narayana/*/sources/"
 mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
