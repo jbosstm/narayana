@@ -78,6 +78,13 @@ public class Utility
         return val;
     }
 
+   /**
+    * Convert a long to a hex String.
+   */
+   public static String longToHexString(long number) throws NumberFormatException {
+        return Long.toString(number, 16);
+   }
+
    private static final byte[] HEX_DIGITS;
 
    static {
