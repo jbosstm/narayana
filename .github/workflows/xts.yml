@@ -46,7 +46,7 @@ jobs:
       matrix:
         java-version: [ 17, 21 ]
     name: XTS test with JDK ${{ matrix.java-version }}
-    timeout-minutes: 120
+    timeout-minutes: 200
     runs-on: ubuntu-latest
 
     steps:
@@ -88,14 +88,11 @@ jobs:
           git config --global user.name "github-actions[bot]"  
           WORKSPACE=$PWD PROFILE=XTS ./scripts/hudson/narayana.sh
 
+      - name: Zip log files into log.zip
+        run: zip -r log.zip . -i **/*.*log*  **/ObjectStore*/**  **/tx-object-store/** **/*tx-object-store.zip **/target/*surefire-reports*/** **/target/*failsafe-reports*/** -r 
+      
       - uses: actions/upload-artifact@v4
         with:
           name: xts-logs-jdk${{ matrix.java-version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
+          path: log.zip
           if-no-files-found: warn
