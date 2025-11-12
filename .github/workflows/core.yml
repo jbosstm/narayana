@@ -44,7 +44,7 @@ jobs:
   core-test:
     strategy:
       matrix:
-        java-version: [ 17, 21 ]
+        java-version: [ 17, 21, 25 ]
     name: CORE test with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     runs-on: ubuntu-latest
