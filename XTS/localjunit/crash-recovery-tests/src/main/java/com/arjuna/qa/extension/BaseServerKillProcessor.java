@@ -130,7 +130,7 @@ public abstract class BaseServerKillProcessor implements ServerKillProcessor {
             runShellCommand("mkdir " + dir);
         }
 
-        String logFile = dir + File.separator + scriptName + ":" + testClass + "_" + processLogId++ + ".txt";
+        String logFile = dir + File.separator + scriptName + "_" + testClass + "_" + processLogId++ + ".txt";
         runShellCommand(getProcessesCmd() + " > " + logFile);
         getLogger().info("Logged current running processes to: " + logFile);
     }
