@@ -45,7 +45,7 @@ jobs:
     strategy:
       matrix:
         java-version: [ 17, 21 ]
-    name: XTS test with JDK ${{ matrix.java-version }}
+    name: XTS axis with JDK ${{ matrix.java-version }}
     timeout-minutes: 120
     runs-on: ubuntu-latest
 
@@ -82,13 +82,14 @@ jobs:
           restore-keys: |
             maven-${{ runner.os }}-
 
-      - name: XTS testing profile
+      - name: XTS testing axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
           WORKSPACE=$PWD PROFILE=XTS ./scripts/hudson/narayana.sh
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: xts-logs-jdk${{ matrix.java-version }}
           path: |

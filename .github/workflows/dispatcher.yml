@@ -2,7 +2,7 @@ name: dispatcher
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, ready_for_review, reopened]
+    types: [opened, edited, synchronize, reopened]
     
 permissions:
   actions: write
@@ -50,7 +50,8 @@ jobs:
               'CORE': 'core.yml',
               'AS_TESTS': 'as_tests.yml',
               'RTS': 'rts.yml',
-              'XTS': 'xts.yml'
+              'XTS': 'xts.yml',
+              'QA_JTA': 'qa_jta.yml'
             };
 
             // Convert "! AXIS" to "!AXIS"
@@ -104,6 +105,15 @@ jobs:
     needs: dispatcher
     if: ${{ fromJson(needs.dispatcher.outputs.workflowToRunMap).XTS }}
     uses: ./.github/workflows/xts.yml
+    with:
+      pull_request_number: ${{ needs.dispatcher.outputs.pr_number }}
+      pull_request_ref: ${{ needs.dispatcher.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.dispatcher.outputs.pr_repo }}
+
+  QA_JTA:
+    needs: dispatcher
+    if: ${{ fromJson(needs.dispatcher.outputs.workflowToRunMap).QA_JTA }}
+    uses: ./.github/workflows/qa_jta.yml
     with:
       pull_request_number: ${{ needs.dispatcher.outputs.pr_number }}
       pull_request_ref: ${{ needs.dispatcher.outputs.pr_ref }}
