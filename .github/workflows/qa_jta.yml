@@ -1,4 +1,4 @@
-name: as_tests
+name: qa_jta
 
 on:
   push:
@@ -27,27 +27,29 @@ on:
         type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
         description: 'Branch or commit to test (optional)'
         required: false
         type: string
-    
+
 # Only run the latest job
 concurrency:
-  group: 'as_tests @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: 'qa_jta @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
-  as_tests-test:
+  qa_jta-test:
     strategy:
       matrix:
         java-version: [ 17, 21 ]
-    name: AS_TESTS axis with JDK ${{ matrix.java-version }}
-    timeout-minutes: 320
+    name: QA_JTA axis with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
     runs-on: ubuntu-latest
+    env:
+      TARGET_DB: "jbossts"
 
     steps:
       - name: Log run context
@@ -64,6 +66,48 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        env:
+          PGUSER: "postgres"
+          TARGET_DB: ${{ env.TARGET_DB }}
+        run: |
+          sudo sed -i '/^host/s/scram-sha-256/trust/' /etc/postgresql/*/main/pg_hba.conf
+          sudo systemctl start postgresql.service
+          pg_isready
+          sudo -u postgres psql -v target_db=${{ env.TARGET_DB }} -v pguser=postgres < .github/databases/postgres/init.sql
+          sudo systemctl restart postgresql.service
+          pg_isready
+
+      - name: Configure MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -h 127.0.0.1 -uroot -proot < .github/databases/mysql/init.sql
+
+      - name: Configure Oracle
+        uses: gvenzl/setup-oracle-free@v1
+        with:
+          tag: "full"
+          app-user: "jbossts"
+          app-user-password: "jbossts"
+          container-runtime: "docker"
+          setup-scripts: "${{ github.workspace }}/.github/databases/oracle"
+
+      - name: Pull and configure DB2
+        run: |
+          docker pull icr.io/db2_community/db2
+          cd ${{ github.workspace }}/.github/databases/db2
+          mkdir docker
+          docker run -h db2server --name db2server --restart=always --detach --privileged=true \
+            -p 50000:50000 --env-file env_list \
+            -v docker:/database icr.io/db2_community/db2
+          docker exec db2server bash -c "
+            useradd -m db2 && echo 'db2:db2' | chpasswd
+            useradd -m db22 && echo 'db22:db22' | chpasswd
+          "
+          docker logs -f db2server | sed "/Setup has completed/q"
+          docker cp init.sql db2server:/tmp/init.sql
+          docker exec db2server su - db2inst1 -c "db2 -tvf /tmp/init.sql"
 
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
@@ -82,21 +126,20 @@ jobs:
           restore-keys: |
             maven-${{ runner.os }}-
 
-      - name: AS_TESTS testing axis
+      - name: QA_JTA testing axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=AS_TESTS ./scripts/hudson/narayana.sh
+          git config --global user.name "github-actions[bot]"
+          WORKSPACE=$PWD PROFILE=QA_JTA ./scripts/hudson/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: as_tests-logs-jdk${{ matrix.java-version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
+          name: qa_jta-logs-jdk${{ matrix.java-version }}
+          path: qa/testoutput/**/*
           if-no-files-found: warn
+
+      - name: Stop and delete DB2
+        run: |
+          docker stop db2server
+          docker rm db2server
