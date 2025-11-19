@@ -86,7 +86,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=CORE ./scripts/hudson/narayana.sh
+          WORKSPACE=$PWD PROFILE=CORE ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: always()
