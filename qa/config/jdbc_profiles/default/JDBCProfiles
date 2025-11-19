@@ -2,12 +2,10 @@
 # SPDX short identifier: Apache-2.0
 #
 #########
-# This is the 'default' version of the profile, used by hosts that
-# can't find one mathcing their own name, which most means hudson nodes.
-#
-# The dbs it uses are in boston, so if running from a dev box on the vpn
-# you probably want to use the boston vpn endpoint or the tests will
-# be more likely to timeout.
+# This is the default profile used by hosts that create databases
+# on demand through container management tools such as Podman or Docker.
+# If you need guidance on setting up local databases with Docker,
+# refer to the workflows in the .github directory.
 #########
 
 ######################################################################
