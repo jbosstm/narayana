@@ -1,4 +1,4 @@
-name: qa_jta
+name: qa_jts_openjdkorb
 
 on:
   workflow_call:
@@ -19,13 +19,13 @@ on:
 
 # Only run the latest job
 concurrency:
-  group: 'qa_jta @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: 'qa_jts_openjdkorb @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
-  qa_jta-test:
-    name: QA_JTA axis with JDK ${{ inputs.jdk_version }}
-    timeout-minutes: 120
+  qa_jts_openjdkorb-test:
+    name: QA_JTS_OPENJDKORB axis with JDK ${{ inputs.jdk_version }}
+    timeout-minutes: 360
     runs-on: ubuntu-latest
     env:
       TARGET_DB: "jbossts"
@@ -101,18 +101,18 @@ jobs:
           key: maven-${{ runner.os }}
           restore-keys: maven-${{ runner.os }}-
 
-      - name: QA_JTA testing axis
-        id: qa_jta_axis
+      - name: QA_JTS_OPENJDKORB testing axis
+        id: qa_jts_openjdkorb
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          WORKSPACE=$PWD PROFILE=QA_JTA ./.github/scripts/narayana.sh
+          WORKSPACE=$PWD PROFILE=QA_JTS_OPENJDKORB ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.qa_jta_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.qa_jts_openjdkorb.conclusion == 'failure' }}
         with:
           retention-days: 30
-          name: qa_jta-logs-jdk${{ inputs.jdk_version }}
+          name: qa_jts_openjdkorb-logs-jdk${{ inputs.jdk_version }}
           path: qa/testoutput/**/*
           if-no-files-found: warn
 

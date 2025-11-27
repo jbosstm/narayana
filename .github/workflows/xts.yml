@@ -1,13 +1,10 @@
 name: xts
 
 on:
-  push:
-    branches:
-      - 'main'
   workflow_call:
     inputs:
-      pull_request_number:
-        description: 'Pull request number'
+      jdk_version:
+        description: 'JDK version'
         required: true
         type: string
       pull_request_repo:
@@ -19,20 +16,17 @@ on:
         description: 'Branch or commit to test'
         required: true
         type: string
-  workflow_dispatch:
-    inputs:
-      pull_request_number:
-        description: 'Pull request number (optional)'
-        required: false
-        type: string
-      pull_request_repo:
-        description: 'Repository to check out'
+      narayana_artifact_name:
+        description: 'Narayana Maven repository artifact name'
         required: true
         type: string
-        default: 'jbosstm/narayana'
-      pull_request_ref:
-        description: 'Branch or commit to test (optional)'
-        required: false
+      wildfly_artifact_name:
+        description: 'WIldFly Maven repository artifact name'
+        required: true
+        type: string
+      jboss_as_zip_name:
+        description: 'JBoss/WildFly zip artifact name'
+        required: true
         type: string
     
 # Only run the latest job
@@ -42,10 +36,7 @@ concurrency:
 
 jobs:
   xts-test:
-    strategy:
-      matrix:
-        java-version: [ 17, 21 ]
-    name: XTS axis with JDK ${{ matrix.java-version }}
+    name: XTS axis with JDK ${{ inputs.jdk_version }}
     timeout-minutes: 120
     runs-on: ubuntu-latest
 
@@ -55,9 +46,9 @@ jobs:
           echo "Triggered by: ${{ github.event_name }}"
           echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
-          if [ ! -z "${{ inputs.pull_request_number }}" ]; then
-            echo "PR Number: #${{ inputs.pull_request_number }}"
-          fi
+          echo "Narayana artifacts: ${{ inputs.narayana_artifact_name }}"
+          echo "WildFly artifacts: ${{ inputs.wildfly_artifact_name }}"
+          echo "WildFly zip name: ${{ inputs.jboss_as_zip_name }}"
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -65,33 +56,59 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ matrix.java-version }}
+      - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ inputs.jdk_version }}
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository/*/*
-            !~/.m2/repository/org/jboss
+            ~/.m2/repository
+            !~/.m2/repository/org/jboss/narayana
             !~/.m2/repository/org/wildfly
           key: maven-${{ runner.os }}
-          restore-keys: |
-            maven-${{ runner.os }}-
+          restore-keys: maven-${{ runner.os }}-
+
+      - name: Download Narayana Maven repository
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ inputs.narayana_artifact_name }}
+          path: ~/.m2/repository/org/jboss/narayana
+
+      - name: Download WildFly Maven repository
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ inputs.wildfly_artifact_name }}
+          path: ~/.m2/repository/org/wildfly
+
+      - name: Download WildFly zip
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ inputs.jboss_as_zip_name }}
+          path: ${{ github.workspace }}
+          merge-multiple: true
+
+      - name: Unzip WildFly zip
+        run: |
+          unzip wildfly-*.zip
+          dir=$(unzip -Z -1 wildfly-*.zip | head -n1 | cut -d/ -f1)
+          mv "$dir" wildfly
 
       - name: XTS testing axis
+        id: xts_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=XTS ./.github/scripts/narayana.sh
+          git config --global user.name "github-actions[bot]"
+          JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=XTS ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ failure() && steps.xts_axis.conclusion == 'failure' }}
         with:
-          name: xts-logs-jdk${{ matrix.java-version }}
+          retention-days: 30
+          name: xts-logs-jdk${{ inputs.jdk_version }}
           path: |
             **/*.*log*
             **/ObjectStore*/**
