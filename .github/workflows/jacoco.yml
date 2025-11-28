@@ -56,6 +56,20 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
+      - name: Configure and restart PostgreSQL
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        uses: ./.github/actions/db2_setup_ubuntu_runner
+
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v5
         with:

@@ -1,0 +1,22 @@
+name: "Configure and restart PostgreSQL"
+description: "Configure and restart PostgreSQL for ubuntu runners"
+
+inputs:
+  target_db:
+    description: "Target database name"
+    required: false
+    default: "jbossts"
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        PGUSER: postgres
+        TARGET_DB: ${{ inputs.target_db }}
+      run: |
+        sudo sed -i '/^host/s/scram-sha-256/trust/' /etc/postgresql/*/main/pg_hba.conf
+        sudo systemctl start postgresql.service
+        pg_isready
+        sudo -u postgres psql -v target_db=${TARGET_DB} -v pguser=postgres < .github/databases/postgres/init.sql
+        sudo systemctl restart postgresql.service
