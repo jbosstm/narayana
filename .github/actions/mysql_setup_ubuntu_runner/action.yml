@@ -1,0 +1,10 @@
+name: "Starts and configures MySQL"
+description: "Starts and configures MySQL for ubuntu runners"
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        sudo systemctl start mysql.service
+        mysql -h 127.0.0.1 -uroot -proot < .github/databases/mysql/init.sql

@@ -44,46 +44,18 @@ jobs:
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Configure and restart PostgreSQL
-        env:
-          PGUSER: "postgres"
-          TARGET_DB: ${{ env.TARGET_DB }}
-        run: |
-          sudo sed -i '/^host/s/scram-sha-256/trust/' /etc/postgresql/*/main/pg_hba.conf
-          sudo systemctl start postgresql.service
-          pg_isready
-          sudo -u postgres psql -v target_db=${{ env.TARGET_DB }} -v pguser=postgres < .github/databases/postgres/init.sql
-          sudo systemctl restart postgresql.service
-          pg_isready
-
-      - name: Configure MySQL
-        run: |
-          sudo systemctl start mysql.service
-          mysql -h 127.0.0.1 -uroot -proot < .github/databases/mysql/init.sql
-
-      - name: Configure Oracle
-        uses: gvenzl/setup-oracle-free@v1
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
         with:
-          tag: "full"
-          app-user: "jbossts"
-          app-user-password: "jbossts"
-          container-runtime: "docker"
-          setup-scripts: "${{ github.workspace }}/.github/databases/oracle"
+          target_db: ${{ env.TARGET_DB }}
 
-      - name: Pull and configure DB2
-        run: |
-          docker pull icr.io/db2_community/db2
-          cd ${{ github.workspace }}/.github/databases/db2
-          mkdir docker
-          docker run -h db2server --name db2server --restart=always --detach --privileged=true \
-            -p 50000:50000 --env-file env_list \
-            -v docker:/database icr.io/db2_community/db2
-          docker exec db2server bash -c "
-            useradd -m db2 && echo 'db2:db2' | chpasswd
-            useradd -m db22 && echo 'db22:db22' | chpasswd
-          "
-          docker logs -f db2server | sed "/Setup has completed/q"
-          docker cp init.sql db2server:/tmp/init.sql
-          docker exec db2server su - db2inst1 -c "db2 -tvf /tmp/init.sql"
+      - name: Starts and configure MySQL
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v4

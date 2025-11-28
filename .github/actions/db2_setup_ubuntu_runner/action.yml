@@ -1,0 +1,21 @@
+name: "Pull and configure DB2"
+description: "Starts and configures IBM DB2 for ubuntu runners"
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        docker pull icr.io/db2_community/db2
+        cd ${{ github.workspace }}/.github/databases/db2
+        mkdir docker
+        docker run -h db2server --name db2server --restart=always --detach --privileged=true \
+          -p 50000:50000 --env-file env_list \
+          -v docker:/database icr.io/db2_community/db2
+        docker exec db2server bash -c "
+          useradd -m db2 && echo 'db2:db2' | chpasswd
+          useradd -m db22 && echo 'db22:db22' | chpasswd
+        "
+        docker logs -f db2server 2>&1 | sed "/Setup has completed/q" || true
+        docker cp init.sql db2server:/tmp/init.sql
+        docker exec db2server su - db2inst1 -c "db2 -tvf /tmp/init.sql"
