@@ -20,7 +20,7 @@ QA tests is a distinct step from running unit tests, which are an integral part 
 
 From July 2009, JBossTS no longer uses the DTF framework for running QA tests. Instead the
 tests have been converted to junit4 and use a small scaffold to spawn the java processes
-as required. This allows better use of existing tool support e.g. junit ant integration, hudson.
+as required. This allows better use of existing tool support e.g. junit ant integration.
 
 requires: jdk (1.9+), ant (1.9.6+), database drivers (for jdbc tests only, see build.xml)
 

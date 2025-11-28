@@ -1,0 +1,177 @@
+name: as_builder
+
+on:
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+      CORE:
+        description: 'Whether CORE should be run'
+        required: true
+        type: string
+      RTS:
+        description: 'Whether RTS should be run'
+        required: true
+        type: string
+      XTS:
+        description: 'Whether XTS should be run'
+        required: true
+        type: string
+      JACOCO:
+        description: 'Whether JACOCO should be run'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: true
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: true
+        type: string
+
+# Only run the latest job
+concurrency:
+  group: 'as_builder @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  as_builder:
+    name: as_builder with JDK ${{ inputs.jdk_version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    outputs:
+      CORE: ${{ inputs.CORE }}
+      RTS: ${{ inputs.RTS }}
+      XTS: ${{ inputs.XTS }}
+      JACOCO: ${{ inputs.JACOCO }}
+      jdk_version: ${{ inputs.jdk_version }}
+      pr_ref: ${{ inputs.pull_request_ref }}
+      pr_repo: ${{ inputs.pull_request_repo }}
+      narayana_artifact_name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
+      wildfly_artifact_name: ${{ steps.export-artifacts-names.outputs.wildfly_artifact_name }}
+      jboss_as_zip_name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
+
+    steps:
+      - name: Log run context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Set up JDK (${{ inputs.jdk_version }})
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/org/jboss/narayana
+            !~/.m2/repository/org/wildfly
+          key: maven-${{ runner.os }}
+          restore-keys: maven-${{ runner.os }}-
+
+      - name: Build Narayana and WildFly
+        id: builds
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          NARAYANA_BUILD=1 AS_BUILD=1 ./.github/scripts/narayana.sh
+          echo "narayana_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
+          echo "wildfly_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f jboss-as/pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
+
+      - name: Export Narayana and WildFly artifact names
+        id: export-artifacts-names
+        run: |
+          echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
+          echo "wildfly_artifact_name=${{ github.run_id }}-wildfly-${{ steps.builds.outputs.wildfly_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
+
+      - name: Save Narayana Maven repository
+        uses: actions/upload-artifact@v4
+        with:
+          compression-level: '0'
+          retention-days: 1
+          name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
+          path: ~/.m2/repository/org/jboss/narayana
+
+      - name: Save WildFly Maven repository
+        uses: actions/upload-artifact@v4
+        with:
+          compression-level: '0'
+          retention-days: 1
+          name: ${{ steps.export-artifacts-names.outputs.wildfly_artifact_name }}
+          path: ~/.m2/repository/org/wildfly
+
+      - name: Export jboss-as zip name
+        id: export-jboss-as-zip-name
+        run: |
+          echo "jboss_as_zip_name=${{ github.run_id }}-jboss-as-zip-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
+
+      - name: Save jboss-as
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
+          path: ${{ github.workspace }}/jboss-as/build/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
+
+  CORE:
+    needs: as_builder
+    if: ${{ needs.as_builder.outputs.CORE == 'true' }}
+    uses: ./.github/workflows/core.yml
+    with:
+      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
+      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
+      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
+      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
+      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+
+  RTS:
+    needs: as_builder
+    if: ${{ needs.as_builder.outputs.RTS == 'true' }}
+    uses: ./.github/workflows/rts.yml
+    with:
+      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
+      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
+      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
+      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
+      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+
+  XTS:
+    needs: as_builder
+    if: ${{ needs.as_builder.outputs.XTS == 'true' }}
+    uses: ./.github/workflows/xts.yml
+    with:
+      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
+      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
+      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
+      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
+      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+
+  JACOCO:
+    needs: as_builder
+    if: ${{ needs.as_builder.outputs.JACOCO == 'true' }}
+    uses: ./.github/workflows/jacoco.yml
+    with:
+      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
+      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
+      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
+      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
+      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}

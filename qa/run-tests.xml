@@ -12,7 +12,7 @@
   1) Run the top level JBossTS ant build:  ant jts
   2) Run the tests:  ant -f run-tests.xml
 
-  For general tests plus JDBC (e.g. use on hudson):
+  For general tests plus JDBC:
     cd qa
     mvn install
     ant -f run-tests.xml junit junit-jdbc

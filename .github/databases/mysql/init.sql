@@ -1,0 +1,7 @@
+CREATE DATABASE jbossts;
+
+CREATE USER 'dtf11'@'%' IDENTIFIED BY 'dtf11';
+GRANT ALL PRIVILEGES ON jbossts.* TO 'dtf11'@'%';;
+
+CREATE USER 'dtf12'@'%' IDENTIFIED BY 'dtf12';
+GRANT ALL PRIVILEGES ON jbossts.* TO 'dtf12'@'%';

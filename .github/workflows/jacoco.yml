@@ -1,4 +1,4 @@
-name: core
+name: jacoco
 
 on:
   workflow_call:
@@ -31,13 +31,13 @@ on:
 
 # Only run the latest job
 concurrency:
-  group: 'core @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: 'jacoco @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
-  core-test:
-    name: CORE axis with JDK ${{ inputs.jdk_version }}
-    timeout-minutes: 120
+  jacoco-test:
+    name: JACOCO axis with JDK ${{ inputs.jdk_version }}
+    timeout-minutes: 1440
     runs-on: ubuntu-latest
 
     steps:
@@ -55,6 +55,20 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v5
@@ -97,18 +111,18 @@ jobs:
           dir=$(unzip -Z -1 wildfly-*.zip | head -n1 | cut -d/ -f1)
           mv "$dir" wildfly
 
-      - name: CORE testing axis
-        id: core_axis
+      - name: jacoco testing axis
+        id: jacoco_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 PROFILE=CORE ./.github/scripts/narayana.sh
+          JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=JACOCO ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.core_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' }}
         with:
           retention-days: 30
-          name: core-logs-jdk${{ inputs.jdk_version }}
+          name: jacoco-logs-jdk${{ inputs.jdk_version }}
           path: |
             **/*.*log*
             **/ObjectStore*/**

@@ -1,4 +1,4 @@
-name: as_tests
+name: qa_jts_openjdkorb
 
 on:
   workflow_call:
@@ -16,17 +16,19 @@ on:
         description: 'Branch or commit to test'
         required: true
         type: string
-    
+
 # Only run the latest job
 concurrency:
-  group: 'as_tests @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: 'qa_jts_openjdkorb @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
-  as_tests-test:
-    name: AS_TESTS axis with JDK ${{ inputs.jdk_version }}
-    timeout-minutes: 360
+  qa_jts_openjdkorb-test:
+    name: QA_JTS_OPENJDKORB axis with JDK ${{ inputs.jdk_version }}
+    timeout-minutes: 720
     runs-on: ubuntu-latest
+    env:
+      TARGET_DB: "jbossts"
 
     steps:
       - name: Log run context
@@ -40,6 +42,20 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v4
@@ -57,22 +73,22 @@ jobs:
           key: maven-${{ runner.os }}
           restore-keys: maven-${{ runner.os }}-
 
-      - name: AS_TESTS testing axis
-        id: as_tests_axis
+      - name: QA_JTS_OPENJDKORB testing axis
+        id: qa_jts_openjdkorb
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=AS_TESTS ./.github/scripts/narayana.sh
+          git config --global user.name "github-actions[bot]"
+          WORKSPACE=$PWD PROFILE=QA_JTS_OPENJDKORB ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.qa_jts_openjdkorb.conclusion == 'failure' }}
         with:
-          name: as_tests-logs-jdk${{ inputs.jdk_version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
+          retention-days: 30
+          name: qa_jts_openjdkorb-logs-jdk${{ inputs.jdk_version }}
+          path: qa/testoutput/**/*
           if-no-files-found: warn
+
+      - name: Stop and delete DB2
+        run: |
+          docker stop db2server
+          docker rm db2server

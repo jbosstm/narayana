@@ -101,7 +101,7 @@ There are three types of tests in the Narayana repository.
   There is a difficulty that each module have different requirements for the integration tests to be run.
   Most of them requires environmental variable `JBOSS_HOME` to be defined and points to an existing
   directory of [WildFly](https://wildfly.org/downloads/). But some of them requires additional steps
-  for WildFly being configured. The best way to find out details is to check the [narayana.sh script](scripts/hudson/narayana.sh)
+  for WildFly being configured. The best way to find out details is to check the [narayana.sh script](.github/scripts/narayana.sh)
   which is used to run CI tests.
 * Integration qa suite resides in the directory `qa/` and contains form of integration tests.
   These are built but not run automatically. See [qa/README.txt](qa/README.txt) for usage. In brevity launching tests

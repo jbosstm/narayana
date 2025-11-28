@@ -108,7 +108,7 @@ fi
 
 # It is important in the deploy step that, if you are deploying, you provide a reference to your settings file as the ./build.sh overrides the default settings file discovery of Maven.
 # Please see https://github.com/jbosstm/narayana/wiki/Narayana-Release-Process for details of the settings.xml requirements
-./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Pcommunity -Drelease -DreleaseStaging
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Pcommunity -Dsign -Ddocs -Drelease -DreleaseStaging
 if [[ $? != 0 ]]; then
   echo 1>&2 Could not deploy narayana
   exit

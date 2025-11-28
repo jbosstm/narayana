@@ -194,7 +194,7 @@
       <dependencies>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
-          <artifactId>ojdbc10</artifactId>
+          <artifactId>ojdbc17</artifactId>
           <scope>test</scope>
         </dependency>
       </dependencies>

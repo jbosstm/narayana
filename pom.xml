@@ -136,8 +136,8 @@
     <url>https://jira.jboss.org/jira/browse/JBTM/</url>
   </issueManagement>
   <ciManagement>
-    <system>hudson</system>
-    <url>http://hudson.qa.jboss.com/hudson/view/JBossTS/</url>
+    <system>Github Actions</system>
+    <url>https://github.com/jbosstm/narayana/actions</url>
   </ciManagement>
   <distributionManagement>
     <snapshotRepository>
@@ -497,6 +497,67 @@
   </build>
   <profiles>
     <profile>
+      <id>documentation</id>
+      <activation>
+        <property>
+          <name>docs</name>
+        </property>
+      </activation>
+      <modules>
+        <module>docs</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <release>17</release>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              <excludePackageNames>*.internal.*</excludePackageNames>
+              <skip>${skip.release}</skip>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>signingArtifacts</id>
+      <activation>
+        <property>
+          <name>sign</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <skip>${skip.release}</skip>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>nexusStagingDeployment</id>
       <activation>
         <property>
@@ -535,9 +596,6 @@
           <name>release</name>
         </property>
       </activation>
-      <modules>
-        <module>docs</module>
-      </modules>
       <build>
         <plugins>
           <plugin>
@@ -552,40 +610,6 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <release>17</release>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <excludePackageNames>*.internal.*</excludePackageNames>
-              <skip>${skip.release}</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <configuration>
-              <skip>${skip.release}</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <phase>verify</phase>
               </execution>
             </executions>
           </plugin>

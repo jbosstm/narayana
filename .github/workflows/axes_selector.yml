@@ -1,0 +1,198 @@
+  name: axes_selector
+
+  on:
+    push:
+      branches:
+        - 'main'
+    pull_request:
+      types: [opened, edited, synchronize, reopened]
+    workflow_dispatch:
+      inputs:
+        jdk_version:
+          description: 'JDK version'
+          required: true
+          type: string
+          default: '17'
+        pull_request_repo:
+          description: 'Repository to check out'
+          required: false
+          type: string
+        pull_request_ref:
+          description: 'Branch or commit to test (optional)'
+          required: false
+          type: string
+        CORE:
+          description: 'Whether CORE should be run'
+          required: true
+          type: boolean
+          default: true
+        RTS:
+          description: 'Whether RTS should be run'
+          required: true
+          type: boolean
+          default: false
+        XTS:
+          description: 'Whether XTS should be run'
+          required: true
+          type: boolean
+          default: false
+        AS_TESTS:
+          description: 'Whether AS_TESTS should be run'
+          required: true
+          type: boolean
+          default: false
+        QA_JTA:
+          description: 'Whether QA_JTA should be run'
+          required: true
+          type: boolean
+          default: false
+        QA_JTS_OPENJDKORB:
+          description: 'Whether QA_JTS_OPENJDKORB should be run'
+          required: true
+          type: boolean
+          default: false
+        JACOCO:
+          description: 'Whether JACOCO should be run'
+          required: true
+          type: boolean
+          default: false
+
+  permissions:
+    actions: write
+    pull-requests: read
+    contents: read
+
+  jobs:
+    axes_selector:
+      runs-on: ubuntu-latest
+
+      outputs:
+        CORE: ${{ steps.parse.outputs.CORE || steps.set-axes-inputs.outputs.CORE || 'true' }}
+        AS_TESTS: ${{ steps.parse.outputs.AS_TESTS || steps.set-axes-inputs.outputs.AS_TESTS || 'true' }}
+        RTS: ${{ steps.parse.outputs.RTS || steps.set-axes-inputs.outputs.RTS || 'true' }}
+        XTS: ${{ steps.parse.outputs.XTS || steps.set-axes-inputs.outputs.XTS || 'true' }}
+        QA_JTA: ${{ steps.parse.outputs.QA_JTA || steps.set-axes-inputs.outputs.QA_JTA || 'true' }}
+        QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
+        JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || 'true' }}
+        jdk_version: ${{ steps.parse.outputs.jdk_version || steps.set-axes-inputs.outputs.jdk_version || '17' }}
+        pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
+        pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
+        pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
+
+      steps:
+        - name: Extract PR metadata
+          id: set-pr-data
+          if: ${{ github.event_name == 'pull_request' }}
+          run: |
+            echo 'pr_number=${{ github.event.pull_request.number }}' >> $GITHUB_OUTPUT
+            echo 'pr_ref=${{ github.event.pull_request.head.ref }}' >> $GITHUB_OUTPUT
+            echo 'pr_repo=${{ github.event.pull_request.head.repo.full_name }}' >> $GITHUB_OUTPUT
+
+        - name: Parse PR description
+          id: parse
+          if: ${{ github.event_name == 'pull_request' }}
+          uses: actions/github-script@v8
+          with:
+            script: |
+              const pr = context.payload.pull_request;
+              const prBody = pr.body;
+              const workflowAxes = [
+                'CORE',
+                'AS_TESTS',
+                'RTS',
+                'XTS',
+                'QA_JTA',
+                'QA_JTS_OPENJDKORB',
+                'JACOCO'
+              ];
+
+              // Convert '! AXIS' to '!AXIS'
+              const processedBody = prBody.replace(/!\s+/g, '!');
+              // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
+              const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
+
+              // Determine which workflows to run
+              for (const axis of workflowAxes) {
+                if (tokens.has(axis) && !tokens.has(`!${axis}`)) {
+                  core.info(`Detected axis ${axis}.`);
+                  core.setOutput(axis, 'true');
+                } else {
+                  core.info(`Axis ${axis} not requested.`);
+                  core.setOutput(axis, 'false');
+                }
+              }
+
+              // Matches JDK17, JDK 17, JDK:17, JDK=17, etc.
+              const jdkRegex = /\bJDK\s*[:=\-\s]*\s*(17|21|25)\b/i;
+
+              const jdkMatch = prBody.match(jdkRegex);
+
+              let jdk_version = null;
+              if (jdkMatch) {
+                jdk_version = parseInt(jdkMatch[1], 10);
+                core.info(`Detected JDK${jdk_version} in PR body.`);
+              } else {
+                // default
+                jdk_version = 17;
+                core.info(`Using JDK${jdk_version}.`);
+              }
+
+              core.setOutput('jdk_version', jdk_version);
+
+        - name: Set axes according to triggering event
+          id: set-axes-inputs
+          if: ${{ github.event_name == 'workflow_dispatch' }}
+          uses: actions/github-script@v8
+          with:
+            script: |
+              core.setOutput('jdk_version', '${{ inputs.jdk_version }}');
+              core.setOutput('CORE', '${{ inputs.CORE }}');
+              core.setOutput('AS_TESTS', '${{ inputs.AS_TESTS }}');
+              core.setOutput('RTS', '${{ inputs.RTS }}');
+              core.setOutput('XTS', '${{ inputs.XTS }}');
+              core.setOutput('QA_JTA', '${{ inputs.QA_JTA }}');
+              core.setOutput('QA_JTS_OPENJDKORB', '${{ inputs.QA_JTS_OPENJDKORB }}');
+              core.setOutput('JACOCO', '${{ inputs.JACOCO }}');
+
+    as_builder:
+      needs: axes_selector
+      if: ${{ needs.axes_selector.outputs.CORE == 'true' ||
+        needs.axes_selector.outputs.RTS == 'true' ||
+        needs.axes_selector.outputs.XTS == 'true' ||
+        needs.axes_selector.outputs.JACOCO == 'true' }}
+      uses: ./.github/workflows/as_builder.yml
+      with:
+        CORE: ${{ needs.axes_selector.outputs.CORE }}
+        RTS: ${{ needs.axes_selector.outputs.RTS }}
+        XTS: ${{ needs.axes_selector.outputs.XTS }}
+        JACOCO: ${{ needs.axes_selector.outputs.JACOCO }}
+        jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+        pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+        pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+
+    AS_TESTS:
+      needs: axes_selector
+      if: ${{ needs.axes_selector.outputs.AS_TESTS == 'true' }}
+      uses: ./.github/workflows/as_tests.yml
+      with:
+        jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+        pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+        pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+
+    QA_JTA:
+      needs: axes_selector
+      if: ${{ needs.axes_selector.outputs.QA_JTA == 'true' }}
+      uses: ./.github/workflows/qa_jta.yml
+      with:
+        jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+        pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+        pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+
+    QA_JTS_OPENJDKORB:
+      needs: axes_selector
+      if: ${{ needs.axes_selector.outputs.QA_JTS_OPENJDKORB == 'true' }}
+      uses: ./.github/workflows/qa_jts_openjdkorb.yml
+      with:
+        jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+        pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+        pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
