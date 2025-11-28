@@ -1,0 +1,13 @@
+name: "Starts and configure Oracle"
+description: "Starts and configure Oracle for ubuntu runners"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: gvenzl/setup-oracle-free@v1
+      with:
+        tag: "full"
+        app-user: "jbossts"
+        app-user-password: "jbossts"
+        container-runtime: "docker"
+        setup-scripts: "${{ github.workspace }}/.github/databases/oracle"
