@@ -37,7 +37,7 @@ concurrency:
 jobs:
   core-test:
     name: CORE axis with JDK ${{ inputs.jdk_version }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     runs-on: ubuntu-latest
 
     steps:
@@ -66,11 +66,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository/*/*/*
             !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly
+            !~/.m2/repository/org/wildfly/*
           key: maven-${{ runner.os }}
-          restore-keys: maven-${{ runner.os }}-
 
       - name: Download Narayana Maven repository
         uses: actions/download-artifact@v5
@@ -105,7 +104,7 @@ jobs:
           JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 PROFILE=CORE ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.core_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.core_axis.conclusion == 'failure' || cancelled() && steps.core_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
           name: core-logs-jdk${{ inputs.jdk_version }}

@@ -42,7 +42,7 @@ jobs:
   as_builder:
     name: as_builder with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
 
     outputs:
       CORE: ${{ inputs.CORE }}
@@ -79,11 +79,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository/*/*/*
             !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly
+            !~/.m2/repository/org/wildfly/*
           key: maven-${{ runner.os }}
-          restore-keys: maven-${{ runner.os }}-
 
       - name: Build Narayana and WildFly
         id: builds

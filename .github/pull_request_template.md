@@ -8,4 +8,7 @@ The build axes can be controlled either by prefixing them with a `!` or by addin
 
 CORE AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_OPENJDKORB PERFORMANCE DB_TESTS mysql db2 postgres oracle
 
+> [!IMPORTANT]  
+> If the DB_TESTS axis is enabled but no database is selected, all databases will be tested by default. Multiple databases may be selected.
+
 Pull requests build and run with one of the following JDKs: JDK17, JDK21, and JDK25. If the JDK version is omitted, the minimum supported JDK will be used.

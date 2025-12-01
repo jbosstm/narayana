@@ -67,21 +67,20 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository/*/*/*
             !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly
+            !~/.m2/repository/org/wildfly/*
           key: maven-${{ runner.os }}
-          restore-keys: maven-${{ runner.os }}-
 
       - name: QA_JTA testing axis
         id: qa_jta_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          WORKSPACE=$PWD PROFILE=QA_JTA ./.github/scripts/narayana.sh
+          PROFILE=QA_JTA ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.qa_jta_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.qa_jta_axis.conclusion == 'failure' || cancelled() && steps.qa_jta_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
           name: qa_jta-logs-jdk${{ inputs.jdk_version }}
