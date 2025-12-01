@@ -56,6 +56,15 @@
           required: true
           type: boolean
           default: false
+        DB_TESTS:
+          description: 'Whether DB_TESTS should be run'
+          required: true
+          type: boolean
+          default: false
+        SELECTED_DB:
+          description: 'In case DB_TESTS is requested, SELECTED_DB will indicate the database to use'
+          required: true
+          type: string
 
   permissions:
     actions: write
@@ -75,6 +84,8 @@
         QA_JTA: ${{ steps.parse.outputs.QA_JTA || steps.set-axes-inputs.outputs.QA_JTA || 'true' }}
         QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
         JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || 'true' }}
+        DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'true' }}
+        SELECTED_DB: ${{ steps.parse.outputs.SELECTED_DB || steps.set-axes-inputs.outputs.SELECTED_DB || '' }}
         jdk_version: ${{ steps.parse.outputs.jdk_version || steps.set-axes-inputs.outputs.jdk_version || '17' }}
         pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
         pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
@@ -104,7 +115,8 @@
                 'XTS',
                 'QA_JTA',
                 'QA_JTS_OPENJDKORB',
-                'JACOCO'
+                'JACOCO',
+                'DB_TESTS'
               ];
 
               // Convert '! AXIS' to '!AXIS'
@@ -120,6 +132,32 @@
                 } else {
                   core.info(`Axis ${axis} not requested.`);
                   core.setOutput(axis, 'false');
+                }
+              }
+
+              if (workflowAxes.DB_TESTS) {
+                const possibleDBs = [
+                  'mysql',
+                  'db2',
+                  'postgres',
+                  'oracle'
+                ];
+
+                let selectedDB = null;
+                for (const db of possibleDBs) {
+                  if (tokens.has(db) && !tokens.has(`!${db}`)) {
+                    if (selectedDB) {
+                      core.setFailed(`Fatal error: Only one database should be selected!`);
+                    return;
+                  }
+                  selectedDB = db;
+                  core.info(`Detected database ${db}.`);
+                  } else {
+                    core.info(`Database ${db} not requested.`);
+                  }
+                }
+                if (!selectedDB) {
+                  core.setFailed(`Fatal error: a database should be selected`);
                 }
               }
 
@@ -154,6 +192,12 @@
               core.setOutput('QA_JTA', '${{ inputs.QA_JTA }}');
               core.setOutput('QA_JTS_OPENJDKORB', '${{ inputs.QA_JTS_OPENJDKORB }}');
               core.setOutput('JACOCO', '${{ inputs.JACOCO }}');
+              core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
+              if (${{ inputs.DB_TESTS }}) {
+                if (${{ inputs.SELECTED_DB }}) {
+                  core.setFailed(`SELECTED_DB should be defined`);
+                  return;
+              }
 
     as_builder:
       needs: axes_selector
@@ -193,6 +237,15 @@
       needs: axes_selector
       if: ${{ needs.axes_selector.outputs.QA_JTS_OPENJDKORB == 'true' }}
       uses: ./.github/workflows/qa_jts_openjdkorb.yml
+      with:
+        jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+        pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+        pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+
+    DB_TESTS:
+      needs: axes_selector
+      if: ${{ needs.axes_selector.outputs.DB_TESTS == 'true' }}
+      uses: ./.github/workflows/db_tests.yml
       with:
         jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
         pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}

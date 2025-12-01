@@ -62,7 +62,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=AS_TESTS ./.github/scripts/narayana.sh
+          PROFILE=AS_TESTS ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' }}

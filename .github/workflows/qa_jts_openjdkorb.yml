@@ -78,7 +78,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          WORKSPACE=$PWD PROFILE=QA_JTS_OPENJDKORB ./.github/scripts/narayana.sh
+          PROFILE=QA_JTS_OPENJDKORB ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.qa_jts_openjdkorb.conclusion == 'failure' }}

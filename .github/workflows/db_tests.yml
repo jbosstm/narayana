@@ -1,0 +1,148 @@
+name: db_tests.yml
+
+on:
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: true
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: true
+        type: string
+      postgres:
+        description: 'Whether PostgreSQL should be tested'
+        required: false
+        type: boolean
+        default: false
+      mysql:
+        description: 'Whether mysql should be tested'
+        required: false
+        type: boolean
+        default: false
+      oracle:
+        description: 'Whether oracle should be tested'
+        required: false
+        type: boolean
+        default: false
+      db2:
+        description: 'Whether db2 should be tested'
+        required: false
+        type: boolean
+        default: false
+
+# Only run the latest job
+concurrency:
+  group: 'db_tests @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+
+jobs:
+  db_tests:
+    name: QA_JTA axis with JDK ${{ inputs.jdk_version }}
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DB: 'jbossts'
+      DYNAMIC_DATASOURCE: 'com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess'
+      JDBC_ACCESS: ''
+      DB_DETAILS: ''
+      DB_TYPE: ''
+
+    steps:
+      - name: Log run context
+        run: |
+          echo 'Triggered by: ${{ github.event_name }}'
+          echo 'Repository: ${{ inputs.pull_request_repo || github.repository }}'
+          echo 'Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}'
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        if: ${{ inputs.postgres }}
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+        env:
+          JDBC_ACCESS: '$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource'
+          DB_DETAILS: 'DatabaseName=$target_db;ServerName=localhost;PortNumber=5432;User=postgres;Password='
+          DB_TYPE: 'postgres'
+
+      - name: Starts and configure MySQL
+        if: ${{ inputs.mysql }}
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+        env:
+          JDBC_ACCESS: '$DYNAMIC_DATASOURCE;ClassName=com.mysql.cj.jdbc.MysqlDataSource'
+          DB_DETAILS: 'DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=root;Password=root'
+          DB_TYPE: 'mysql'
+
+      - name: Starts and configure Oracle
+        if: ${{ inputs.oracle }}
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+        env:
+          DYNAMIC_DATASOURCE: 'com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess'
+          JDBC_ACCESS: '$DYNAMIC_DATASOURCE;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;NetworkProtocol=tcp;ServiceName=$db_name'
+          DB_DETAILS: 'DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=root;Password=root'
+          DB_TYPE: 'oracle'
+
+      - name: Pull, starts and configure DB2
+        if: ${{ inputs.db2 }}
+        uses: ./.github/actions/db2_setup_ubuntu_runner
+        env:
+          JDBC_ACCESS: '$DYNAMIC_DATASOURCE;ClassName=com.ibm.db2.jcc.DB2DataSource;DriverType=4'
+          DB_DETAILS: 'DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2inst1;Password=db2inst1-pwd'
+          DB_TYPE: 'db2'
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/org/jboss/narayana
+            !~/.m2/repository/org/wildfly
+          key: maven-${{ runner.os }}
+          restore-keys: maven-${{ runner.os }}-
+
+      - name: DB_TESTS testing axis
+        id: db_tests_axis
+        run: |
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+
+          JDBC_ACCESS="$JDBC_ACCESS;$DB_DETAILS"
+          cd ./ArjunaCore/arjuna/src/test/resource
+          cp /dbjbossts-properties.xml dbjbossts-properties.xml.template
+          envsubst < dbjbossts-properties.xml > dbjbossts-properties.xml
+          rm dbjbossts-properties.xml.template
+          cd ${{ github.workspace }}
+          OBJECT_STORE_PROFILE=",$DB_TYPE-jdbc-store" QA_PROFILE=-Dprofile=$DB_TYPE PROFILE=DB_TESTS ./.github/scripts/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.db_tests_axis.conclusion == 'failure' }}
+        with:
+          retention-days: 30
+          name: db_tests-logs-jdk${{ inputs.jdk_version }}
+          path: qa/testoutput/**/*
+          if-no-files-found: warn
+
+      - name: Stop and delete DB2
+        run: |
+          docker stop db2server
+          docker rm db2server
+
