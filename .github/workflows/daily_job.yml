@@ -1,0 +1,72 @@
+name: Daily Job
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # runs daily at 00:00 UTC
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for commits in the last 24 hours
+        id: check
+        run: |
+          if git log --since="24 hours ago" --quiet; then
+            echo "recent_commits=true" >> $GITHUB_OUTPUT
+          else
+            echo "recent_commits=false" >> $GITHUB_OUTPUT
+          fi
+
+  jdk17:
+    needs: check-commits
+    if: needs.check-commits.outputs.recent_commits == 'true'
+    uses: ./.github/workflows/axes_selector.yml
+    with:
+      jdk_version: '17'
+      CORE: true
+      RTS: true
+      XTS: true
+      AS_TESTS: true
+      QA_JTA: true
+      QA_JTS_OPENJDKORB: true
+      JACOCO: true
+      DB_TESTS: true
+      enabled_databases: '["postgres","mysql","oracle","db2"]'
+
+  jdk20:
+    needs: check-commits
+    if: needs.check-commits.outputs.recent_commits == 'true'
+    uses: ./.github/workflows/axes_selector.yml
+    with:
+      jdk_version: '21'
+      CORE: true
+      RTS: true
+      XTS: true
+      AS_TESTS: true
+      QA_JTA: true
+      QA_JTS_OPENJDKORB: true
+      JACOCO: true
+      DB_TESTS: true
+      enabled_databases: '["postgres","mysql","oracle","db2"]'
+
+  jdk25:
+    needs: check-commits
+    if: needs.check-commits.outputs.recent_commits == 'true'
+    uses: ./.github/workflows/axes_selector.yml
+    with:
+      jdk_version: '25'
+      CORE: true
+      RTS: true
+      XTS: true
+      AS_TESTS: true
+      QA_JTA: true
+      QA_JTS_OPENJDKORB: true
+      JACOCO: true
+      DB_TESTS: true
+      enabled_databases: '["postgres","mysql","oracle","db2"]'

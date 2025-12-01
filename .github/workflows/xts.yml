@@ -28,7 +28,7 @@ on:
         description: 'JBoss/WildFly zip artifact name'
         required: true
         type: string
-    
+
 # Only run the latest job
 concurrency:
   group: 'xts @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
@@ -66,11 +66,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository/*/*/*
             !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly
+            !~/.m2/repository/org/wildfly/*
           key: maven-${{ runner.os }}
-          restore-keys: maven-${{ runner.os }}-
 
       - name: Download Narayana Maven repository
         uses: actions/download-artifact@v5
@@ -105,7 +104,7 @@ jobs:
           JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=XTS ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.xts_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.xts_axis.conclusion == 'failure' || cancelled() && steps.xts_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
           name: xts-logs-jdk${{ inputs.jdk_version }}

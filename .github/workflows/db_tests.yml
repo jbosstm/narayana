@@ -1,0 +1,257 @@
+name: db_tests.yml
+
+on:
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: true
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: true
+        type: string
+      enabled_databases:
+        description: 'The collection of databases to test against'
+        type: string
+
+# Only run the latest job
+concurrency:
+  group: 'db_tests @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  narayana_db_tests:
+    name: Testing Narayana with JDK ${{ inputs.jdk_version }} and ${{ matrix.database }} Object Store
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        database: ${{ fromJson(inputs.enabled_databases) }}
+    env:
+      TARGET_DB: 'jbossts'
+
+    steps:
+      - name: Log run context
+        run: |
+          echo 'Triggered by: ${{ github.event_name }}'
+          echo 'Repository: ${{ inputs.pull_request_repo || github.repository }}'
+          echo 'Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}'
+          echo 'Enabled databases: ${{ inputs.enabled_databases }}'
+
+      - name: Setting environment variables
+        id: setting_env_vars
+        run: |
+          DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess"
+          JDBC_ACCESS=""
+          DB_DETAILS=""
+
+          if [[ "${{ matrix.database }}" == "postgres" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource"
+            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=5432;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "mysql" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.mysql.cj.jdbc.MysqlDataSource"
+            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "oracle" ]]; then
+            DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess"
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;NetworkProtocol=tcp"
+            DB_DETAILS="ServiceName=FREEPDB1;ServerName=localhost;PortNumber=1521;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "db2" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.ibm.db2.jcc.DB2DataSource;DriverType=4"
+            DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
+          fi
+
+          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
+          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
+          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        if: ${{ matrix.database == 'postgres' }}
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        if: ${{ matrix.database == 'mysql' }}
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        if: ${{ matrix.database == 'oracle' }}
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        if: ${{ matrix.database == 'db2' }}
+        uses: ./.github/actions/db2_setup_ubuntu_runner
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository/*/*/*
+            !~/.m2/repository/org/jboss/narayana
+            !~/.m2/repository/org/wildfly/*
+          key: maven-${{ runner.os }}
+
+      - name: Testing Narayana with ${{ matrix.database }} Object Store
+        id: narayana_db_tests
+        run: |
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+
+          export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
+          cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
+          cp dbjbossts-properties.xml dbjbossts-properties.xml.template
+          envsubst < dbjbossts-properties.xml.template > dbjbossts-properties.xml
+          rm dbjbossts-properties.xml.template
+
+          cd ${{ github.workspace }}
+          OBJECT_STORE_PROFILE=",${{ matrix.database }}-jdbc-store" NARAYANA_BUILD=1 NARAYANA_TESTS=1 ./.github/scripts/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.narayana_db_tests.conclusion == 'failure' || cancelled() && steps.narayana_db_tests.conclusion == 'cancelled' }}
+        with:
+          retention-days: 30
+          name: narayana_db_tests-logs-jdk${{ inputs.jdk_version }}-${{ matrix.database }}
+          path: |
+            **/*.*log*
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: warn
+
+      - name: Stop and delete DB2
+        if: ${{ always() && matrix.database == 'db2' }}
+        run: |
+          docker stop db2server
+          docker rm db2server
+  db_tests:
+    name: Testing QA_TARGET ${{ matrix.qa_target }} with JDK ${{ inputs.jdk_version }} and DB ${{ matrix.database }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        database: ${{ fromJson(inputs.enabled_databases) }}
+        qa_target: [ 'junit-testsuite', 'junit-jts-testsuite', 'junit-jts-testsuite-crashrecovery', 'junit-jdbc-testsuite' ]
+    env:
+      TARGET_DB: 'jbossts'
+
+    steps:
+      - name: Log run context
+        run: |
+          echo 'Triggered by: ${{ github.event_name }}'
+          echo 'Repository: ${{ inputs.pull_request_repo || github.repository }}'
+          echo 'Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}'
+          echo 'Enabled databases: ${{ inputs.enabled_databases }}'
+
+      - name: Setting environment variables
+        id: setting_env_vars
+        run: |
+          DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess"
+          JDBC_ACCESS=""
+          DB_DETAILS=""
+          
+          if [[ "${{ matrix.database }}" == "postgres" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource"
+            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=5432;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "mysql" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.mysql.cj.jdbc.MysqlDataSource"
+            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "oracle" ]]; then
+            DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess"
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;NetworkProtocol=tcp"
+            DB_DETAILS="ServiceName=FREEPDB1;ServerName=localhost;PortNumber=1521;User=dtf11;Password=dtf11"
+          elif [[ "${{ matrix.database }}" == "db2" ]]; then
+            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.ibm.db2.jcc.DB2DataSource;DriverType=4"
+            DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
+          fi
+
+          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
+          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
+          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        if: ${{ matrix.database == 'postgres' }}
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        if: ${{ matrix.database == 'mysql' }}
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        if: ${{ matrix.database == 'oracle' }}
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        if: ${{ matrix.database == 'db2' }}
+        uses: ./.github/actions/db2_setup_ubuntu_runner
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository/*/*/*
+            !~/.m2/repository/org/jboss/narayana
+            !~/.m2/repository/org/wildfly/*
+          key: maven-${{ runner.os }}
+
+      - name: DB_TESTS testing axis
+        id: db_tests_axis
+        run: |
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+
+          export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
+          cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
+          cp dbjbossts-properties.xml dbjbossts-properties.xml.template
+          envsubst < dbjbossts-properties.xml.template > dbjbossts-properties.xml
+          rm dbjbossts-properties.xml.template
+
+          cd ${{ github.workspace }}
+          QA_PROFILE="-Dprofile=${{ matrix.database }}" QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.db_tests_axis.conclusion == 'failure' || cancelled() && steps.db_tests_axis.conclusion == 'cancelled' }}
+        with:
+          retention-days: 30
+          name: db_tests-logs-jdk${{ inputs.jdk_version }}-${{ matrix.database }}-${{ matrix.qa_target }}
+          path: qa/testoutput/**/*
+          if-no-files-found: warn
+
+      - name: Stop and delete DB2
+        if: ${{ always() && matrix.database == 'db2' }}
+        run: |
+          docker stop db2server
+          docker rm db2server
+

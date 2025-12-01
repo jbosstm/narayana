@@ -16,7 +16,7 @@ on:
         description: 'Branch or commit to test'
         required: true
         type: string
-    
+
 # Only run the latest job
 concurrency:
   group: 'as_tests @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
@@ -25,7 +25,6 @@ concurrency:
 jobs:
   as_tests-test:
     name: AS_TESTS axis with JDK ${{ inputs.jdk_version }}
-    timeout-minutes: 320
     runs-on: ubuntu-latest
 
     steps:
@@ -51,21 +50,20 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository/*/*/*
             !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly
+            !~/.m2/repository/org/wildfly/*
           key: maven-${{ runner.os }}
-          restore-keys: maven-${{ runner.os }}-
 
       - name: AS_TESTS testing axis
         id: as_tests_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
-          WORKSPACE=$PWD PROFILE=AS_TESTS ./.github/scripts/narayana.sh
+          PROFILE=AS_TESTS ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' }}
+        if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' || cancelled() && steps.as_tests_axis.conclusion == 'cancelled' }}
         with:
           name: as_tests-logs-jdk${{ inputs.jdk_version }}
           path: |
