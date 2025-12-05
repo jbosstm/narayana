@@ -61,15 +61,12 @@ jobs:
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
+          cache: 'maven'
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.m2/repository/*/*/*
-            !~/.m2/repository/org/jboss/narayana
-            !~/.m2/repository/org/wildfly/*
-          key: maven-${{ runner.os }}
+      - name: Remove Narayana and WildFly from the Maven cache
+        run: |
+          rm -rf ~/.m2/repository/org/jboss/narayana
+          rm -rf ~/.m2/repository/org/wildfly
 
       - name: QA_JTS_OPENJDKORB testing axis
         id: qa_jts_openjdkorb
