@@ -24,10 +24,11 @@ concurrency:
 
 jobs:
   qa_jts_openjdkorb-test:
-    name: QA_JTS_OPENJDKORB axis with JDK ${{ inputs.jdk_version }}
+    name: Testing QA_TARGET ${{ matrix.qa_target }} with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
-    env:
-      TARGET_DB: "jbossts"
+    strategy:
+      matrix:
+        qa_target: ['junit-jts-testsuite', 'junit-jts-testsuite-crashrecovery']
 
     steps:
       - name: Log run context
@@ -41,20 +42,6 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
-
-      - name: Configure and restart PostgreSQL
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
-        with:
-          target_db: ${{ env.TARGET_DB }}
-
-      - name: Starts and configure MySQL
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v4
@@ -76,7 +63,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          PROFILE=QA_JTS_OPENJDKORB ./.github/scripts/narayana.sh
+          QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.qa_jts_openjdkorb.conclusion == 'failure' || cancelled() && steps.qa_jts_openjdkorb.conclusion == 'cancelled' }}
@@ -86,7 +73,3 @@ jobs:
           path: qa/testoutput/**/*
           if-no-files-found: warn
 
-      - name: Stop and delete DB2
-        run: |
-          docker stop db2server
-          docker rm db2server

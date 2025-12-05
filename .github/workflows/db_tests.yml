@@ -254,4 +254,3 @@ jobs:
         run: |
           docker stop db2server
           docker rm db2server
-
