@@ -2,11 +2,13 @@ name: Daily Job
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # runs daily at 00:00 UTC
+    # runs daily at 00:00 UTC
+    - cron: "0 0 * * *"
 
 jobs:
   check-commits:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'jbosstm'
 
     steps:
       - name: Checkout repository
@@ -17,7 +19,8 @@ jobs:
       - name: Check for commits in the last 24 hours
         id: check
         run: |
-          if git log --since="24 hours ago" --quiet; then
+          COUNT=$(git rev-list --count --since="24 hours ago" HEAD)
+          if [ "$COUNT" -gt 0 ]; then
             echo "recent_commits=true" >> $GITHUB_OUTPUT
           else
             echo "recent_commits=false" >> $GITHUB_OUTPUT
@@ -25,7 +28,7 @@ jobs:
 
   jdk17:
     needs: check-commits
-    if: needs.check-commits.outputs.recent_commits == 'true'
+    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
     uses: ./.github/workflows/axes_selector.yml
     with:
       jdk_version: '17'
@@ -41,7 +44,7 @@ jobs:
 
   jdk20:
     needs: check-commits
-    if: needs.check-commits.outputs.recent_commits == 'true'
+    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
     uses: ./.github/workflows/axes_selector.yml
     with:
       jdk_version: '21'
@@ -57,7 +60,7 @@ jobs:
 
   jdk25:
     needs: check-commits
-    if: needs.check-commits.outputs.recent_commits == 'true'
+    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
     uses: ./.github/workflows/axes_selector.yml
     with:
       jdk_version: '25'
