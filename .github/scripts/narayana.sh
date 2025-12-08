@@ -456,7 +456,7 @@ function qa_tests_once {
   # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
-    [ $CODE_COVERAGE = 1 ] && codeCoverage=true
+    [ -n "$CODE_COVERAGE_ARGS" ] && codeCoverage=true
   done
 
   cp TaskImpl.properties.template TaskImpl.properties
