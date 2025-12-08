@@ -62,6 +62,65 @@ on:
         description: 'The collection of databases to test against'
         type: string
         default: '["postgres","mysql","oracle","db2"]'
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+        default: '17'
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: false
+        type: string
+      pull_request_ref:
+        description: 'Branch or commit to test (optional)'
+        required: false
+        type: string
+      CORE:
+        description: 'Whether CORE should be run'
+        required: true
+        type: boolean
+        default: true
+      RTS:
+        description: 'Whether RTS should be run'
+        required: true
+        type: boolean
+        default: false
+      XTS:
+        description: 'Whether XTS should be run'
+        required: true
+        type: boolean
+        default: false
+      AS_TESTS:
+        description: 'Whether AS_TESTS should be run'
+        required: true
+        type: boolean
+        default: false
+      QA_JTA:
+        description: 'Whether QA_JTA should be run'
+        required: true
+        type: boolean
+        default: false
+      QA_JTS_OPENJDKORB:
+        description: 'Whether QA_JTS_OPENJDKORB should be run'
+        required: true
+        type: boolean
+        default: false
+      JACOCO:
+        description: 'Whether JACOCO should be run'
+        required: true
+        type: boolean
+        default: false
+      DB_TESTS:
+        description: 'Whether DB_TESTS should be run'
+        required: true
+        type: boolean
+        default: false
+      enabled_databases:
+        description: 'The collection of databases to test against'
+        type: string
+        default: '["postgres","mysql","oracle","db2"]'
 
 permissions:
   actions: write
