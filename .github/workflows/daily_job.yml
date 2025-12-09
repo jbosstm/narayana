@@ -9,6 +9,8 @@ jobs:
   check-commits:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'jbosstm'
+    outputs:
+      recent_commits: ${{ steps.check.outputs.recent_commits }}
 
     steps:
       - name: Checkout repository
