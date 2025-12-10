@@ -31,7 +31,7 @@ on:
 
 # Only run the latest job
 concurrency:
-  group: 'jacoco @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: 'jacoco @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }} @ jdk${{ inputs.jdk_version }}'
   cancel-in-progress: true
 
 jobs:
