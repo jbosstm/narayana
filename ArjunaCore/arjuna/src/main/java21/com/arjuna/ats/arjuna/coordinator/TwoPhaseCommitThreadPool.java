@@ -4,10 +4,14 @@
  */
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
-import java.util.concurrent.*;
-import java.util.function.BiFunction;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class TwoPhaseCommitThreadPool {
     private static final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -28,10 +32,10 @@ public class TwoPhaseCommitThreadPool {
         return new ExecutorCompletionService<Boolean>(executor);
     }
 
-    protected static Future<Integer> submitJob(BiFunction<Boolean, AbstractRecord, Integer> func,
-                                               AbstractRecord ar, boolean reportHeuristics) {
-        return executor.submit(
-                () -> func.apply(reportHeuristics, ar)
+    protected static void submitJob(BiConsumer<BasicAction, Boolean> func,
+                                               BasicAction action, boolean reportHeuristics) {
+        executor.submit(
+                () -> func.accept(action, reportHeuristics)
         );
     }
 
@@ -42,9 +46,11 @@ public class TwoPhaseCommitThreadPool {
         );
     }
 
-    // TODO we are missing functionality to shut down the executor which should be implemented and called from
-    //  BasicAction.finalizeInternal()
-    // Refer to the javadoc for java.util.concurrent.ExecutorService to see how to do that safely.
-    // But note that starting with jdk 21 there is an Executors.newVirtualThreadPerTaskExecutor()
-    // executor which can be autoclosed using a try-with-resources statement
+    protected record BAAsyncPrepareJobParams(BasicAction theAction, AbstractRecord ar, Boolean reportHeuristics) {}
+
+    protected static Future<Integer> submitJob(Function<BAAsyncPrepareJobParams, Integer> func, BAAsyncPrepareJobParams args) {
+        return executor.submit(
+                () -> func.apply(args)
+        );
+    }
 }
