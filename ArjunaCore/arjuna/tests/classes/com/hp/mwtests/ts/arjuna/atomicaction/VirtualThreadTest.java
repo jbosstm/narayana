@@ -25,8 +25,6 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -49,7 +47,7 @@ class VirtualThreadTest {
 
     @org.junit.Test
     @Test
-    // test prepare and commit are called on all registered records
+    // test that prepare and commit are called on all registered records
     public void isSane() {
         SimpleAbstractRecord[] ars = {
                 new SimpleAbstractRecord(false),
@@ -77,14 +75,26 @@ class VirtualThreadTest {
                             r -> VIRTUAL_THREADS_GROUP_NAME.equals(r.getCommitThreadGroup()))
                     .count();
             assertEquals(2, preparesOnVT); // only 2 since the last prepare call runs on the callers thread
-            // asynchronous commit is not supported if the caller has requested heuristic reporting
+            /**
+             * asynchronous commit is not supported if the caller has requested heuristic reporting see
+             * @see com.arjuna.ats.arjuna.coordinator.BasicAction#End(boolean)
+             */
             assertEquals(0, commitsOnVT);
         }
     }
 
+    /**
+     * test that abort is called if one of the records fails to prepare:
+     * Commit a transaction with three resources, the middle one will fail the prepare phase.
+     * Since there is no point in preparing the last resource it will be told to abort instead.
+     * The two prepared resources, the first two, will then be asked to abort, therefore in total
+     * <p>
+     * Asynchronous abort is not supported if the caller has requested heuristic reporting so
+     * a virtual thread will not be used for and of the resource rollback calls:
+     * @see com.arjuna.ats.arjuna.coordinator.BasicAction (#End(boolean))
+     */
     @org.junit.Test
     @Test
-    // test that abort is called if one of the records fails to prepare
     public void testPrepareFailReportHeuristics() {
         SimpleAbstractRecord[] ars = {
                 new SimpleAbstractRecord(false),
@@ -110,12 +120,17 @@ class VirtualThreadTest {
                     .count();
 
             // since the middle resource failed to prepare the last one is not asked to prepare since the action aborts
+            // it's expected that the first two prepare calls are executed on virtual threads and the last prepare
+            // runs on the callers thread
             assertEquals(2, preparesOnVT);
-            // asynchronous commit is not supported if the caller has requested heuristic reporting
+            // asynchronous abort is not supported if the caller has requested heuristic reporting - see BasicAction#End
             assertEquals(0, abortsOnVT); // aborting with a virtual thread
         }
     }
 
+    /**
+     * Similar to testPrepareFailReportHeuristics except that heuristics are not requested.
+     */
     @org.junit.Test
     @Test
     public void testPrepareFailIgnoreHeuristics() {
@@ -188,87 +203,16 @@ class VirtualThreadTest {
                     .count();
             // since the middle resource failed to prepare the last one is not asked to prepare since the action aborts
             assertEquals(2, preparesOnVT);
-            // in this example commit was requested
+            // in this example commit was requested but since one of the prepare calls failed the code
+            // that tests the condition (!reportHeuristics && TxControl.asyncCommit) in BasicAction#End will be
+            // true and the abort call runs async - although it is counter-intuitive it is how the current
+            // code base handles this situation. The lambda this::phase2Abort is submitted to the thread pool
+            // and a virtual thread will be used to execute the lambda, but note that BasicAction#phase2Abort itself
+            // executes the resource abort calls one after the other (ie we don't use separate threads for each abort
+            // call).
+            // Remark: There are further opportunities for executing resource calls asynchronously when asyncCommit
+            // and asyncAbort are configured (see JBTM-4025).
             assertEquals(3, abortsOnVT);
-        }
-    }
-
-//    @org.junit.Test
-//    @Test
-//    @EnabledForJreRange(min = JRE.JAVA_21)
-    public void testCanAbortSuspendedTransaction()
-    {
-        boolean virtualThreadsSupported = false;
-        AtomicAction aa = new AtomicAction();
-        aa.begin();
-        assertNotNull(AtomicAction.Current());
-        AtomicAction.suspend();
-        assertNull(AtomicAction.Current());
-        SimpleAbstractRecord[] ars = {
-                new SimpleAbstractRecord(false),
-                new SimpleAbstractRecord(true),
-                new SimpleAbstractRecord(false)
-        };
-        Arrays.stream(ars).forEach(aa::add);
-        /*
-         * call commit without reporting heuristics so that the commit calls will happen asynchronously
-         * this fails because BasicAction.phase2Commit takes synchronizationLock and when calling
-         * if (!reportHeuristics && TxControl.asyncCommit
-         */
-        boolean shouldReportHeuristics = false;
-        aa.commit(shouldReportHeuristics); // should abort because the second resource fails the prepare phase
-        // all resources should have had prepare called and none should have been asked to commit
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
-        Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled));
-        assertTrue(ars[0].wasAborted());
-        assertTrue(ars[1].wasAborted());
-        assertTrue(ars[2].wasAborted());
-        // the last (or only) 2PC aware resource will be asked to prepare on the callers thread
-        // resources are asked to prepare in the reverse order from which they were enlisted
-        // but since this behaviour could change just check that n-1 participants prepared on a virtual thread
-        int abortedOnVTCount = 0;
-        for (SimpleAbstractRecord ar : ars) {
-            if (ar.wasAbortedWithVirtualThread()) {
-                abortedOnVTCount += 1;
-            }
-        }
-
-        if (virtualThreadsSupported) {
-            assertEquals(ars.length - 1, abortedOnVTCount);
-        }
-    }
-
-//    @org.junit.Test
-//    @Test
-//    @EnabledForJreRange(min = JRE.JAVA_21)
-    public void testCanCommitSuspendedTransaction()
-    {
-        boolean virtualThreadsSupported = false;
-        AtomicAction aa = new AtomicAction();
-        aa.begin();
-        assertNotNull(AtomicAction.Current());
-        AtomicAction.suspend();
-        assertNull(AtomicAction.Current());
-        SimpleAbstractRecord[] ars = {
-                new SimpleAbstractRecord(false),
-                new SimpleAbstractRecord(false),
-                new SimpleAbstractRecord(false)
-        };
-        Arrays.stream(ars).forEach(aa::add);
-        aa.commit();
-        // the last (or only) 2PC aware resource will be asked to prepare on the callers thread
-        // resources are asked to prepare in the reverse order from which they were enlisted
-        // but since this behaviour could change just check that n-1 participants prepared on a virtual thread
-        int preparedOnVTCount = 0;
-        for (SimpleAbstractRecord ar : ars) {
-            assertTrue(ar.wasCommitted());
-            if (ar.wasPreparedWithVirtualThread()) {
-                preparedOnVTCount += 1;
-            }
-        }
-
-        if (virtualThreadsSupported) {
-            assertEquals(ars.length - 1, preparedOnVTCount);
         }
     }
 
@@ -281,9 +225,6 @@ class VirtualThreadTest {
         String prepareThreadGroup;
         String commitThreadGroup;
         String abortThreadGroup;
-        private boolean prepareCalledWithVirtualThread;
-        private boolean commitCalledWithVirtualThread;
-        private boolean abortCalledWithVirtualThread;
 
         public SimpleAbstractRecord(boolean failPrepare) {
             this(0, failPrepare);
@@ -327,18 +268,6 @@ class VirtualThreadTest {
             return abortThreadGroup;
         }
 
-        public boolean wasCommittedWithVirtualThread() {
-            return commitCalledWithVirtualThread;
-		}
-
-        public boolean wasPreparedWithVirtualThread() {
-            return prepareCalledWithVirtualThread;
-        }
-
-        public boolean wasAbortedWithVirtualThread() {
-            return abortCalledWithVirtualThread;
-        }
-
         @Override
         public Object value() {
             return null;
@@ -361,11 +290,6 @@ class VirtualThreadTest {
         @Override
         public int nestedPrepare() {
             return 0;
-        }
-
-        private boolean isRunningOnAVirtualThread() {
-            // check for running on a virtual thread using the thread group name as opposed to Thread.currentThread().isVirtual()
-            return Thread.currentThread().getThreadGroup().getName().equals("VirtualThreads");
         }
 
         @Override
