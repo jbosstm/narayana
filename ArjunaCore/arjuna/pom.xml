@@ -126,6 +126,64 @@
 
   <profiles>
     <profile>
+      <id>jdk21</id>
+      <activation>
+        <jdk>[21,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>com/arjuna/ats/arjuna/tools/stats/TxPerfGraph.java</exclude>
+                <exclude>com/arjuna/ats/arjuna/tools/stats/TxPerfPlugin.java</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>compile-java-17</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <source>17</source>
+                  <target>17</target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>compile-java-21</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <release>21</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java21</compileSourceRoot>
+                  </compileSourceRoots>
+                  <multiReleaseOutput>true</multiReleaseOutput>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Multi-Release>true</Multi-Release>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>linux-windows</id>
       <activation>
         <file>

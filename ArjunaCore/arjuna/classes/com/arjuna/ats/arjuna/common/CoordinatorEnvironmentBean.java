@@ -156,8 +156,11 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns maximum thread pool size allowed for two phase commits.
-     *
+     * <p>
      * Default: 100
+     * <p>
+     * When running on JRE version 21 and above {@link java.util.concurrent.Executors#newVirtualThreadPerTaskExecutor}
+     * is used to create new threads so the size of the pool is unused.
      *
      * @return maximum number of threads in a thread pool
      */
