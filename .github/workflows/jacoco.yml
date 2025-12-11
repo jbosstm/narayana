@@ -36,8 +36,19 @@ concurrency:
 
 jobs:
   jacoco-test:
-    name: JACOCO axis with JDK ${{ inputs.jdk_version }}
+    name: Testing ${{ matrix.map.axis }} axis with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        map: [
+          { envVars: 'NARAYANA_BUILD=1 NARAYANA_TESTS=1', axis: 'NARAYANA', artifact: 'narayana' },
+          { envVars: 'XTS_TESTS=1', axis: 'XTS', artifact: 'xts' },
+          { envVars: 'COMPENSATIONS_TESTS=1', axis: 'COMPENSATION', artifact: 'compensation' },
+          { envVars: 'txbridge=1', axis: 'TXBRIDGE', artifact: 'txbridge' },
+          { envVars: 'RTS_TESTS=1', axis: 'RTS', artifact: 'rts' },
+          { envVars: 'JTA_CDI_TESTS=1', axis: 'JTA_CDI', artifact: 'jta' },
+          { envVars: 'JTA_AS_TESTS=1', axis: 'JTA_AS', artifact: 'jta_as' }
+        ]
 
     steps:
       - name: Log run context
@@ -54,20 +65,6 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
-
-      - name: Configure and restart PostgreSQL
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
-        with:
-          target_db: ${{ env.TARGET_DB }}
-
-      - name: Starts and configure MySQL
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@v5
@@ -111,10 +108,179 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=JACOCO ./.github/scripts/narayana.sh
+          export MAVEN_OPTS='-Xms2048m -Xmx2048m'
+          CODE_COVERAGE_ARGS='-PcodeCoverage -Pfindbugs' JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 ${{ matrix.map.envVars }} ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
+        with:
+          retention-days: 30
+          name: jacoco-logs-jdk${{ inputs.jdk_version }}-${{ matrix.map.artifact }}
+          path: |
+            **/*.*log*
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ steps.jacoco_axis.conclusion == 'success' }}
+        with:
+          retention-days: 1
+          name: coverage-data-jdk${{ inputs.jdk_version }}-${{ matrix.map.artifact }}
+          path: |
+            **/target/site/
+            **/target/coverage-reports
+            **/target/classes
+            **/target/surefire-reports
+            **/target/idlj-openjdk-surefire-reports
+          if-no-files-found: warn
+
+  jacoco-qa-test:
+    name: Testing QA_TARGET ${{ matrix.qa_target }} with JDK ${{ inputs.jdk_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        qa_target: [
+          'junit-testsuite',
+          'junit-jts-testsuite',
+          'junit-jts-testsuite-crashrecovery',
+          'junit-jdbc-testsuite'
+        ]
+
+    steps:
+      - name: Log run context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+          echo "Narayana artifacts: ${{ inputs.narayana_artifact_name }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Configure and restart PostgreSQL
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        with:
+          target_db: ${{ env.TARGET_DB }}
+
+      - name: Starts and configure MySQL
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/mysql_setup_ubuntu_runner
+
+      - name: Starts and configure Oracle
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/oracle_setup_ubuntu_runner
+
+      - name: Pull, starts and configure DB2
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/db2_setup_ubuntu_runner
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+          cache: 'maven'
+
+      - name: Remove Narayana and WildFly from the Maven cache
+        run: |
+          rm -rf ~/.m2/repository/org/jboss/narayana
+          rm -rf ~/.m2/repository/org/wildfly
+
+      - name: Download Narayana Maven repository
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ inputs.narayana_artifact_name }}
+          path: ~/.m2/repository/org/jboss/narayana
+
+      - name: jacoco testing axis
+        id: jacoco_axis
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          export MAVEN_OPTS='-Xms2048m -Xmx2048m'
+          CODE_COVERAGE_ARGS='codeCoverage' QA_TARGET=${{ matrix.qa_target }} QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
+        with:
+          retention-days: 30
+          name: jacoco-logs-jdk${{ inputs.jdk_version }}-${{ matrix.qa_target }}
+          path: |
+            **/*.*log*
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ steps.jacoco_axis.conclusion == 'success' }}
+        with:
+          retention-days: 1
+          name: coverage-data-jdk${{ inputs.jdk_version }}-${{ matrix.qa_target }}
+          path: |
+            **/target/site/
+            **/target/coverage-reports
+            **/target/classes
+            **/target/surefire-reports
+            **/target/idlj-openjdk-surefire-reports
+          if-no-files-found: warn
+
+  code-coverage-report:
+    needs: [jacoco-test, jacoco-qa-test]
+    name: Generating JaCoCo report
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log run context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+          cache: 'maven'
+
+      - name: Remove Narayana and WildFly from the Maven cache
+        run: |
+          rm -rf ~/.m2/repository/org/jboss/narayana
+          rm -rf ~/.m2/repository/org/wildfly
+
+      - name: Download All Raw Data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-data-jdk${{ inputs.jdk_version }}-*
+          merge-multiple: true
+
+      - name: code coverage generator
+        id: code_coverage_generator
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+          CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage" ./.github/scripts/narayana.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.code_coverage_generator.conclusion == 'failure' || cancelled() && steps.code_coverage_generator.conclusion == 'cancelled' }}
         with:
           retention-days: 30
           name: jacoco-logs-jdk${{ inputs.jdk_version }}
@@ -126,3 +292,10 @@ jobs:
             **/target/*surefire-reports*/**
             **/target/*failsafe-reports*/**
           if-no-files-found: warn
+
+      - name: Upload Final JaCoCo HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: narayana-coverage-report
+          path: code-coverage/target/coverage/
+          retention-days: 30
