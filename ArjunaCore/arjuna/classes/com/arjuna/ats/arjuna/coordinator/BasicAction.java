@@ -1559,7 +1559,7 @@ public class BasicAction extends StateManager
 
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null)) {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, false));
+                            TwoPhaseCommitThreadPool.submitJob(this::phase2Abort, false);
                         } else
                             phase2Abort(reportHeuristics); /* first phase failed */
                     }
@@ -1568,7 +1568,7 @@ public class BasicAction extends StateManager
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null))
                         {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, true));
+                            TwoPhaseCommitThreadPool.submitJob(this::phase2Commit, false);
                         }
                         else
                             phase2Commit(reportHeuristics); /* first phase succeeded */
@@ -2115,7 +2115,7 @@ public class BasicAction extends StateManager
 
         // Prepare 2PC aware resources
         while (pendingList.size() != 0) {
-            tasks.add(TwoPhaseCommitThreadPool.submitJob(new AsyncPrepare(this, reportHeuristics, pendingList.getFront())));
+            tasks.add(TwoPhaseCommitThreadPool.submitJob(this::doPrepare, pendingList.getFront(), reportHeuristics));
         }
 
         // Prepare the last (or only) 2PC aware resource on the callers thread
