@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 /*
  * Default visibility.
  */
+@Deprecated // package private class is no longer used
 class AsyncPrepare implements Callable<Integer> {
     public Integer call() throws Exception {
         /*
