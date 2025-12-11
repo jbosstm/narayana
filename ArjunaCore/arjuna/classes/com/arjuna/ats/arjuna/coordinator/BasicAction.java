@@ -1559,7 +1559,7 @@ public class BasicAction extends StateManager
 
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null)) {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, false));
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Abort, this, false);
                         } else
                             phase2Abort(reportHeuristics); /* first phase failed */
                     }
@@ -1568,7 +1568,7 @@ public class BasicAction extends StateManager
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null))
                         {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, true));
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Commit, this, false);
                         }
                         else
                             phase2Commit(reportHeuristics); /* first phase succeeded */
@@ -1906,6 +1906,12 @@ public class BasicAction extends StateManager
      *
      * @throws Error JBTM-895 tests, byteman limitation
      */
+    protected final void explicitPhase2Commit (BasicAction theAction, boolean reportHeuristics)
+    {
+        ThreadActionData.pushAction(theAction, false);
+        phase2Commit(reportHeuristics);
+        ThreadActionData.popAction(false);
+    }
 
     protected final void phase2Commit (boolean reportHeuristics) throws Error
     {
@@ -2028,6 +2034,12 @@ public class BasicAction extends StateManager
      * commit. This can be overridden at runtime using the READONLY_OPTIMISATION
      * variable.
      */
+    protected final void explicitPhase2Abort (BasicAction theAction, boolean reportHeuristics)
+    {
+        ThreadActionData.pushAction(theAction, false);
+        phase2Abort(reportHeuristics);
+        ThreadActionData.popAction(false);
+    }
 
     protected final void phase2Abort (boolean reportHeuristics)
     {
@@ -2115,7 +2127,8 @@ public class BasicAction extends StateManager
 
         // Prepare 2PC aware resources
         while (pendingList.size() != 0) {
-            tasks.add(TwoPhaseCommitThreadPool.submitJob(new AsyncPrepare(this, reportHeuristics, pendingList.getFront())));
+            tasks.add(TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Prepare,
+                    new TwoPhaseCommitThreadPool.BAAsyncPrepareJobParams(this, pendingList.getFront(), reportHeuristics)));
         }
 
         // Prepare the last (or only) 2PC aware resource on the callers thread
@@ -2929,6 +2942,18 @@ public class BasicAction extends StateManager
         }
 
         return p;
+    }
+
+    // version of doPrepare that is passed the action context explicitly
+
+    protected int explicitPhase2Prepare(TwoPhaseCommitThreadPool.BAAsyncPrepareJobParams args) {
+        ThreadActionData.pushAction(args.theAction(), false);
+
+        int outcome = doPrepare(args.reportHeuristics(), args.ar());
+
+        ThreadActionData.popAction(false);
+
+        return outcome;
     }
 
     /**

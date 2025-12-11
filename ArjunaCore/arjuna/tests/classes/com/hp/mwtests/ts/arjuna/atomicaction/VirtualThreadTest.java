@@ -10,6 +10,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
@@ -25,6 +26,8 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -60,9 +63,14 @@ class VirtualThreadTest {
         Arrays.stream(ars).forEach(aa::add);  // add the records
         aa.commit(true); // report any heuristic outcome
 
+        // verify that prepare and commit were called and that the correct action was associated
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
         Arrays.stream(ars).forEach(ar -> assertFalse(ar.abortCalled));
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.commitCalled));
+
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
+        Arrays.stream(ars).forEach(ar -> assertNull(ar.abortAction));
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.commitAction));
 
         // If the VirtualThreadPerTaskExecutor is configured then check which calls ran using virtual threads.
         // These asserts are closely linked to how ArjunaCore implements async operations
@@ -107,9 +115,14 @@ class VirtualThreadTest {
         Arrays.stream(ars).forEach(aa::add);
         aa.commit(true); // report heuristics
 
+        // verify that prepare and abort were called and that the correct action was associated
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.abortCalled)); // because prepare failed
         Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled));
+
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.abortAction));
+        Arrays.stream(ars).forEach(ar -> assertNull(ar.commitAction));
 
         if (isVirtualThreadPerTaskExecutor) {
             long preparesOnVT = Arrays.stream(ars).filter(
@@ -190,9 +203,14 @@ class VirtualThreadTest {
             assertTrue(completed[0], "AtomicAction still committing after 500 ms");
         }
 
+        // verify that prepare and abort were called and that the correct action was associated
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
         Arrays.stream(ars).forEach(ar -> assertTrue(ar.abortCalled));
         Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled));
+
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
+        Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.abortAction));
+        Arrays.stream(ars).forEach(ar -> assertNull(ar.commitAction));
 
         if (isVirtualThreadPerTaskExecutor) {
             long preparesOnVT = Arrays.stream(ars).filter(
@@ -225,6 +243,9 @@ class VirtualThreadTest {
         String prepareThreadGroup;
         String commitThreadGroup;
         String abortThreadGroup;
+        BasicAction prepareAction;
+        BasicAction commitAction;
+        BasicAction abortAction;
 
         public SimpleAbstractRecord(boolean failPrepare) {
             this(0, failPrepare);
@@ -235,26 +256,10 @@ class VirtualThreadTest {
             this.id = id;
         }
 
-        public int getId() {
-            return id;
-        }
-
         @Override
         public int typeIs() {
             return RecordType.USER_DEF_FIRST0;
         }
-
-		public boolean wasCommitted() {
-			return commitCalled;
-		}
-
-		public boolean wasPrepared() {
-			return prepareCalled;
-		}
-
-		public boolean wasAborted() {
-			return abortCalled;
-		}
 
         public String getPrepareThreadGroup() {
             return prepareThreadGroup;
@@ -294,22 +299,25 @@ class VirtualThreadTest {
 
         @Override
         public int topLevelAbort() {
-            abortThreadGroup = Thread.currentThread().getThreadGroup().getName();
             abortCalled = true;
+            abortThreadGroup = Thread.currentThread().getThreadGroup().getName();
+            abortAction = BasicAction.Current();
             return 0;
         }
 
         @Override
         public int topLevelCommit() {
-            commitThreadGroup = Thread.currentThread().getThreadGroup().getName();
             commitCalled = true;
+            commitThreadGroup = Thread.currentThread().getThreadGroup().getName();
+            commitAction = BasicAction.Current();
             return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
         public int topLevelPrepare() {
-            prepareThreadGroup = Thread.currentThread().getThreadGroup().getName();
             prepareCalled = true;
+            prepareThreadGroup = Thread.currentThread().getThreadGroup().getName();
+            prepareAction = BasicAction.Current();
             if (failPrepare) {
                 return TwoPhaseOutcome.PREPARE_NOTOK;
             }
