@@ -566,28 +566,32 @@ function qa_tests {
 }
 
 function hw_spec {
-  if [ -x /usr/sbin/system_profiler ]; then
+  # macOS
+  if command -v system_profiler >/dev/null 2>&1; then
     echo "sw_vers:"; sw_vers
-    echo "system_profiler:"; /usr/sbin/system_profiler
-  else
-    set -o xtrace
-
-    echo "uname -a"; uname -a
-    echo "redhat release:"; cat /etc/redhat-release
-    echo "java version:"; java -version
-    echo "free:"; free -m
-    echo "cpuinfo:"; cat /proc/cpuinfo
-    echo "meminfo:"; cat /proc/meminfo
-    echo "devices:"; cat /proc/devices
-    echo "scsi:"; cat /proc/scsi/scsi
-    echo "partitions:"; cat /proc/partitions
-
-    echo "lspci:"; lspci
-    echo "lsusb:"; lsusb
-    echo "lsblk:"; lsblk
-    echo "df:"; df
-    echo "mount:"; mount | column -t | grep ext
+    echo "system_profiler:"; system_profiler SPHardwareDataType SPSoftwareDataType
+    return
   fi
+
+  # Linux / CI
+  echo "uname -a:"; uname -a
+
+  echo "os-release:"
+  [ -f /etc/redhat-release ] && cat /etc/redhat-release
+  [ -f /etc/os-release ] && cat /etc/os-release
+
+  echo "java version:"; java -version
+  echo "free:"; command -v free >/dev/null && free -m
+  echo "cpuinfo:"; [ -r /proc/cpuinfo ] && cat /proc/cpuinfo
+  echo "meminfo:"; [ -r /proc/meminfo ] && cat /proc/meminfo
+  echo "devices:"; [ -r /proc/devices ] && cat /proc/devices
+  echo "scsi:"; [ -r /proc/scsi/scsi ] && cat /proc/scsi/scsi
+  echo "partitions:"; [ -r /proc/partitions ] && cat /proc/partitions
+  echo "lspci:"; command -v lspci >/dev/null && timeout 5s lspci || echo "skipped"
+  echo "lsusb:"; command -v lsusb >/dev/null && timeout 5s lsusb || echo "skipped"
+  echo "lsblk:"; command -v lsblk >/dev/null && timeout 5s lsblk || echo "skipped"
+  echo "df:"; df
+  echo "mount:"; mount | grep -E 'ext[234]|xfs|btrfs' || true
 }
 
 function perf_tests {
@@ -607,7 +611,7 @@ function perf_tests {
     [ $? -eq 0 ] || fatal "git rebase failed"
   fi
 
-  WORKSPACE=$(pwd) ./scripts/run_bm.sh || :
+  BUILD_NARAYANA=n WORKSPACE=$(pwd) ./scripts/run_bm.sh || :
   res=$?
   cd $WORKSPACE
 
