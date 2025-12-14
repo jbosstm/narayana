@@ -58,6 +58,11 @@ on:
         required: true
         type: boolean
         default: false
+      PERFORMANCE:
+        description: 'Whether PERFORMANCE should be run'
+        required: true
+        type: boolean
+        default: false
       enabled_databases:
         description: 'The collection of databases to test against'
         type: string
@@ -117,6 +122,11 @@ on:
         required: true
         type: boolean
         default: false
+      PERFORMANCE:
+        description: 'Whether PERFORMANCE should be run'
+        required: true
+        type: boolean
+        default: false
       enabled_databases:
         description: 'The collection of databases to test against'
         type: string
@@ -141,6 +151,7 @@ jobs:
       QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
       JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || 'true' }}
       DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
+      PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
       jdk_version: ${{ steps.parse.outputs.jdk_version || steps.set-axes-inputs.outputs.jdk_version || '17' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
@@ -172,7 +183,8 @@ jobs:
               'QA_JTA',
               'QA_JTS_OPENJDKORB',
               'JACOCO',
-              'DB_TESTS'
+              'DB_TESTS',
+              'PERFORMANCE'
             ];
             
             // Convert '! AXIS' to '!AXIS'
@@ -247,6 +259,7 @@ jobs:
             core.setOutput('QA_JTS_OPENJDKORB', '${{ inputs.QA_JTS_OPENJDKORB }}');
             core.setOutput('JACOCO', '${{ inputs.JACOCO }}');
             core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
+            core.setOutput('PERFORMANCE', '${{ inputs.PERFORMANCE }}');
             if (${{ inputs.DB_TESTS }}) {
               const enabled_databases = JSON.parse(${{ inputs.enabled_databases }});
               const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
@@ -311,3 +324,12 @@ jobs:
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       enabled_databases: ${{ needs.axes_selector.outputs.enabled_databases }}
+
+  PERFORMANCE:
+    needs: axes_selector
+    if: ${{ needs.axes_selector.outputs.PERFORMANCE == 'true' }}
+    uses: ./.github/workflows/performance.yml
+    with:
+      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
