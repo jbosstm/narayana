@@ -13,6 +13,8 @@ import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * A JavaBean containing configuration properties for the core transaction coordinator.
  *
@@ -33,6 +35,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     @Deprecated
     private volatile boolean transactionLog = false; // rename to useTransactionLog ?
 
+    private volatile boolean useVirtualThreadsForTwoPhaseCommitThreads = true;
     private volatile int maxTwoPhaseCommitThreads = 100;
 
     // public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
@@ -175,6 +178,26 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      */
     public void setMaxTwoPhaseCommitThreads(int maxTwoPhaseCommitThreads) {
         this.maxTwoPhaseCommitThreads = maxTwoPhaseCommitThreads;
+    }
+
+    /**
+     * Returns true if separate virtual threads are to be used to prepare resources when running in asynchronous mode
+     * @see CoordinatorEnvironmentBean#asyncPrepare
+     * <p>
+     * @return true if virtual threads will be used
+     */
+    public boolean isUseVirtualThreadsForTwoPhaseCommitThreads() {
+        return useVirtualThreadsForTwoPhaseCommitThreads;
+    }
+
+    /**
+     * Enables the use of virtual threads for preparing resources
+     * The setting will only take effect when running on JRE 21 and above.
+     * <p>
+     * @param enableVT true if virtual threads should be used to prepare resources when running in asynchronous mode
+     */
+    public void setUseVirtualThreadsForTwoPhaseCommitThreads(boolean enableVT) {
+        useVirtualThreadsForTwoPhaseCommitThreads = enableVT;
     }
 
     /**

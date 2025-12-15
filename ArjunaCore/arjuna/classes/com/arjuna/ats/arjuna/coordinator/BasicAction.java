@@ -1908,6 +1908,8 @@ public class BasicAction extends StateManager
      */
     protected final void explicitPhase2Commit (BasicAction theAction, boolean reportHeuristics)
     {
+        // change the notion of the current transaction so that any abstract
+        // records that need that information can still have it
         ThreadActionData.pushAction(theAction, false);
         phase2Commit(reportHeuristics);
         ThreadActionData.popAction(false);

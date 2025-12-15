@@ -4,6 +4,8 @@
  */
 package com.arjuna.ats.arjuna.coordinator;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
@@ -13,11 +15,29 @@ import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class TwoPhaseCommitThreadPool {
-    private static final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+public class TwoPhaseCommitThreadPool {//implements AutoCloseable {
+    private static boolean isUsingVirtualThreads;
+    private static ExecutorService executor = initializeExecutor();
 
-    public static String getExecutorClassName() {
-        return executor.getClass().getName();
+    private static ExecutorService initializeExecutor() {
+        if (executor != null) {
+           close();
+        }
+
+        if (arjPropertyManager.getCoordinatorEnvironmentBean().isUseVirtualThreadsForTwoPhaseCommitThreads()) {
+            isUsingVirtualThreads = true;
+            return Executors.newVirtualThreadPerTaskExecutor();
+        } else {
+            isUsingVirtualThreads = false;
+            return Executors.newFixedThreadPool(
+                    arjPropertyManager.getCoordinatorEnvironmentBean().getMaxTwoPhaseCommitThreads());
+        }
+    }
+
+    static boolean restartExecutor() {
+        executor = initializeExecutor();
+
+        return isUsingVirtualThreads;
     }
 
     public static Future<Integer> submitJob(Callable<Integer> job) {
@@ -32,23 +52,31 @@ public class TwoPhaseCommitThreadPool {
         return new ExecutorCompletionService<Boolean>(executor);
     }
 
-    protected static void submitJob(BiConsumer<BasicAction, Boolean> func,
+    static void submitJob(BiConsumer<BasicAction, Boolean> func,
                                                BasicAction action, boolean reportHeuristics) {
         executor.submit(
                 () -> func.accept(action, reportHeuristics)
         );
     }
 
-    public static void submitJob(java.util.function.Consumer<Boolean> func, boolean reportHeuristics) {
+    static void submitJob(java.util.function.Consumer<Boolean> func, boolean reportHeuristics) {
         // Don't want heuristic information otherwise would not be running async
         executor.submit(
                 () -> func.accept(reportHeuristics)
         );
     }
 
-    protected record BAAsyncPrepareJobParams(BasicAction theAction, AbstractRecord ar, Boolean reportHeuristics) {}
+    /**
+     * @see java.util.concurrent.ExecutorService
+     * Initiates an orderly shutdown in which previously submitted tasks are executed, but no new tasks will be accepted.
+     */
+    static void close() {
+        executor.close();
+    }
 
-    protected static Future<Integer> submitJob(Function<BAAsyncPrepareJobParams, Integer> func, BAAsyncPrepareJobParams args) {
+    record BAAsyncPrepareJobParams(BasicAction theAction, AbstractRecord ar, Boolean reportHeuristics) {}
+
+    static Future<Integer> submitJob(Function<BAAsyncPrepareJobParams, Integer> func, BAAsyncPrepareJobParams args) {
         return executor.submit(
                 () -> func.apply(args)
         );
