@@ -6,6 +6,7 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
+import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -19,36 +20,129 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @RunWith(JUnit4.class)
 class VirtualThreadTest {
     private static final String VIRTUAL_THREADS_GROUP_NAME = "VirtualThreads";
+    private static final String RESTART_EXECUTOR_METHOD_NAME = "restartExecutor";
     private static boolean isVirtualThreadPerTaskExecutor;
+    private static MethodHandle restartExecutorMH; // method handle to restart the executor
 
     @BeforeAll
     public static void beforeClass() {
-        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncPrepare(true);
-        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncCommit(true);
-        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncRollback(true);
+        CoordinatorEnvironmentBean configBean = arjPropertyManager.getCoordinatorEnvironmentBean();
 
-        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncBeforeSynchronization(true);
-        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncAfterSynchronization(true);
+        configBean.setAsyncPrepare(true);
+        configBean.setAsyncCommit(true);
+        configBean.setAsyncRollback(true);
 
-        isVirtualThreadPerTaskExecutor =
-                TwoPhaseCommitThreadPool.getExecutorClassName().equals("java.util.concurrent.ThreadPerTaskExecutor");
+        configBean.setAsyncBeforeSynchronization(true);
+        configBean.setAsyncAfterSynchronization(true);
+
+        // TwoPhaseCommitThreadPool.restartExecutor executor is required, but it is package private
+        // so we need to use method handles (or reflection):
+
+        // create the lookup
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        // lookup the method
+        try {
+            Method restartMethod = TwoPhaseCommitThreadPool.class.getDeclaredMethod(RESTART_EXECUTOR_METHOD_NAME);
+            // it's package private so make it accessible
+            restartMethod.setAccessible(true);
+            // and get a method handle to it
+            restartExecutorMH = lookup.unreflect(restartMethod);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            fail(e);
+        }
+
+        isVirtualThreadPerTaskExecutor = restartExecutor(true);
     }
 
-    @org.junit.Test
+    private static boolean restartExecutor(boolean useVirtualThreads) {
+        try {
+            arjPropertyManager.getCoordinatorEnvironmentBean().
+                    setUseVirtualThreadsForTwoPhaseCommitThreads(useVirtualThreads);
+
+            // invoke the restartExecutor method on TwoPhaseCommitThreadPool
+            isVirtualThreadPerTaskExecutor = (boolean) restartExecutorMH.invokeExact();
+        } catch (Throwable e) {
+            fail(e);
+        }
+
+        return isVirtualThreadPerTaskExecutor;
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_21) // virtual threads require at least JRE.JAVA_21
+    public void testConfigureVirtualThreads() {
+        restartExecutor(false);
+
+        assertFalse(isVirtualThreadPerTaskExecutor, "TwoPhaseCommitThreadPool did not restart with standard threads");
+
+        // var holder for the results of the job execution
+        var ref = new Object() {
+            AtomicBoolean ranOnVT = new AtomicBoolean(false);
+            int expected = 1;
+        };
+        int finalExpected = ref.expected;
+
+        // submit a job to the executor
+        Future<Integer> future = TwoPhaseCommitThreadPool.submitJob(() -> {
+            ref.ranOnVT.set(VIRTUAL_THREADS_GROUP_NAME.equals(Thread.currentThread().getThreadGroup().getName()));
+            return finalExpected;
+        });
+        // and verify it returned the expected result
+        try {
+            assertEquals(ref.expected, future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            fail("future.get");
+        }
+        // and verify that the executor ran using standard, as opposed to virtual, threads
+        assertFalse(ref.ranOnVT.get());
+
+        // redo exactly the same test but with the executor configured to use virtual threads:
+        arjPropertyManager.getCoordinatorEnvironmentBean().setUseVirtualThreadsForTwoPhaseCommitThreads(true);
+        isVirtualThreadPerTaskExecutor = restartExecutor(true); // should succeed on JRE.JAVA_21 and above
+        assertTrue(isVirtualThreadPerTaskExecutor, "TwoPhaseCommitThreadPool did not restart with virtual threads");
+
+        // reset the var holder for the results of the job execution
+        ref.ranOnVT = new AtomicBoolean(false);
+        ref.expected = 1;
+        AtomicBoolean finalRanOnVT = ref.ranOnVT;
+        // submit a job to the executor
+        future = TwoPhaseCommitThreadPool.submitJob(() -> {
+            finalRanOnVT.set(VIRTUAL_THREADS_GROUP_NAME.equals(Thread.currentThread().getThreadGroup().getName()));
+            return ref.expected;
+        });
+        // and verify it returned the expected result
+        try {
+            assertEquals(ref.expected, future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            fail("future.get");
+        }
+
+        // and verify that the executor ran using virtual, as opposed to standard, threads
+        assertTrue(ref.ranOnVT.get());
+    }
+
     @Test
     // test that prepare and commit are called on all registered records
     public void isSane() {
@@ -101,7 +195,6 @@ class VirtualThreadTest {
      * a virtual thread will not be used for and of the resource rollback calls:
      * @see com.arjuna.ats.arjuna.coordinator.BasicAction (#End(boolean))
      */
-    @org.junit.Test
     @Test
     public void testPrepareFailReportHeuristics() {
         SimpleAbstractRecord[] ars = {
@@ -144,7 +237,6 @@ class VirtualThreadTest {
     /**
      * Similar to testPrepareFailReportHeuristics except that heuristics are not requested.
      */
-    @org.junit.Test
     @Test
     public void testPrepareFailIgnoreHeuristics() {
         SimpleAbstractRecord[] ars = {
@@ -237,6 +329,7 @@ class VirtualThreadTest {
     private static class SimpleAbstractRecord extends AbstractRecord {
         private final int id;
         private final boolean failPrepare;
+        private final long delayPrepareMillis;
         private boolean commitCalled;
         private boolean abortCalled;
         private boolean prepareCalled;
@@ -252,7 +345,12 @@ class VirtualThreadTest {
         }
 
         public SimpleAbstractRecord(int id, boolean failPrepare) {
+            this(id, failPrepare, 0L);
+        }
+
+        public SimpleAbstractRecord(int id, boolean failPrepare, long delayPrepareMillis) {
             this.failPrepare = failPrepare;
+            this.delayPrepareMillis = delayPrepareMillis;
             this.id = id;
         }
 
@@ -318,6 +416,12 @@ class VirtualThreadTest {
             prepareCalled = true;
             prepareThreadGroup = Thread.currentThread().getThreadGroup().getName();
             prepareAction = BasicAction.Current();
+            if (delayPrepareMillis != 0) {
+                try {
+                    Thread.sleep(delayPrepareMillis);
+                } catch (InterruptedException ignore) {
+                }
+            }
             if (failPrepare) {
                 return TwoPhaseOutcome.PREPARE_NOTOK;
             }
