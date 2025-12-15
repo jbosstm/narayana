@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TwoPhaseCommitThreadPool {//implements AutoCloseable {
@@ -52,17 +52,16 @@ public class TwoPhaseCommitThreadPool {//implements AutoCloseable {
         return new ExecutorCompletionService<Boolean>(executor);
     }
 
-    static void submitJob(BiConsumer<BasicAction, Boolean> func,
-                                               BasicAction action, boolean reportHeuristics) {
+    static void submitJob(Consumer<BasicAction> func, BasicAction action) {
         executor.submit(
-                () -> func.accept(action, reportHeuristics)
+                () -> func.accept(action)
         );
     }
 
-    static void submitJob(java.util.function.Consumer<Boolean> func, boolean reportHeuristics) {
+    static void submitJob(java.util.function.Consumer<Boolean> func) {
         // Don't want heuristic information otherwise would not be running async
         executor.submit(
-                () -> func.accept(reportHeuristics)
+                () -> func.accept(false)
         );
     }
 

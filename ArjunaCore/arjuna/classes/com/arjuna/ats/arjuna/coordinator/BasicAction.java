@@ -1559,7 +1559,7 @@ public class BasicAction extends StateManager
 
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null)) {
-                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Abort, this, false);
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Abort, this);
                         } else
                             phase2Abort(reportHeuristics); /* first phase failed */
                     }
@@ -1568,7 +1568,7 @@ public class BasicAction extends StateManager
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null))
                         {
-                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Commit, this, false);
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Commit, this);
                         }
                         else
                             phase2Commit(reportHeuristics); /* first phase succeeded */
@@ -1906,15 +1906,6 @@ public class BasicAction extends StateManager
      *
      * @throws Error JBTM-895 tests, byteman limitation
      */
-    protected final void explicitPhase2Commit (BasicAction theAction, boolean reportHeuristics)
-    {
-        // change the notion of the current transaction so that any abstract
-        // records that need that information can still have it
-        ThreadActionData.pushAction(theAction, false);
-        phase2Commit(reportHeuristics);
-        ThreadActionData.popAction(false);
-    }
-
     protected final void phase2Commit (boolean reportHeuristics) throws Error
     {
         synchronizationLock.lock();
@@ -2024,6 +2015,22 @@ public class BasicAction extends StateManager
     }
 
     /**
+     * A version of phase2Commit that runs with a specific action
+     * The expectation is that this method will be called asynchronously and therefore
+     * there will be no requirement for saving or reporting heuristic decisions
+     * @see BasicAction#getHeuristicDecision()
+     * @param theAction the action to commit
+     */
+    protected final void explicitPhase2Commit (BasicAction theAction)
+    {
+        // change the notion of the current transaction so that any abstract
+        // records that need that information can still have it
+        ThreadActionData.pushAction(theAction, false);
+        phase2Commit(false);
+        ThreadActionData.popAction(false);
+    }
+
+    /**
      * Second phase of the two phase commit protocol for aborting actions.
      * Actions are aborted by invoking the doAbort operation on the
      * preparedList, the readonlyList, and the pendingList.
@@ -2036,13 +2043,6 @@ public class BasicAction extends StateManager
      * commit. This can be overridden at runtime using the READONLY_OPTIMISATION
      * variable.
      */
-    protected final void explicitPhase2Abort (BasicAction theAction, boolean reportHeuristics)
-    {
-        ThreadActionData.pushAction(theAction, false);
-        phase2Abort(reportHeuristics);
-        ThreadActionData.popAction(false);
-    }
-
     protected final void phase2Abort (boolean reportHeuristics)
     {
         synchronizationLock.lock();
@@ -2105,6 +2105,20 @@ public class BasicAction extends StateManager
         } finally {
             synchronizationLock.unlock();
         }
+    }
+
+    /**
+     * A version of phase2Abort that runs with a specific action
+     * The expectation is that this method will be called asynchronously and therefore
+     * there will be no requirement for saving or reporting heuristic decisions
+     * @see BasicAction#getHeuristicDecision()
+     * @param theAction the action to abort
+     */
+    protected final void explicitPhase2Abort (BasicAction theAction)
+    {
+        ThreadActionData.pushAction(theAction, false);
+        phase2Abort(false);
+        ThreadActionData.popAction(false);
     }
 
     /*

@@ -6,8 +6,13 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
-import java.util.concurrent.*;
-import java.util.function.BiConsumer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 // Remark: this class should be package private - change it or use a different class in BasicAction
@@ -36,10 +41,10 @@ public class TwoPhaseCommitThreadPool {
         return new ExecutorCompletionService<Boolean>(executor);
     }
 
-    static void submitJob(BiConsumer<BasicAction, Boolean> func,
-                                               BasicAction action, boolean reportHeuristics) {
+    static void submitJob(Consumer<BasicAction> func,
+                          BasicAction action) {
         executor.submit(
-                () -> func.accept(action, reportHeuristics)
+                () -> func.accept(action)
         );
     }
 
