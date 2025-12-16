@@ -33,7 +33,7 @@ jobs:
     if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
     uses: ./.github/workflows/axes_selector.yml
     with:
-      jdk_version: '25'
+      jdk_versions: '["25"]'
       CORE: true
       RTS: true
       XTS: true
