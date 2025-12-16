@@ -5,11 +5,11 @@ on:
     types: [ opened, edited, synchronize, reopened ]
   workflow_dispatch:
     inputs:
-      jdk_version:
-        description: 'JDK version'
+      jdk_versions:
+        description: 'JDK versions'
         required: true
         type: string
-        default: '17'
+        default: '["17"]'
       pull_request_repo:
         description: 'Repository to check out'
         required: false
@@ -69,11 +69,11 @@ on:
         default: '["postgres","mysql","oracle","db2"]'
   workflow_call:
     inputs:
-      jdk_version:
-        description: 'JDK version'
+      jdk_versions:
+        description: 'JDK versions'
         required: true
         type: string
-        default: '17'
+        default: '["17"]'
       pull_request_repo:
         description: 'Repository to check out'
         required: false
@@ -153,7 +153,7 @@ jobs:
       DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
       PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
-      jdk_version: ${{ steps.parse.outputs.jdk_version || steps.set-axes-inputs.outputs.jdk_version || '17' }}
+      jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || '["17"]' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
@@ -229,20 +229,16 @@ jobs:
             }
             
             // Matches JDK17, JDK 17, JDK:17, JDK=17, etc.
-            const jdkRegex = /\bJDK\s*[:=\-\s]*\s*(17|21|25)\b/i;
-            const jdkMatch = prBody.match(jdkRegex);
-            
-            let jdk_version = null;
-            if (jdkMatch) {
-              jdk_version = parseInt(jdkMatch[1], 10);
-              core.info(`Detected JDK${jdk_version} in PR body.`);
+            const jdkRegex = /\bJDK\s*[:=\-\s]*\s*(17|21|25)\b/gi;
+            const matches = [...prBody.matchAll(jdkRegex)];
+            let jdk_versions = matches.map(m => parseInt(m[1], 10));
+            if (jdk_versions.length === 0) {
+              jdk_versions = [17];
+              core.info(`Using JDK17.`);
             } else {
-              // default
-              jdk_version = 17;
-              core.info(`Using JDK${jdk_version}.`);
+              core.info(`JDKs detected in PR body: ${jdk_versions}`);
             }
-            
-            core.setOutput('jdk_version', jdk_version);
+            core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
 
       - name: Set axes according to triggering event
         id: set-axes-inputs
@@ -250,7 +246,7 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            core.setOutput('jdk_version', '${{ inputs.jdk_version }}');
+            core.setOutput('jdk_versions', '${{ inputs.jdk_versions }}');
             core.setOutput('CORE', '${{ inputs.CORE }}');
             core.setOutput('AS_TESTS', '${{ inputs.AS_TESTS }}');
             core.setOutput('RTS', '${{ inputs.RTS }}');
@@ -261,7 +257,7 @@ jobs:
             core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
             core.setOutput('PERFORMANCE', '${{ inputs.PERFORMANCE }}');
             if (${{ inputs.DB_TESTS }}) {
-              const enabled_databases = JSON.parse(${{ inputs.enabled_databases }});
+              const enabled_databases = JSON.parse('${{ inputs.enabled_databases }}');
               const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
             
               const filteredDBs = possibleDBs.filter(db => enabled_databases.includes(db.toLowerCase()));
@@ -279,12 +275,15 @@ jobs:
       needs.axes_selector.outputs.XTS == 'true' ||
       needs.axes_selector.outputs.JACOCO == 'true' }}
     uses: ./.github/workflows/as_builder.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
       CORE: ${{ needs.axes_selector.outputs.CORE }}
       RTS: ${{ needs.axes_selector.outputs.RTS }}
       XTS: ${{ needs.axes_selector.outputs.XTS }}
       JACOCO: ${{ needs.axes_selector.outputs.JACOCO }}
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
 
@@ -292,8 +291,11 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.AS_TESTS == 'true' }}
     uses: ./.github/workflows/as_tests.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
 
@@ -301,8 +303,11 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.QA_JTA == 'true' }}
     uses: ./.github/workflows/qa_jta.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
 
@@ -310,8 +315,11 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.QA_JTS_OPENJDKORB == 'true' }}
     uses: ./.github/workflows/qa_jts_openjdkorb.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
 
@@ -319,8 +327,11 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.DB_TESTS == 'true' }}
     uses: ./.github/workflows/db_tests.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       enabled_databases: ${{ needs.axes_selector.outputs.enabled_databases }}
@@ -329,7 +340,10 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.PERFORMANCE == 'true' }}
     uses: ./.github/workflows/performance.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      jdk_version: ${{ needs.axes_selector.outputs.jdk_version }}
+      jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
