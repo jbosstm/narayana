@@ -28,38 +28,6 @@ jobs:
             echo "recent_commits=false" >> $GITHUB_OUTPUT
           fi
 
-  jdk17:
-    needs: check-commits
-    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
-    uses: ./.github/workflows/axes_selector.yml
-    with:
-      jdk_version: '17'
-      CORE: true
-      RTS: true
-      XTS: true
-      AS_TESTS: true
-      QA_JTA: true
-      QA_JTS_OPENJDKORB: true
-      JACOCO: true
-      DB_TESTS: true
-      enabled_databases: '["postgres","mysql","oracle","db2"]'
-
-  jdk20:
-    needs: check-commits
-    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
-    uses: ./.github/workflows/axes_selector.yml
-    with:
-      jdk_version: '21'
-      CORE: true
-      RTS: true
-      XTS: true
-      AS_TESTS: true
-      QA_JTA: true
-      QA_JTS_OPENJDKORB: true
-      JACOCO: true
-      DB_TESTS: true
-      enabled_databases: '["postgres","mysql","oracle","db2"]'
-
   jdk25:
     needs: check-commits
     if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
@@ -74,4 +42,5 @@ jobs:
       QA_JTS_OPENJDKORB: true
       JACOCO: true
       DB_TESTS: true
+      PERFORMANCE: true
       enabled_databases: '["postgres","mysql","oracle","db2"]'
