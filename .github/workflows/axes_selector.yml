@@ -1,8 +1,6 @@
 name: axes_selector
 
 on:
-  pull_request:
-    types: [ opened, edited, synchronize, reopened ]
   workflow_dispatch:
     inputs:
       jdk_version:
@@ -132,28 +130,23 @@ on:
         type: string
         default: '["postgres","mysql","oracle","db2"]'
 
-permissions:
-  actions: write
-  pull-requests: read
-  contents: read
-
 jobs:
   axes_selector:
     timeout-minutes: 5
     runs-on: ubuntu-latest
 
     outputs:
-      CORE: ${{ steps.parse.outputs.CORE || steps.set-axes-inputs.outputs.CORE || 'true' }}
-      AS_TESTS: ${{ steps.parse.outputs.AS_TESTS || steps.set-axes-inputs.outputs.AS_TESTS || 'true' }}
-      RTS: ${{ steps.parse.outputs.RTS || steps.set-axes-inputs.outputs.RTS || 'true' }}
-      XTS: ${{ steps.parse.outputs.XTS || steps.set-axes-inputs.outputs.XTS || 'true' }}
-      QA_JTA: ${{ steps.parse.outputs.QA_JTA || steps.set-axes-inputs.outputs.QA_JTA || 'true' }}
-      QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
-      JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || 'true' }}
-      DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
-      PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
-      enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
-      jdk_version: ${{ steps.parse.outputs.jdk_version || steps.set-axes-inputs.outputs.jdk_version || '17' }}
+      CORE: ${{ steps.set-axes-inputs.outputs.CORE || 'true' }}
+      AS_TESTS: ${{ steps.set-axes-inputs.outputs.AS_TESTS || 'true' }}
+      RTS: ${{ steps.set-axes-inputs.outputs.RTS || 'true' }}
+      XTS: ${{ steps.set-axes-inputs.outputs.XTS || 'true' }}
+      QA_JTA: ${{ steps.set-axes-inputs.outputs.QA_JTA || 'true' }}
+      QA_JTS_OPENJDKORB: ${{ steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
+      JACOCO: ${{ steps.set-axes-inputs.outputs.JACOCO || 'true' }}
+      DB_TESTS: ${{ steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
+      PERFORMANCE: ${{ steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
+      enabled_databases: ${{ steps.set-axes-inputs.outputs.enabled_databases || '' }}
+      jdk_version: ${{ steps.set-axes-inputs.outputs.jdk_version || '["17"]' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
@@ -166,83 +159,6 @@ jobs:
           echo 'pr_number=${{ github.event.pull_request.number }}' >> $GITHUB_OUTPUT
           echo 'pr_ref=${{ github.event.pull_request.head.ref }}' >> $GITHUB_OUTPUT
           echo 'pr_repo=${{ github.event.pull_request.head.repo.full_name }}' >> $GITHUB_OUTPUT
-
-      - name: Parse PR description
-        id: parse
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            const prBody = pr.body;
-            const workflowAxes = [
-              'CORE',
-              'AS_TESTS',
-              'RTS',
-              'XTS',
-              'QA_JTA',
-              'QA_JTS_OPENJDKORB',
-              'JACOCO',
-              'DB_TESTS',
-              'PERFORMANCE'
-            ];
-            
-            // Convert '! AXIS' to '!AXIS'
-            const processedBody = prBody.replace(/!\s+/g, '!');
-            // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
-            const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
-            
-            let db_tests_triggered = false;
-            // Determine which workflows to run
-            for (const axis of workflowAxes) {
-              if (tokens.has(axis) && !tokens.has(`!${axis}`)) {
-                core.info(`Axis ${axis} REQUESTED.`);
-                core.setOutput(axis, 'true');
-                if (axis == 'DB_TESTS') {
-                  db_tests_triggered = true;
-                }
-              } else {
-                core.info(`Axis ${axis} NOT REQUESTED.`);
-                core.setOutput(axis, 'false');
-              }
-            }
-            
-            if (db_tests_triggered) {
-              const possibleDBs = ['mysql', 'db2', 'postgres', 'oracle'];
-            
-              let selectedDBs = [];
-              for (const db of possibleDBs) {
-                if (tokens.has(db) && !tokens.has(`!${db}`)) {
-                  core.info(`Database ${db} SELECTED.`);
-                  selectedDBs.push(db);
-                } else {
-                  core.info(`Database ${db} NOT REQUESTED.`);
-                }
-              }
-            
-              if (selectedDBs.length === 0) {
-                core.info(`Empty or invalid input. All possible databases will be selected: ${possibleDBs.join(', ')}`);
-                selectedDBs = possibleDBs;
-              }
-            
-              core.setOutput('enabled_databases', JSON.stringify(selectedDBs));
-            }
-            
-            // Matches JDK17, JDK 17, JDK:17, JDK=17, etc.
-            const jdkRegex = /\bJDK\s*[:=\-\s]*\s*(17|21|25)\b/i;
-            const jdkMatch = prBody.match(jdkRegex);
-            
-            let jdk_version = null;
-            if (jdkMatch) {
-              jdk_version = parseInt(jdkMatch[1], 10);
-              core.info(`Detected JDK${jdk_version} in PR body.`);
-            } else {
-              // default
-              jdk_version = 17;
-              core.info(`Using JDK${jdk_version}.`);
-            }
-            
-            core.setOutput('jdk_version', jdk_version);
 
       - name: Set axes according to triggering event
         id: set-axes-inputs
