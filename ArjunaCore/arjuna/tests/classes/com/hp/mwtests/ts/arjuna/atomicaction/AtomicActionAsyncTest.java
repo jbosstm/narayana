@@ -5,19 +5,35 @@
 
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import com.hp.mwtests.ts.arjuna.resources.TestBase;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import org.junit.rules.TestName;
+
+import static org.junit.Assert.fail;
 
 public class AtomicActionAsyncTest extends AtomicActionTestBase
 {
+    @Rule
+    public TestName name = new TestName();
+
     // NOTE: The following bean properties can only be set once (because TxControl takes a static copy of them)
     @BeforeClass
     public static void init() {
         AtomicActionTestBase.init(true);
+    }
+
+    @After
+    public void after() {
+        if (BasicAction.Current() != null) {
+            ThreadActionData.popAction(); // otherwise the next transaction on this thread will have a parent txn
+            fail("AtomicActionAsyncTest test did not cleanup: " + name.getMethodName());
+        }
     }
 
     @Test
