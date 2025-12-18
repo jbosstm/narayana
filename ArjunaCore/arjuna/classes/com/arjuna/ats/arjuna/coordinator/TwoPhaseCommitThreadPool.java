@@ -48,13 +48,6 @@ public class TwoPhaseCommitThreadPool {
         );
     }
 
-    static void submitJob(java.util.function.Consumer<Boolean> func, boolean reportHeuristics) {
-        // Don't want heuristic information otherwise would not be running async
-        executor.submit(
-                () -> func.accept(reportHeuristics)
-        );
-    }
-
     record BAAsyncPrepareJobParams(BasicAction theAction, AbstractRecord ar, Boolean reportHeuristics) {}
 
     static Future<Integer> submitJob(Function<BAAsyncPrepareJobParams, Integer> func, BAAsyncPrepareJobParams args) {
