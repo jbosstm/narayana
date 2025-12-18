@@ -212,14 +212,8 @@ jobs:
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
-          name: jacoco-logs-jdk${{ inputs.jdk_version }}-${{ matrix.qa_target }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
+          name: jacoco-qa-logs-jdk${{ inputs.jdk_version }}-${{ matrix.qa_target }}
+          path: qa/testoutput
           if-no-files-found: warn
 
       - uses: actions/upload-artifact@v4
@@ -227,12 +221,7 @@ jobs:
         with:
           retention-days: 1
           name: coverage-data-jdk${{ inputs.jdk_version }}-${{ matrix.qa_target }}
-          path: |
-            **/target/site/
-            **/target/coverage-reports
-            **/target/classes
-            **/target/surefire-reports
-            **/target/idlj-openjdk-surefire-reports
+          path: qa/testoutput
           if-no-files-found: warn
 
   code-coverage-report:

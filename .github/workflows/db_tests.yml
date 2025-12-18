@@ -240,7 +240,7 @@ jobs:
         with:
           retention-days: 30
           name: db_tests-logs-jdk${{ inputs.jdk_version }}-${{ matrix.database }}-${{ matrix.qa_target }}
-          path: qa/testoutput/**/*
+          path: qa/testoutput
           if-no-files-found: warn
 
       - name: Stop and delete DB2
