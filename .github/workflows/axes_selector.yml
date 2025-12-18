@@ -5,68 +5,94 @@ on:
     types: [ opened, edited, synchronize, reopened ]
   workflow_dispatch:
     inputs:
-      jdk_versions:
-        description: 'JDK versions'
-        required: true
-        type: string
-        default: '["17"]'
       pull_request_repo:
-        description: 'Repository to check out'
+        description: 'Repository to check out (optional)'
         required: false
         type: string
       pull_request_ref:
         description: 'Branch or commit to test (optional)'
         required: false
         type: string
+      jdk17:
+        description: 'JDK17'
+        required: true
+        type: boolean
+        default: false
+      jdk21:
+        description: 'JDK21'
+        required: true
+        type: boolean
+        default: false
+      jdk25:
+        description: 'JDK25'
+        required: true
+        type: boolean
+        default: true
       CORE:
-        description: 'Whether CORE should be run'
+        description: 'CORE testing axis'
         required: true
         type: boolean
         default: true
       RTS:
-        description: 'Whether RTS should be run'
+        description: 'RTS testing axis'
         required: true
         type: boolean
         default: false
       XTS:
-        description: 'Whether XTS should be run'
+        description: 'XTS testing axis'
         required: true
         type: boolean
         default: false
       AS_TESTS:
-        description: 'Whether AS_TESTS should be run'
+        description: 'AS_TESTS testing axis'
         required: true
         type: boolean
         default: false
       QA_JTA:
-        description: 'Whether QA_JTA should be run'
+        description: 'QA_JTA testing axis'
         required: true
         type: boolean
         default: false
       QA_JTS_OPENJDKORB:
-        description: 'Whether QA_JTS_OPENJDKORB should be run'
+        description: 'QA_JTS_OPENJDKORB testing axis'
         required: true
         type: boolean
         default: false
       JACOCO:
-        description: 'Whether JACOCO should be run'
+        description: 'JACOCO testing axis'
         required: true
         type: boolean
         default: false
       DB_TESTS:
-        description: 'Whether DB_TESTS should be run'
+        description: 'DB_TESTS testing axis'
         required: true
         type: boolean
         default: false
       PERFORMANCE:
-        description: 'Whether PERFORMANCE should be run'
+        description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
         default: false
-      enabled_databases:
-        description: 'The collection of databases to test against'
-        type: string
-        default: '["postgres","mysql","oracle","db2"]'
+      postgres:
+        description: 'PostgreSQL will be used for the DB_TESTS testing axis.'
+        required: false
+        type: boolean
+        default: false
+      mysql:
+        description: 'MySQL will be used for the DB_TESTS testing axis.'
+        required: false
+        type: boolean
+        default: false
+      oracle:
+        description: 'Oracle will be used for the DB_TESTS testing axis.'
+        required: false
+        type: boolean
+        default: false
+      db2:
+        description: 'DB2 will be used for the DB_TESTS testing axis.'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       jdk_versions:
@@ -75,7 +101,7 @@ on:
         type: string
         default: '["17"]'
       pull_request_repo:
-        description: 'Repository to check out'
+        description: 'Repository to check out (optional)'
         required: false
         type: string
       pull_request_ref:
@@ -83,47 +109,47 @@ on:
         required: false
         type: string
       CORE:
-        description: 'Whether CORE should be run'
+        description: 'CORE testing axis'
         required: true
         type: boolean
         default: true
       RTS:
-        description: 'Whether RTS should be run'
+        description: 'RTS testing axis'
         required: true
         type: boolean
         default: false
       XTS:
-        description: 'Whether XTS should be run'
+        description: 'XTS testing axis'
         required: true
         type: boolean
         default: false
       AS_TESTS:
-        description: 'Whether AS_TESTS should be run'
+        description: 'AS_TESTS testing axis'
         required: true
         type: boolean
         default: false
       QA_JTA:
-        description: 'Whether QA_JTA should be run'
+        description: 'QA_JTA testing axis'
         required: true
         type: boolean
         default: false
       QA_JTS_OPENJDKORB:
-        description: 'Whether QA_JTS_OPENJDKORB should be run'
+        description: 'QA_JTS_OPENJDKORB testing axis'
         required: true
         type: boolean
         default: false
       JACOCO:
-        description: 'Whether JACOCO should be run'
+        description: 'JACOCO testing axis'
         required: true
         type: boolean
         default: false
       DB_TESTS:
-        description: 'Whether DB_TESTS should be run'
+        description: 'DB_TESTS testing axis'
         required: true
         type: boolean
         default: false
       PERFORMANCE:
-        description: 'Whether PERFORMANCE should be run'
+        description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
         default: false
@@ -153,7 +179,7 @@ jobs:
       DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
       PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
-      jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || '["17"]' }}
+      jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || '["25"]' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
@@ -174,7 +200,7 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
-            const prBody = pr.body;
+            const prBody = pr.body || '';
             const workflowAxes = [
               'CORE',
               'AS_TESTS',
@@ -246,7 +272,14 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            core.setOutput('jdk_versions', '${{ inputs.jdk_versions }}');
+            // Creates jdk_versions
+            const jdk_versions = [
+              ${{ inputs.jdk17 }} && '17',
+              ${{ inputs.jdk21 }} && '21',
+              ${{ inputs.jdk25 }} && '25'
+            ].filter(Boolean);
+
+            core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
             core.setOutput('CORE', '${{ inputs.CORE }}');
             core.setOutput('AS_TESTS', '${{ inputs.AS_TESTS }}');
             core.setOutput('RTS', '${{ inputs.RTS }}');
@@ -257,14 +290,20 @@ jobs:
             core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
             core.setOutput('PERFORMANCE', '${{ inputs.PERFORMANCE }}');
             if (${{ inputs.DB_TESTS }}) {
-              const enabled_databases = JSON.parse('${{ inputs.enabled_databases }}');
-              const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
+              // Creates enabled_databases
+              const selected_databases = [
+                ${{ inputs.postgres }} && 'postgres',
+                ${{ inputs.mysql }} && 'mysql',
+                ${{ inputs.oracle }} && 'oracle',
+                ${{ inputs.db2 }} && 'db2'
+              ].filter(Boolean);
             
-              const filteredDBs = possibleDBs.filter(db => enabled_databases.includes(db.toLowerCase()));
-            
-              if (filteredDBs.length === 0) {
-                core.info(`Empty or invalid input. All possible databases will be selected: ${possibleDBs.join(', ')}`);
+              if (selected_databases.length === 0) {
+                const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
+                core.info(`No database has been selected. All possible databases will be activated: ${possibleDBs.join(', ')}`);
                 core.setOutput('enabled_databases', JSON.stringify(possibleDBs));
+              } else {
+                core.setOutput('enabled_databases', JSON.stringify(selected_databases));
               }
             }
 
