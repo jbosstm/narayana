@@ -67,6 +67,6 @@ jobs:
         with:
           retention-days: 30
           name: qa_jts_openjdkorb-logs-jdk${{ inputs.jdk_version }}
-          path: qa/testoutput/**/*
+          path: qa/testoutput
           if-no-files-found: warn
 
