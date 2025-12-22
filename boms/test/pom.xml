@@ -37,7 +37,7 @@
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>5.9.2</version.junit.jupiter>
-    <version.log4j-core>2.25.1</version.log4j-core>
+    <version.log4j-core>2.25.3</version.log4j-core>
     <version.mariadb>1.2.2</version.mariadb>
     <version.mysql>8.2.0</version.mysql>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
