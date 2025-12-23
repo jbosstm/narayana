@@ -99,7 +99,7 @@ on:
         description: 'JDK versions'
         required: true
         type: string
-        default: '["17"]'
+        default: '["25"]'
       pull_request_repo:
         description: 'Repository to check out (optional)'
         required: false
@@ -259,8 +259,8 @@ jobs:
             const matches = [...prBody.matchAll(jdkRegex)];
             let jdk_versions = matches.map(m => parseInt(m[1], 10));
             if (jdk_versions.length === 0) {
-              jdk_versions = [17];
-              core.info(`Using JDK17.`);
+              jdk_versions = [25];
+              core.info(`Using JDK25.`);
             } else {
               core.info(`JDKs detected in PR body: ${jdk_versions}`);
             }
