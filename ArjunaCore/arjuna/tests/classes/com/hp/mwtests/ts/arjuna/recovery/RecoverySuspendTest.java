@@ -140,7 +140,8 @@ public class RecoverySuspendTest {
     @Test
     @BMScripts(scripts = {
             @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledRecord"),
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest")
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_Rendezvous")
     })
     public void testSuspensionWhenThereIsAtomicActionToRecover() {
 
