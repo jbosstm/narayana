@@ -176,7 +176,11 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		try {
 			synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
-			runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
+			// There are a number of scenarios where synchronizations can register new synchronizations
+			// (see AtomicActionAsyncTest for the detail) which, depending upon the timing, can cause
+			// concurrent access issues when iterating over the runningSynchronizations list
+			// so use a concurrent version of ArrayList
+			runningSynchronizations = new CopyOnWriteArrayList<>();
 
 			for (SynchronizationRecord synchRecord : _synchs) {
 				if (synchRecord.isInterposed())
@@ -443,6 +447,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 				problem = true;
 			} catch (ExecutionException e) {
 				problem = true;
+			} catch (CancellationException e) {
+				problem = true; // can happen if asyncBeforeCompletion has to clean up (ie a cancelled future)
 			}
 		}
 

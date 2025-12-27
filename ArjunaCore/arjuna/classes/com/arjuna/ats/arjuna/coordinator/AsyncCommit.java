@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
 /*
  * Default visibility.
  */
-
+@Deprecated // package private class is no longer used
 class AsyncCommit implements Runnable
 {
  public void run() {

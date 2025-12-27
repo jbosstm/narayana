@@ -1559,7 +1559,7 @@ public class BasicAction extends StateManager
 
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null)) {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, false));
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Abort, this);
                         } else
                             phase2Abort(reportHeuristics); /* first phase failed */
                     }
@@ -1568,7 +1568,7 @@ public class BasicAction extends StateManager
                         if (!reportHeuristics && TxControl.asyncCommit
                                 && (parentAction == null))
                         {
-                            TwoPhaseCommitThreadPool.submitJob(new AsyncCommit(this, true));
+                            TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Commit, this);
                         }
                         else
                             phase2Commit(reportHeuristics); /* first phase succeeded */
@@ -1906,7 +1906,6 @@ public class BasicAction extends StateManager
      *
      * @throws Error JBTM-895 tests, byteman limitation
      */
-
     protected final void phase2Commit (boolean reportHeuristics) throws Error
     {
         synchronizationLock.lock();
@@ -2016,6 +2015,22 @@ public class BasicAction extends StateManager
     }
 
     /**
+     * A version of phase2Commit that runs with a specific action
+     * The expectation is that this method will be called asynchronously and therefore
+     * there will be no requirement for saving or reporting heuristic decisions
+     * @see BasicAction#getHeuristicDecision()
+     * @param theAction the action to commit
+     */
+    protected final void explicitPhase2Commit (BasicAction theAction)
+    {
+        // change the notion of the current transaction so that any abstract
+        // records that need that information can still have it
+        ThreadActionData.pushAction(theAction, false);
+        phase2Commit(false);
+        ThreadActionData.popAction(false);
+    }
+
+    /**
      * Second phase of the two phase commit protocol for aborting actions.
      * Actions are aborted by invoking the doAbort operation on the
      * preparedList, the readonlyList, and the pendingList.
@@ -2028,7 +2043,6 @@ public class BasicAction extends StateManager
      * commit. This can be overridden at runtime using the READONLY_OPTIMISATION
      * variable.
      */
-
     protected final void phase2Abort (boolean reportHeuristics)
     {
         synchronizationLock.lock();
@@ -2093,6 +2107,20 @@ public class BasicAction extends StateManager
         }
     }
 
+    /**
+     * A version of phase2Abort that runs with a specific action
+     * The expectation is that this method will be called asynchronously and therefore
+     * there will be no requirement for saving or reporting heuristic decisions
+     * @see BasicAction#getHeuristicDecision()
+     * @param theAction the action to abort
+     */
+    protected final void explicitPhase2Abort (BasicAction theAction)
+    {
+        ThreadActionData.pushAction(theAction, false);
+        phase2Abort(false);
+        ThreadActionData.popAction(false);
+    }
+
     /*
      * Various optimisations which are possible during synchronous prepare are
      * not possible for asynchronous prepare due to lack of ordering. For instance
@@ -2115,7 +2143,8 @@ public class BasicAction extends StateManager
 
         // Prepare 2PC aware resources
         while (pendingList.size() != 0) {
-            tasks.add(TwoPhaseCommitThreadPool.submitJob(new AsyncPrepare(this, reportHeuristics, pendingList.getFront())));
+            tasks.add(TwoPhaseCommitThreadPool.submitJob(this::explicitPhase2Prepare,
+                    new TwoPhaseCommitThreadPool.BAAsyncPrepareJobParams(this, pendingList.getFront(), reportHeuristics)));
         }
 
         // Prepare the last (or only) 2PC aware resource on the callers thread
@@ -2929,6 +2958,18 @@ public class BasicAction extends StateManager
         }
 
         return p;
+    }
+
+    // version of doPrepare that is passed the action context explicitly
+
+    protected int explicitPhase2Prepare(TwoPhaseCommitThreadPool.BAAsyncPrepareJobParams args) {
+        ThreadActionData.pushAction(args.theAction(), false);
+
+        int outcome = doPrepare(args.reportHeuristics(), args.ar());
+
+        ThreadActionData.popAction(false);
+
+        return outcome;
     }
 
     /**
