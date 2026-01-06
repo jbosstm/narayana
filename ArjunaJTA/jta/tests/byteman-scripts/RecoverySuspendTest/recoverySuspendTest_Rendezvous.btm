@@ -1,0 +1,26 @@
+########################################################################
+#
+# Byteman script used to create a rendezvous to force the recovery
+# thread to wait for the testing thread
+#
+########################################################################
+
+RULE rendezvousForTheRecoveryThread
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD run
+AFTER INVOKE doWorkInternal
+IF TRUE
+DO debug("[PeriodicRecovery.run] Rendezvous for " + Thread.currentThread().getName());
+    rendezvous("sync", 2);
+    debug("[PeriodicRecovery.run] " + Thread.currentThread().getName() + " released");
+ENDRULE
+
+RULE rendezvousForTheTestingThread
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD suspendScan(boolean,boolean)
+AT ENTRY
+IF TRUE
+DO debug("[PeriodicRecovery.suspendScan(boolean,boolean)] Rendezvous for " + Thread.currentThread().getName());
+    rendezvous("sync", 2);
+    debug("[PeriodicRecovery.suspendScan(boolean,boolean)] " + Thread.currentThread().getName() + " released");
+ENDRULE

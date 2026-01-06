@@ -126,7 +126,8 @@ public class RecoverySuspendTest {
             @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_commitFailure"),
             @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_rollbackFailure"),
             @BMScript("RecoverySuspendTest/recoverySuspendTest_SkipAtomicActionRecoveryModule"),
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest")
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_Rendezvous")
     })
     public void testSuspensionWhenThereIsXAOrphanToRecover() {
 
