@@ -122,7 +122,7 @@ jobs:
         with:
           retention-days: 1
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
-          path: ${{ github.workspace }}/jboss-as/build/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
+          path: ${{ github.workspace }}/jboss-as/dist/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
 
   CORE:
     needs: as_builder

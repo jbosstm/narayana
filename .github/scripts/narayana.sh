@@ -218,7 +218,7 @@ function build_as {
   else
       WILDFLY_ARGS=${WILDFLY_ARGS:-"-DskipTests"}
   fi
-  ./build.sh clean install -B -fae $WILDFLY_ARGS $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+  ./build.sh clean install -Prelease -B -fae $WILDFLY_ARGS $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS build failed"
 
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
