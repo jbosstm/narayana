@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<ruleset name="jacorb-ruleset">
+
+  <description>
+  My custom ruleset excluding what I don't need.
+  </description>
+
+   <rule ref="rulesets/finalizers.xml"/>
+   <rule ref="rulesets/unusedcode.xml"/>
+   <rule ref="rulesets/basic.xml">
+      <exclude name="AvoidThreadGroup"/>
+   </rule>
+   <rule ref="rulesets/design.xml">
+      <exclude name="SwitchDensity"/>
+      <exclude name="ConfusingTernary"/>
+      <exclude name="SimplifyBooleanExpressions"/>
+      <exclude name="NullAssignmentRule"/>
+      <exclude name="AvoidSynchronizedAtMethodLevel"/>
+   </rule>
+   <rule ref="rulesets/sunsecure.xml"/>
+   <rule ref="rulesets/strictexception.xml"/>
+   <rule ref="rulesets/strings.xml">
+      <exclude name="AvoidDuplicateLiterals"/>
+   </rule>
+   <rule ref="rulesets/imports.xml"/>
+   <rule ref="rulesets/clone.xml"/>
+   <rule ref="rulesets/naming.xml">
+      <exclude name="ShortVariable"/>
+      <exclude name="LongVariable"/>
+      <exclude name="ShortMethodName"/>
+      <exclude name="VariableNamingConventions"/>
+      <exclude name="MethodNamingConventions"/>
+      <exclude name="ClassNamingConventions"/>
+      <exclude name="AbstractNaming"/>
+      <exclude name="AvoidFieldNameMatchingMethodName"/>
+      <exclude name="PackageCase"/>
+   </rule>
+   <rule ref="rulesets/junit.xml"/>
+   <rule ref="rulesets/braces.xml"/>
+   <rule ref="rulesets/javabeans.xml">
+      <exclude name="BeanMembersShouldSerialize"/>
+   </rule>
+   <rule ref="rulesets/optimizations.xml">
+      <exclude name="MethodArgumentCouldBeFinal"/>
+      <exclude name="LocalVariableCouldBeFinal"/>
+      <exclude name="AvoidInstantiatingObjectsInLoops"/>
+   </rule>
+</ruleset>

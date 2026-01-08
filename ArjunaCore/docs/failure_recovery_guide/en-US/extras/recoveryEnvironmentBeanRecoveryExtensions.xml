@@ -1,0 +1,3 @@
+<entry key="RecoveryEnvironmentBean.recoveryExtenstions">
+  com.arjuna.demo.recoverymodule.SimpleRecoveryModule
+</entry>
