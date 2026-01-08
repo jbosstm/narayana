@@ -58,7 +58,6 @@ jobs:
       pr_ref: ${{ inputs.pull_request_ref }}
       pr_repo: ${{ inputs.pull_request_repo }}
       narayana_artifact_name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
-      wildfly_artifact_name: ${{ steps.export-artifacts-names.outputs.wildfly_artifact_name }}
       jboss_as_zip_name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
 
     steps:
@@ -108,11 +107,10 @@ jobs:
           echo "narayana_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
           echo "wildfly_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f jboss-as/pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
 
-      - name: Export Narayana and WildFly artifact names
+      - name: Export Narayana artifact name
         id: export-artifacts-names
         run: |
           echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
-          echo "wildfly_artifact_name=${{ github.run_id }}-wildfly-${{ steps.builds.outputs.wildfly_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
 
       - name: Save Narayana Maven repository
         uses: actions/upload-artifact@v4
@@ -121,14 +119,6 @@ jobs:
           retention-days: 1
           name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
-
-      - name: Save WildFly Maven repository
-        uses: actions/upload-artifact@v4
-        with:
-          compression-level: '0'
-          retention-days: 1
-          name: ${{ steps.export-artifacts-names.outputs.wildfly_artifact_name }}
-          path: ~/.m2/repository/org/wildfly
 
       - name: Export jboss-as zip name
         id: export-jboss-as-zip-name
@@ -151,7 +141,6 @@ jobs:
       pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
       pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
       narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
       jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
 
   RTS:
@@ -163,7 +152,6 @@ jobs:
       pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
       pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
       narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
       jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
 
   XTS:
@@ -175,7 +163,6 @@ jobs:
       pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
       pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
       narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
       jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
 
   JACOCO:
@@ -187,5 +174,4 @@ jobs:
       pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
       pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
       narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      wildfly_artifact_name: ${{ needs.as_builder.outputs.wildfly_artifact_name }}
       jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
