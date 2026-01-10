@@ -16,6 +16,10 @@
   <name>Narayana: ArjunaCore arjuna</name>
   <description>Narayana: ArjunaCore Arjuna</description>
 
+  <properties>
+    <skipTests>false</skipTests>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -119,6 +123,15 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- some profiles, such as jdk21+, require different additionalClasspathElements depending upon the java
+            version, so disable tests by default and re-enable them for each java specific profile -->
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
     </plugins>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests/classes</testSourceDirectory>
@@ -126,30 +139,46 @@
 
   <profiles>
     <profile>
-      <id>jdk21</id>
+      <id>jdk17+</id>
       <activation>
-        <jdk>[21,)</jdk>
+        <jdk>[17,21)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>${skipTests}</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk21+</id>
+      <activation>
+        <jdk>[21,25)</jdk>
       </activation>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>com/arjuna/ats/arjuna/tools/stats/TxPerfGraph.java</exclude>
-                <exclude>com/arjuna/ats/arjuna/tools/stats/TxPerfPlugin.java</exclude>
-              </excludes>
-            </configuration>
             <executions>
               <execution>
                 <id>compile-java-17</id>
                 <goals>
                   <goal>compile</goal>
                 </goals>
+                <phase>compile</phase>
                 <configuration>
-                  <source>17</source>
-                  <target>17</target>
+                  <release>17</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/classes</compileSourceRoot>
+                    <multiReleaseOutput>true</multiReleaseOutput>
+                  </compileSourceRoots>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/versions/17</outputDirectory>
                 </configuration>
               </execution>
               <execution>
@@ -162,27 +191,120 @@
                   <release>21</release>
                   <compileSourceRoots>
                     <compileSourceRoot>${project.basedir}/src/main/java21</compileSourceRoot>
+                    <multiReleaseOutput>true</multiReleaseOutput>
                   </compileSourceRoots>
-                  <multiReleaseOutput>true</multiReleaseOutput>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/versions/21</outputDirectory>
                 </configuration>
               </execution>
             </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.3.0</version>
-            <configuration>
-              <archive>
-                <manifestEntries>
-                  <Multi-Release>true</Multi-Release>
-                </manifestEntries>
-              </archive>
-            </configuration>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>java21-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+                <configuration>
+                  <skipTests>${skipTests}</skipTests>
+                  <!-- inspired by workaround https://github.com/apache/maven-surefire/issues/2007 -->
+                  <classesDirectory>${project.build.directory}/classes/META-INF/versions/21</classesDirectory>
+                  <additionalClasspathElements>
+                    <additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
+                  </additionalClasspathElements>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>jdk25+</id>
+      <activation>
+        <jdk>[25,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>compile-java-17</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <release>17</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/classes</compileSourceRoot>
+                    <multiReleaseOutput>true</multiReleaseOutput>
+                  </compileSourceRoots>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/versions/17</outputDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>compile-java-21</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <release>21</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java21</compileSourceRoot>
+                    <multiReleaseOutput>true</multiReleaseOutput>
+                  </compileSourceRoots>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/versions/21</outputDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>compile-java-25</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <release>25</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java25</compileSourceRoot>
+                    <multiReleaseOutput>true</multiReleaseOutput>
+                  </compileSourceRoots>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/versions/25</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>java25-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+                <configuration>
+                  <skipTests>${skipTests}</skipTests>
+                  <!-- inspired by workaround https://github.com/apache/maven-surefire/issues/2007 -->
+                  <classesDirectory>${project.build.directory}/classes/META-INF/versions/25</classesDirectory>
+                  <additionalClasspathElements>
+                    <additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
+                  </additionalClasspathElements>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>linux-windows</id>
       <activation>
