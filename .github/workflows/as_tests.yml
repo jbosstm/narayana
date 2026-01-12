@@ -72,6 +72,8 @@ jobs:
 
       - name: AS_TESTS testing axis
         id: as_tests_axis
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"  
