@@ -93,6 +93,22 @@ on:
         required: false
         type: boolean
         default: false
+      AS_BRANCH:
+        description: 'AS_BRANCH: the branch/commit of jboss-as to checkout.'
+        required: false
+        type: string
+      NARAYANA_FORK_BRANCH_TO_REBASE_ON:
+        description: 'NARAYANA_FORK_BRANCH_TO_REBASE_ON'
+        required: false
+        type: string
+      SPI_BRANCH:
+        description: 'SPI_BRANCH: the branch/commit of jboss-transaction-spi to checkout.'
+        required: false
+        type: string
+      PERF_PR_NUMBER:
+        description: 'PERF_PR_NUMBER: PR number to checkout for the performance repo tests.'
+        required: false
+        type: string
   workflow_call:
     inputs:
       jdk_versions:
@@ -155,8 +171,14 @@ on:
         default: false
       enabled_databases:
         description: 'The collection of databases to test against'
+        required: false
         type: string
         default: '["postgres","mysql","oracle","db2"]'
+      environment_variables:
+        description: 'The environment variables to use in narayana.sh'
+        required: false
+        type: string
+        default: '{}'
 
 permissions:
   actions: write
@@ -180,6 +202,7 @@ jobs:
       PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
       jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || '["25"]' }}
+      environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || '{}' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
@@ -265,6 +288,28 @@ jobs:
               core.info(`JDKs detected in PR body: ${jdk_versions}`);
             }
             core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
+            
+            const possibleEnvVars = [
+              'AS_BRANCH',
+              'SPI_BRANCH',
+              'PERF_PR_NUMBER'
+            ];
+            
+            const extractedEnvVars = {};
+            
+            for (const varName of possibleEnvVars) {
+              // Matches "VAR=value" stopping at the first whitespace
+              const regex = new RegExp(`\\b${varName}=([^\\s]+)`);
+              const match = prBody.match(regex);
+            
+              if (match) {
+                const value = match[1];
+                core.info(`Environment variables ${varName} detected: ${value}`);
+                extractedEnvVars[varName] = value;
+              }
+            }
+            
+            core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
 
       - name: Set axes according to triggering event
         id: set-axes-inputs
@@ -306,6 +351,16 @@ jobs:
                 core.setOutput('enabled_databases', JSON.stringify(selected_databases));
               }
             }
+            
+            const extractedEnvVars = Object.fromEntries([
+              ['AS_BRANCH', '${{ inputs.AS_BRANCH }}'],
+              ['NARAYANA_FORK_BRANCH_TO_REBASE_ON', '${{ inputs.NARAYANA_FORK_BRANCH_TO_REBASE_ON }}'],
+              ['SPI_BRANCH', '${{ inputs.SPI_BRANCH }}'],
+              ['PERF_PR_NUMBER', '${{ inputs.PERF_PR_NUMBER }}']
+            ].filter(entry => entry[1] !== ''));
+
+            core.info(`Custom Envs: ${JSON.stringify(extractedEnvVars)}`);
+            core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
 
   as_builder:
     needs: axes_selector
@@ -325,6 +380,7 @@ jobs:
       jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
 
   AS_TESTS:
     needs: axes_selector
@@ -337,6 +393,7 @@ jobs:
       jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
 
   QA_JTA:
     needs: axes_selector
@@ -386,3 +443,4 @@ jobs:
       jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
