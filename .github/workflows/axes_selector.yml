@@ -254,8 +254,8 @@ jobs:
               core.setOutput('enabled_databases', JSON.stringify(selectedDBs));
             }
             
-            // Matches JDK17, JDK 17, JDK:17, JDK=17, etc.
-            const jdkRegex = /\bJDK\s*[:=\-\s]*\s*(17|21|25)\b/gi;
+            // Matches JDK17, JDK21, etc.
+            const jdkRegex = /\bJDK(17|21|25)\b/gi;
             const matches = [...prBody.matchAll(jdkRegex)];
             let jdk_versions = matches.map(m => parseInt(m[1], 10));
             if (jdk_versions.length === 0) {
