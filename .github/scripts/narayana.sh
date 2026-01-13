@@ -166,6 +166,9 @@ function clone_as {
     [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
+    
+    echo "This is the current revision of the Narayana WildFly version:"
+    echo $(git rev-parse HEAD)
 
     git remote add upstream https://github.com/wildfly/wildfly.git
 
@@ -181,12 +184,10 @@ function clone_as {
     fi
 
     git fetch upstream
-    echo "This is the JBoss-AS commit"
+    echo "This is the latest WildFly commit:"
     echo $(git rev-parse upstream/main)
-    echo "This is the AS_BRANCH $AS_BRANCH commit"
-    echo $(git rev-parse HEAD)
 
-    echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
+    echo "Rebasing the Narayana WildFly version on upstream main"
     git pull --rebase upstream main
     [ $? -eq 0 ] || fatal "git rebase failed"
   fi
