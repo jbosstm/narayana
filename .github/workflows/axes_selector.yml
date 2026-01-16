@@ -5,14 +5,6 @@ on:
     types: [ opened, edited, synchronize, reopened ]
   workflow_dispatch:
     inputs:
-      pull_request_repo:
-        description: 'Repository to check out (optional)'
-        required: false
-        type: string
-      pull_request_ref:
-        description: 'Branch or commit to test (optional)'
-        required: false
-        type: string
       jdk17:
         description: 'JDK17'
         required: true
@@ -93,6 +85,14 @@ on:
         required: false
         type: boolean
         default: false
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: false
+        type: string
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: false
+        type: string
       AS_BRANCH:
         description: 'AS_BRANCH: the branch/commit of jboss-as to checkout.'
         required: false
