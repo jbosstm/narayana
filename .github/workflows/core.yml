@@ -20,10 +20,6 @@ on:
         description: 'Narayana Maven repository artifact name'
         required: true
         type: string
-      wildfly_artifact_name:
-        description: 'WIldFly Maven repository artifact name'
-        required: true
-        type: string
       jboss_as_zip_name:
         description: 'JBoss/WildFly zip artifact name'
         required: true
@@ -47,7 +43,6 @@ jobs:
           echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
           echo "Narayana artifacts: ${{ inputs.narayana_artifact_name }}"
-          echo "WildFly artifacts: ${{ inputs.wildfly_artifact_name }}"
           echo "WildFly zip name: ${{ inputs.jboss_as_zip_name }}"
 
       - name: Checkout code
@@ -74,12 +69,6 @@ jobs:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
 
-      - name: Download WildFly Maven repository
-        uses: actions/download-artifact@v5
-        with:
-          name: ${{ inputs.wildfly_artifact_name }}
-          path: ~/.m2/repository/org/wildfly
-
       - name: Download WildFly zip
         uses: actions/download-artifact@v5
         with:
@@ -98,7 +87,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          JBOSS_HOME=${{ github.workspace }}/wildfly NARAYANA_BUILD=1 NARAYANA_TESTS=1 JTA_CDI_TESTS=1 JTA_AS_TESTS=1 ./.github/scripts/narayana.sh
+          JBOSS_HOME=${{ github.workspace }}/wildfly NARAYANA_BUILD=1 NARAYANA_TESTS=1 JTA_CDI_TESTS=1 ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.core_axis.conclusion == 'failure' || cancelled() && steps.core_axis.conclusion == 'cancelled' }}
