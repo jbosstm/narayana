@@ -71,7 +71,7 @@
     <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
     <version.sun.jdk>jdk</version.sun.jdk>
     <version.tanukisoft>3.2.3</version.tanukisoft>
-    <version.vertx>5.0.5</version.vertx>
+    <version.vertx>5.0.7</version.vertx>
   </properties>
 
   <dependencyManagement>
