@@ -6,6 +6,7 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
@@ -17,16 +18,28 @@ import java.util.function.Function;
 
 // Remark: this class should be package private - change it or use a different class in BasicAction
 public class TwoPhaseCommitThreadPool {
-    private static final ExecutorService executor = initializeExecutor();
+    private static ExecutorService executor = initializeExecutor();
 
     private static ExecutorService initializeExecutor() {
         return Executors.newFixedThreadPool(
                 arjPropertyManager.getCoordinatorEnvironmentBean().getMaxTwoPhaseCommitThreads());
     }
 
-    static boolean restartExecutor() {
-        // only implemented when running on JRE 21 and above
-        return false;
+    private static boolean restartExecutor() {
+        shutdownExecutor();
+        executor = initializeExecutor();
+
+        return false; // not using virtual threads
+    }
+
+    private static boolean shutdownExecutor() {
+        executor.shutdown();
+
+        return executor.isShutdown();
+    }
+
+    private static List<Runnable> shutdownExecutorNow() {
+        return executor.shutdownNow();
     }
 
     public static Future<Integer> submitJob(Callable<Integer> job) {

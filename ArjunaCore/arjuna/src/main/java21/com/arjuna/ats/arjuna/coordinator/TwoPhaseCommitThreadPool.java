@@ -6,6 +6,7 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
@@ -34,10 +35,20 @@ public class TwoPhaseCommitThreadPool {//implements AutoCloseable {
         }
     }
 
-    static boolean restartExecutor() {
+    private static boolean restartExecutor() {
         executor = initializeExecutor();
 
         return isUsingVirtualThreads;
+    }
+
+    private static boolean shutdownExecutor() {
+        executor.shutdown();
+
+        return executor.isShutdown();
+    }
+
+    private static List<Runnable> shutdownExecutorNow() {
+        return executor.shutdownNow();
     }
 
     public static Future<Integer> submitJob(Callable<Integer> job) {
