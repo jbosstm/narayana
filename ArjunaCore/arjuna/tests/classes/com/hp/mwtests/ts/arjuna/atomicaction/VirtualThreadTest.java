@@ -19,6 +19,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseCommitThreadPool;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -29,12 +30,15 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -43,11 +47,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 class VirtualThreadTest {
     private static final String VIRTUAL_THREADS_GROUP_NAME = "VirtualThreads";
     private static final String RESTART_EXECUTOR_METHOD_NAME = "restartExecutor";
+    private static final String SHUTDOWN_EXECUTOR_METHOD_NAME = "shutdownExecutor";
+    private static final String SHUTDOWN_EXECUTOR_NOW_METHOD_NAME = "shutdownExecutorNow";
     private static boolean isVirtualThreadPerTaskExecutor;
     private static MethodHandle restartExecutorMH; // method handle to restart the executor
+    private static MethodHandle shutdownExecutorNowMH; // method handle to shut down the executor immediately
+    private static MethodHandle shutdownExecutorMH; // method handle to shut down the executor
 
     @BeforeAll
     public static void beforeClass() {
+        // configure asynchronous resource operations
         CoordinatorEnvironmentBean configBean = arjPropertyManager.getCoordinatorEnvironmentBean();
 
         configBean.setAsyncPrepare(true);
@@ -57,23 +66,45 @@ class VirtualThreadTest {
         configBean.setAsyncBeforeSynchronization(true);
         configBean.setAsyncAfterSynchronization(true);
 
-        // TwoPhaseCommitThreadPool.restartExecutor executor is required, but it is package private
+        // TwoPhaseCommitThreadPool.restartExecutor executor is required, but it is private
         // so we need to use method handles (or reflection):
 
         // create the lookup
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        // lookup the method
+        // lookup the methods
         try {
             Method restartMethod = TwoPhaseCommitThreadPool.class.getDeclaredMethod(RESTART_EXECUTOR_METHOD_NAME);
             // it's package private so make it accessible
             restartMethod.setAccessible(true);
             // and get a method handle to it
             restartExecutorMH = lookup.unreflect(restartMethod);
+
+            Method shutdownMethod =
+                    TwoPhaseCommitThreadPool.class.getDeclaredMethod(SHUTDOWN_EXECUTOR_METHOD_NAME);
+            shutdownMethod.setAccessible(true);
+            shutdownExecutorMH = lookup.unreflect(shutdownMethod);
+
+            Method shutdownNowMethod =
+                    TwoPhaseCommitThreadPool.class.getDeclaredMethod(SHUTDOWN_EXECUTOR_NOW_METHOD_NAME);
+            shutdownNowMethod.setAccessible(true);
+            shutdownExecutorNowMH = lookup.unreflect(shutdownNowMethod);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             fail(e);
         }
+    }
 
+    // restart the TwoPhaseCommitThreadPool executor and use virtual threads on java 21+
+    @BeforeEach
+    @EnabledForJreRange(min = JRE.JAVA_21)
+    public void beforeEach() {
         isVirtualThreadPerTaskExecutor = restartExecutor(true);
+    }
+
+    // restart the TwoPhaseCommitThreadPool executor on JDKs 17, 18, 19 and 20 which don't support virtual threads
+    @BeforeEach
+    @EnabledForJreRange(min = JRE.JAVA_17, max = JRE.JAVA_20)
+    public void beforeEach17_20() {
+        isVirtualThreadPerTaskExecutor = restartExecutor(false);
     }
 
     private static boolean restartExecutor(boolean useVirtualThreads) {
@@ -88,6 +119,88 @@ class VirtualThreadTest {
         }
 
         return isVirtualThreadPerTaskExecutor;
+    }
+
+    private static boolean shutdownExecutor(boolean immediately) {
+        assertNotNull(shutdownExecutorMH, "shutdownExecutorMH not set");
+        assertNotNull(shutdownExecutorNowMH, "shutdownExecutorNowMH not set");
+        try {
+            if (immediately) {
+                List<Runnable> pending = (List<Runnable>) shutdownExecutorNowMH.invokeExact();
+                return pending.isEmpty();
+            } else {
+                return (boolean) shutdownExecutorMH.invokeExact();
+            }
+        } catch (Throwable e) {
+            fail(e);
+        }
+
+        return false;
+    }
+
+    @Test
+    // test shutting down the TwoPhaseCommitThreadPool executor waiting for any pending and running tasks to complete
+    public void testGracefullyShutdownTwoPhaseCommitThreadPool() {
+        Callable<Integer> fastJob = () -> 0;
+        Callable<Integer> slowJob = () -> {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                return -1; // to indicate a problem
+            }
+            return 200;
+        };
+
+        restartExecutor(false);
+        Future<Integer> f = TwoPhaseCommitThreadPool.submitJob(fastJob);
+        try {
+            assertEquals(0, f.get());
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        }
+
+        f = TwoPhaseCommitThreadPool.submitJob(slowJob);
+
+        // gracefully shutdown the executor (pending jobs should complete)
+        shutdownExecutor(false);
+
+        try {
+            assertEquals(200, f.get(), "Expected job to pass when the executor gracefully shuts down");
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    // test shutting down the TwoPhaseCommitThreadPool executor immediately, ie forcing any running tasks to stop
+    public void testDisgracefullyShutdownTwoPhaseCommitThreadPool() {
+        Callable<Integer> fastJob = () -> 0;
+        Callable<Integer> slowJob = () -> {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                return -1; // to indicate a problem
+            }
+            return 200;
+        };
+
+        restartExecutor(false);
+        Future<Integer> f = TwoPhaseCommitThreadPool.submitJob(fastJob);
+        try {
+            assertEquals(0, f.get());
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        }
+
+        f = TwoPhaseCommitThreadPool.submitJob(slowJob);
+        // shutdown the executor immediately (pending jobs should not complete)
+        shutdownExecutor(true);
+
+        try {
+            assertEquals(-1, f.get(), "Expected job to fail when the executor shuts down immediately");
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        }
     }
 
     @Test
