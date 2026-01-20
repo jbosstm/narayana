@@ -18,6 +18,17 @@ We use a four step process for contributions:
 1. Create a GitHub Pull Request for your change, following the instructions in the pull request template.
 1. Perform a Code Review with the project maintainers on the pull request.
 
+> [!NOTE]
+> When the Narayana repository was initially migrated from SVN, a significant portion of its history was left behind.
+> In October 2025, the Narayana team successfully merged the recovered SVN commits into the current repository.
+> As a consequence, the project's commit history now extends back to December 2005.
+> To access the complete history (all commits since 2005) when cloning your fork of Narayana, you must run these extra steps:
+> 1. `git clone https://github.com/your_org/narayana.git`
+> 1. `git remote add upstream https://github.com/jbosstm/narayana.git`
+> 1. `git fetch upstream 'refs/replace/*:refs/replace/*'`
+>
+> The final operation fetches all replacement references from `jbosstm/narayana`, which include a graft that connects the recovered older SVN history with the more recent Git history.  
+
 ## Certificate of Origin and License
 
 All files in this repository are subject to the Apache 2.0 license.
