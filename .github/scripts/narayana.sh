@@ -219,6 +219,10 @@ function build_as {
   else
       WILDFLY_ARGS=${WILDFLY_ARGS:-"-DskipTests"}
   fi
+
+  export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS"
+
   ./build.sh clean install -Prelease -B -fae $WILDFLY_ARGS $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS build failed"
 
