@@ -178,6 +178,8 @@ jobs:
 
   cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     needs:
       - as_builder
       - CORE
