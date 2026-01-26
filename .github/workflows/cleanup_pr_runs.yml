@@ -1,0 +1,37 @@
+name: Cleanup PR Runs
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cleanup PR workflow runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "Finding workflow runs for PR #$PR_NUMBER"
+
+          RUN_IDS=$(gh api \
+            repos/$REPO/actions/runs \
+            --paginate \
+            -q ".workflow_runs[]
+                | select(.pull_requests[].number == $PR_NUMBER)
+                | .id")
+
+          for RUN_ID in $RUN_IDS; do
+            echo "Deleting workflow run $RUN_ID"
+            gh run delete "$RUN_ID" \
+              --repo "$REPO" \
+              --yes \
+              || echo "Run delete failed, skipping"
+          done
