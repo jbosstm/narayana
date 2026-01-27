@@ -1,0 +1,58 @@
+name: Cleanup Successful Workflow Runs
+
+on:
+  schedule:
+    - cron: "0 7 * * 0"
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete successful workflow runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="$GITHUB_REPOSITORY"
+          echo "Target repository: $REPO"
+
+          RUNS=$(gh run list \
+            --repo "$REPO" \
+            --limit 500 \
+            --json databaseId,event,headBranch,conclusion \
+            -q '.[] | select(.conclusion=="success") | {id:.databaseId, event:.event, branch:.headBranch}')
+
+          echo "$RUNS" | jq -c '.' | while read -r run; do
+            RUN_ID=$(echo "$run" | jq -r '.id')
+            EVENT=$(echo "$run" | jq -r '.event')
+            BRANCH=$(echo "$run" | jq -r '.branch')
+
+            DELETE_RUN=true
+            if [[ "$EVENT" == "pull_request" && -n "$BRANCH" ]]; then
+              PR_NUMBER=$(gh pr list \
+                --repo "$REPO" \
+                --head "$BRANCH" \
+                --state all \
+                --json number \
+                -q '.[0].number' 2>/dev/null || true)
+
+              if [[ -n "$PR_NUMBER" ]]; then
+                STATE=$(gh pr view "$PR_NUMBER" \
+                  --repo "$REPO" \
+                  --json state \
+                  -q '.state' 2>/dev/null || echo "UNKNOWN")
+
+                # Normalize state to lowercase for safe comparison
+                STATE=$(echo "$STATE" | tr '[:upper:]' '[:lower:]')
+
+                if [[ "$STATE" == "open" ]]; then
+                  DELETE_RUN=false
+                  echo "Skipping run $RUN_ID (PR #$PR_NUMBER is still open)"
+                fi
+              fi
+            fi
+
+            if [[ "$DELETE_RUN" == true ]]; then
+              echo "Deleting successful run ID: $RUN_ID"
+              gh run delete "$RUN_ID" --repo "$REPO"
+            fi
+          done
