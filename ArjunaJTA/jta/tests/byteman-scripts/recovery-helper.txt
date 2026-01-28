@@ -39,6 +39,6 @@ METHOD bottomUpRecovery
 AT EXIT
 IF TRUE
 DO debug("Recovery Helper: bottomUpRecovery at exit"),
-   Thread.sleep(500),
+   Thread.sleep(500L),
    debug("Recovery Helper: bottomUpRecovery finished")
 ENDRULE
