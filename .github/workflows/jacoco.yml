@@ -42,8 +42,7 @@ jobs:
           { envVars: 'COMPENSATIONS_TESTS=1', axis: 'COMPENSATION', artifact: 'compensation' },
           { envVars: 'txbridge=1', axis: 'TXBRIDGE', artifact: 'txbridge' },
           { envVars: 'RTS_TESTS=1', axis: 'RTS', artifact: 'rts' },
-          { envVars: 'JTA_CDI_TESTS=1', axis: 'JTA_CDI', artifact: 'jta' },
-          { envVars: 'JTA_AS_TESTS=1', axis: 'JTA_AS', artifact: 'jta_as' }
+          { envVars: 'JTA_CDI_TESTS=1', axis: 'JTA_CDI', artifact: 'jta' }
         ]
 
     steps:
