@@ -99,7 +99,7 @@ jobs:
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='-PcodeCoverage -Pfindbugs' JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 ${{ matrix.map.envVars }} ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -113,7 +113,7 @@ jobs:
             **/target/*failsafe-reports*/**
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ steps.jacoco_axis.conclusion == 'success' }}
         with:
           retention-days: 1
@@ -196,7 +196,7 @@ jobs:
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='codeCoverage' QA_TARGET=${{ matrix.qa_target }} QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -204,7 +204,7 @@ jobs:
           path: qa/testoutput
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ steps.jacoco_axis.conclusion == 'success' }}
         with:
           retention-days: 1
@@ -256,7 +256,7 @@ jobs:
 
           CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage" ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.code_coverage_generator.conclusion == 'failure' || cancelled() && steps.code_coverage_generator.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -271,7 +271,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload Final JaCoCo HTML Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: narayana-coverage-report
           path: code-coverage/target/coverage/

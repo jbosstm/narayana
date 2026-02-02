@@ -77,7 +77,7 @@ jobs:
           git config --global user.name "github-actions[bot]"  
           PROFILE=AS_TESTS ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' || cancelled() && steps.as_tests_axis.conclusion == 'cancelled' }}
         with:
           name: as_tests-logs-jdk${{ inputs.jdk_version }}

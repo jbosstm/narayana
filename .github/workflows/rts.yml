@@ -89,7 +89,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=RTS ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.rts_axis.conclusion == 'failure' || cancelled() && steps.rts_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
