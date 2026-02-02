@@ -48,7 +48,7 @@
     <version.jboss-modules>1.10.2.Final</version.jboss-modules>
     <version.jboss.jnpserver>4.2.2.GA</version.jboss.jnpserver>
     <version.jfree>1.5.3</version.jfree>
-    <version.jnpserver>5.0.3.GA</version.jnpserver>
+    <version.jnpserver>5.0.5.Final</version.jnpserver>
     <version.microprofile.config-api>3.0.2</version.microprofile.config-api>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.org.apache.activemq>2.43.0</version.org.apache.activemq>
