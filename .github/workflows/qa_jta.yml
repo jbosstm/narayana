@@ -84,7 +84,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           QA_PROFILE="-Dprofile=${{ matrix.database }}" QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.qa_jta_axis.conclusion == 'failure' || cancelled() && steps.qa_jta_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30

@@ -113,7 +113,7 @@ jobs:
           echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
 
       - name: Save Narayana Maven repository
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           compression-level: '0'
           retention-days: 1
@@ -126,7 +126,7 @@ jobs:
           echo "jboss_as_zip_name=${{ github.run_id }}-jboss-as-zip-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
 
       - name: Save jboss-as
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}

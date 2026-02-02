@@ -77,7 +77,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           PROFILE=PERFORMANCE ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.performance.conclusion == 'failure' || cancelled() && steps.performance.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -92,7 +92,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Uploading PERFORMANCE results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 30
           name: performance-results-jdk${{ inputs.jdk_version }}
