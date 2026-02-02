@@ -33,7 +33,7 @@
     <version.httpcomponents>4.5.14</version.httpcomponents>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
-    <version.jakartaee-api>11.0.0</version.jakartaee-api>
+    <version.jakartaee-api>10.0.0</version.jakartaee-api>
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
     <version.junit>4.13.1</version.junit>
     <version.junit.jupiter>6.0.2</version.junit.jupiter>
