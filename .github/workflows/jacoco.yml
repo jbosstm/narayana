@@ -74,13 +74,13 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download Narayana Maven repository
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
 
       - name: Download WildFly zip
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}
@@ -184,7 +184,7 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download Narayana Maven repository
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
@@ -244,7 +244,7 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download All Raw Data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: coverage-data-jdk${{ inputs.jdk_version }}-*
           merge-multiple: true
