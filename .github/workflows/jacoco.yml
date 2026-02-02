@@ -56,7 +56,7 @@ jobs:
           echo "WildFly zip name: ${{ inputs.jboss_as_zip_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
@@ -148,7 +148,7 @@ jobs:
           echo "Narayana artifacts: ${{ inputs.narayana_artifact_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
@@ -226,7 +226,7 @@ jobs:
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
