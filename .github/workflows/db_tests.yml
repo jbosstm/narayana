@@ -121,7 +121,7 @@ jobs:
           cd ${{ github.workspace }}
           OBJECT_STORE_PROFILE=",${{ matrix.database }}-jdbc-store" NARAYANA_BUILD=1 NARAYANA_TESTS=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.narayana_db_tests.conclusion == 'failure' || cancelled() && steps.narayana_db_tests.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -235,7 +235,7 @@ jobs:
           cd ${{ github.workspace }}
           QA_PROFILE="-Dprofile=${{ matrix.database }}" QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ failure() && steps.db_tests_axis.conclusion == 'failure' || cancelled() && steps.db_tests_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
