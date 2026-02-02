@@ -62,7 +62,7 @@ jobs:
 
     steps:
       - name: Load Dynamic Environment Variables
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
         env:
           ENV_JSON: ${{ inputs.environment_variables }}
