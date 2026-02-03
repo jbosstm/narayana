@@ -94,7 +94,7 @@
                       <structure name="JaCoCo">
                         <group name="org.jboss.narayana.arjunacore">
                           <classfiles>
-                            <fileset dir="../ArjunaCore/arjuna/target/classes" includes="**/*.class"></fileset>
+                            <fileset dir="../ArjunaCore/arjuna/target/classes" includes="**/*.class" excludes="META-INF/**/*"></fileset>
                             <fileset dir="../ArjunaCore/txoj/target/classes" includes="**/*.class"></fileset>
                           </classfiles>
                           <sourcefiles>
