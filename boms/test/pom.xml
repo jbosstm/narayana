@@ -24,7 +24,7 @@
   -->
   <properties>
     <version.arquillian.byteman>1.1.0</version.arquillian.byteman>
-    <version.arquillian.weld-embedded>3.0.2.Final</version.arquillian.weld-embedded>
+    <version.arquillian.weld-embedded>4.0.0.Final</version.arquillian.weld-embedded>
     <version.com.h2database>2.2.224</version.com.h2database>
     <version.com.ibm>db2jcc4</version.com.ibm>
     <version.com.oracle>23.26.0.0.0</version.com.oracle>
