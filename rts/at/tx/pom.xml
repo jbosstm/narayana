@@ -94,12 +94,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- undertow with RestEasy -->
     <dependency>
       <groupId>org.jboss.resteasy</groupId>

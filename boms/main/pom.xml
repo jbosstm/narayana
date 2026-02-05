@@ -68,7 +68,6 @@
     <version.parsson>1.1.7</version.parsson>
     <version.smallrye-converter-api>2.7.0</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
-    <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
     <version.sun.jdk>jdk</version.sun.jdk>
     <version.tanukisoft>3.2.3</version.tanukisoft>
     <version.vertx>5.0.7</version.vertx>

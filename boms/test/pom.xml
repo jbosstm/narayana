@@ -54,7 +54,6 @@
     <version.org.wildfly.core>31.0.2.Final</version.org.wildfly.core>
     <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
     <version.postgresql>42.7.9</version.postgresql>
-    <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
   </properties>
 
   <dependencyManagement>
@@ -345,13 +344,6 @@
         <groupId>org.junit.vintage</groupId>
         <artifactId>junit-vintage-engine</artifactId>
         <version>${version.junit.jupiter}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.squareup.okhttp</groupId>
-        <artifactId>okhttp</artifactId>
-        <version>${version.squareup.okhttp}</version>
-        <scope>test</scope>
       </dependency>
 
       <!-- undertow with RestEasy -->
