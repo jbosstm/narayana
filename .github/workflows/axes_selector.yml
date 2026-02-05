@@ -240,7 +240,8 @@ jobs:
             const processedBody = prBody.replace(/!\s+/g, '!');
             // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
             const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
-            
+
+            let axis_selected = false;
             let db_tests_triggered = false;
             // Determine which workflows to run
             for (const axis of workflowAxes) {
@@ -250,10 +251,16 @@ jobs:
                 if (axis == 'DB_TESTS') {
                   db_tests_triggered = true;
                 }
+                axis_selected = true;
               } else {
                 core.info(`Axis ${axis} NOT REQUESTED.`);
                 core.setOutput(axis, 'false');
               }
+            }
+
+            if (!axis_selected) {
+                core.info(`No axis was requested, so run CORE at least.`);
+                core.setOutput('CORE', 'true');
             }
             
             if (db_tests_triggered) {
