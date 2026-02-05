@@ -25,7 +25,7 @@
   <name>Project - mod-stm</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
+    <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
 
     <!--Plugin versions-->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
