@@ -5,29 +5,18 @@
 
 package org.jboss.jbossts.star.test;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
-import com.squareup.okhttp.OkHttpClient;
-import io.undertow.Undertow;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HEAD;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.net.ssl.SSLContext;
+
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
@@ -50,16 +39,29 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
+
+import io.undertow.Undertow;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HEAD;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 public class BaseTest {
     protected static final Logger log = Logger.getLogger(BaseTest.class);
@@ -172,17 +174,14 @@ public class BaseTest {
     }
 
     private static class SpdyConnection implements HttpConnectionCreator {
-        private OkHttpClient spdyClient;
+
+        private javax.net.ssl.SSLSocketFactory sslSocketFactory;
 
         SpdyConnection() {
-
-            spdyClient = new OkHttpClient();
-
             try {
-                //sslContext = getSSLContext();
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 sslContext.init(null, null, null);
-                spdyClient.setSslSocketFactory(sslContext.getSocketFactory());
+                sslSocketFactory = sslContext.getSocketFactory();
             } catch (Exception e) {
                 throw new AssertionError(); // The system has no TLS. Just give up.
             }
@@ -190,7 +189,11 @@ public class BaseTest {
 
         @Override
         public HttpURLConnection open(URL url) throws IOException {
-            return spdyClient.open(url);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            if (connection instanceof javax.net.ssl.HttpsURLConnection) {
+                ((javax.net.ssl.HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
+            }
+            return connection;
         }
     }
 
