@@ -51,7 +51,7 @@
     <version.jnpserver>5.0.5.Final</version.jnpserver>
     <version.microprofile.config-api>3.1</version.microprofile.config-api>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
-    <version.org.apache.activemq>2.43.0</version.org.apache.activemq>
+    <version.org.apache.activemq>2.44.0</version.org.apache.activemq>
     <version.org.apache.ant>1.10.15</version.org.apache.ant>
     <version.org.eclipse.microprofile.openapi>3.1</version.org.eclipse.microprofile.openapi>
     <version.org.eclipse.microprofile.reactive-streams-operators>3.0</version.org.eclipse.microprofile.reactive-streams-operators>
