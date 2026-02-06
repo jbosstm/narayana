@@ -54,7 +54,7 @@
     <version.org.wildfly.core>31.0.1.Final</version.org.wildfly.core>
     <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
     <version.postgresql>42.7.2</version.postgresql>
-    <version.squareup.okhttp>1.5.4</version.squareup.okhttp>
+    <version.squareup.okhttp>2.7.5</version.squareup.okhttp>
   </properties>
 
   <dependencyManagement>
