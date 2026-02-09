@@ -22,7 +22,7 @@
   <properties>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
-    <org.asciidoctor.asciidoctor-maven-plugin>3.0.0</org.asciidoctor.asciidoctor-maven-plugin>
+    <org.asciidoctor.asciidoctor-maven-plugin>3.2.0</org.asciidoctor.asciidoctor-maven-plugin>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.sortpom>3.2.0</version.sortpom>
     <skip.release>true</skip.release>
