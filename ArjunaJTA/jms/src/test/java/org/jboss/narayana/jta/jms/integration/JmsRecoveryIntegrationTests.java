@@ -5,37 +5,39 @@
 
 package org.jboss.narayana.jta.jms.integration;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.jta.TransactionManager;
-import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.jboss.byteman.contrib.bmunit.BMRule;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.jta.TransactionManager;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

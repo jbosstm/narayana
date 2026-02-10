@@ -5,10 +5,16 @@
 
 package org.jboss.narayana.jta.jms;
 
-import jakarta.jms.JMSException;
-import jakarta.jms.Session;
-import jakarta.jms.XASession;
-import jakarta.transaction.Synchronization;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.xa.XAResource;
 
 import org.junit.Before;
@@ -16,15 +22,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
+import jakarta.jms.XASession;
+import jakarta.transaction.Synchronization;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
