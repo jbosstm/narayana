@@ -47,7 +47,7 @@
     <version.jaxws-ri>4.0.3</version.jaxws-ri>
     <version.jboss-modules>2.3.0</version.jboss-modules>
     <version.jboss.jnpserver>4.2.2.GA</version.jboss.jnpserver>
-    <version.jfree>1.5.3</version.jfree>
+    <version.jfree>1.5.6</version.jfree>
     <version.jnpserver>5.0.5.Final</version.jnpserver>
     <version.microprofile.config-api>3.1</version.microprofile.config-api>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
