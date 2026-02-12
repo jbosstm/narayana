@@ -51,7 +51,7 @@
     <version.org.slf4j>2.0.17</version.org.slf4j>
     <version.org.springframework>7.0.3</version.org.springframework>
     <version.org.wildfly.arquillian>5.1.0.Final</version.org.wildfly.arquillian>
-    <version.org.wildfly.core>31.0.2.Final</version.org.wildfly.core>
+    <version.org.wildfly.core>31.0.3.Final</version.org.wildfly.core>
     <version.org.wildfly.extras.creaper>2.0.3</version.org.wildfly.extras.creaper>
     <version.postgresql>42.7.10</version.postgresql>
   </properties>
