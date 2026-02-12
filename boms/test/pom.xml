@@ -31,7 +31,7 @@
     <version.com.sun.messaging.mq.fscontext>4.6-b01</version.com.sun.messaging.mq.fscontext>
     <version.hamcrest>3.0</version.hamcrest>
     <version.httpcomponents>4.5.14</version.httpcomponents>
-    <version.io.mashona>1.0.0.Beta1</version.io.mashona>
+    <version.io.mashona>1.1.0</version.io.mashona>
     <version.jakarta.ejb.jakarta-ejb-api>4.0.1</version.jakarta.ejb.jakarta-ejb-api>
     <version.jakartaee-api>10.0.0</version.jakartaee-api>
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
