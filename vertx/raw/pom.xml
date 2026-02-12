@@ -90,7 +90,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.4.0</version>
+        <version>3.6.3</version>
         <executions>
           <execution>
             <!-- run the application using the fat jar -->
