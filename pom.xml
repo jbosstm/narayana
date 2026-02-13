@@ -167,8 +167,7 @@
     <jvm.args.modular></jvm.args.modular>
     <jvm.args.other>-server</jvm.args.other>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
 
     <!-- Nexus Settings -->
     <nexus.repository.release>narayana</nexus.repository.release>
