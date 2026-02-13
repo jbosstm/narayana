@@ -9,12 +9,10 @@ on:
         description: 'JDK17'
         required: true
         type: boolean
-        default: false
       jdk21:
         description: 'JDK21'
         required: true
         type: boolean
-        default: false
       jdk25:
         description: 'JDK25'
         required: true
@@ -29,62 +27,50 @@ on:
         description: 'RTS testing axis'
         required: true
         type: boolean
-        default: false
       XTS:
         description: 'XTS testing axis'
         required: true
         type: boolean
-        default: false
       AS_TESTS:
         description: 'AS_TESTS testing axis'
         required: true
         type: boolean
-        default: false
       QA_JTA:
         description: 'QA_JTA testing axis'
         required: true
         type: boolean
-        default: false
       QA_JTS_OPENJDKORB:
         description: 'QA_JTS_OPENJDKORB testing axis'
         required: true
         type: boolean
-        default: false
       JACOCO:
         description: 'JACOCO testing axis'
         required: true
         type: boolean
-        default: false
       DB_TESTS:
         description: 'DB_TESTS testing axis'
         required: true
         type: boolean
-        default: false
       PERFORMANCE:
         description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
-        default: false
       postgres:
         description: 'PostgreSQL will be used for the DB_TESTS testing axis.'
         required: false
         type: boolean
-        default: false
       mysql:
         description: 'MySQL will be used for the DB_TESTS testing axis.'
         required: false
         type: boolean
-        default: false
       oracle:
         description: 'Oracle will be used for the DB_TESTS testing axis.'
         required: false
         type: boolean
-        default: false
       db2:
         description: 'DB2 will be used for the DB_TESTS testing axis.'
         required: false
         type: boolean
-        default: false
       pull_request_repo:
         description: 'Repository to check out'
         required: false
@@ -133,42 +119,34 @@ on:
         description: 'RTS testing axis'
         required: true
         type: boolean
-        default: false
       XTS:
         description: 'XTS testing axis'
         required: true
         type: boolean
-        default: false
       AS_TESTS:
         description: 'AS_TESTS testing axis'
         required: true
         type: boolean
-        default: false
       QA_JTA:
         description: 'QA_JTA testing axis'
         required: true
         type: boolean
-        default: false
       QA_JTS_OPENJDKORB:
         description: 'QA_JTS_OPENJDKORB testing axis'
         required: true
         type: boolean
-        default: false
       JACOCO:
         description: 'JACOCO testing axis'
         required: true
         type: boolean
-        default: false
       DB_TESTS:
         description: 'DB_TESTS testing axis'
         required: true
         type: boolean
-        default: false
       PERFORMANCE:
         description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
-        default: false
       enabled_databases:
         description: 'The collection of databases to test against'
         required: false
@@ -191,18 +169,18 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      CORE: ${{ steps.parse.outputs.CORE || steps.set-axes-inputs.outputs.CORE || 'true' }}
-      AS_TESTS: ${{ steps.parse.outputs.AS_TESTS || steps.set-axes-inputs.outputs.AS_TESTS || 'true' }}
-      RTS: ${{ steps.parse.outputs.RTS || steps.set-axes-inputs.outputs.RTS || 'true' }}
-      XTS: ${{ steps.parse.outputs.XTS || steps.set-axes-inputs.outputs.XTS || 'true' }}
-      QA_JTA: ${{ steps.parse.outputs.QA_JTA || steps.set-axes-inputs.outputs.QA_JTA || 'true' }}
-      QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || 'true' }}
-      JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || 'true' }}
-      DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || 'false' }}
-      PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || 'true' }}
-      enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || '' }}
-      jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || '["25"]' }}
-      environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || '{}' }}
+      CORE: ${{ steps.parse.outputs.CORE || steps.set-axes-inputs.outputs.CORE || inputs.CORE }}
+      AS_TESTS: ${{ steps.parse.outputs.AS_TESTS || steps.set-axes-inputs.outputs.AS_TESTS || inputs.AS_TESTS }}
+      RTS: ${{ steps.parse.outputs.RTS || steps.set-axes-inputs.outputs.RTS || inputs.RTS }}
+      XTS: ${{ steps.parse.outputs.XTS || steps.set-axes-inputs.outputs.XTS || inputs.XTS }}
+      QA_JTA: ${{ steps.parse.outputs.QA_JTA || steps.set-axes-inputs.outputs.QA_JTA || inputs.QA_JTA }}
+      QA_JTS_OPENJDKORB: ${{ steps.parse.outputs.QA_JTS_OPENJDKORB || steps.set-axes-inputs.outputs.QA_JTS_OPENJDKORB || inputs.QA_JTS_OPENJDKORB }}
+      JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || inputs.JACOCO }}
+      DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || inputs.DB_TESTS }}
+      PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || inputs.PERFORMANCE }}
+      enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || inputs.enabled_databases }}
+      jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || inputs.jdk_versions }}
+      environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || inputs.environment_variables }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
