@@ -45,7 +45,7 @@
     <!-- remark: this property is duplicated in the top level pom -->
     <version.org.jboss.byteman>4.0.26</version.org.jboss.byteman>
     <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
-    <version.org.jboss.shrinkwrap.resolvers>3.3.4</version.org.jboss.shrinkwrap.resolvers>
+    <version.org.jboss.shrinkwrap.resolvers>3.3.5</version.org.jboss.shrinkwrap.resolvers>
     <version.org.jboss.weld>6.0.4.Final</version.org.jboss.weld>
     <version.org.mockito>5.21.0</version.org.mockito>
     <version.org.slf4j>2.0.17</version.org.slf4j>
