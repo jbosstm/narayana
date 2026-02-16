@@ -36,7 +36,7 @@
     <version.jakartaee-api>11.0.0</version.jakartaee-api>
     <version.jboss.profiler.jvmti>1.0.0.CR5</version.jboss.profiler.jvmti>
     <version.junit>4.13.2</version.junit>
-    <version.junit.jupiter>6.0.2</version.junit.jupiter>
+    <version.junit.jupiter>6.0.3</version.junit.jupiter>
     <version.log4j-core>2.25.3</version.log4j-core>
     <version.mariadb>1.2.2</version.mariadb>
     <version.mysql>9.6.0</version.mysql>
