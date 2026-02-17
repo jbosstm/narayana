@@ -1,6 +1,8 @@
 [![Narayana](https://design.jboss.org/narayana/logo/final/narayana_logo_600px.png)](https://narayana.io/)
 
-[![Version](https://img.shields.io/maven-central/v/org.jboss.narayana/narayana-all?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/org.jboss.narayana/narayana-all)
+[![Version](https://img.shields.io/maven-central/v/org.jboss.narayana/narayana-all)](https://search.maven.org/artifact/org.jboss.narayana/narayana-all)
+[![Daily Job](https://github.com/jbosstm/narayana/actions/workflows/daily_job.yml/badge.svg)](https://github.com/jbosstm/narayana/actions/workflows/daily_job.yml)
+[![Project Chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg?logo=zulip)](https://narayana.zulipchat.com)
 
 # Narayana
 
