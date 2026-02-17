@@ -1,4 +1,4 @@
-name: jacoco
+name: JaCoCo
 
 on:
   workflow_call:
@@ -32,7 +32,7 @@ concurrency:
 
 jobs:
   jacoco-test:
-    name: Testing ${{ matrix.map.axis }} axis with JDK ${{ inputs.jdk_version }}
+    name: Testing JaCoCo ${{ matrix.map.axis }} axis with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -91,7 +91,7 @@ jobs:
           dir=$(unzip -Z -1 wildfly-*.zip | head -n1 | cut -d/ -f1)
           mv "$dir" wildfly
 
-      - name: jacoco testing axis
+      - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -127,7 +127,7 @@ jobs:
           if-no-files-found: warn
 
   jacoco-qa-test:
-    name: Testing QA_TARGET ${{ matrix.qa_target }} with JDK ${{ inputs.jdk_version }}
+    name: Testing JaCoCo QA_TARGET ${{ matrix.qa_target }} with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -188,7 +188,7 @@ jobs:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
 
-      - name: jacoco testing axis
+      - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
