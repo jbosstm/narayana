@@ -18,6 +18,7 @@
 
   <properties>
     <skipTests>false</skipTests>
+    <version.infinispan>16.0.5</version.infinispan>
   </properties>
 
   <dependencyManagement>
@@ -29,9 +30,20 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-bom</artifactId>
+        <version>${version.infinispan}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
