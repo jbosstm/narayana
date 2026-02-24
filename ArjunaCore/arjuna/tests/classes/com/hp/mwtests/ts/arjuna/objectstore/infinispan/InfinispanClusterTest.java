@@ -10,6 +10,7 @@ import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -384,5 +385,96 @@ public class InfinispanClusterTest {
         cache0.clear();
         cache1.clear();
         cache2.clear();
+    }
+
+    /*
+     * validate that an attempt to initialise a slot store with insufficient capacity will fail
+     */
+    @Test
+    public void misconfigureBackingSlots() throws IOException {
+        int SLOT_COUNT = 1;
+        String CACHE_NAME = "simple";
+        Cache<byte[], byte[]> cache;
+        InfinispanStoreEnvironmentBean config;
+        InfinispanSlots slots = new InfinispanSlots(); // slot store backed by an infinispan cache
+
+        byte[] k1 = "k1".getBytes();
+        byte[] k2 = "k2".getBytes();
+        byte[] v1 = "v1".getBytes();
+        byte[] v2 = "v2".getBytes();
+
+        config = new InfinispanStoreEnvironmentBean();
+
+        try (DefaultCacheManager manager = new DefaultCacheManager()) {
+            manager.defineConfiguration(CACHE_NAME, new ConfigurationBuilder().build());
+            cache = manager.getCache(CACHE_NAME);
+
+            cache.put(k1, v1);
+            cache.put(k2, v2);
+
+            config.setNumberOfSlots(SLOT_COUNT);
+            config.setCacheName(CACHE_NAME);
+            config.setCache(manager.getCache(CACHE_NAME));
+            config.setBackingSlots(slots);
+
+            try {
+                // initialise the slot store whose capacity is 1 (SLOT_COUNT) with a cache (cache) containing 2 entries
+                slots.init(config);
+                fail("should not be able to initialise a slot store with more entries than it has capacity for");
+            } catch (IOException e) {
+                String expected = tsLogger.i18NLogger.get_infinipan_too_few_slots(cache.size(), SLOT_COUNT);
+                Assertions.assertTrue(e.getMessage().endsWith(expected));
+            }
+        }
+    }
+
+    /*
+     * test that writing to a full store will fail
+     */
+    @Test
+    public void backingSlotsCapacityReachedTest () throws IOException {
+        int SLOT_COUNT = 1; // to test writing to a full store
+        String CACHE_NAME = "simple";
+        Cache<byte[], byte[]> cache;
+        InfinispanStoreEnvironmentBean config;
+        InfinispanSlots slots = new InfinispanSlots(); // slot store backed by an infinispan cache
+
+        byte[] k1 = "k1".getBytes();
+        byte[] k2 = "k2".getBytes();
+
+        config = new InfinispanStoreEnvironmentBean();
+
+        // tell the recovery manager that we are using the slot store
+        BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).
+                setObjectStoreType(SlotStoreAdaptor.class.getName());
+
+        try (DefaultCacheManager manager = new DefaultCacheManager()) {
+            manager.defineConfiguration(CACHE_NAME, new ConfigurationBuilder().build());
+            cache = manager.getCache(CACHE_NAME);
+
+            config.setNumberOfSlots(SLOT_COUNT);
+            config.setCacheName(CACHE_NAME);
+            config.setCache(manager.getCache(CACHE_NAME));
+            config.setBackingSlots(slots);
+
+            slots.init(config);
+
+            RecoveryStore recoveryStore = startRecoveryStore(config);
+            OutputObjectState oos = new OutputObjectState();
+            oos.packString("junit1");
+
+            try {
+                // the store capacity is 1 so the first write should succeed
+                Assertions.assertTrue(recoveryStore.write_committed(new Uid(), "StateManager/junit1", oos));
+            } catch (ObjectStoreException e) {
+                fail(e);
+            }
+            try {
+                // The store capacity is 1 so writing a second record should fail
+                Assertions.assertFalse(recoveryStore.write_committed(new Uid(), "StateManager/junit2", oos));
+            } catch (ObjectStoreException e) {
+                fail("writing to full store should return false but an exception was thrown: " + e.getMessage());
+            }
+        }
     }
 }
