@@ -188,6 +188,7 @@
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.9.8.2</version.com.github.spotbugs.spotbugs-maven-plugin>
 
     <version.doxia>1.11.1</version.doxia>
+    <version.infinispan>16.0.5</version.infinispan>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.javadoc.plugin>3.5.0</version.javadoc.plugin>
     <version.maven.jandex-plugin>3.5.3</version.maven.jandex-plugin>
