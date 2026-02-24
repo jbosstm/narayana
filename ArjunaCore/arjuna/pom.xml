@@ -18,7 +18,6 @@
 
   <properties>
     <skipTests>false</skipTests>
-    <version.infinispan>16.0.5</version.infinispan>
   </properties>
 
   <dependencyManagement>
