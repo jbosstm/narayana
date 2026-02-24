@@ -72,9 +72,8 @@ public class InfinispanSlots implements BackingSlots {
     @Override
     public void clear(int slot, boolean sync) throws IOException {
         try {
-            // TODO evicting cache entries has some caveats
-            // see https://infinispan.org/docs/stable/apidocs/org/infinispan/Cache.html#evict(K)
-            cache.evict(slots[slot]);
+            // remove an entry from the entire cache system (it's important to use this method instead of evict)
+            cache.remove(slots[slot]);
         } catch (Exception e) {
             throw new IOException(e);
         }
