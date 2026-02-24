@@ -3,12 +3,11 @@
  *
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package com.arjuna.ats.internal.arjuna.objectstore.slot.infinspan;
+package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 
 import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBeanMBean;
 import org.infinispan.Cache;
-import org.infinispan.context.Flag;
 
 /**
  * A JMX MBean interface containing configuration for the InfinispanStore
