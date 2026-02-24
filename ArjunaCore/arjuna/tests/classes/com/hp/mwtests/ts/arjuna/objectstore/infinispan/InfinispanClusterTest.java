@@ -436,13 +436,8 @@ public class InfinispanClusterTest {
         int SLOT_COUNT = 1; // to test writing to a full store
         String CACHE_NAME = "simple";
         Cache<byte[], byte[]> cache;
-        InfinispanStoreEnvironmentBean config;
+        InfinispanStoreEnvironmentBean config = new InfinispanStoreEnvironmentBean();
         InfinispanSlots slots = new InfinispanSlots(); // slot store backed by an infinispan cache
-
-        byte[] k1 = "k1".getBytes();
-        byte[] k2 = "k2".getBytes();
-
-        config = new InfinispanStoreEnvironmentBean();
 
         // tell the recovery manager that we are using the slot store
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).
@@ -450,7 +445,6 @@ public class InfinispanClusterTest {
 
         try (DefaultCacheManager manager = new DefaultCacheManager()) {
             manager.defineConfiguration(CACHE_NAME, new ConfigurationBuilder().build());
-            cache = manager.getCache(CACHE_NAME);
 
             config.setNumberOfSlots(SLOT_COUNT);
             config.setCacheName(CACHE_NAME);
