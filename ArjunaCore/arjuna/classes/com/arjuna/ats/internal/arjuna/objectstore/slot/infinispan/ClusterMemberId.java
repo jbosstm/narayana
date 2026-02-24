@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package com.arjuna.ats.internal.arjuna.objectstore.slot.infinspan;
+package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import java.nio.charset.StandardCharsets;

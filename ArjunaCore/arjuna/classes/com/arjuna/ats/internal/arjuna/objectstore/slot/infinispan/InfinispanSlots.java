@@ -2,7 +2,7 @@
    Copyright The Narayana Authors
    SPDX-License-Identifier: Apache-2.0
  */
-package com.arjuna.ats.internal.arjuna.objectstore.slot.infinspan;
+package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
@@ -12,7 +12,6 @@ import org.infinispan.CacheSet;
 import org.infinispan.Cache;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore} implementation backed by an infinispan cache.
