@@ -80,7 +80,7 @@ public class InfinispanSlots implements BackingSlots {
         }
     }
 
-    private void load(CacheSet<byte[]> keys) {
+    private void load(CacheSet<byte[]> keys) throws IOException {
         int i = 0;
 
         for (byte[] key : keys) {
@@ -88,9 +88,13 @@ public class InfinispanSlots implements BackingSlots {
                 slots[i] = key;
                 i += 1;
             } else {
-                tsLogger.logger.infof("Too many infinispan keys: ignoring remaining keys from slot %d (key=%s)",
-                        i, key);
-                break;
+                /*
+                 * The number of slots should equal the maximum number of unresolved transactions expected at any given
+                 * time, including those in-flight and awaiting recovery.
+                 */
+                String errorMsg = tsLogger.i18NLogger.get_infinipan_too_few_slots(keys.size(), slots.length);
+
+                throw new IOException(errorMsg);
             }
         }
 
