@@ -6,9 +6,7 @@
 
 # Narayana
 
-Website: https://narayana.io
-
-Twitter: https://twitter.com/narayana_io, using twitter handle [#narayanaio](https://twitter.com/search?q=%23narayanaio)
+[Official Website](https://narayana.io) - [DeepWiki](https://deepwiki.com/jbosstm/narayana/1-overview) - [Twitter](https://twitter.com/narayana_io), using twitter handle [#narayanaio](https://twitter.com/search?q=%23narayanaio)
 
 ## Getting help
 
