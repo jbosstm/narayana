@@ -219,82 +219,86 @@ jobs:
             // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
             const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
 
-            let axis_selected = false;
-            let db_tests_triggered = false;
-            // Determine which workflows to run
-            for (const axis of workflowAxes) {
-              if (tokens.has(axis) && !tokens.has(`!${axis}`)) {
-                core.info(`Axis ${axis} REQUESTED.`);
-                core.setOutput(axis, 'true');
-                if (axis == 'DB_TESTS') {
-                  db_tests_triggered = true;
-                }
-                axis_selected = true;
-              } else {
-                core.info(`Axis ${axis} NOT REQUESTED.`);
-                core.setOutput(axis, 'false');
-              }
-            }
-
-            if (!axis_selected) {
-                core.info(`No axis was requested, so run CORE at least.`);
-                core.setOutput('CORE', 'true');
-            }
-            
-            if (db_tests_triggered) {
-              const possibleDBs = ['mysql', 'db2', 'postgres', 'oracle'];
-            
-              let selectedDBs = [];
-              for (const db of possibleDBs) {
-                if (tokens.has(db) && !tokens.has(`!${db}`)) {
-                  core.info(`Database ${db} SELECTED.`);
-                  selectedDBs.push(db);
-                } else {
-                  core.info(`Database ${db} NOT REQUESTED.`);
-                }
-              }
-            
-              if (selectedDBs.length === 0) {
-                core.info(`Empty or invalid input. All possible databases will be selected: ${possibleDBs.join(', ')}`);
-                selectedDBs = possibleDBs;
-              }
-            
-              core.setOutput('enabled_databases', JSON.stringify(selectedDBs));
-            }
-            
-            // Matches JDK17, JDK21, etc.
-            const jdkRegex = /\bJDK(17|21|25)\b/gi;
-            const matches = [...prBody.matchAll(jdkRegex)];
-            let jdk_versions = matches.map(m => parseInt(m[1], 10));
-            if (jdk_versions.length === 0) {
-              jdk_versions = [25];
-              core.info(`Using JDK25.`);
+            if (tokens.has('NO_TESTS')) {
+              core.info('NO_TESTS was requested. No axes will be started.');
             } else {
-              core.info(`JDKs detected in PR body: ${jdk_versions}`);
-            }
-            core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
-            
-            const possibleEnvVars = [
-              'AS_BRANCH',
-              'SPI_BRANCH',
-              'PERF_PR_NUMBER'
-            ];
-            
-            const extractedEnvVars = {};
-            
-            for (const varName of possibleEnvVars) {
-              // Matches "VAR=value" stopping at the first whitespace
-              const regex = new RegExp(`\\b${varName}=([^\\s]+)`);
-              const match = prBody.match(regex);
-            
-              if (match) {
-                const value = match[1];
-                core.info(`Environment variables ${varName} detected: ${value}`);
-                extractedEnvVars[varName] = value;
+              let axis_selected = false;
+              let db_tests_triggered = false;
+              // Determine which workflows to run
+              for (const axis of workflowAxes) {
+                if (tokens.has(axis) && !tokens.has(`!${axis}`)) {
+                  core.info(`Axis ${axis} REQUESTED.`);
+                  core.setOutput(axis, 'true');
+                  if (axis == 'DB_TESTS') {
+                    db_tests_triggered = true;
+                  }
+                  axis_selected = true;
+                } else {
+                  core.info(`Axis ${axis} NOT REQUESTED.`);
+                  core.setOutput(axis, 'false');
+                }
               }
+  
+              if (!axis_selected) {
+                  core.info(`No axis was requested, so run CORE at least.`);
+                  core.setOutput('CORE', 'true');
+              }
+              
+              if (db_tests_triggered) {
+                const possibleDBs = ['mysql', 'db2', 'postgres', 'oracle'];
+              
+                let selectedDBs = [];
+                for (const db of possibleDBs) {
+                  if (tokens.has(db) && !tokens.has(`!${db}`)) {
+                    core.info(`Database ${db} SELECTED.`);
+                    selectedDBs.push(db);
+                  } else {
+                    core.info(`Database ${db} NOT REQUESTED.`);
+                  }
+                }
+              
+                if (selectedDBs.length === 0) {
+                  core.info(`Empty or invalid input. All possible databases will be selected: ${possibleDBs.join(', ')}`);
+                  selectedDBs = possibleDBs;
+                }
+              
+                core.setOutput('enabled_databases', JSON.stringify(selectedDBs));
+              }
+              
+              // Matches JDK17, JDK21, etc.
+              const jdkRegex = /\bJDK(17|21|25)\b/gi;
+              const matches = [...prBody.matchAll(jdkRegex)];
+              let jdk_versions = matches.map(m => parseInt(m[1], 10));
+              if (jdk_versions.length === 0) {
+                jdk_versions = [25];
+                core.info(`Using JDK25.`);
+              } else {
+                core.info(`JDKs detected in PR body: ${jdk_versions}`);
+              }
+              core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
+              
+              const possibleEnvVars = [
+                'AS_BRANCH',
+                'SPI_BRANCH',
+                'PERF_PR_NUMBER'
+              ];
+              
+              const extractedEnvVars = {};
+              
+              for (const varName of possibleEnvVars) {
+                // Matches "VAR=value" stopping at the first whitespace
+                const regex = new RegExp(`\\b${varName}=([^\\s]+)`);
+                const match = prBody.match(regex);
+              
+                if (match) {
+                  const value = match[1];
+                  core.info(`Environment variables ${varName} detected: ${value}`);
+                  extractedEnvVars[varName] = value;
+                }
+              }
+              
+              core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
             }
-            
-            core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
 
       - name: Set axes according to triggering event
         id: set-axes-inputs
