@@ -1,0 +1,338 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Administration_And_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  
+  <title>Getting Started</title>
+
+  <indexterm><primary>user transactions</primary></indexterm>
+  <indexterm><primary>business activities</primary></indexterm>
+  <indexterm><primary>context handlers</primary></indexterm>
+  <indexterm><primary>participants</primary></indexterm>
+  <indexterm><primary>service-side handlers</primary></indexterm>
+  <indexterm><primary>JAX-RPC</primary></indexterm>
+  <indexterm><primary>com.arjuna.mw.wst11</primary><secondary>XTS API</secondary></indexterm>
+
+
+  <section>
+    <title>Installing the XTS Service Archive into JBoss Transaction Service</title>
+    <para>
+      XTS, which is the Web Services component of JBoss Transaction Service, provides WS-AT and WS-BA support for Web
+      Services hosted on the &APPSERVER;. The module is packaged as a <firstterm>Service Archive (.sar)</firstterm>
+      located in <filename><replaceable>$JBOSS_HOME</replaceable>/docs/examples/transactions/</filename>. To install it,
+      follow <xref linkend="procedure-install-xts" />.
+    </para>
+
+    <procedure id="procedure-install-xts">
+      <title>Installing the XTS Module</title>
+      <step>
+   <para>
+     Create a sub-directory in the
+     <filename><replaceable>$JBOSS_HOME</replaceable>/server/[<replaceable>name</replaceable>]/deploy/</filename>
+     directory, called <filename>jbossxts.sar/</filename>.
+   </para>
+      </step>
+      <step>
+   <para>
+     Unpack the SAR, which is a ZIP archive, into this new directory.
+   </para>
+      </step>
+      <step>
+   <para>
+     Restart &APPSERVER; to activate the module.
+   </para>
+      </step>
+    </procedure>
+  </section>
+  
+  <section>
+    <title>Creating Client Applications</title>
+
+    <para>
+      There are two aspects to a client application using XTS, the transaction declaration aspects, and the business
+      logic. The business logic includes the invocation of Web Services.
+    </para>
+    <para>
+      Transaction declaration aspects are handled automatically with the XTS client API. This API provides simple
+      transaction directives such as <methodname>begin</methodname>, <methodname>commit</methodname>, and
+      <methodname>rollback</methodname>, which the client application can use to initialize, manage, and terminate
+      transactions. Internally, this API uses SOAP to invoke operations on the various WS-C, WS-AT and WS-BA services,
+      in order to create a coordinator and drive the transaction to completion.
+    </para>
+
+    <section>
+      <title>User Transactions</title>
+      <para>
+   A client uses the <classname>UserTransactionFactory</classname> and <classname>UserTransaction</classname> classes to
+   create and manage WS-AT transactions.  These classes provide a simple API which operates in a manner similar to the
+   JTA API. A WS-AT transaction is started and associated with the client thread by calling the
+   <methodname>begin</methodname> method of the <methodname>UserTransaction</methodname> class. The transaction can be
+   committed by calling the <methodname>commit</methodname> method, and rolled back by calling the
+   <methodname>rollback</methodname> method.
+      </para>
+      <para>
+   More complex transaction management, such as suspension and resumption of transactions, is supported by the
+   <classname>TransactionManagerFactory</classname> and <classname>TransactionManager</classname> classes.
+      </para>
+      <para>
+   Full details of the WS-AT APIs are provided in <xref linkend="sec-xts-api" />.
+      </para>
+    </section>
+
+    <section>
+      <title>Business Activities</title>
+
+      <para>
+   A client creates and manages Business Activities using the <classname>UserBusinessActivityFactory</classname> and
+   <classname>UserBusinessActivity</classname> classes. A WS-BA activity is started and associated with the client
+   thread by calling the <methodname>begin</methodname> method of the <methodname>UserBusinessActivity</methodname>
+   class. A client can terminate a business activity by calling the <methodname>close</methodname> method, and cancel it
+   by calling the <methodname>cancel</methodname> method.
+      </para>
+      <para>
+   If any of the Web Services invoked by the client register for the
+   <systemitem>BusinessActivityWithCoordinatorCompletion</systemitem> protocol, the client can call the
+   <methodname>completed</methodname> method before calling the <methodname>close</methodname> method, to notify the
+   services that it has finished making service invocations in the current activity.
+      </para>
+      <para>
+   More complex business activity management, such as suspension and resumption of business activities, is supported by
+   the <classname>BusinessActivityManagerFactory</classname> and <classname>BusinessActivityManager</classname> classes.
+      </para>
+      <para>
+   Full details of the WS-AT APIs are provided in <xref linkend="sec-xts-api" />.
+      </para>
+    </section>
+
+    <section>
+      <title>Client-Side Handler Configuration</title>
+
+      <para>
+   XTS does not require the client application to use a specific API to perform invocations on transactional Web
+   Services. The client is free to use any appropriate API to send SOAP messages to the server and receive SOAP
+   responses.  The only requirements imposed on the client are:
+      </para>
+      <itemizedlist>
+   <listitem>
+     <para>
+       It must forward details of the current transaction to the server when invoking a web service.
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       It must process any responses from the server in the context of the correct transaction.
+     </para>
+   </listitem>
+      </itemizedlist>
+      <para>
+   In order to achieve this, the client must insert details of the current XTS context into the headers of outgoing SOAP
+   messages, and extract the context details from the headers of incoming messages and associate the context with the
+   current thread. To simplify this process, the XTS module includes handlers which can perform this task
+   automatically. These handlers are designed to work with JAX-WS clients.
+      </para>
+      
+      <note>
+   <para>
+     If you choose to use a different SOAP client/server infrastructure for business service invocations, you must
+     provide for header processing. XTS only provides interceptors for or JAX-WS. A JAX-RPC handler is provided only for
+     the 1.0 implementation.
+   </para>
+      </note>
+      <!--
+      <section> <title>JAX-RPC Client Context Handlers</title> <para> To register the JAX-RPC client-side context
+      handler used by the client applications, a handler chain must be included in the definition of the
+      <varname>service-ref</varname> in the client's <filename>web.xml</filename> deployment descriptor.  Please refer
+      to the example application located in <filename>ddrpc/jboss/client-web-app.xml</filename> for an example of such a
+      handler.  </para> <para> You need to instantiate the
+      <classname>com.arjuna.mw.wst11.client.JaxRPCHeaderContextProcessor</classname> class when registering a JAX-RPC
+      client context handler.  </para> <note> <para> A JAX-RPC client handler is not provided for the 1.1
+      implementation.  </para> </note> </section>
+      -->
+      <section>
+   <title>JAX-WS Client Context Handlers</title>
+   <para>
+     In order to register the JAX-WS client-side context handler, the client application uses the APIs provided by the
+     <classname>javax.xml.ws.BindingProvider</classname> and <classname>javax.xml.ws.Binding</classname> classes, to
+     install a handler chain on the service proxy which is used to invoke the remote endpoint. Refer to the example
+     application client implementation located in the
+     <filename>src/com/jboss/jbosstm/xts/demo/BasicClient.java</filename> file for an example.
+   </para>
+   <para>
+     You can also specify the handlers by using a configuration file deployed with the application. The file is
+     identified by attaching a <systemitem>javax.jws.HandlerChain</systemitem> annotation to the interface class, which
+     declares the JAX-WS client API. This interface is normally generated from the web service WSDL port definition.
+   </para>
+   <para>
+     You need to instantiate the <classname>com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor</classname> class
+     when registering a JAX-WS client context handler.
+   </para>
+   <!--
+   <note> <para> The class used in the 1.1 implementation is
+   <classname>com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor</classname>.  </para> </note>
+   -->
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Creating Transactional Web Services</title>
+
+    <para>
+      The two parts to implementing a Web service using XTS are the transaction management and the business logic.
+    </para>
+    <para>
+      The bulk of the transaction management aspects are organized in a clear and easy-to-implement model by means of
+      the XTS’s <firstterm>Participant API</firstterm>, provides a structured model for negotiation between the web
+      service and the transaction coordinator. It allows the web service to manage its own local transactional data, in
+      accordance with the needs of the business logic, while ensuring that its activities are in step with those of the
+      client and other services involved in the transaction. Internally, this API uses SOAP to invokes operations on the
+      various WS-C, WS-AT and WS-BA services, to drive the transaction to completion.
+    </para>
+    
+    <section>
+      <title>Participants</title>
+      <para>
+   A <firstterm>participant</firstterm> is a software entity which is driven by the transaction manager on behalf of a
+   Web service. When a web service wants to participate in a particular transaction, it must enroll a participant to act
+   as a proxy for the service in subsequent negotiations with the coordinator. The participant implements an API
+   appropriate to the type of transaction it is enrolled in, and the participant model selected when it is enrolled. For
+   example, a Durable2PC participant, as part of a WS-Atomic Transaction, implements the Durable2PCParticipant
+   interface.  The use of participants allows the transactional control management aspects of the Web service to be
+   factored into the participant implementation, while staying separate from the the rest of the Web service's business
+   logic and private transactional data management.
+      </para>
+      <para>
+   The creation of participants is not trivial, since they ultimately reflect the state of a Web service’s back-end
+   processing facilities, an aspect normally associated with an enterprise’s own IT infrastructure. Implementations must
+   use one of the following interfaces, depending upon the protocol it will participate within:
+   <interfacename>com.arjuna.wst11.Durable2PCParticipant</interfacename>,
+   <interfacename>com.arjuna.wst11.Volatile2PCParticipant</interfacename>,
+   <interfacename>com.arjuna.wst11.BusinessAgreementWithParticipantCompletionParticipant</interfacename>, or
+   <interfacename>com.arjuna.wst11.BusinessAgreementWithCoordinatorCompletionParticipant</interfacename>.
+      </para>
+      <para>
+   A full description of XTS’s participant features is provided in <remark>Fix me</remark>.
+      </para>
+<!--
+      <note> <para> The 1.1 XTS implementation expects participants to implement the same APIs as the 1.0
+      implementation.  </para> </note>
+-->
+    </section>
+
+    <section>
+      <title>Service-Side Handler Configuration</title>
+      <para>
+   A transactional Web service must ensure that a service invocation is included in the appropriate transaction. This
+   usually only affects the operation of the participants and has no impact on the operation of the rest of the Web
+   service. XTS simplifies this task and decouples it from the business logic, in much the same way as for transactional
+   clients<remark>Add an xref</remark>. XTS provides a handler which detects and extracts the context details from the
+   headers in incoming SOAP headers, and associates the web service thread with the transaction. The handler clears this
+   association when dispatching SOAP responses, and writes the context into the outgoing message headers. This is shown
+   in <xref linkend="fig-context-handlers-registered-with-soap-server" />.
+      </para>
+      <para>
+   The service side handlers for JAX-WS come in two different versions. The normal handler resumes any transaction
+   identified by an incoming context when the service is invoked, and suspends this transaction when the service call
+   completes. The alternative handler is used to interpose a local coordinator. The first time an incoming parent
+   context is seen, the local coordinator service creates a subordinate transaction, which is resumed before the web
+   service is called. The handler ensures that this subordinate transaction is resumed each time the service is invoked
+   with the same parent context. When the subordinate transaction completes, the association between the parent
+   transaction and its subordinate is cleared.
+      </para>
+      <note>
+   <para>
+     The subordinate service side handler is only able to interpose a subordinate coordinator for an Atomic Transaction.
+   </para>
+      </note>
+      <note>
+   <para>
+     JAX-RPC is provided for the 1.0 implementation only.
+   </para>
+      </note>
+      <!--
+      <section>
+   <title>JAX-RPC Service Context Handlers</title>
+
+   <para> In order to register the JAX-RPC server-side context handler with the deployed Web Services, you must include
+   a handler chain in the Web Services deployment descriptor.  Please refer to the example application located in the
+   <filename>ddrpc/jboss/webservices.xml</filename> deployment descriptor for an example.  </para> <para> When
+   registering a normal JAX-RPC service context handler, you must instantiate the
+   <classname>com.arjuna.mw.wst11.service.JaxRPCHeaderContextProcessor</classname> class. If you need coordinator
+   interposition, you need to employ the
+   <classname>com.arjuna.mw.wst11.service.JaxRPCSubordinateHeaderContextProcessor</classname> instead.  </para> <note>
+   <para> A JAX-RPC client handler is not provided for the 1.1 implementation.  </para> </note> </section>
+      -->
+      <section>
+   <title>JAX-WS Service Context Handlers</title>
+   <para>
+     To register the JAX-WS server-side context handler with the deployed Web Services, you must install a handler chain
+     on the Server Endpoint Implementation class. The endpoint implementation class annotation, which is the one
+     annotated with a <systemitem>javax.jws.WebService</systemitem>, must be supplemented with a
+     <systemitem>javax.jws.HandlerChain</systemitem> annotation which identifies a handler configuration file deployed
+     with the application. Please refer to the example application configuration file located at
+     <filename>dd/jboss/context-handlers.xml</filename> and the endpoint implementation classes located in
+     <filename>src/com/jboss/jbosstm/xts/demo/services</filename> for an example.
+   </para>
+   <para>
+     When registering a normal JAX-WS service context handler, you must instantiate the
+     <classname>com.arjuna.mw.wst11.service.JaxWSHeaderContextProcessor</classname> class. If you need coordinator
+     interposition, employ the <classname>com.arjuna.mw.wst11.service.JaxWSSubordinateHeaderContextProcessor</classname>
+     instead.
+   </para>
+   <!--
+       <note> <para> The classes used in the 1.1 implementation are
+       <classname>com.arjuna.mw.wst11.service.JaxWSHeaderContextProcessor</classname> and
+       <classname>com.arjuna.mw.wst11.service.JaxWSSubordinateHeaderContextProcessor</classname>.  </para> </note>
+   -->
+   <figure id="fig-context-handlers-registered-with-soap-server">
+     <title>Context Handlers Registered with the SOAP Server</title>
+     <mediaobject>
+       <imageobject>
+         <imagedata fileref="images/fig-context-handlers-registered-with-soap-server.png" format="PNG"/>
+       </imageobject>
+       <textobject>
+         <para></para>
+       </textobject>
+     </mediaobject>
+   </figure>
+
+      </section>
+    </section>
+
+<!--
+    <section> <title>Implementing the Web Service Business Logic</title> <para> Details about the context management
+    that the context processor performs are normally unimportant to the Web service application logic as well as work
+    performed by other protocol-specific context handlers. However, back-end systems used by the Web service application
+    logic, such as databases, need to track the front-end transaction context, in order to map any operations invoked
+    within its scope onto a back-end transaction context.  </para> <para> The back-end typically wraps a database driver
+    in a decorator pattern which extends the interface of the original driver to hook into the service-side API, so that
+    it can access the transaction context details. The general architecture for this pattern is shown in <xref
+    linkend="fig-back-end-pattern" />.  </para> <figure id="fig-back-end-pattern"> <title>General Pattern for Back-End
+    Integration, from the Service Side</title> <mediaobject> <imageobject> <imagedata
+    fileref="images/fig-back-end-pattern.png" format="PNG"/> </imageobject> </mediaobject> </figure> <para> The missing
+    element in <xref linkend="fig-back-end-pattern" /> is the <systemitem>commit</systemitem> protocol which allows
+    back-end work to be made durable or roll back at the end of a transaction. This is covered in the <remark>Add an
+    xref</remark> participant chapter, which explores the participant/back-end relation.  </para> </section>
+-->
+  </section>
+
+  <section>
+    <title>Summary</title>
+
+    <para>
+      This chapter gives a high-level overview of each of the major software pieces used by the Web Services
+      transactions component of JBoss Transaction Service. The Web Services transaction manager provided by JBoss
+      Transaction Service is the hub of the architecture and is the only piece of software that user-level software does
+      not bind to directly. XTS provides header-processing infrastructure for use with Web Services transactions
+      contexts for both client applications and Web Services. XTS provides a simple interface for developing transaction
+      participants, along with the necessary document-handling code.
+    </para>
+    <para>
+      This chapter is only an overview, and does not address the more difficult and subtle aspects of programming Web
+      Services. For fuller explanations of the components, please continue reading.
+    </para>
+  </section>
+</chapter>
+
