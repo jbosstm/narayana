@@ -50,32 +50,55 @@ public interface InfinispanStoreEnvironmentBeanMBean extends SlotStoreEnvironmen
      * Extra metadata embedded to be within an id
      * @return metadata
      */
-    String getFailoverId();
+    String getGroupName();
 
-    void setFailoverId(String failoverId);
+    void setGroupName(String groupName);
 
     /**
      * {@link SlotStoreEnvironmentBeanMBean#getNumberOfSlots()}
      */
-    public int getNumberOfSlots();
+    int getNumberOfSlots();
 
     /**
      * {@link SlotStoreEnvironmentBeanMBean#setNumberOfSlots(int)}
      */
-    public void setNumberOfSlots(int numberOfSlots);
+    void setNumberOfSlots(int numberOfSlots);
 
     /**
      * {@link SlotStoreEnvironmentBeanMBean#getBytesPerSlot()}
      */
-    public int getBytesPerSlot();
+    int getBytesPerSlot();
 
     /**
      * {@link SlotStoreEnvironmentBeanMBean#setBytesPerSlot(int)} }
      */
-    public void setBytesPerSlot(int bytesPerSlot);
+    void setBytesPerSlot(int bytesPerSlot);
 
     /**
      * {@link SlotStoreEnvironmentBeanMBean#setBackingSlots(BackingSlots)} }
      */
-    public void setBackingSlots(InfinispanSlots infinispanSlots);
+    void setBackingSlots(InfinispanSlots infinispanSlots);
+
+    /**
+     * The classname of the {@link InfinispanSlotKeyGenerator}
+     * @param slotKeyGeneratorClassName the classname of the class that should be used to generate unique slot keys
+     */
+    void setSlotKeyGeneratorClassName(String slotKeyGeneratorClassName);
+
+    /**
+     *
+     * @return the classname of the class that should be used to generate unique slot keys
+     */
+    String getSlotKeyGeneratorClassName();
+
+    /**
+     * set the instance that should be used to generate unique slot keys
+     * @param infinispanSlotKeyGenerator the slot key generator
+     */
+    void setSlotKeyGenerator(InfinispanSlotKeyGenerator infinispanSlotKeyGenerator);
+
+    /**
+     * @return the slot key generator instance
+     */
+    InfinispanSlotKeyGenerator getSlotKeyGenerator();
 }

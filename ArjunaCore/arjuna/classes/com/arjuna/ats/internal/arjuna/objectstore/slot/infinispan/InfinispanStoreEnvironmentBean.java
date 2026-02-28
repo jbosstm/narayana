@@ -6,6 +6,7 @@
 package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 
@@ -19,7 +20,9 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
     private String cacheName;
     private boolean ignoreReturnValues = true;
     private String nodeAddress;
-    private String failoverId = "0";
+    private String groupName = "0";
+    private String slotKeyGeneratorClassName;
+    private InfinispanSlotKeyGenerator infinispanSlotKeyGenerator;
 
     public Cache<byte[], byte[]> getCache() {
         return cache;
@@ -80,16 +83,45 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
      *
      * @return metadata
      */
-    public String getFailoverId() {
-        return failoverId;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setFailoverId(String failoverId) {
-        this.failoverId = failoverId;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Override
     public void setBackingSlots(InfinispanSlots infinispanSlots) {
         super.setBackingSlots(infinispanSlots);
+    }
+
+    /**
+     * classname of the generator function for internal slot keys
+     * @return
+     */
+    public void setSlotKeyGeneratorClassName(String slotKeyGeneratorClassName) {
+        this.slotKeyGeneratorClassName = slotKeyGeneratorClassName;
+    }
+
+    public String getSlotKeyGeneratorClassName() {
+        return slotKeyGeneratorClassName;
+    }
+
+    public void setSlotKeyGenerator(InfinispanSlotKeyGenerator infinispanSlotKeyGenerator) {
+        this.infinispanSlotKeyGenerator = infinispanSlotKeyGenerator;
+    }
+
+    public InfinispanSlotKeyGenerator getSlotKeyGenerator() {
+        if(infinispanSlotKeyGenerator == null && slotKeyGeneratorClassName != null)
+        {
+            synchronized (this) {
+                if(infinispanSlotKeyGenerator == null && slotKeyGeneratorClassName != null) {
+                    infinispanSlotKeyGenerator = ClassloadingUtility.loadAndInstantiateClass(InfinispanSlotKeyGenerator.class, slotKeyGeneratorClassName, null);
+                }
+            }
+        }
+
+        return infinispanSlotKeyGenerator;
     }
 }
