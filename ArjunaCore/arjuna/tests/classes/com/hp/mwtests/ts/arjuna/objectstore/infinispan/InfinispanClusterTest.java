@@ -113,6 +113,7 @@ public class InfinispanClusterTest {
             config.setIgnoreReturnValues(true);
             config.setCache(manager.getCache(OBJECT_STORE_NAME));
             config.setBackingSlots(slots);
+            config.setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
 
             slots.init(config); // can throw IOException
 
@@ -416,6 +417,7 @@ public class InfinispanClusterTest {
             config.setCacheName(CACHE_NAME);
             config.setCache(manager.getCache(CACHE_NAME));
             config.setBackingSlots(slots);
+            config.setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
 
             try {
                 // initialise the slot store whose capacity is 1 (SLOT_COUNT) with a cache (cache) containing 2 entries
@@ -450,6 +452,7 @@ public class InfinispanClusterTest {
             config.setCacheName(CACHE_NAME);
             config.setCache(manager.getCache(CACHE_NAME));
             config.setBackingSlots(slots);
+            config.setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
 
             slots.init(config);
 

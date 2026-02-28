@@ -5,54 +5,14 @@
  */
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
-import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlots;
-import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanStoreEnvironmentBean;
-import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
-public class InfinispanReplicatedAndPersistentTest {
-
-    static final String CACHE_NAME = "replicatedAndPersistent"; // the name of the cache used for the object store
-    // location of the file system store (with surefire it will be the build directory)
-    static final String STORE_DIR = System.getProperty("java.io.tmpdir") + "/infinispan-caches/";
-
-    private DefaultCacheManager createCacheManager(String nodeName) {
-        String CLUSTER_NAME = "InfinispanReplicatedAndPersistentTestCluster";
-        GlobalConfigurationBuilder globalConfig = GlobalConfigurationBuilder.defaultClusteredBuilder();
-
-        globalConfig.transport().nodeName(nodeName).clusterName(CLUSTER_NAME);
-
-        var manager = new DefaultCacheManager(globalConfig.build());
-        var storeDir = String.format("%s%s/", STORE_DIR, nodeName);
-
-        // Define the replicated cache configuration
-        ConfigurationBuilder cacheConfig = new ConfigurationBuilder();
-        cacheConfig.clustering()
-                .cacheMode(CacheMode.REPL_SYNC)  // write operations block until all nodes confirm
-                .remoteTimeout(5, TimeUnit.SECONDS) // abort remote calls if timeout is reached
-                // add persistence to the cache
-                .persistence() // configure cache so that is survives cluster failure
-                .passivation(false) // Write-through
-                .addSoftIndexFileStore()
-                .dataLocation(storeDir + "data")
-                .indexLocation(storeDir + "index")
-                .shared(false);
-
-        manager.defineConfiguration(CACHE_NAME, cacheConfig.build());
-
-        return manager;
-    }
+public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
 
     /*
      * test infinispan write through caches, ie verify that when a slot store is backed by a persistent
@@ -60,31 +20,13 @@ public class InfinispanReplicatedAndPersistentTest {
      */
     @Test
     public void testWriteThroughCache() throws IOException {
-        // record bringing together various data related to a slot store instance
-        record Store(DefaultCacheManager manager, // the infinispan cache manager
-                     String nodeName, // name of a cluster node
-                     Cache<byte[], byte[]> cache, // the cache for this cluster node
-                     InfinispanStoreEnvironmentBean config, // config for the slot store on this node
-                     InfinispanSlots slots, // slot store
-                     Path path) { // filesystem path where the persistent cache is located
-            public Store(DefaultCacheManager manager, String nodeName) throws IOException {
-                this(
-                        manager,
-                        nodeName,
-                        manager.getCache(CACHE_NAME),
-                        new InfinispanStoreEnvironmentBean(),
-                        new InfinispanSlots(),
-                        Paths.get(STORE_DIR + nodeName)
-                );
-                config.setCacheName(cache.getName());
-                config.setCache(cache);
-                config.setBackingSlots(slots);
-                slots.init(config);
-            }
-        }
+        Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
+        Store store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
 
-        Store store1 = new Store(createCacheManager("node1"), "node1");
-        Store store2 = new Store(createCacheManager("node2"), "node2");
+        store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
+        store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
+        store1.start();
+        store2.start();
 
         // create two key value pairs
         record KVPair(byte[] key, byte[] value) {}
@@ -92,47 +34,55 @@ public class InfinispanReplicatedAndPersistentTest {
         KVPair kv2 = new KVPair("key2".getBytes(), "value2".getBytes());
 
         // populate the first infinispan cache with them
-        store1.cache.put(kv1.key, kv1.value);
-        store1.cache.put(kv2.key, kv2.value);
+        store1.cache().put(kv1.key, kv1.value);
+        store1.cache().put(kv2.key, kv2.value);
 
         // and verify it replicates to cache2
-        Assertions.assertArrayEquals(kv1.value, store1.cache.get(kv1.key));
-        Assertions.assertArrayEquals(kv1.value, store2.cache.get(kv1.key));
-        Assertions.assertArrayEquals(kv2.value, store1.cache.get(kv2.key));
-        Assertions.assertArrayEquals(kv2.value, store2.cache.get(kv2.key));
+        Assertions.assertArrayEquals(kv1.value, store1.cache().get(kv1.key));
+        Assertions.assertArrayEquals(kv1.value, store2.cache().get(kv1.key));
+        Assertions.assertArrayEquals(kv2.value, store1.cache().get(kv2.key));
+        Assertions.assertArrayEquals(kv2.value, store2.cache().get(kv2.key));
 
         // and check that the infinispan filesystem persistence store was created at both nodes
-        Assertions.assertTrue(Files.exists(store1.path), "infinispan persistence store 1 was not created");
-        Assertions.assertTrue(Files.exists(store2.path), "infinispan persistence store 2 was not created");
+        Assertions.assertTrue(Files.exists(store1.path()), "infinispan persistence store 1 was not created");
+        Assertions.assertTrue(Files.exists(store2.path()), "infinispan persistence store 2 was not created");
 
         // verify that the slot stores at each node have the same values
-        byte[] value1 = store1.slots.read(0);
-        byte[] value2 = store2.slots.read(0);
-        byte[] value3 = store1.slots.read(1);
-        byte[] value4 = store2.slots.read(1);
+        byte[] value1 = store1.slots().read(0);
+        byte[] value2 = store2.slots().read(0);
+        byte[] value3 = store1.slots().read(1);
+        byte[] value4 = store2.slots().read(1);
 
         Assertions.assertArrayEquals(value1, value2);
         Assertions.assertArrayEquals(value3, value4);
 
         // stop both nodes
-        store1.manager.stop();
-        store2.manager.stop();
+        store1.stop();
+        store2.stop();
 
         /*
          * All nodes are now down so we know none of the data can be in-memory.
          * Restart them and verify that they repopulated their caches
          * from the filesystem backing stores on their respective nodes
          */
-        store1 = new Store(createCacheManager("node1"), "node1");
-        store2 = new Store(createCacheManager("node2"), "node2");
+        store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
+        store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
 
-        Assertions.assertArrayEquals(kv1.value, store1.cache.get(kv1.key));
-        Assertions.assertArrayEquals(kv1.value, store2.cache.get(kv1.key));
-        Assertions.assertArrayEquals(kv2.value, store1.cache.get(kv2.key));
-        Assertions.assertArrayEquals(kv2.value, store2.cache.get(kv2.key));
+        store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
+        store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
+        store1.start();
+        store2.start();
+
+        Assertions.assertArrayEquals(kv1.value, store1.cache().get(kv1.key));
+        Assertions.assertArrayEquals(kv1.value, store2.cache().get(kv1.key));
+        Assertions.assertArrayEquals(kv2.value, store1.cache().get(kv2.key));
+        Assertions.assertArrayEquals(kv2.value, store2.cache().get(kv2.key));
 
         // and similarly check that the slot stores are repopulated correctly
-        Assertions.assertArrayEquals(store1.slots.read(0), store2.slots.read(0));
-        Assertions.assertArrayEquals(store1.slots.read(1), store2.slots.read(1));
+        Assertions.assertArrayEquals(store1.slots().read(0), store2.slots().read(0));
+        Assertions.assertArrayEquals(store1.slots().read(1), store2.slots().read(1));
+
+        store1.stop();
+        store2.stop();
     }
 }

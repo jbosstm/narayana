@@ -26,9 +26,9 @@ import java.io.IOException;
  * Maintaining these requirements is non-trivial and requires extra support from the environment.
  */
 public class InfinispanSlots implements BackingSlots {
-    private ClusterMemberId clusterMemberId;
     private byte[][] slots = null;
     private Cache<byte[], byte[]> cache;
+    private InfinispanSlotKeyGenerator infinispanSlotKeyGenerator;
 
     @Override
     public void init(SlotStoreEnvironmentBean slotStoreConfig) throws IOException {
@@ -41,7 +41,9 @@ public class InfinispanSlots implements BackingSlots {
         }
 
         slots = new byte[slotStoreConfig.getNumberOfSlots()][];
-        clusterMemberId = new ClusterMemberId(config.getNodeAddress(), config.getFailoverId());
+        infinispanSlotKeyGenerator = config.getSlotKeyGenerator();
+        infinispanSlotKeyGenerator.init(config);
+
         try {
             cache = config.getCache();
 
@@ -99,7 +101,7 @@ public class InfinispanSlots implements BackingSlots {
 
         // initialise the remaining slots
         while (i < slots.length) {
-            slots[i] = clusterMemberId.generateUniqueKey(i);
+            slots[i] = infinispanSlotKeyGenerator.generateUniqueKey(i);
             i += 1;
         }
     }
