@@ -47,6 +47,7 @@ public class InfinispanTestBase {
                     groupName,
                     nodeName,
                     manager.getCache(CLUSTER_NAME),
+                    // manager.administration().getOrCreateCache(CLUSTER_NAME, manager.getDefaultCacheConfiguration()),
                     new InfinispanStoreEnvironmentBean(),
                     new InfinispanSlots(),
                     Paths.get(STORE_DIR + "/" + nodeName)
@@ -74,7 +75,7 @@ public class InfinispanTestBase {
 
     DefaultCacheManager createCacheManager(String nodeName,
                                                    CacheMode cacheMode,
-                                                   int numowners, // used with CacheMode.CacheMode
+                                                   int numOwners, // used with CacheMode.CacheMode
                                                    Grouper<WrappedByteArray> grouper,
                                                    boolean persistence,
                                                    boolean partitionResilience) {
@@ -92,10 +93,11 @@ public class InfinispanTestBase {
                 .cacheMode(cacheMode)
                 .remoteTimeout(5, TimeUnit.SECONDS);
 
-        if (numowners > 0) {
+        if (numOwners > 0) {
             cacheConfig
                     .clustering()
-                    .hash().numOwners(numowners);
+                    .hash()
+                    .numOwners(numOwners); // number of cluster-wide replicas for each cache entry
         }
         if (grouper != null) {
             cacheConfig

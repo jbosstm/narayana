@@ -10,6 +10,8 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanStor
 import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlotKeyGenerator;
 
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ClusterMemberId implements InfinispanSlotKeyGenerator {
     String nodeId;
@@ -44,7 +46,30 @@ public class ClusterMemberId implements InfinispanSlotKeyGenerator {
     }
 
     public byte[] generateUniqueKey(int index) {
-        return String.format("{%s}:%s:%s:%d", groupId, nodeId, uid.stringForm(), index)
+        return String.format("{%s};%s;%s;%d", groupId, nodeId, uid.stringForm(), index)
                 .getBytes(StandardCharsets.UTF_8);
+    }
+
+    static final Pattern CB_DELIMITER_REGEX = Pattern.compile("\\{(\\w+)\\}");
+
+    public static ClusterMemberId fromUniqueKey(String uniqueKey) {
+        String[] split = uniqueKey.split(";");
+        if (split.length != 4)
+            return null;
+
+        ClusterMemberId id = new ClusterMemberId();
+        // the groupId is enclosed in curly braces (see the generateUniqueKey method)
+        Matcher matcher = CB_DELIMITER_REGEX.matcher(split[0]);
+        if (matcher.find()) {
+            id.groupId = matcher.group(1);
+        }
+        id.nodeId = split[1];
+        id.uid = new Uid(split[2]);
+
+        return id;
+    }
+
+    public static ClusterMemberId fromUniqueKey(byte[] bytes) {
+        return fromUniqueKey(new String(bytes));
     }
 }
