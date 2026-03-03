@@ -98,7 +98,6 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
 
     /**
      * classname of the generator function for internal slot keys
-     * @return
      */
     public void setSlotKeyGeneratorClassName(String slotKeyGeneratorClassName) {
         this.slotKeyGeneratorClassName = slotKeyGeneratorClassName;
