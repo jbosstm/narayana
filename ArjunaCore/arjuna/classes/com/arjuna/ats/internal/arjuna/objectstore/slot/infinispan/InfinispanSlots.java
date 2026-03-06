@@ -12,6 +12,8 @@ import org.infinispan.CacheSet;
 import org.infinispan.Cache;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore} implementation backed by an infinispan cache.
@@ -45,9 +47,15 @@ public class InfinispanSlots implements BackingSlots {
         infinispanSlotKeyGenerator.init(config);
 
         try {
+            // set up the slot keys
+            String group = config.getGroupName();
+
             cache = config.getCache();
 
-            load(cache.keySet()); // set up the slot keys
+            if (group != null)
+                load(cache.getAdvancedCache().getGroup(group).keySet());
+            else
+                load(cache.keySet());
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -81,7 +89,7 @@ public class InfinispanSlots implements BackingSlots {
         }
     }
 
-    private void load(CacheSet<byte[]> keys) throws IOException {
+    private void load(Set<byte[]> keys) throws IOException {
         int i = 0;
 
         for (byte[] key : keys) {
