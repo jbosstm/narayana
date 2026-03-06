@@ -1,13 +1,20 @@
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanStoreEnvironmentBean;
+import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.infinispan.Cache;
 import org.infinispan.commons.marshall.WrappedByteArray;
@@ -65,6 +72,7 @@ public class InfinispanTestBase {
          * This is particularly important with jgroups.
          */
         public void stop() {
+            cache().stop();
             manager.stop();
         }
 
@@ -73,7 +81,7 @@ public class InfinispanTestBase {
         }
     }
 
-    DefaultCacheManager createCacheManager(String nodeName,
+    static DefaultCacheManager createCacheManager(String nodeName,
                                                    CacheMode cacheMode,
                                                    int numOwners, // used with CacheMode.CacheMode
                                                    Grouper<WrappedByteArray> grouper,
@@ -132,7 +140,7 @@ public class InfinispanTestBase {
      * @param bean config for the recovery manager
      * @return the new store
      */
-    RecoveryStore startRecoveryStore(InfinispanStoreEnvironmentBean bean) {
+    static RecoveryStore startRecoveryStore(InfinispanStoreEnvironmentBean bean) {
         StoreManager.shutdown(); // remove any existing store
 
         // tell the recovery manager that we are using the slot store
@@ -155,7 +163,7 @@ public class InfinispanTestBase {
     }
 
     // update the slot store environment bean
-    private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
+    static private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
                 BeanPopulator.class,
                 MethodHandles.lookup()
@@ -171,6 +179,50 @@ public class InfinispanTestBase {
         ConcurrentMap<String, Object> beanInstances = (ConcurrentMap<String, Object>) varHandle.get();
 
         beanInstances.put(SlotStoreEnvironmentBean.class.getName(), bean);
+    }
+
+    // reset the AARM
+    static void resetAARM() throws Throwable {//RecoveryStore
+        MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
+                AtomicActionRecoveryModule.class,
+                MethodHandles.lookup()
+        );
+
+        // Get a VarHandle for the private static field
+        VarHandle varHandle = lookup.findStaticVarHandle(
+                AtomicActionRecoveryModule.class,
+                "_recoveryStore",
+                RecoveryStore.class
+        );
+
+        varHandle.set(null);
+//        RecoveryStore recoveryStore = (RecoveryStore) varHandle.get();
+//        recoveryStore = null;
+    }
+
+    boolean containsAtomicAction(RecoveryStore recoveryStore, AtomicAction aa) {
+        InputObjectState ios = new InputObjectState();
+
+        try {
+            if (recoveryStore.allObjUids(aa.type(), ios, StateStatus.OS_UNKNOWN)) {
+                Uid id;
+
+                do {
+                    try {
+                        id = UidHelper.unpackFrom(ios);
+                        if (id.equals(aa.get_uid())) {
+                            return true;
+                        }
+                    } catch (Exception ex) {
+                        return false;
+                    }
+                }
+                while (id.notEquals(Uid.nullUid()));
+            }
+        } catch (ObjectStoreException ignore) {
+        }
+
+        return false;
     }
 
     static class Participant extends AbstractRecord {
@@ -228,7 +280,7 @@ public class InfinispanTestBase {
 
         @Override
         public boolean shouldAdd(AbstractRecord a) {
-            return false;
+            return true; // record should be added to the intentions list
         }
 
         @Override

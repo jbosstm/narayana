@@ -20,7 +20,7 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
     private String cacheName;
     private boolean ignoreReturnValues = true;
     private String nodeAddress;
-    private String groupName = "0";
+    private String groupName = null;
     private String slotKeyGeneratorClassName;
     private InfinispanSlotKeyGenerator infinispanSlotKeyGenerator;
 
