@@ -18,23 +18,23 @@ import org.infinispan.CacheSet;
 import org.infinispan.commons.marshall.WrappedByteArray;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.container.entries.CacheEntry;
-import org.infinispan.context.Flag;
 import org.infinispan.distribution.DistributionInfo;
 import org.infinispan.distribution.DistributionManager;
-import org.infinispan.distribution.LocalizedCacheTopology;
 import org.infinispan.distribution.group.Grouper;
 import org.infinispan.metadata.EmbeddedMetadata;
 import org.infinispan.metadata.Metadata;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,15 +43,35 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class InfinispanGrouperTest extends InfinispanTestBase {
 
+    private List<Store> stores;
+
     @BeforeAll
     static void beforeAll() {
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(true);
         Assertions.assertTrue(arjPropertyManager.getCoordinatorEnvironmentBean().isCommitOnePhase());
     }
 
+    @BeforeEach
+    public void beforeEach() {
+        stores = new ArrayList<>();
+    }
+
+    @AfterEach
+    public void afterEach() {
+        for (Store store : stores) {
+            store.stop();
+        }
+    }
+    private Store getStore(String nodeName, CacheMode mode, int numOwners, Grouper<WrappedByteArray> grouper, boolean persistence, boolean partitionResilience, String groupName) {
+        Store store = new Store(createCacheManager(nodeName, mode, numOwners, grouper, persistence, partitionResilience), groupName, nodeName);
+
+        stores.add(store);
+        return store;
+    }
+
     @Test
     public void testUserDefinedKeyGenerator() throws IOException {
-        Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, false, false), null, "node1");
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, false, false, "group1");
 
         // user defined SlotKeyGenerator instance (Arjuna ClassLoadingUtility doesn't support construct of anonymous classes)
         UserDefinedSlotKeyGenerator slotKeyGenerator = new UserDefinedSlotKeyGenerator();
@@ -124,14 +144,14 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         for (int i = 0; i < numStores; i++) {
             String nodeId = "node" + i;
             String groupId = "group" + i % 2;
-            Store store = new Store(createCacheManager(nodeId, CacheMode.DIST_SYNC, numOwners, recoveryGrouper, false, false),
-                    groupId, nodeId);
+            Store store = getStore(nodeId, CacheMode.DIST_SYNC, numOwners, recoveryGrouper, false, false, groupId);
+
             store.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
             store.start();
             stores.add(store);
         }
 
-        List<AtomicAction> actions = new ArrayList<>();
+        Map<AtomicAction, String> actions = new HashMap<>();
         RecoveryStore recoveryStore;
         int NUMBER_OF_ACTIONS_PER_NODE = 2;
 
@@ -151,7 +171,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
                 int res = aa.commit(true);
 
                 Assertions.assertEquals(ActionStatus.H_HAZARD, res);
-                actions.add(aa);
+                actions.put(aa, store.groupName());
                 // make sure the log is in the store
                 try {
                     recoveryStore.read_committed(aa.getSavingUid(), aa.type());
@@ -161,15 +181,23 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
             }
         }
 
-        // all actions should be readable from any node
+        // check that actions were partitioned across the stores according to the groupNames and that any
+        // action is a particular group can be read from any store configured with that groupName
         for (Store store : stores) {
             recoveryStore = startRecoveryStore(store.config());
 
-            for (AtomicAction aa : actions) {
+            for (Map.Entry<AtomicAction, String> entry : actions.entrySet()) {
+                AtomicAction aa = entry.getKey();
+                boolean shouldPass = store.groupName().equals(entry.getValue());
                 try {
                     recoveryStore.read_committed(aa.getSavingUid(), aa.type());
+                    if (!shouldPass)
+                        fail("action with group id " + entry.getValue()
+                                + " should not be accessible from store with groupName " + store.groupName());
                 } catch (ObjectStoreException e) {
-                    fail(e); // record should be available in the recovery store
+                    if (shouldPass)
+                        fail("action with group id " + entry.getValue()
+                                + " should be accessible from store with groupName " + store.groupName());
                 }
             }
         }
@@ -233,20 +261,34 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         Assertions.assertNotNull(primaryStore);
 
         /*
-         * clean up the store (any recovery manager in the cluster can be used clean up)
+         * clean up the store (only recovery managers with the same groupId as the action should be able to remove the action)
          */
+        Store store = stores.get(0);
+        recoveryStore = startRecoveryStore(store.config());
+        String groupName = store.config().getGroupName();
 
-        recoveryStore = startRecoveryStore(stores.get(new Random().nextInt(stores.size())).config());
-        for (AtomicAction aa : actions) {
-            recoveryStore.remove_committed(aa.getSavingUid(), aa.type());
+        for (Map.Entry<AtomicAction, String> entry : actions.entrySet()) {
+            AtomicAction aa = entry.getKey();
+            if (groupName.equals(entry.getValue())) {
+                try {
+                    recoveryStore.remove_committed(aa.getSavingUid(), aa.type());
+                } catch (ObjectStoreException e) {
+                    fail("should have been able to delete action");
+                }
+            }
         }
-        // use any store to verify the actions were removed
-        recoveryStore = startRecoveryStore(stores.get(new Random().nextInt(stores.size())).config());
-        for (AtomicAction aa : actions) {
-            try {
-                recoveryStore.read_committed(aa.getSavingUid(), aa.type());
-                fail("record should not be in the store");
-            } catch (ObjectStoreException ignore) {
+        store = stores.get(1); // the second store has a different group name
+        recoveryStore = startRecoveryStore(store.config());
+        groupName = store.config().getGroupName();
+
+        for (Map.Entry<AtomicAction, String> entry : actions.entrySet()) {
+            AtomicAction aa = entry.getKey();
+            if (groupName.equals(entry.getValue())) {
+                try {
+                    recoveryStore.remove_committed(aa.getSavingUid(), aa.type());
+                } catch (ObjectStoreException e) {
+                    fail("should have been able to delete action");
+                }
             }
         }
 
@@ -261,10 +303,10 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         // a new primary store should have been chosen since the old one was removed from the cluster when we stopped it:
         Assertions.assertNotEquals(primary, newPrimary);
 
-        for (Store store : stores) {
+        for (Store s : stores) {
             // make sure we don't try accessing the cache we just stopped
-            if (store.manager().isRunning(store.cache().getName())) {
-                Assertions.assertEquals(0, store.manager().getCache(CLUSTER_NAME).size());
+            if (s.manager().isRunning(s.cache().getName())) {
+                Assertions.assertEquals(0, s.manager().getCache(CLUSTER_NAME).size());
                 store.stop();
             }
         }
@@ -279,8 +321,10 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
     public void testCleanup() throws IOException {
         for (int i =  0; i < 4; i++) {
             String nodeId = "node" + i;
-            Store store = new Store(createCacheManager(nodeId, CacheMode.REPL_SYNC, 3, null, false, false), null, nodeId);
+            Store store = getStore(nodeId, CacheMode.REPL_SYNC, 3, null, false, false, null);
+
             store.start();
+
             RecoveryStore recoveryStore = startRecoveryStore(store.config());
 
             AtomicAction action = new AtomicAction(new Uid());
@@ -302,8 +346,8 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
     @Test
     public void testWithMetadata() throws IOException {
 
-        Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
-        Store store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, true, false, null);
+        Store store2 = getStore("node2", CacheMode.REPL_SYNC, -1, null, true, false, null);
 
         store1.start();
         store2.start();

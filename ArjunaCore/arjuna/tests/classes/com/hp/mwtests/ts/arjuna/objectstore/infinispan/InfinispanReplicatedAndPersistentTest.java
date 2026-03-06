@@ -23,6 +23,9 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
         Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
         Store store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
 
+        store1.manager().getCache(CLUSTER_NAME).clear(); // start clean
+        store2.manager().getCache(CLUSTER_NAME).clear(); // start clean
+
         store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
         store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
         store1.start();
@@ -81,6 +84,9 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
         // and similarly check that the slot stores are repopulated correctly
         Assertions.assertArrayEquals(store1.slots().read(0), store2.slots().read(0));
         Assertions.assertArrayEquals(store1.slots().read(1), store2.slots().read(1));
+
+        store1.slots().clear(0, true);
+        store1.slots().clear(1, true);
 
         store1.stop();
         store2.stop();
