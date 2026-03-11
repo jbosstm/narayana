@@ -162,7 +162,10 @@ public class InfinispanTestBase {
         return StoreManager.getRecoveryStore();
     }
 
-    // update the slot store environment bean
+    /*
+     * update the slot store environment bean which normally gets set once per VM, but we need different
+     * values of the SlotStoreEnvironmentBean for various tests
+     */
     static private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
                 BeanPopulator.class,
@@ -181,8 +184,12 @@ public class InfinispanTestBase {
         beanInstances.put(SlotStoreEnvironmentBean.class.getName(), bean);
     }
 
-    // reset the AARM
-    static void resetAARM() throws Throwable {//RecoveryStore
+    /*
+     * reset the AtomicActionRecoveryModule
+     * this is useful when restarting recovery because the AARM initialises a private static variable
+     * RecoveryStore _recoveryStore which needs to be reset when testing different recovery configurations
+     */
+    static void resetAtomicActionRecoveryModule() throws Throwable {//RecoveryStore
         MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
                 AtomicActionRecoveryModule.class,
                 MethodHandles.lookup()
@@ -195,9 +202,7 @@ public class InfinispanTestBase {
                 RecoveryStore.class
         );
 
-        varHandle.set(null);
-//        RecoveryStore recoveryStore = (RecoveryStore) varHandle.get();
-//        recoveryStore = null;
+        varHandle.set((Object) null);
     }
 
     boolean containsAtomicAction(RecoveryStore recoveryStore, AtomicAction aa) {

@@ -15,9 +15,6 @@ import java.util.regex.Pattern;
 
 public class ClusterMemberId implements InfinispanSlotKeyGenerator {
     String nodeId;
-    // grouping is the concern of the users and can define the groupId according to their own specific needs
-    // eg a redis based store might apply the semantic that keys in the same "failover" group support migrate
-    // semantics within the group
     String groupId;
     Uid uid;
     String id;
@@ -38,8 +35,8 @@ public class ClusterMemberId implements InfinispanSlotKeyGenerator {
         this.keyPattern = String.format("{%s}:%s:*", groupId, nodeId); // matches all keys in this group
     }
 
-    /**
-     * @return a pattern that matches all keys that share the same failoverGroupId and nodeId
+    /*
+     * @return a pattern that matches all keys that share the same groupId and nodeId
      */
     public String allKeysPattern() {
         return keyPattern;

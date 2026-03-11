@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -47,24 +46,24 @@ public class InfinispanRecoveryGroupScanTest extends InfinispanTestBase {
     }
 
     /*
-     * Define strategy for grouping keys, ie for co-locating a group of entries on the same nodes.
-     * This means that keys managed by a particular recovery manager a co-located
+     * Define a strategy for grouping keys, ie for co-locating a group of entries on the same nodes.
+     * This means that keys managed by a particular recovery manager are co-located
      */
     static class RecoveryGrouper implements Grouper<WrappedByteArray> {
-        static final Pattern CB_DELIMITER_REGEX = Pattern.compile("\\{(\\w+)\\}");
 
         @Override
         public Object computeGroup(WrappedByteArray key, Object group) {
             // group holds the group as currently computed, or null if no group has been determined yet
             String k = new String(key.getBytes());
 
-            Matcher matcher = CB_DELIMITER_REGEX.matcher(k);
+            Matcher matcher = ClusterMemberId.CB_DELIMITER_REGEX.matcher(k);
             if (matcher.find()) {
                 return matcher.group(1);
             }
 
             return "";
         }
+
         @Override
         public Class<WrappedByteArray> getKeyType() {
             return WrappedByteArray.class; //byte[].class;
@@ -85,12 +84,12 @@ public class InfinispanRecoveryGroupScanTest extends InfinispanTestBase {
 
         manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
         try {
-            resetAARM();
+            resetAtomicActionRecoveryModule();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
         try {
-            resetAARM();
+            resetAtomicActionRecoveryModule();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

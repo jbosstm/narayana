@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -98,6 +97,31 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         recoveryStore.stop();
     }
 
+    @Test
+    public void testMissingKeyGenerator() throws IOException {
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, false, false, "group1");
+
+        store1.config().setSlotKeyGenerator(null); // verify that store still works with the default key generator
+        store1.config().setSlotKeyGeneratorClassName(null);
+        store1.start();
+
+        RecoveryStore recoveryStore = startRecoveryStore(store1.config());
+
+        Uid uid = new Uid();
+        AtomicAction action = new AtomicAction(uid);
+        Participant participant = new Participant();
+
+        action.begin();
+        action.add(participant);
+
+        Assertions.assertEquals(ActionStatus.COMMITTED, action.commit(false));
+
+        Assertions.assertEquals(0, store1.manager().getCache(CLUSTER_NAME).size());
+
+        store1.stop();
+        recoveryStore.stop();
+    }
+
     /*
      * Test Infinispan Distributed Mode which provides better scalability than does Replication Mode:
      * - with replicated caches all nodes in a cluster hold all keys,
@@ -107,7 +131,6 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
      * are distributed. Like replication mode it still provides strong consistency.
      *
      * Note that Infinispan has good support for partition handling in both distributed and replicated cache modes
-     * (TODO include some tests).
      * This allows for more fine-grained control of a cache’s behaviour when a split brain occurs.
      * Note that there is a dedicated ConflictManager component so that conflicts on cache entries can be
      * automatically resolved on-demand by users and/or automatically during partition merges.
@@ -116,14 +139,12 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
     public void testDistributedMode() throws IOException, ObjectStoreException {
         // define strategy for grouping keys
         class RecoveryGrouper implements Grouper<WrappedByteArray> {
-            static final Pattern CB_DELIMITER_REGEX = Pattern.compile("\\{(\\w+)\\}");
-
             @Override
             public Object computeGroup(WrappedByteArray key, Object group) {
                 // group holds the group as currently computed, or null if no group has been determined yet
                 String k = new String(key.getBytes());
 
-                Matcher matcher = CB_DELIMITER_REGEX.matcher(k);
+                Matcher matcher = ClusterMemberId.CB_DELIMITER_REGEX.matcher(k);
                 if (matcher.find()) {
                     return matcher.group(1);
                 }
@@ -349,9 +370,6 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, true, false, null);
         Store store2 = getStore("node2", CacheMode.REPL_SYNC, -1, null, true, false, null);
 
-        store1.start();
-        store2.start();
-
         // create two key value pairs
         record KVPair(byte[] key, byte[] value) {}
         KVPair kv1 = new KVPair("key1".getBytes(), "value1".getBytes());
@@ -360,6 +378,9 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         // populate the first infinispan cache with them
         putWithMetadata(store1.cache(), kv1.key, kv1.value);
         putWithMetadata(store1.cache(), kv2.key, kv2.value);
+
+        store1.start();
+        store2.start();
 
         // and verify it replicates to cache2
         Assertions.assertArrayEquals(kv1.value, store1.cache().get(kv1.key));
