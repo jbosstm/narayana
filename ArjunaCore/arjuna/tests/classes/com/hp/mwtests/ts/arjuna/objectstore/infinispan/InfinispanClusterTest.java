@@ -437,7 +437,6 @@ public class InfinispanClusterTest {
     public void backingSlotsCapacityReachedTest () throws IOException {
         int SLOT_COUNT = 1; // to test writing to a full store
         String CACHE_NAME = "simple";
-        Cache<byte[], byte[]> cache;
         InfinispanStoreEnvironmentBean config = new InfinispanStoreEnvironmentBean();
         InfinispanSlots slots = new InfinispanSlots(); // slot store backed by an infinispan cache
 

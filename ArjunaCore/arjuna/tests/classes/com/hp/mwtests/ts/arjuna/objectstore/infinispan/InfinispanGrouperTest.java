@@ -136,7 +136,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
      * automatically resolved on-demand by users and/or automatically during partition merges.
      */
     @Test
-    public void testDistributedMode() throws IOException, ObjectStoreException {
+    public void testDistributedMode() throws IOException {
         // define strategy for grouping keys
         class RecoveryGrouper implements Grouper<WrappedByteArray> {
             @Override
