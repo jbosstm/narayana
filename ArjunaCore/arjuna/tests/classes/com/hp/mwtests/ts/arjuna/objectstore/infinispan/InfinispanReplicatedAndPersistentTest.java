@@ -28,8 +28,6 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
 
         store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
         store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
-        store1.start();
-        store2.start();
 
         // create two key value pairs
         record KVPair(byte[] key, byte[] value) {}
@@ -39,6 +37,11 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
         // populate the first infinispan cache with them
         store1.cache().put(kv1.key, kv1.value);
         store1.cache().put(kv2.key, kv2.value);
+
+        // make sure to start the store after updating the infinispan caches, then starting the store will
+        // load the keys just were added.
+        store1.start();
+        store2.start();
 
         // and verify it replicates to cache2
         Assertions.assertArrayEquals(kv1.value, store1.cache().get(kv1.key));
@@ -51,6 +54,7 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
         Assertions.assertTrue(Files.exists(store2.path()), "infinispan persistence store 2 was not created");
 
         // verify that the slot stores at each node have the same values
+        // note that the slots backend is internal, but it's still useful to test it directlyu
         byte[] value1 = store1.slots().read(0);
         byte[] value2 = store2.slots().read(0);
         byte[] value3 = store1.slots().read(1);

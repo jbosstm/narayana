@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<infinispan
+        xmlns="urn:infinispan:config:16.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:infinispan:config:16.0
+                        https://infinispan.org/schemas/infinispan-config-16.0.xsd">
+
+    <jgroups>
+        <stack-file name="udp-stack" path="jgroups.xml" />
+    </jgroups>
+
+    <cache-container name="objectStoreCluster" default-cache="objectStoreCluster">
+        <transport cluster="cluster1"
+                   node-name="nodeName"
+                   machine="machineId"
+                   stack="udp-stack"/>
+
+        <distributed-cache name="objectStoreCluster" mode="SYNC" remote-timeout="5000">
+            <!--        <groups enabled="false">
+                        <grouper class="LocationGrouper"/>
+                    </groups>-->
+            <partition-handling when-split="DENY_READ_WRITES" merge-policy="PREFERRED_ALWAYS"/>
+            <persistence passivation="false">
+                <file-store shared="false">
+                    <data path="infinispan-caches/data"/>
+                    <index path="infinispan-caches/index"/>
+                    <!-- write through caches are the default (as opposed to <write-behind ...>) -->
+                </file-store>
+            </persistence>
+        </distributed-cache>
+    </cache-container>
+</infinispan>

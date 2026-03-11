@@ -79,9 +79,16 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
     }
 
     /**
-     * extra metadata embedded to be within an id
-     *
-     * @return metadata
+     * Cluster Configuration Considerations
+     * <p>
+     * 1. A single member must run the recovery manager and a new one started if it fails (aka an HA singleton)
+     * 2. Top down recovery (AtomicActionRecoveryModule) will recover all transactions in the store unless the
+     *    recovery groupName is set in which case the recovery manager will only recover AtomicActions created
+     *    with that groupName.
+     * 3. Any member can create and commit transactions ({@link com.arjuna.ats.arjuna.recovery.TransactionStatusManager}
+     *    will be used by recovery to verify if the creator is still running)
+     * <p>
+     * @return the group name or null if not required
      */
     public String getGroupName() {
         return groupName;
@@ -97,7 +104,9 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
     }
 
     /**
-     * classname of the generator function for internal slot keys
+     * classname of the generator function for internal slot keys if the classname is unset and
+     * {@link InfinispanStoreEnvironmentBean#setSlotKeyGenerator(InfinispanSlotKeyGenerator)} has not been called
+     * then a {@link com.arjuna.ats.arjuna.common.Uid} will be used
      */
     public void setSlotKeyGeneratorClassName(String slotKeyGeneratorClassName) {
         this.slotKeyGeneratorClassName = slotKeyGeneratorClassName;
@@ -107,6 +116,12 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
         return slotKeyGeneratorClassName;
     }
 
+    /**
+     * Define a strategy for initialising slot store keys. If unset then a
+     * {@link com.arjuna.ats.arjuna.common.Uid} will be used
+     * <p>
+     * @param infinispanSlotKeyGenerator the slot key generator
+     */
     public void setSlotKeyGenerator(InfinispanSlotKeyGenerator infinispanSlotKeyGenerator) {
         this.infinispanSlotKeyGenerator = infinispanSlotKeyGenerator;
     }

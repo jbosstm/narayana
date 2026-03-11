@@ -44,12 +44,12 @@ public class InfinispanRecoveryScanTest extends InfinispanTestBase {
         recoveryStore = startRecoveryStore(store.config());
 
         recoveryEnvironmentBean.setRecoveryBackoffPeriod(1); // use a short interval between passes
-        recoveryEnvironmentBean.setRecoveryListener(true); // configure the RecoveryMonitor
+        recoveryEnvironmentBean.setRecoveryListener(false); // configure the RecoveryMonitor
 
         manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
 
         try {
-            resetAARM();
+            resetAtomicActionRecoveryModule();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
