@@ -47,7 +47,7 @@ public class ClusterMemberId implements InfinispanSlotKeyGenerator {
                 .getBytes(StandardCharsets.UTF_8);
     }
 
-    static final Pattern CB_DELIMITER_REGEX = Pattern.compile("\\{(\\w+)\\}");
+    static final Pattern CB_DELIMITER_REGEX = Pattern.compile("\\{(\\w+)}");
 
     public static ClusterMemberId fromUniqueKey(String uniqueKey) {
         String[] split = uniqueKey.split(";");

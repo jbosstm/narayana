@@ -6,95 +6,29 @@
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
-import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
 import org.infinispan.configuration.cache.CacheMode;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InfinispanRecoveryScanTest extends InfinispanTestBase {
-
-    private static RecoveryManager manager;
-    private static InfinispanTestBase.Store store;
-    private static RecoveryStore recoveryStore;
+/*
+ * tests showing that periodic recovery can recover in doubt actions in the store
+ */
+public class InfinispanRecoveryScanTest extends InfinispanRecoveryTestBase {
 
     @BeforeAll
-    public static void beforeAll() throws Exception {
-        RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
+    public static void beforeAll() {
         store = new InfinispanTestBase.Store(
                 createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, false, false),
                 null, "node1");
 
-        store.start();
-        recoveryStore = startRecoveryStore(store.config());
-
-        recoveryEnvironmentBean.setRecoveryBackoffPeriod(1); // use a short interval between passes
-        recoveryEnvironmentBean.setRecoveryListener(false); // configure the RecoveryMonitor
-
-        manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-
-        try {
-            resetAtomicActionRecoveryModule();
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-
-        AtomicActionRecoveryModule aaRecoveryModule = new AtomicActionRecoveryModule();
-        manager.addModule(aaRecoveryModule); // we only need to test the XARecoveryModule
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        recoveryStore.stop();
-        store.stop();
-        manager.terminate();
-    }
-
-    public static class RecoverableCrashRecord extends CrashRecord {
-
-        // needs a default constructor which gets called during recovery via AbstractRecord.create
-        public RecoverableCrashRecord() {
-            super();
-        }
-
-        public RecoverableCrashRecord(CrashLocation crashLocation, CrashType crashType) {
-            super(crashLocation, crashType);
-        }
-
-        public boolean shouldAdd(AbstractRecord a)  {
-            return true;
-        }
-    }
-    static class RecoverableCrashRecordTypeMap implements RecordTypeMap {
-        public Class<RecoverableCrashRecord> getRecordClass ()
-        {
-            return RecoverableCrashRecord.class;
-        }
-
-        public int getType() {
-            // the type must be registered in the RecordType registry which it will be if RecoverableCrashRecord
-            // uses RecordType.USER_DEF_FIRST0 which it does
-            int recordType = new RecoverableCrashRecord().typeIs();
-
-            Assertions.assertEquals(RecordType.USER_DEF_FIRST0, recordType);
-
-            return recordType;
-        }
+        startRecoverySystem(store);
     }
 
     @Test
@@ -104,7 +38,7 @@ public class InfinispanRecoveryScanTest extends InfinispanTestBase {
 
         aa.begin();
 
-        RecordTypeManager.manager().add(new RecoverableCrashRecordTypeMap());
+//        RecordTypeManager.manager().add(new RecoverableCrashRecordTypeMap());
 
         aa.add(new RecoverableCrashRecord(CrashRecord.CrashLocation.NoCrash, CrashRecord.CrashType.Normal));
         aa.add(new RecoverableCrashRecord(CrashRecord.CrashLocation.CrashInCommit, CrashRecord.CrashType.Normal));

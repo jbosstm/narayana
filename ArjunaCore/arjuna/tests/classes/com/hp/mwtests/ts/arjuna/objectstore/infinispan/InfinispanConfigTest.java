@@ -4,9 +4,6 @@
  */
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ClusteringConfiguration;
 import org.infinispan.configuration.cache.Configuration;
@@ -26,11 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InfinispanConfigTest extends InfinispanTestBase {
     private static InfinispanTestBase.Store store;
+    private final static String STORE_CONFIG_FILE = "/infinispan-store-config.xml";
 
     @BeforeAll
     public static void beforeAll() throws Exception {
         DefaultCacheManager cacheManager = new DefaultCacheManager(
-                InfinispanConfigTest.class.getResourceAsStream("/infinispan-store-config.xml"));
+                InfinispanConfigTest.class.getResourceAsStream(STORE_CONFIG_FILE));
         store = new Store(cacheManager, null, "node1");
         store.start();
     }
@@ -42,7 +40,7 @@ public class InfinispanConfigTest extends InfinispanTestBase {
 
     @Test
     public void test() {
-        String INDEX_LOCATION = "infinispan-caches/index";
+        String INDEX_LOCATION = "infinispan-caches/index"; // the location is defined in STORE_CONFIG_FILE
         String DATA_LOCATION = "infinispan-caches/data";
 
         Configuration cacheConfig = store.cache().getCacheConfiguration();

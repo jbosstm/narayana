@@ -82,12 +82,18 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
      * Cluster Configuration Considerations
      * <p>
      * 1. A single member must run the recovery manager and a new one started if it fails (aka an HA singleton)
-     * 2. Top down recovery (AtomicActionRecoveryModule) will recover all transactions in the store unless the
+     * 2. Top down recovery via the AtomicActionRecoveryModule will recover all transactions in the store unless the
      *    recovery groupName is set in which case the recovery manager will only recover AtomicActions created
      *    with that groupName.
      * 3. Any member can create and commit transactions ({@link com.arjuna.ats.arjuna.recovery.TransactionStatusManager}
-     *    will be used by recovery to verify if the creator is still running)
+     *    will be used during recovery to decide if the creator is still running)
      * <p>
+     * The group name may also be used in Distributed Mode which can provide orders of magnitude improvements in
+     * scalability than can the Replication Mode. For example if a large cluster is supporting multi-tenancy
+     * (multiple transaction and recovery managers) then Distributed Mode together with key grouping can ensure
+     * that cache entries for a particular group are co-located on a group of cluster nodes rather than being
+     * scattered over the entire cluster.
+     *
      * @return the group name or null if not required
      */
     public String getGroupName() {
