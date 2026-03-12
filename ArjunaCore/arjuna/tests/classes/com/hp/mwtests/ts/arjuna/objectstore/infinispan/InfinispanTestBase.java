@@ -89,7 +89,8 @@ public class InfinispanTestBase {
                                                    boolean partitionResilience) {
         GlobalConfigurationBuilder globalConfig = GlobalConfigurationBuilder.defaultClusteredBuilder();
 
-        globalConfig.transport().nodeName(nodeName).machineId(nodeName).clusterName(CLUSTER_NAME);
+        globalConfig.transport().nodeName(nodeName).machineId(nodeName)
+                .clusterName(CLUSTER_NAME).addProperty("configurationFile", "jgroups.xml");
 
         var manager = new DefaultCacheManager(globalConfig.build());
         var storeDir = String.format("%s/%s", STORE_DIR, nodeName);

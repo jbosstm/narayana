@@ -64,7 +64,8 @@ public class InfinispanClusterTest {
     private DefaultCacheManager createCacheManager(String nodeName) {
         GlobalConfigurationBuilder globalConfig = GlobalConfigurationBuilder.defaultClusteredBuilder();
 
-        globalConfig.transport().nodeName(nodeName).clusterName(CLUSTER_NAME);
+        globalConfig.transport().nodeName(nodeName)
+                .clusterName(CLUSTER_NAME).addProperty("configurationFile", "jgroups.xml");;
 
         var manager = new DefaultCacheManager(globalConfig.build());
 
@@ -424,7 +425,7 @@ public class InfinispanClusterTest {
                 slots.init(config);
                 fail("should not be able to initialise a slot store with more entries than it has capacity for");
             } catch (IOException e) {
-                String expected = tsLogger.i18NLogger.get_infinipan_too_few_slots(cache.size(), SLOT_COUNT);
+                String expected = tsLogger.i18NLogger.get_infinispan_too_few_slots(cache.size(), SLOT_COUNT);
                 Assertions.assertTrue(e.getMessage().endsWith(expected));
             }
         }
