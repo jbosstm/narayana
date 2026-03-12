@@ -9,11 +9,9 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import org.infinispan.CacheSet;
 import org.infinispan.Cache;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -179,7 +177,7 @@ public class InfinispanSlots implements BackingSlots {
                  * The number of slots should equal the maximum number of unresolved transactions expected at any given
                  * time, including those in-flight and awaiting recovery.
                  */
-                String errorMsg = tsLogger.i18NLogger.get_infinipan_too_few_slots(keys.size(), slots.length);
+                String errorMsg = tsLogger.i18NLogger.get_infinispan_too_few_slots(keys.size(), slots.length);
 
                 throw new IOException(errorMsg);
             }
