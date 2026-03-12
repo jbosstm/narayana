@@ -30,15 +30,19 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class InfinispanStoreComparisonTest extends InfinispanTestBase {
+
     RecoveryStore recoveryStore = null;
     Store store = null;
     record MeasurementConfig(String storeName, int threadCount, int batchSize, int warmUpCount) {}
 
     MeasurementConfig setup(String storeType) throws CoreEnvironmentBeanException {
+        int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+        int BATCH_SIZE = 4000; // each thread will run this number of transactions
+        int WARMUP_COUNT = 2;
         BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).setNodeIdentifier("1");
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).setObjectStoreType(storeType);
 
-        return new MeasurementConfig(storeType, 10, 100000, 0);
+        return new MeasurementConfig(storeType, THREAD_COUNT, BATCH_SIZE, WARMUP_COUNT);
     }
 
     private Store getStore(String nodeName, CacheMode mode, int numOwners, Grouper<WrappedByteArray> grouper, boolean persistence, boolean partitionResilience, String groupName) {
@@ -63,6 +67,16 @@ public class InfinispanStoreComparisonTest extends InfinispanTestBase {
     }
 
     @Test
+    public void testDiskSlots() throws CoreEnvironmentBeanException {
+        MeasurementConfig runConfig = setup(SlotStoreAdaptor.class.getName());
+        SlotStoreEnvironmentBean configBean = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
+
+        configBean.setBackingSlotsClassName(DiskSlots.class.getName());
+
+        measure(runConfig, DiskSlots.class.getName());
+    }
+
+    @Test
     public void testInfinispan() throws IOException, CoreEnvironmentBeanException {
         MeasurementConfig runConfig = setup(InfinispanSlots.class.getName());
         String nodeId = "node1";
@@ -73,16 +87,6 @@ public class InfinispanStoreComparisonTest extends InfinispanTestBase {
         recoveryStore = startRecoveryStore(store.config());
 
         measure(runConfig);
-    }
-
-    @Test
-    public void testDiskSlots() throws CoreEnvironmentBeanException {
-        MeasurementConfig runConfig = setup(SlotStoreAdaptor.class.getName());
-        SlotStoreEnvironmentBean configBean = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
-
-        configBean.setBackingSlotsClassName(DiskSlots.class.getName());
-
-        measure(runConfig, DiskSlots.class.getName());
     }
 
     @Test
@@ -102,7 +106,8 @@ public class InfinispanStoreComparisonTest extends InfinispanTestBase {
     void measure(MeasurementConfig config, String storeName) {
         int numberOfTransactions = config.threadCount * config.batchSize;
         WorkerWorkload<Void> workerWorkload = getWorker();
-        Measurement measurement = new Measurement.Builder(getClass().getName() + "_test1")
+        long start = System.currentTimeMillis();
+        Measurement measurement = new Measurement.Builder(getClass().getName())
                 .maxTestTime(0L)
                 .numberOfCalls(numberOfTransactions)
                 .numberOfThreads(config.threadCount)
@@ -114,9 +119,11 @@ public class InfinispanStoreComparisonTest extends InfinispanTestBase {
         Assert.assertEquals(0, measurement.getNumberOfErrors());
         Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
-        System.out.printf("== %s: throughput: %f (%d ms)%n", storeName,
+        System.out.printf("== %s: throughput: %f (%d ms %d threads %d actions)%n", storeName,
                 (float) (numberOfTransactions / (measurement.getTotalMillis() / 1000.0)),
-                measurement.getTotalMillis());
+                measurement.getTotalMillis(),
+                config.threadCount,
+                numberOfTransactions);
 //        System.out.println("\ttime for " + numberOfTransactions + " write transactions is " + measurement.getTotalMillis());
 //        System.out.println("\tnumber of transactions: " + numberOfTransactions);
     }

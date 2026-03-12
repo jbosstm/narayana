@@ -21,6 +21,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/*
+ * tests configuring an infinispan store using the standard infinispan xml config
+ * whereas the other tests all use programmatic config
+ */
 public class InfinispanConfigTest extends InfinispanTestBase {
     private static InfinispanTestBase.Store store;
     private final static String STORE_CONFIG_FILE = "/infinispan-store-config.xml";
@@ -40,7 +44,9 @@ public class InfinispanConfigTest extends InfinispanTestBase {
 
     @Test
     public void test() {
-        String INDEX_LOCATION = "infinispan-caches/index"; // the location is defined in STORE_CONFIG_FILE
+        // the location of the index and data files are defined in STORE_CONFIG_FILE
+        // ie they should be kept in sync for the test to pass
+        String INDEX_LOCATION = "infinispan-caches/index";
         String DATA_LOCATION = "infinispan-caches/data";
 
         Configuration cacheConfig = store.cache().getCacheConfiguration();

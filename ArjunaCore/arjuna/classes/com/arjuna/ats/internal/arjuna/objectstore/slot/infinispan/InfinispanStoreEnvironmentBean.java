@@ -8,6 +8,7 @@ package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 import org.infinispan.Cache;
+import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.context.Flag;
 
 /**
@@ -32,7 +33,7 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
         this.cache = cache;
 
         if (isIgnoreReturnValues()) {
-            cache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES);
+            this.cache = cache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES);
         }
     }
 

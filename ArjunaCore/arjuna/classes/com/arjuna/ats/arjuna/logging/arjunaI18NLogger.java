@@ -1663,7 +1663,7 @@ public interface arjunaI18NLogger {
 	@Message(id = 12418, value = "The number of actual transaction logs, {0}, exceeds the number of configured " +
 			"slots, {1}. The number of configured slots should equal the maximum number of unresolved transactions " +
 	        "expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
-	String get_infinipan_too_few_slots(int actual, int configured);
+	String get_infinispan_too_few_slots(int actual, int configured);
 
     /*
         Allocate new messages directly above this notice.
