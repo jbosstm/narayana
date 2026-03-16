@@ -1,0 +1,11 @@
+
+
+<FindBugsFilter>
+   <Match classregex="org\.jacorb\.poa\.gui\..*"/>
+   <!-- Exclude tracing as very old unsupported code -->
+   <Match classregex="org\.jacorb\.util\.tracing\..*"/>
+
+   <Match classregex=".*">
+      <BugPattern name="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+</FindBugsFilter>
