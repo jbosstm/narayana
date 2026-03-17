@@ -1,0 +1,16 @@
+<config xmlns="urn:org:jgroups"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
+    <SHARED_LOOPBACK/>
+    <SHARED_LOOPBACK_PING/>
+    <MERGE3 min_interval="1000" max_interval="5000"/>
+    <FD_ALL3 timeout="3000" interval="1000"/>
+    <VERIFY_SUSPECT2 timeout="1000"/>
+    <pbcast.NAKACK2 use_mcast_xmit="false"/>
+    <UNICAST3/>
+    <pbcast.STABLE desired_avg_gossip="5000" max_bytes="1M"/>
+    <pbcast.GMS print_local_addr="false" join_timeout="500"/>
+    <UFC max_credits="4M" min_threshold="0.4"/>
+    <MFC max_credits="4M" min_threshold="0.4"/>
+    <FRAG4/>
+</config>
