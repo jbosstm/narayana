@@ -6,7 +6,9 @@
    Copyright The Narayana Authors
    SPDX short identifier: Apache-2.0
  -->
-
+  <!--
+   Testing jboss-as with testcontainer on github actions
+ -->
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
