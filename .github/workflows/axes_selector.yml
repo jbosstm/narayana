@@ -197,7 +197,7 @@ jobs:
       - name: Parse PR description
         id: parse
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const pr = context.payload.pull_request;
@@ -303,7 +303,7 @@ jobs:
       - name: Set axes according to triggering event
         id: set-axes-inputs
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             // Creates jdk_versions
