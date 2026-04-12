@@ -1665,6 +1665,15 @@ public interface arjunaI18NLogger {
 	        "expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
 	String get_infinispan_too_few_slots(int actual, int configured);
 
+	@Message(id = 12419, value = "InfinispanSlotStore: Initializing experimental feature. Do not use in production.",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_infinispan_slot_store();
+
+	@Message(id = 12420, value = "InfinispanSlotStore: infinispan config file invalid", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_infinispan_config(@Cause() Throwable cause);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

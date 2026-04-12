@@ -62,8 +62,8 @@ public class InfinispanRecoveryGroupScanTest extends InfinispanRecoveryTestBase 
     private void restartRecoverySystem(String nodeName, String groupName)  {
         stopRecoveryStore();
         store = new Store(
-                createCacheManager(nodeName, CacheMode.REPL_SYNC, -1, recoveryGrouper, true, false),
-                groupName, nodeName);
+                createCacheManager(nodeName, CacheMode.REPL_SYNC, -1, recoveryGrouper, STORE_DIR, false),
+                groupName, nodeName, STORE_DIR);
         startRecoverySystem(store);
     }
 

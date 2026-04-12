@@ -61,8 +61,8 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
             store.stop();
         }
     }
-    private Store getStore(String nodeName, CacheMode mode, int numOwners, Grouper<WrappedByteArray> grouper, boolean persistence, boolean partitionResilience, String groupName) {
-        Store store = new Store(createCacheManager(nodeName, mode, numOwners, grouper, persistence, partitionResilience), groupName, nodeName);
+    private Store getStore(String nodeName, CacheMode mode, int numOwners, Grouper<WrappedByteArray> grouper, String persistence, boolean partitionResilience, String groupName) {
+        Store store = new Store(createCacheManager(nodeName, mode, numOwners, grouper, persistence, partitionResilience), groupName, nodeName, persistence);
 
         stores.add(store);
         return store;
@@ -70,7 +70,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
 
     @Test
     public void testUserDefinedKeyGenerator() throws IOException {
-        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, false, false, "group1");
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, null, false, "group1");
 
         // user defined SlotKeyGenerator instance (Arjuna ClassLoadingUtility doesn't support construct of anonymous classes)
         UserDefinedSlotKeyGenerator slotKeyGenerator = new UserDefinedSlotKeyGenerator();
@@ -99,7 +99,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
 
     @Test
     public void testMissingKeyGenerator() throws IOException {
-        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, false, false, "group1");
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, null, false, "group1");
 
         store1.config().setSlotKeyGenerator(null); // verify that store still works with the default key generator
         store1.config().setSlotKeyGeneratorClassName(null);
@@ -165,7 +165,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         for (int i = 0; i < numStores; i++) {
             String nodeId = "node" + i;
             String groupId = "group" + i % 2;
-            Store store = getStore(nodeId, CacheMode.DIST_SYNC, numOwners, recoveryGrouper, false, false, groupId);
+            Store store = getStore(nodeId, CacheMode.DIST_SYNC, numOwners, recoveryGrouper, null, false, groupId);
 
             store.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
             store.start();
@@ -342,7 +342,7 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
     public void testCleanup() throws IOException {
         for (int i =  0; i < 4; i++) {
             String nodeId = "node" + i;
-            Store store = getStore(nodeId, CacheMode.REPL_SYNC, 3, null, false, false, null);
+            Store store = getStore(nodeId, CacheMode.REPL_SYNC, 3, null, null, false, null);
 
             store.start();
 
@@ -367,8 +367,8 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
     @Test
     public void testWithMetadata() throws IOException {
 
-        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, true, false, null);
-        Store store2 = getStore("node2", CacheMode.REPL_SYNC, -1, null, true, false, null);
+        Store store1 = getStore("node1", CacheMode.REPL_SYNC, -1, null, STORE_DIR , false, null);
+        Store store2 = getStore("node2", CacheMode.REPL_SYNC, -1, null, STORE_DIR, false, null);
 
         // create two key value pairs
         record KVPair(byte[] key, byte[] value) {}

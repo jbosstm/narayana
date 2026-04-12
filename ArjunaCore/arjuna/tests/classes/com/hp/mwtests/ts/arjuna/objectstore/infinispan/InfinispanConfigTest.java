@@ -22,18 +22,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
- * tests configuring an infinispan store using the standard infinispan xml config
+ * test configuring an infinispan store using the standard infinispan xml config
  * whereas the other tests all use programmatic config
  */
 public class InfinispanConfigTest extends InfinispanTestBase {
     private static InfinispanTestBase.Store store;
-    private final static String STORE_CONFIG_FILE = "/infinispan-store-config.xml";
+    private final static String STORE_CONFIG_FILE = "/infinispan-config.xml";
 
     @BeforeAll
     public static void beforeAll() throws Exception {
+        // configure the cache manager using an infinispan config file
         DefaultCacheManager cacheManager = new DefaultCacheManager(
                 InfinispanConfigTest.class.getResourceAsStream(STORE_CONFIG_FILE));
-        store = new Store(cacheManager, null, "node1");
+        store = new Store(cacheManager, null, "node1", STORE_DIR);
         store.start();
     }
 
@@ -52,7 +53,7 @@ public class InfinispanConfigTest extends InfinispanTestBase {
         Configuration cacheConfig = store.cache().getCacheConfiguration();
         List<StoreConfiguration> stores = cacheConfig.persistence().stores();
         assertEquals(1, stores.size());
-        StoreConfiguration storeConfig = stores.getFirst();
+        StoreConfiguration storeConfig = stores.get(0);
         ClusteringConfiguration clustering = cacheConfig.clustering();
 
         assertEquals(MergePolicy.PREFERRED_ALWAYS, clustering.partitionHandling().mergePolicy());
@@ -61,5 +62,8 @@ public class InfinispanConfigTest extends InfinispanTestBase {
         Assertions.assertFalse(storeConfig.shared());
         assertEquals(INDEX_LOCATION, ((SoftIndexFileStoreConfiguration) storeConfig).indexLocation());
         assertEquals(DATA_LOCATION, ((SoftIndexFileStoreConfiguration) storeConfig).dataLocation());
+        // remark: this would be a good place to check for the experimental feature (message id ARJUNA012419)
+        // but jboss logging does appear to support programmatically adding an appender which we could have used
+        // to check the log output
     }
 }

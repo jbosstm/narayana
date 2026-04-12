@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
 
@@ -20,14 +21,18 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
      */
     @Test
     public void testWriteThroughCache() throws IOException {
-        Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
-        Store store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
+        String storeDir1 = "infinispan-caches/write-through1";
+        String storeDir2 = "infinispan-caches/write-through2";
+        Store store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, storeDir1, false), null, "node1", storeDir1);
+        Store store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, storeDir2, false), null, "node2", storeDir2);
 
         store1.manager().getCache(CLUSTER_NAME).clear(); // start clean
         store2.manager().getCache(CLUSTER_NAME).clear(); // start clean
 
         store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
         store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
+        Assertions.assertTrue(store1.config().getStoreDir().endsWith("write-through1/node1"));
+        Assertions.assertTrue(store2.config().getStoreDir().endsWith("write-through2/node2"));
 
         // create two key value pairs
         record KVPair(byte[] key, byte[] value) {}
@@ -50,11 +55,11 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
         Assertions.assertArrayEquals(kv2.value, store2.cache().get(kv2.key));
 
         // and check that the infinispan filesystem persistence store was created at both nodes
-        Assertions.assertTrue(Files.exists(store1.path()), "infinispan persistence store 1 was not created");
-        Assertions.assertTrue(Files.exists(store2.path()), "infinispan persistence store 2 was not created");
+        Assertions.assertTrue(Files.exists(Paths.get(store1.config().getStoreDir())), "infinispan persistence store 1 was not created");
+        Assertions.assertTrue(Files.exists(Paths.get(store2.config().getStoreDir())), "infinispan persistence store 2 was not created");
 
         // verify that the slot stores at each node have the same values
-        // note that the slots backend is internal, but it's still useful to test it directlyu
+        // note that the slots backend is internal, but it's still useful to test it directly
         byte[] value1 = store1.slots().read(0);
         byte[] value2 = store2.slots().read(0);
         byte[] value3 = store1.slots().read(1);
@@ -72,8 +77,8 @@ public class InfinispanReplicatedAndPersistentTest extends InfinispanTestBase {
          * Restart them and verify that they repopulated their caches
          * from the filesystem backing stores on their respective nodes
          */
-        store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, true, false), null, "node1");
-        store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, true, false), null, "node2");
+        store1 = new Store(createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, storeDir1, false), null, "node1", storeDir1);
+        store2 = new Store(createCacheManager("node2", CacheMode.REPL_SYNC, -1, null, storeDir2, false), null, "node2", storeDir2);
 
         store1.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
         store2.config().setSlotKeyGeneratorClassName(ClusterMemberId.class.getName());
