@@ -25,8 +25,8 @@ public class InfinispanRecoveryScanTest extends InfinispanRecoveryTestBase {
     @BeforeAll
     public static void beforeAll() {
         store = new InfinispanTestBase.Store(
-                createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, false, false),
-                null, "node1");
+                createCacheManager("node1", CacheMode.REPL_SYNC, -1, null, STORE_DIR, false),
+                null, "node1", STORE_DIR);
 
         startRecoverySystem(store);
     }
@@ -37,8 +37,6 @@ public class InfinispanRecoveryScanTest extends InfinispanRecoveryTestBase {
         AtomicAction aa = new AtomicAction(uid);
 
         aa.begin();
-
-//        RecordTypeManager.manager().add(new RecoverableCrashRecordTypeMap());
 
         aa.add(new RecoverableCrashRecord(CrashRecord.CrashLocation.NoCrash, CrashRecord.CrashType.Normal));
         aa.add(new RecoverableCrashRecord(CrashRecord.CrashLocation.CrashInCommit, CrashRecord.CrashType.Normal));

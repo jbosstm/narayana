@@ -9,13 +9,13 @@
         <stack-file name="udp-stack" path="jgroups.xml" />
     </jgroups>
 
-    <cache-container name="objectStoreCluster" default-cache="objectStoreCluster">
+    <cache-container name="clusteredObjectStore" default-cache="clusteredObjectStore">
         <transport cluster="cluster1"
                    node-name="nodeName"
                    machine="machineId"
                    stack="udp-stack"/>
 
-        <distributed-cache name="objectStoreCluster" mode="SYNC" remote-timeout="5000">
+        <distributed-cache name="clusteredObjectStore" mode="SYNC" remote-timeout="5000">
             <!--        <groups enabled="false">
                         <grouper class="LocationGrouper"/>
                     </groups>-->

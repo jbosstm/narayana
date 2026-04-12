@@ -1,0 +1,21 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+
+    <entry key="SlotStoreEnvironmentBean.numberOfSlots">256</entry>
+    <entry key="SlotStoreEnvironmentBean.bytesPerSlot">4096</entry>
+    <entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlots</entry>
+    <entry key="SlotStoreEnvironmentBean.storeDir">infinispan-caches</entry>
+
+    <entry key="InfinispanStoreEnvironmentBean.ignoreReturnValues">true</entry>
+    <entry key="InfinispanStoreEnvironmentBean.nodeAddress">node1</entry>
+    <entry key="InfinispanStoreEnvironmentBean.groupName"/>
+    <entry key="InfinispanStoreEnvironmentBean.slotKeyGeneratorClassName"/>
+
+    <!-- infinispan cluster config file name relative to the resource directory so begins with a slash char: -->
+    <entry key="InfinispanStoreEnvironmentBean.infinispanConfigFileName">/infinispan-config.xml</entry>
+    <!-- the cache name as configured in infinispan-config.xml -->
+    <entry key="InfinispanStoreEnvironmentBean.cacheName">clusteredObjectStore</entry>
+</properties>

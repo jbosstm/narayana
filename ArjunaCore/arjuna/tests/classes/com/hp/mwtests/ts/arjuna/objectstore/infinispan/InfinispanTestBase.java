@@ -36,9 +36,9 @@ import java.util.concurrent.TimeUnit;
 
 public class InfinispanTestBase {
     // the name of the cluster and the shared cache used for the object store
-    static final String CLUSTER_NAME = "objectStoreCluster";
+    static final String CLUSTER_NAME = "clusteredObjectStore";
     // location of the file system store (with surefire it will be the build directory)
-    static final String STORE_DIR = System.getProperty("java.io.tmpdir") + "/infinispan-caches";
+    static final String STORE_DIR = System.getProperty("user.dir") + "/infinispan-caches";
 
     // record bringing together various data related to a slot store instance
     record Store(DefaultCacheManager manager, // the infinispan cache manager
@@ -48,7 +48,7 @@ public class InfinispanTestBase {
                  InfinispanStoreEnvironmentBean config, // config for the slot store on this node
                  InfinispanSlots slots, // slot store
                  Path path) { // filesystem path where the persistent cache is located
-        public Store(DefaultCacheManager manager, String groupName, String nodeName) {
+        public Store(DefaultCacheManager manager, String groupName, String nodeName, String storeDir) {
             this(
                     manager,
                     groupName,
@@ -57,10 +57,11 @@ public class InfinispanTestBase {
                     // manager.administration().getOrCreateCache(CLUSTER_NAME, manager.getDefaultCacheConfiguration()),
                     new InfinispanStoreEnvironmentBean(),
                     new InfinispanSlots(),
-                    Paths.get(STORE_DIR + "/" + nodeName)
+                    Paths.get(storeDir + "/" + nodeName)
             );
             config.setNodeAddress(manager.getNodeAddress());
             config.setGroupName(groupName);
+            config.setStoreDir(path.toString());
             config.setCacheName(cache.getName());
             config.setCache(cache);
             config.setBackingSlots(slots);
@@ -85,7 +86,7 @@ public class InfinispanTestBase {
                                                    CacheMode cacheMode,
                                                    int numOwners, // used with CacheMode.CacheMode
                                                    Grouper<WrappedByteArray> grouper,
-                                                   boolean persistence,
+                                                   String persistenceDir,
                                                    boolean partitionResilience) {
         GlobalConfigurationBuilder globalConfig = GlobalConfigurationBuilder.defaultClusteredBuilder();
 
@@ -93,7 +94,6 @@ public class InfinispanTestBase {
                 .clusterName(CLUSTER_NAME).addProperty("configurationFile", "jgroups.xml");
 
         var manager = new DefaultCacheManager(globalConfig.build());
-        var storeDir = String.format("%s/%s", STORE_DIR, nodeName);
 
         // Define the replicated cache configuration
         ConfigurationBuilder cacheConfig = new ConfigurationBuilder();
@@ -113,7 +113,8 @@ public class InfinispanTestBase {
                     .clustering()
                     .hash().groups().enabled().addGrouper(grouper);
         }
-        if (persistence) {
+        if (persistenceDir != null) {
+            var storeDir = String.format("%s/%s", persistenceDir, nodeName);
             cacheConfig
                     .clustering()
                     .persistence()

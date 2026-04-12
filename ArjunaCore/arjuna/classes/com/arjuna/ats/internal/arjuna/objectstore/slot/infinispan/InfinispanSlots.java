@@ -70,6 +70,8 @@ public class InfinispanSlots implements BackingSlots {
     public void init(SlotStoreEnvironmentBean slotStoreConfig) throws IOException {
         InfinispanStoreEnvironmentBean config;
 
+        tsLogger.i18NLogger.warn_infinispan_slot_store();
+
         if (slotStoreConfig instanceof InfinispanStoreEnvironmentBean) {
             config = (InfinispanStoreEnvironmentBean) slotStoreConfig;
         } else {
@@ -99,7 +101,7 @@ public class InfinispanSlots implements BackingSlots {
 
             cache = config.getCache();
 
-            if (group != null)
+            if (group != null && !group.isEmpty())
                 load(cache.getAdvancedCache().getGroup(group).keySet());
             else
                 load(cache.keySet());
