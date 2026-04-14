@@ -166,14 +166,14 @@
                         -Djboss.modules.system.pkgs=org.jboss.byteman
                         -Dorg.jboss.byteman.transform.all
                         -javaagent:${project.build.directory}/lib/byteman.jar=listener:true</jvm.args.byteman>
-    <jvm.args.debug></jvm.args.debug>
+    <jvm.args.debug/>
     <!-- IP stack configs. -->
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <jvm.args.jacoco>-javaagent:${project.build.directory}/lib/jacocoagent.jar=destfile=${project.build.directory}/coverage-reports/jacoco-ut.exec,includes=*,append=true,output=file</jvm.args.jacoco>
     <!-- the need for -XX:MaxPermSize= was dropped as of Java SE 8 -->
     <!-- -XX:ParallelGCThreads=2 is no not available in Java SE 9 -->
     <jvm.args.memory>-Xms64m -Xmx1024m</jvm.args.memory>
-    <jvm.args.modular></jvm.args.modular>
+    <jvm.args.modular/>
     <jvm.args.other>-server</jvm.args.other>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <maven.compiler.source>11</maven.compiler.source>
@@ -251,7 +251,7 @@
     <version.org.eclipse.microprofile.reactive-streams-operators>3.0</version.org.eclipse.microprofile.reactive-streams-operators>
     <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
-    <version.org.jboss.arquillian.core>1.7.0.Alpha12</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.core>1.10.1.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.22</version.org.jboss.byteman>
     <version.org.jboss.invocation>2.0.0.Final</version.org.jboss.invocation>
@@ -432,7 +432,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -445,7 +445,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -458,7 +458,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -471,7 +471,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -485,7 +485,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -537,7 +537,7 @@
           <failsOnError>true</failsOnError>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <excludes>**/*$logger.java,**/*$bundle.java</excludes>
-          <useFile></useFile>
+          <useFile/>
           <!-- checkstyle is set to be run on particular modules by disabling skip -->
           <skip>${checkstyle.skip}</skip>
         </configuration>
