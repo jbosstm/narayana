@@ -52,7 +52,7 @@ public class BasicStateRecord extends StateManager
 
 	/**
 	 * This constructor will be used to recreate an object after a
-	 * crash has occured.
+	 * crash has occurred.
 	 */
 	public BasicStateRecord(Uid oldId)
 	{
