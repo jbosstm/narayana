@@ -67,43 +67,43 @@ public interface atI18NLogger {
     void warn_isInStoreInboundBridgeOrphanFilter(@Cause Throwable t);
 
     @LogMessage(level = WARN)
-    @Message(id = 27010, value = "XAException occured while subordinate rollback. '%s'")
+    @Message(id = 27010, value = "XAException occurred while subordinate rollback. '%s'")
     void warn_subordinateRollbackXAException(String cause, @Cause XAException e);
 
     @LogMessage(level = WARN)
-    @Message(id = 27011, value = "XAException occured while subordinate commit. '%s'")
+    @Message(id = 27011, value = "XAException occurred while subordinate commit. '%s'")
     void warn_subordinateCommitXAException(String cause, @Cause XAException e);
 
     @LogMessage(level = WARN)
-    @Message(id = 27012, value = "XAException occured while subordinate vote. '%s'")
+    @Message(id = 27012, value = "XAException occurred while subordinate vote. '%s'")
     void warn_subordinateVoteXAException(String cause, @Cause XAException e);
 
     @LogMessage(level = WARN)
-    @Message(id = 27013, value = "XAException occured while InboundBridgeRecoveryModule periodicWorkSecondPass. '%s'")
+    @Message(id = 27013, value = "XAException occurred while InboundBridgeRecoveryModule periodicWorkSecondPass. '%s'")
     void warn_inboundBridgeRecoveryModulePeriodicWorkSecondPass(String cause, @Cause XAException e);
 
     @LogMessage(level = WARN)
-    @Message(id = 27014, value = "XAException occured while InboundBridgeRecoveryModule addBridgesToMapping. '%s'")
+    @Message(id = 27014, value = "XAException occurred while InboundBridgeRecoveryModule addBridgesToMapping. '%s'")
     void warn_inboundBridgeRecoveryModuleAddBridgesToMapping(String cause, @Cause XAException e);
 
     @LogMessage(level = WARN)
-    @Message(id = 27015, value = "Exception occured while InboundBridgeRecoveryModule getUidsToRecover. '%s'")
+    @Message(id = 27015, value = "Exception occurred while InboundBridgeRecoveryModule getUidsToRecover. '%s'")
     void warn_InboundBridgeRecoveryModulegetUidsToRecover(String cause, @Cause Throwable t);
 
     @LogMessage(level = WARN)
-    @Message(id = 27016, value = "Exception occured while Tx Support getIntValue. '%s'")
+    @Message(id = 27016, value = "Exception occurred while Tx Support getIntValue. '%s'")
     void warn_txSupportGetIntValue(String cause, @Cause Throwable t);
 
     @LogMessage(level = DEBUG)
-    @Message(id = 27017, value = "Exception occured while Tx Support HttpRequest. '%s'")
+    @Message(id = 27017, value = "Exception occurred while Tx Support HttpRequest. '%s'")
     void info_txSupportHttpRequest(String cause, @Cause Throwable t);
 
     @LogMessage(level = WARN)
-    @Message(id = 27018, value = "Exception occured while Tx Support AddLocationHeader. '%s'")
+    @Message(id = 27018, value = "Exception occurred while Tx Support AddLocationHeader. '%s'")
     void warn_txSupportAddLocationHeader(String cause, @Cause Throwable t);
 
     @LogMessage(level = WARN)
-    @Message(id = 27019, value = "Exception occured while InboundBridgeParticipantDeserializer Participant deserialize. '%s'")
+    @Message(id = 27019, value = "Exception occurred while InboundBridgeParticipantDeserializer Participant deserialize. '%s'")
     void warn_deserializeInboundBridgeParticipantDeserializer(String cause, @Cause Throwable t);
 
     @LogMessage(level = WARN)
