@@ -606,7 +606,7 @@ function perf_tests {
     [ $? -eq 0 ] || fatal "git rebase failed"
   fi
 
-  BUILD_NARAYANA=n WORKSPACE=$(pwd) ./scripts/run_bm.sh || :
+  BUILD_NARAYANA=n WORKSPACE=$(pwd) ./.github/scripts/performance.sh || :
   res=$?
   cd $WORKSPACE
 
