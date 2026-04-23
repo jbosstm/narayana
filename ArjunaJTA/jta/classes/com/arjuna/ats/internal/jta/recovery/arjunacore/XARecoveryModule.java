@@ -551,7 +551,6 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
             }
         }
 
-
         // JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
         // JBTM-924 requires this here garbage collection, see JBTM-1155:
         if (_xidScans != null) {
@@ -757,7 +756,15 @@ public class XARecoveryModule implements ExtendedRecoveryModule {
             try {
                 Xid[] xids = xidsToRecover.toRecover();
 
-                if (xids != null) {
+                /* The difference between the size of xidsToRecover and xidsToRecover.toRecover()
+                 * is the number of orphan xids that are NOT yet old enough to be recovered during
+                 * the first recovery cycle that detected them. Another recovery cycle is needed.
+                 */
+                if (xidsToRecover.size() > xids.length) {
+                    hasWorkLeftToDo = true;
+                }
+
+                if (xids.length > 0) {
                     if (jtaLogger.logger.isDebugEnabled()) {
                         jtaLogger.logger.debug("Have "
                                 + xids.length

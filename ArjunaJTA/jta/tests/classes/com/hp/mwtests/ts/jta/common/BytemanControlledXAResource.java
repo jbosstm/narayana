@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BytemanControlledXAResource implements XAResource {
 
-    private static String _fileName = "BytemanControlledXAResource.bin";
+    private final static String _fileName = "BytemanControlledXAResource.bin";
     private static int _xaExceptionCode;
 
     public static void setCommitReturn(int commitExceptionCode) {
@@ -103,7 +103,7 @@ public class BytemanControlledXAResource implements XAResource {
     public void commit(Xid xid, boolean b) throws XAException {
         BytemanControlledXAResource._commitCallCounter.getAndIncrement();
 
-        deleteFile();
+        deleteXidFile();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class BytemanControlledXAResource implements XAResource {
 
     @Override
     public boolean isSameRM(XAResource xaResource) throws XAException {
-        return xaResource == this;
+        return xaResource instanceof BytemanControlledXAResource;
     }
 
     @Override
@@ -131,21 +131,7 @@ public class BytemanControlledXAResource implements XAResource {
         BytemanControlledXAResource._prepareCallCounter.getAndIncrement();
 
         try {
-            final int formatId = xid.getFormatId();
-            final byte[] gtrid = xid.getGlobalTransactionId();
-            final int gtrid_length = gtrid.length;
-            final byte[] bqual = xid.getBranchQualifier();
-            final int bqual_length = bqual.length;
-
-            File file = new File(BytemanControlledXAResource._fileName);
-            DataOutputStream fos = new DataOutputStream(new FileOutputStream(file));
-            fos.writeInt(formatId);
-            fos.writeInt(gtrid_length);
-            fos.write(gtrid, 0, gtrid_length);
-            fos.writeInt(bqual_length);
-            fos.write(bqual, 0, bqual_length);
-            fos.flush();
-            fos.close();
+            writeXidToFile(xid);
         } catch (IOException e) {
             throw new XAException(XAException.XAER_RMERR);
         }
@@ -204,7 +190,7 @@ public class BytemanControlledXAResource implements XAResource {
     public void rollback(Xid xid) throws XAException {
         BytemanControlledXAResource._rollbackCallCounter.getAndIncrement();
 
-        deleteFile();
+        deleteXidFile();
     }
 
     @Override
@@ -218,7 +204,25 @@ public class BytemanControlledXAResource implements XAResource {
 
     }
 
-    private void deleteFile() throws XAException {
+    public static void writeXidToFile(Xid xid) throws IOException {
+        final int formatId = xid.getFormatId();
+        final byte[] gtrid = xid.getGlobalTransactionId();
+        final int gtrid_length = gtrid.length;
+        final byte[] bqual = xid.getBranchQualifier();
+        final int bqual_length = bqual.length;
+
+        File file = new File(BytemanControlledXAResource._fileName);
+        DataOutputStream fos = new DataOutputStream(new FileOutputStream(file));
+        fos.writeInt(formatId);
+        fos.writeInt(gtrid_length);
+        fos.write(gtrid, 0, gtrid_length);
+        fos.writeInt(bqual_length);
+        fos.write(bqual, 0, bqual_length);
+        fos.flush();
+        fos.close();
+    }
+
+    public static void deleteXidFile() throws XAException {
         File file = new File(BytemanControlledXAResource._fileName);
         if (!file.exists()) {
             throw new XAException(XAException.XAER_RMERR);
