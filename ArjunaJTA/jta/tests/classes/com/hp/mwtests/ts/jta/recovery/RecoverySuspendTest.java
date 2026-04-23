@@ -6,6 +6,7 @@
 package com.hp.mwtests.ts.jta.recovery;
 
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
@@ -17,6 +18,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.BytemanControlledXAResource;
 import com.hp.mwtests.ts.jta.common.BytemanControlledXAResourceRecovery;
 import jakarta.transaction.HeuristicMixedException;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -56,6 +59,7 @@ public class RecoverySuspendTest {
     // fields read with byteman
     private final static int periodicRecoveryPeriod = 5;
     private final static int recoveryBackoffPeriod = 1;
+    private final static int safetyInterval = (periodicRecoveryPeriod + recoveryBackoffPeriod) * 1000  ;
 
     @BeforeAll
     public static void beforeClass() {
@@ -65,22 +69,15 @@ public class RecoverySuspendTest {
         // Let's go quick on this
         _recoveryConfig.setRecoveryBackoffPeriod(recoveryBackoffPeriod);
         _recoveryConfig.setPeriodicRecoveryPeriod(periodicRecoveryPeriod);
-        /*
-         * Set this interval to be equal to periodicRecoveryPeriod.
-         * The reason behind this choice is:
-         * 1) Activate the Recovery Manager
-         * 2) Create an XA transaction
-         * 3) After periodicRecoveryPeriod seconds, the XA txn can be
-         * processed by the XA Recovery Module
-         */
-        _jtaEnvironmentBean.setOrphanSafetyInterval(periodicRecoveryPeriod);
+
+        _jtaEnvironmentBean.setOrphanSafetyInterval(safetyInterval);
 
         _recoveryConfig.setRecoveryModuleClassNames(modules);
 
         _jtaEnvironmentBean.setXaResourceRecoveryClassNames(
                 List.of(BytemanControlledXAResourceRecovery.class.getName()));
 
-        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(List.of("*"));
+        _jtaEnvironmentBean.setXaRecoveryNodes(List.of("*"));
     }
 
     @AfterEach
@@ -99,8 +96,8 @@ public class RecoverySuspendTest {
     @Test
     @BMScripts(scripts = {
             @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledXAResource"),
-            @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_commitFailure"),
-            @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_recoverFailure"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledXAResource_commitFailure"),
+            @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledXAResource_recoverFailure"),
             @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest")
     })
     public void testSuspensionWhenThereIsXATransactionsToRecover() {
@@ -122,25 +119,11 @@ public class RecoverySuspendTest {
 
     @Test
     @BMScripts(scripts = {
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledXAResource"),
-            @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_commitFailure"),
-            @BMScript("RecoverySuspendTest/recoverySusptenTest_BytemanControlledXAResource_rollbackFailure"),
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_SkipAtomicActionRecoveryModule"),
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
-            @BMScript("RecoverySuspendTest/recoverySuspendTest_Rendezvous")
+        @BMScript("RecoverySuspendTest/recoverySuspendTest_BytemanControlledXAResource"),
+        @BMScript("RecoverySuspendTest/recoverySuspendTest_FailTest"),
+        @BMScript("RecoverySuspendTest/recoverySuspendTest_Rendezvous")
     })
-    public void testSuspensionWhenThereIsXAOrphanToRecover() {
-
-        /*
-         * AtomicActionRecoveryModule (AARM) is used only at the end of the test to clean the environment.
-         * In other words, instead of completing/deleting the transaction manually, the Recovery Manager
-         * will commit the transaction and, as a consequence, won't get stuck during suspension.
-         * NOTE: this is an artificial scenario as the transaction that the AARM eventually commits
-         * has already been rolled back by BytemanControlledXAResource (locally to itself).
-         * Thus, the transaction should have resulted in a heuristic outcome.
-         * The outcome achieved through the use of AARM isn't specs compliant,
-         * but it is good enough to clean the environment and test XARecoveryModule in isolation.
-         */
+    public void testSuspensionWhenThereIsAnXAOrphanToRecover() {
 
         // Set up the orphan filter
         XAResourceOrphanFilter xaResourceOrphanFilter = new NodeNameXAResourceOrphanFilter();
@@ -148,28 +131,35 @@ public class RecoverySuspendTest {
 
         // Make sure that the test environment is ready
         resetCounters();
-        BytemanControlledXAResource.setCommitReturn(XAException.XAER_RMFAIL);
+
+        try {
+            // This creates an orphan Xid in the XA resource
+            BytemanControlledXAResource.writeXidToFile(new XidImple(new Uid()));
+        } catch (IOException ioException) {
+            fail("Exception occurred while writing Xid to file: " + ioException.getMessage());
+        }
 
         /*
-         * BytemanControlledXAResource.getCommitCallCounter() should be 2 as:
-         * - One invocation from the normal commit procedure should fail
+         * BytemanControlledXAResource.getRollbackCallCounter() should be 1 as:
          * - One invocation from the recovery process should pass
-         * (i.e. when processing AtomicActionRecoveryModule)
-         * BytemanControlledXAResource.getRollbackCallCounter() should be 2 as:
-         * - One invocation from the recovery process should fail
-         * - One invocation from the recovery process should pass
-         * BytemanControlledXAResource.getRecoverCallCounter() should be 3
-         * as there is a total of 3 recovery process's passes
+         * BytemanControlledXAResource.getRecoverCallCounter() should be 2
+         * as there is a total of 2 recovery process's passes
          */
-        startTest(2, 2, 3, 0);
+        startTest(false, 0, 1, 2, 0);
 
         // Reset orphan filters setup
         _jtaEnvironmentBean.setXaResourceOrphanFilters(null);
     }
 
     private void startTest(int numberOfCommits, int numberOfRollbacks, int numberOfRecovers, int timeout) {
+        startTest(true, numberOfCommits, numberOfRollbacks, numberOfRecovers, timeout);
+    }
 
-        createXATransaction(new BytemanControlledXAResource(), timeout);
+    private void startTest(boolean createTransaction, int numberOfCommits, int numberOfRollbacks, int numberOfRecovers, int timeout) {
+
+        if (createTransaction) {
+            createXATransaction(new BytemanControlledXAResource(), timeout);
+        }
 
         // The Transaction System needs to be disabled, i.e. no new transactions can be created
         TxControl.disable();
