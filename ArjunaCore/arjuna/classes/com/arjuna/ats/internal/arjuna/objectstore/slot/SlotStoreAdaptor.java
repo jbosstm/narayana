@@ -31,7 +31,16 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
 
     // used for standalone bootstrap via StoreManager
     public SlotStoreAdaptor() throws IOException {
-        SlotStoreEnvironmentBean envBean = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
+        store = new SlotStore(BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class));
+    }
+
+    /**
+     * Initialise the adaptor with an environment bean
+     * {@see com.arjuna.common.internal.util.ClassloadingUtility#loadAndInstantiateClass(Class, String, String)}
+     * @param envBean a bean containing the config for the slot store
+     * @throws IOException  if the required storage can't be initialized
+     */
+    public SlotStoreAdaptor(SlotStoreEnvironmentBean envBean) throws IOException {
         store = new SlotStore(envBean);
     }
 

@@ -215,7 +215,7 @@ public class InfinispanStoreEnvironmentBean extends SlotStoreEnvironmentBean imp
         if(infinispanSlotKeyGenerator == null && slotKeyGeneratorClassName != null)
         {
             synchronized (this) {
-                if(infinispanSlotKeyGenerator == null && slotKeyGeneratorClassName != null) {
+                if(infinispanSlotKeyGenerator == null && (slotKeyGeneratorClassName != null && !slotKeyGeneratorClassName.isBlank())) {
                     infinispanSlotKeyGenerator = ClassloadingUtility.loadAndInstantiateClass(InfinispanSlotKeyGenerator.class, slotKeyGeneratorClassName, null);
                 }
             }
