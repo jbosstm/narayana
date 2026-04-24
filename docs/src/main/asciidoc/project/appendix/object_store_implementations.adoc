@@ -181,4 +181,108 @@ These should be garbage collected by the system,(or the recovery sub-system, eve
 
 Check the Configuration Options table for how to configure the LogStore.
 
+==== InfinispanSlotStore
+
+[WARNING]
+====
+This is an experimental feature. It is not recommended for production systems and may contain breaking changes in future releases. If the store is enabled on startup you should notice a warning message in the logs:
+
+`ARJUNA012419: InfinispanSlotStore: Initializing experimental feature. Do not use in production.`
+====
+
+With this store, transaction logs are stored in an infinispan cache. The user is responsible for configuring the cache in such a way that the store can serve as transaction log storage, for example cache writes should be backed by persistent storage so that they can be recovered in the event of the loss of all nodes hosting the cache.
+
+The InfinispanSlotStore is implemented internally using the Narayana SlotStore feature whose design is conceptually an array. The SlotStore is divided into a number of elements, each capable of holding one entry of up to a given size. The SlotStore has pluggable sub-implementations, termed backends, and the InfinispanSlotStore is one such backend.
+
+.Configuration Properties
+
+ObjectStoreEnvironmentBean.objectStoreType::
+Defines the object store implementation and must be set to `com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor`.
+As is usual with most object store types, it is recommended to also set the state and communication stores to the same type, ie `ObjectStoreEnvironmentBean.stateStore.objectStoreType` and `ObjectStoreEnvironmentBean.communicationStore.objectStoreType`
+properties.
+
+SlotStoreEnvironmentBean.backingSlotsClassName::
+Defines the SlotStore backend and must be set to `com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlots` to enable the feature.
+
+SlotStoreEnvironmentBean.numberOfSlots::
+Sets the desired number of slots for the store.
+Should equal the maximum number of unresolved transactions expected at any given time,
+including those in-flight and awaiting recovery.
+[WARNING]
+====
+Caution: reducing the number of slots in a non-empty store may result in data loss.
+====
+The default is 256.
+
+SlotStoreEnvironmentBean.bytesPerSlot::
+Sets the desired maximum size of entries in the store. A typical transaction record is less than 1KB.
+The optimum sizing depends on both the infinispan storage and whether write-through caches are used (which they should be for transaction logs).
+[WARNING]
+====
+Modifying the size of slots in a non-empty store may result in data loss.
+====
+Default: 4096
+
+InfinispanStoreEnvironmentBean.infinispanConfigFileName::
+The infinispan xml based cache configuration. The config file name relative to the resource directory
+so begins with a slash char
+[[NOTE]]
+====
+Properties set in this infinispan xml config file will override any related config the beans, including 
+`cacheName`, `nodeAddress`, `storeDir` and `groupName`.
+====
+Default: /infinispan-config.xml
+
+InfinispanStoreEnvironmentBean.cacheName::
+The name of the cache used to store the key/value pairs for this slot store
+
+Default: clusteredObjectStore
+
+InfinispanStoreEnvironmentBean.cache::
+Set the infinispan cache that the InfinispanSlotStore should use.
+
+InfinispanStoreEnvironmentBean.storeDir::
+When infinispan write through caching is configured set the filesystem location used for the storage.
+If storeDir is not an absolute path then it will be interpreted as being relative to the User's current working directory
+(as defined by the user.dir system property).
+
+[WARNING]
+====
+This setting only applies for programmatic configuration of the cache. If `infinispanConfigFileName` is configured then the cache config will use that file instead.
+====
+Default: infinispan-caches
+
+InfinispanStoreEnvironmentBean.ignoreReturnValues::
+When set to true the return value of cache write operations will be ignored to avoid needless remote calls.
+Default: true
+
+InfinispanStoreEnvironmentBean.nodeAddress::
+The address of the node within a cluster.
+Used in clustered and embedded scenarios to identify which member of the JGroups cluster
+the JVM is currently representing.
+
+InfinispanStoreEnvironmentBean.groupName::
+== Cluster Configuration Considerations
+1. A single member must run the recovery manager and a new one started if it fails (aka an HA singleton)
+2. Top down recovery via the AtomicActionRecoveryModule will recover all transactions in the store unless the
+recovery groupName is set in which case the recovery manager will only recover AtomicActions created
+with that groupName.
+3. Any member can create and commit transactions ({@link com.arjuna.ats.arjuna.recovery.TransactionStatusManager}
+will be used during recovery to decide if the creator is still running)
+<p>
+The group name may also be used in Distributed Mode which can provide orders of magnitude improvements in
+scalability than can the Replication Mode. For example if a large cluster is supporting multi-tenancy
+(multiple transaction and recovery managers) then Distributed Mode together with key grouping can ensure
+that cache entries for a particular group are co-located on a group of cluster nodes rather than being
+scattered over the entire cluster.
+
+leave unset if group name functionality is not required
+
+InfinispanStoreEnvironmentBean.slotKeyGeneratorClassName::
+The classname of the class that should be used to generate unique slot keys. The class should implement the interface
+`com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlotKeyGenerator`.
+If unset then a strategy based on `com.arjuna.ats.arjuna.common.Uid` will be used.
+
+
 :sectnums:
+<HERE>
