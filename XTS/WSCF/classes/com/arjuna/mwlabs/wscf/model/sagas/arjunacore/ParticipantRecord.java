@@ -198,19 +198,19 @@ public class ParticipantRecord extends
 				}
                 catch (WrongStateException ex)
                 {
-                    // this indicates a fail occured and was detected during cancel (or compensation?) so we return a
+                    // this indicates a fail occurred and was detected during cancel (or compensation?) so we return a
                     // HEURISTIC_HAZARD which will place the participant in the heuristic list
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 }
                 catch (CancelFailedException ex)
                 {
-                    // this indicates a fail occured and was detected during cancel so we return a HEURISTIC_HAZARD
+                    // this indicates a fail occurred and was detected during cancel so we return a HEURISTIC_HAZARD
                     // which will place the participant in the heuristic list
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 }
                 catch (CompensateFailedException ex)
                 {
-                    // this indicates a fail occured during compensation so we return a HEURISTIC_HAZARD
+                    // this indicates a fail occurred during compensation so we return a HEURISTIC_HAZARD
                     // which will place the participant in the heuristic list
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 }

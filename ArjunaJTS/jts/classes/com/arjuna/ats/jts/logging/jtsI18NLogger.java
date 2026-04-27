@@ -306,7 +306,7 @@ public interface jtsI18NLogger {
 	@Message(id = 22093, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_context_codeccreate();
 
-	@Message(id = 22094, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
+	@Message(id = 22094, value = "{0} - a failure occurred when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_orbspecific_javaidl_interceptors_context_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 
@@ -331,7 +331,7 @@ public interface jtsI18NLogger {
 	@Message(id = 22100, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_interposition_codeccreate();
 
-	@Message(id = 22101, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
+	@Message(id = 22101, value = "{0} - a failure occurred when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_orbspecific_javaidl_interceptors_interposition_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 

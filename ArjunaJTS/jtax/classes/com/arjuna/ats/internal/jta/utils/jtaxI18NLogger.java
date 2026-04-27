@@ -266,7 +266,7 @@ public interface jtaxI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_could_not_enlist_xar(XAResource xar, Object[] params, @Cause() Exception e1);
 
-	@Message(id = 24062, value = "ORB ''{0}'' occured on one phase commit for xid {1}", format = MESSAGE_FORMAT)
+	@Message(id = 24062, value = "ORB ''{0}'' occurred on one phase commit for xid {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_jtax_resources_jts_orbspecific_cant_commit_onephase(Xid xid, Class<? extends Throwable> corbaException, @Cause() Throwable e);
 	
