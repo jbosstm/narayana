@@ -28,9 +28,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  performance-test:
-    name: Testing PERFORMANCE with JDK ${{ inputs.jdk_version }}
+  # ---------------------------------------------------------------------------
+  # Build Narayana once and upload Maven artifacts
+  # ---------------------------------------------------------------------------
+  build-narayana:
+    name: Build Narayana (JDK ${{ inputs.jdk_version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    outputs:
+      narayana-version: ${{ steps.build.outputs.narayana-version }}
 
     steps:
       - name: Load Dynamic Environment Variables
@@ -70,32 +77,168 @@ jobs:
           rm -rf ~/.m2/repository/org/jboss/narayana
           rm -rf ~/.m2/repository/org/wildfly
 
-      - name: PERFORMANCE testing axis
-        id: performance
+      - name: Build SPI branch
+        if: ${{ env.SPI_BRANCH != '' }}
+        run: |
+          git clone https://github.com/jbosstm/jboss-transaction-spi.git -o jbosstm
+          cd jboss-transaction-spi
+          git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+          git checkout "$SPI_BRANCH"
+          cd ..
+          ./build.sh -f jboss-transaction-spi/pom.xml -B clean install
+
+      - name: Build Narayana
+        id: build
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          PROFILE=PERFORMANCE ./.github/scripts/narayana.sh
+          ./build.sh -B -Pcommunity -DskipTests clean install
+          echo "narayana-version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v7
-        if: ${{ failure() && steps.performance.conclusion == 'failure' || cancelled() && steps.performance.conclusion == 'cancelled' }}
+      - name: Upload Narayana Maven artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: narayana-m2-jdk${{ inputs.jdk_version }}
+          retention-days: 1
+          path: ~/.m2/repository/org/jboss/narayana/
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Run each benchmark group in parallel via matrix strategy
+  # ---------------------------------------------------------------------------
+  benchmarks:
+    name: ${{ matrix.benchmark }} (JDK ${{ inputs.jdk_version }})
+    needs: build-narayana
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        benchmark: [stores, comparisons, rts, transports, journal]
+
+    steps:
+      - name: Load Dynamic Environment Variables
+        uses: actions/github-script@v9
+        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
+        env:
+          ENV_JSON: ${{ inputs.environment_variables }}
+        with:
+          script: |
+            const envs = JSON.parse(process.env.ENV_JSON);
+            for (const [key, value] of Object.entries(envs)) {
+              core.exportVariable(key, value);
+              core.info(`Set ${key}=${value}`);
+            }
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+
+      - name: Describe Environment
+        run: |
+          echo "uname -a:"; uname -a
+
+          echo "os-release:"
+          [ -f /etc/redhat-release ] && cat /etc/redhat-release
+          [ -f /etc/os-release ] && cat /etc/os-release
+
+          echo "java version:"; java -version
+          echo "free:"; command -v free >/dev/null && free -m
+          echo "cpuinfo:"; [ -r /proc/cpuinfo ] && cat /proc/cpuinfo
+          echo "meminfo:"; [ -r /proc/meminfo ] && cat /proc/meminfo
+          echo "devices:"; [ -r /proc/devices ] && cat /proc/devices
+          echo "scsi:"; [ -r /proc/scsi/scsi ] && cat /proc/scsi/scsi
+          echo "partitions:"; [ -r /proc/partitions ] && cat /proc/partitions
+          echo "lspci:"; command -v lspci >/dev/null && timeout 5s lspci || echo "skipped"
+          echo "lsusb:"; command -v lsusb >/dev/null && timeout 5s lsusb || echo "skipped"
+          echo "lsblk:"; command -v lsblk >/dev/null && timeout 5s lsblk || echo "skipped"
+          echo "df:"; df
+          echo "mount:"; mount | grep -E 'ext[234]|xfs|btrfs' || true
+
+      - name: Download Narayana Maven artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: narayana-m2-jdk${{ inputs.jdk_version }}
+          path: ~/.m2/repository/org/jboss/narayana/
+
+      - name: Clone performance repository
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git clone https://github.com/jbosstm/performance.git performance
+          if [ -n "$PERF_PR_NUMBER" ]; then
+            cd performance
+            git fetch origin +refs/pull/*/head:refs/remotes/origin/pull/*/head
+            git checkout "remotes/origin/pull/$PERF_PR_NUMBER/head"
+            git pull --rebase --ff-only origin main
+            cd ..
+          fi
+
+      - name: Run ${{ matrix.benchmark }} benchmark
+        id: benchmark
+        env:
+          OVERRIDE_NARAYANA_VERSION: ${{ needs.build-narayana.outputs.narayana-version }}
+        run: |
+          cd performance
+          WORKSPACE=$(pwd) ./.github/scripts/run-benchmark.sh "${{ matrix.benchmark }}"
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v7
+        if: ${{ failure() && steps.benchmark.conclusion == 'failure' || cancelled() && steps.benchmark.conclusion == 'cancelled' }}
         with:
           retention-days: 30
-          name: performance-logs-jdk${{ inputs.jdk_version }}
+          name: benchmark-${{ matrix.benchmark }}-logs-jdk${{ inputs.jdk_version }}
           path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
+            performance/**/*.*log*
+            performance/**/ObjectStore*/**
+            performance/**/tx-object-store/**
+            performance/**/*tx-object-store.zip
+            performance/**/target/*surefire-reports*/**
+            performance/**/target/*failsafe-reports*/**
           if-no-files-found: warn
 
-      - name: Uploading PERFORMANCE results
+      - name: Upload results
+        uses: actions/upload-artifact@v7
+        with:
+          retention-days: 30
+          name: benchmark-${{ matrix.benchmark }}-results-jdk${{ inputs.jdk_version }}
+          path: |
+            performance/**/target/**/*.csv
+            performance/**/benchmark*.png
+            performance/**/benchmark*.txt
+            performance/**/results.txt
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------------------
+  # Collect all benchmark results into a single artifact
+  # ---------------------------------------------------------------------------
+  collect-results:
+    name: Collect Results (JDK ${{ inputs.jdk_version }})
+    needs: benchmarks
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download all benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-*-results-jdk${{ inputs.jdk_version }}
+          path: collected-results/
+          merge-multiple: false
+
+      - name: List collected results
+        run: |
+          echo "=== Collected benchmark results ==="
+          find collected-results/ -type f | sort
+          echo "==================================="
+
+      - name: Upload combined results
         uses: actions/upload-artifact@v7
         with:
           retention-days: 30
           name: performance-results-jdk${{ inputs.jdk_version }}
-          path: |
-            **/target/**/*.csv
-          if-no-files-found: error
+          path: collected-results/
+          if-no-files-found: warn
