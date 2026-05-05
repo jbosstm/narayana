@@ -320,9 +320,17 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         // stop the primary
         primaryStore.stop();
 
-        String newPrimary = dm.getCacheTopology().getDistribution(aKey).primary().getMachineId();
-        // a new primary store should have been chosen since the old one was removed from the cluster when we stopped it:
-        Assertions.assertNotEquals(primary, newPrimary);
+        // a new primary store should be chosen since the old one was removed from the cluster when we stopped it:
+        // wait for the cluster to rebalance
+        try {
+            Thread.sleep(200); // allow some time for the topology change to be detected and re-balance
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            String newPrimary = dm.getCacheTopology().getDistribution(aKey).primary().getMachineId();
+
+            Assertions.assertNotEquals(primary, newPrimary);
+        }
 
         for (Store s : stores) {
             // make sure we don't try accessing the cache we just stopped
