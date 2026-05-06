@@ -158,7 +158,7 @@ jobs:
           echo "mount:"; mount | grep -E 'ext[234]|xfs|btrfs' || true
 
       - name: Download Narayana Maven artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: narayana-m2-jdk${{ inputs.jdk_version }}
           path: ~/.m2/repository/org/jboss/narayana/
@@ -223,7 +223,7 @@ jobs:
 
     steps:
       - name: Download all benchmark results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: benchmark-*-results-jdk${{ inputs.jdk_version }}
           path: collected-results/
