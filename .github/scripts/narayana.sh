@@ -213,16 +213,16 @@ function build_as {
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WILDFLY_CLONED_REPO}/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
 
+  # build the as without executing tests
+  export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -Prelease -B -DallTests -DskipTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+  [ $? -eq 0 ] || fatal "AS build failed"
+
   # execute all tests only if AS_TESTS is set to 1
   if [ "$AS_TESTS" = 1 ]; then
-      WILDFLY_ARGS=${WILDFLY_ARGS:-"-DallTests"}
-  else
-      WILDFLY_ARGS=${WILDFLY_ARGS:-"-DskipTests"}
+      JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh verify -Prelease -B -fae -DallTests $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
+      [ $? -eq 0 ] || fatal "AS tests failed"
   fi
-
-  export MAVEN_OPTS="-XX:MaxMetaspaceSize=512m $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m $JAVA_OPTS" ./build.sh clean install -Prelease -B -fae $WILDFLY_ARGS $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
-  [ $? -eq 0 ] || fatal "AS build failed"
 
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
   JBOSS_HOME=${WILDFLY_CLONED_REPO}/dist/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
