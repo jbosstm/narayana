@@ -215,7 +215,7 @@ function build_as {
 
   # execute all tests only if AS_TESTS is set to 1
   if [ "$AS_TESTS" = 1 ]; then
-      WILDFLY_ARGS=${WILDFLY_ARGS:-"-DallTests"}
+      WILDFLY_ARGS=${WILDFLY_ARGS:-"-Dskip.preview -DallTests"}
   else
       WILDFLY_ARGS=${WILDFLY_ARGS:-"-DskipTests"}
   fi
