@@ -23,6 +23,7 @@ import org.infinispan.distribution.DistributionManager;
 import org.infinispan.distribution.group.Grouper;
 import org.infinispan.metadata.EmbeddedMetadata;
 import org.infinispan.metadata.Metadata;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +42,7 @@ import java.util.regex.Matcher;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InfinispanGrouperTest extends InfinispanTestBase {
+    private static final Logger log = Logger.getLogger(InfinispanGrouperTest.class);
 
     private List<Store> stores;
 
@@ -322,15 +324,10 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
 
         // a new primary store should be chosen since the old one was removed from the cluster when we stopped it:
         // wait for the cluster to rebalance
-        try {
-            Thread.sleep(200); // allow some time for the topology change to be detected and re-balance
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            String newPrimary = dm.getCacheTopology().getDistribution(aKey).primary().getMachineId();
+        int maxRetries = 5;
+        String newPrimary = waitForTopologyChange(maxRetries, primary, dm, aKey);
 
-            Assertions.assertNotEquals(primary, newPrimary);
-        }
+        Assertions.assertNotEquals(primary, newPrimary);
 
         for (Store s : stores) {
             // make sure we don't try accessing the cache we just stopped
@@ -341,6 +338,48 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
         }
 
         recoveryStore.stop();
+    }
+
+    private String waitForTopologyChange(int maxRetries, String oldPrimary, DistributionManager dm, Object aKey) {
+        int INITIAL_DELAY = 200; // 200 ms
+        int MAX_DELAY = 1000; // 1 second
+        long tot = 0;
+        // ie millis before giving up wil be 200 (INITIAL_DELAY) + 400 + 800 + 1000 (MAX_DELAY) + 1000 ... up to maxRetries
+        // so a maximum of 3400 milliseconds with 5 retries
+
+        String newPrimary = dm.getCacheTopology().getDistribution(aKey).primary().getMachineId();
+
+        // the optimistic check should see the topology change immediately
+        if (!oldPrimary.equals(newPrimary)) {
+            log.debugf("waitForTopologyChange succeeded (took %d ms)%n", tot);
+            return newPrimary;
+        }
+
+        // the pessimistic check requires periodic retries
+        for (int i = 0; i < maxRetries; i++) {
+            long waitFor = (long) (INITIAL_DELAY * Math.pow(2, i));
+
+            waitFor = Math.min(waitFor, MAX_DELAY);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(waitFor);
+                // keep a track of how long it takes for the topology to change
+                // (useful for tuning against different build environments)
+                tot += waitFor;
+                newPrimary = dm.getCacheTopology().getDistribution(aKey).primary().getMachineId();
+
+                if (!oldPrimary.equals(newPrimary)) {
+                    log.debugf("waitForTopologyChange succeeded (took %d ms)%n", tot);
+                    return newPrimary;
+                }
+            } catch (InterruptedException ie) {
+                fail("waitForTopologyChange: interrupted");
+            }
+        }
+
+        log.debugf("waitForTopologyChange failed (took %d ms)%n", tot);
+
+        return oldPrimary; // ran out of time, return the existing primary
     }
 
     /*
