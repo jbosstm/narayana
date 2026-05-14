@@ -65,6 +65,13 @@ jobs:
           java-version: ${{ inputs.jdk_version }}
           cache: 'maven'
 
+      - name: Update hosts - linux
+        run: |
+          cat /etc/hosts
+          sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
+          sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
+          sudo sysctl -w fs.file-max=2097152
+
       - name: Remove Narayana and WildFly from the Maven cache
         run: |
           rm -rf ~/.m2/repository/org/jboss/narayana
