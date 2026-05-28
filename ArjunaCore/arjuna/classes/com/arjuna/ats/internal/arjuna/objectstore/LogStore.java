@@ -726,7 +726,7 @@ public class LogStore extends FileSystemStore
             byte[] uidString = objUid.stringForm().getBytes(StandardCharsets.UTF_8);
             int buffSize = _redzone.length + uidString.length + imageSize + 8;  // don't put in endOfLog since we keep overwriting that.
             RandomAccessFile ofile = null;
-            java.nio.channels.FileLock lock = null;
+
 
             if (imageSize > 0)
             {
@@ -815,18 +815,6 @@ public class LogStore extends FileSystemStore
                     throw new ObjectStoreException(
                             "ShadowingStore::write_state() - write failed for "
                                     + fname + ": " + e, e);
-                }
-                finally
-                {
-                    try
-                    {
-                        if (lock != null)
-                            lock.release();
-                    }
-                    catch (IOException ex)
-                    {
-                        tsLogger.i18NLogger.warn_LogStore_1(ex);
-                    }
                 }
             }
 
