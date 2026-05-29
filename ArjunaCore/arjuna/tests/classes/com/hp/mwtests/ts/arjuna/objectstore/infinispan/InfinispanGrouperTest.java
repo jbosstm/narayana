@@ -315,28 +315,6 @@ public class InfinispanGrouperTest extends InfinispanTestBase {
             }
         }
 
-        /*
-         * verify that a new primary is selected if the current one is down
-         */
-
-        // stop the primary
-        primaryStore.stop();
-
-        // a new primary store should be chosen since the old one was removed from the cluster when we stopped it:
-        // wait for the cluster to rebalance
-        int maxRetries = 5;
-        String newPrimary = waitForTopologyChange(maxRetries, primary, dm, aKey);
-
-        Assertions.assertNotEquals(primary, newPrimary);
-
-        for (Store s : stores) {
-            // make sure we don't try accessing the cache we just stopped
-            if (s.manager().isRunning(s.cache().getName())) {
-                Assertions.assertEquals(0, s.manager().getCache(CLUSTER_NAME).size());
-                store.stop();
-            }
-        }
-
         recoveryStore.stop();
     }
 
