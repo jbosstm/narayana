@@ -1,8 +1,8 @@
 Thanks for submitting your Pull Request!
 
 Please refer to our [guidelines for making contributions](https://github.com/jbosstm/narayana/blob/main/CONTRIBUTING.md) when creating your pull request. In particular, it helps the reviewer if you ensure that the:
-- [ ] Pull Request title is properly formatted: JBTM-XYZ Subject
-- [ ] Pull Request contains a link to the JIRA issue(s) and that they contain sufficient information for the reviewer to be able to gauge whether the proposed changes correctly address the issue
+- [ ] Pull Request title is properly formatted: [#XXXX] Subject
+- [ ] Pull Request contains a link to the [GitHub issue(s)](https://github.com/jbosstm/narayana/issues) and that they contain sufficient information for the reviewer to be able to gauge whether the proposed changes correctly address the issue
 
 The build axes can be controlled either by prefixing them with a `!` or by adding only the ones needed:
 
