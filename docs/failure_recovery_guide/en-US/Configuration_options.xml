@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
+]>
+<chapter>
+    <title>Configuration Options</title>
+    <section>
+        <title>Recovery Protocol in OTS - Overview</title>
+        <para>JBossTS is highly configurable. For full details of the configuration mechanism used, see the Programmer's Guide.</para>
+        <para>The following table shows the configuration features, with default values shown in italics. More details about each option can be found in the relevant sections of this document.</para>
+        <note>
+            <para>You need to prefix each property in this table with the string com.arjuna.ats.arjuna.recovery. The
+prefix has been removed for formatting reasons, and has been replaced by ...</para>
+        </note>
+        <informaltable>
+            <tgroup cols="3">
+                <thead>
+                    <row>
+                        <entry>Configuration Name</entry>
+                        <entry>Possible Values</entry>
+                        <entry>Description</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>...periodicRecoveryPeriod</para>
+                        </entry>
+                        <entry>
+                            <para>120/any positive integer</para>
+                        </entry>
+                        <entry>
+                            <para>
+              Interval between recovery attempts, in seconds.
+            </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>...recoveryBackoffPeriod</para>
+                        </entry>
+                        <entry>
+                            <para>10/any positive integer</para>
+                        </entry>
+                        <entry>
+                            <para>
+              Interval between first and second recovery passes, in seconds. 
+            </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>...expiryScanInterval</para>
+                        </entry>
+                        <entry>
+                            <para>12/any integer</para>
+                        </entry>
+                        <entry>
+                            <para>
+              Interval between expiry scans, in hours. 0 disables scanning. Negative values postpone the first run.
+            </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>...transactionStatusManagerExpiryTime</para>
+                        </entry>
+                        <entry>
+                            <para>12/any positive integer</para>
+                        </entry>
+                        <entry>
+                            <para>
+               Interval after which a non-contactable process is considered dead. 0 = never.
+            </para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </informaltable>
+    </section>
+</chapter>

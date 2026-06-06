@@ -1,0 +1,2 @@
+<rmic compiler="com.arjuna.common.tools.rmictool.RMICTool" classname="RMIObjectImpl" base="build-dir"
+  verify="true" iiop="true" iiopopts="-poa" classpathref="build.classpath" />
