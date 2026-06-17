@@ -467,7 +467,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration combine.self="append">
+        <configuration combine.self="merge">
           <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
           <childDelegation>true</childDelegation>
