@@ -158,3 +158,9 @@ JTA and JTA in turn a superset of Core.
 pom.xml, even when building standalone releases. The version of WildFly to use is determined by the top level pom.xml
 
 Maven is provided via [maven wrapper](https://github.com/takari/maven-wrapper) with command `./mvnw`.
+=======
+IMPORTANT: Please use https://github.com/jbosstm/narayana
+
+This is a backup of an old repo, provided for reference only.
+
+At least one dependency in it does have a CVE, and generally code in it may be vulnerable to CVEs and other security vulnerabilities, defects and so on.
