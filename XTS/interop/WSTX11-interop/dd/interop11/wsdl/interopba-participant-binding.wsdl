@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ -->
+<definitions
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl"
+        xmlns:tns="http://fabrikam123.com/wsba"
+        targetNamespace="http://fabrikam123.com/wsba"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <import
+       namespace="http://fabrikam123.com/wsba"
+       location="interopba.wsdl"/>
+
+    <binding name="Participant_SOAPBinding" type="tns:ParticipantPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="Cancel">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/Cancel"/>
+        <input message="tns:Cancel">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Exit">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/Exit"/>
+        <input message="tns:Exit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Fail">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/Fail"/>
+        <input message="tns:Fail">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="CannotComplete">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/CannotComplete"/>
+        <input message="tns:CannotComplete">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="ParticipantCompleteClose">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/ParticipantCompleteClose"/>
+        <input message="tns:ParticipantCompleteClose">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="CoordinatorCompleteClose">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/CoordinatorCompleteClose"/>
+        <input message="tns:CoordinatorCompleteClose">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="UnsolicitedComplete">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/UnsolicitedComplete"/>
+        <input message="tns:UnsolicitedComplete">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Compensate">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/Compensate"/>
+        <input message="tns:Compensate">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="CompensationFail">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/CompensationFail"/>
+        <input message="tns:CompensationFail">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="ParticipantCancelCompletedRace">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/ParticipantCancelCompletedRace"/>
+        <input message="tns:ParticipantCancelCompletedRace">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="MessageLossAndRecovery">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/MessageLossAndRecovery"/>
+        <input message="tns:MessageLossAndRecovery">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="MixedOutcome">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/MixedOutcome"/>
+        <input message="tns:MixedOutcome">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+    </binding>
+
+    <service name="ParticipantService">
+      <port binding="tns:Participant_SOAPBinding" name="ParticipantPortType">
+	<wsaw:UsingAddressing required="true"/>
+	<soap:address location="http://localhost:9000/interopba/ParticipantService"/>
+      </port>
+    </service>
+
+</definitions>

@@ -1,0 +1,7 @@
+<entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
+  com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+  com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
+  com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule
+  com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule
+  com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule
+</entry>
