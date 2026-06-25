@@ -2,7 +2,7 @@
 name: Request for Enhancement
 about: Suggest an idea for this project
 title: "[RFE]"
-labels: type/enhancement
+labels: triage/needs-review
 assignees: ''
 type: Feature
 
