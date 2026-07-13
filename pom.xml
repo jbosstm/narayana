@@ -184,7 +184,7 @@
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
-    <version.com.github.spotbugs.spotbugs-maven-plugin>4.10.2.0</version.com.github.spotbugs.spotbugs-maven-plugin>
+    <version.com.github.spotbugs.spotbugs-maven-plugin>4.10.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
 
     <version.doxia>1.11.1</version.doxia>
     <version.infinispan>16.2.1</version.infinispan>
