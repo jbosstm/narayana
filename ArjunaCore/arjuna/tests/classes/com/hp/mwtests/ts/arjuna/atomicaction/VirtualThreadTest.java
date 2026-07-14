@@ -7,14 +7,11 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 import com.arjuna.ats.arjuna.AtomicAction;
 
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 
-import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCommitThreadPool;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.jupiter.api.Assertions;
@@ -271,9 +268,9 @@ class VirtualThreadTest {
         aa.commit(true); // report any heuristic outcome
 
         // verify that prepare and commit were called and that the correct action was associated
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
-        Arrays.stream(ars).forEach(ar -> assertFalse(ar.abortCalled));
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.commitCalled));
+        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled.get()));
+        Arrays.stream(ars).forEach(ar -> assertFalse(ar.abortCalled.get()));
+        Arrays.stream(ars).forEach(ar -> assertTrue(ar.commitCalled.get()));
 
         Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
         Arrays.stream(ars).forEach(ar -> assertNull(ar.abortAction));
@@ -322,9 +319,9 @@ class VirtualThreadTest {
         aa.commit(true); // report heuristics
 
         // verify that prepare and abort were called and that the correct action was associated
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.abortCalled)); // because prepare failed
-        Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled));
+        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled.get()));
+        Arrays.stream(ars).forEach(ar -> assertTrue(ar.abortCalled.get())); // because prepare failed
+        Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled.get()));
 
         Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
         Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.abortAction));
@@ -335,7 +332,7 @@ class VirtualThreadTest {
                             r -> VIRTUAL_THREADS_GROUP_NAME.equals(r.getPrepareThreadGroup()))
                     .count();
             long abortsOnVT = Arrays.stream(ars).filter(
-                            r -> r.getAbortThreadGroup().equals("VirtualThreads"))
+                    r -> VIRTUAL_THREADS_GROUP_NAME.equals(r.getAbortThreadGroup()))
                     .count();
 
             // since the middle resource failed to prepare the last one is not asked to prepare since the action aborts
@@ -344,6 +341,17 @@ class VirtualThreadTest {
             assertEquals(2, preparesOnVT);
             // asynchronous abort is not supported if the caller has requested heuristic reporting - see BasicAction#End
             assertEquals(0, abortsOnVT); // aborting with a virtual thread
+        }
+    }
+
+    /*
+     * runs testPrepareFailIgnoreHeuristics in a loop to test any potential races between heuristic reporting and
+     * resource abort
+     */
+    @Test
+    public void testPrepareFailIgnoreHeuristicsExpectAbort() {
+        for (int i = 0; i < 10; i++) {
+            testPrepareFailIgnoreHeuristics();
         }
     }
 
@@ -358,68 +366,34 @@ class VirtualThreadTest {
                 new SimpleAbstractRecord(3, false)
         };
         AtomicAction aa = new AtomicAction();
-        // since the abort runs async we need to register a synchronization to determine when it has finished
-        final Boolean[] completed = {false};
-        var sr = new SynchronizationRecord() {
-            final Uid uid = new Uid();
-
-            @Override
-            public int compareTo(Object o) {
-                return 0;
-            }
-
-            @Override
-            public Uid get_uid() {
-                return uid;
-            }
-
-            @Override
-            public boolean beforeCompletion() {
-                return true;
-            }
-
-            @Override
-            public boolean afterCompletion(int status) {
-                completed[0] = true;
-                return true;
-            }
-
-            @Override
-            public boolean isInterposed() {
-                return false;
-            }
-        };
 
         aa.begin();
-        aa.addSynchronization(sr);
         Arrays.stream(ars).forEach(aa::add);
 
-        int status = aa.commit(false); // do not report heuristics
+        aa.commit(false); // do not report heuristics because the completion phase runs async
 
-        // Since we didn't ask commit to report heuristics we aren't guaranteed that it has committed yet
-        // But note that the code runs so fast that just the mere fact of registering the synchronization is enough
-        // to allow the async abort to finish
-        if (status == ActionStatus.COMMITTING) {
-            for (int i = 0; i < 10; i++) {
-                if (!completed[0]) {
-                    Assertions.assertDoesNotThrow(() -> Thread.sleep(50), "interrupted ");
-                }
+        // verify that abort were called
+        for (SimpleAbstractRecord ar : ars) {
+            int i = 0;
+            // Since we didn't ask commit to report heuristics we aren't guaranteed that it has committed yet so
+            // wait for a maximum of 500 milliseconds (normally a max of a few millis is enough) before giving up
+            // (note that registering a synchronisation won't help because the Arjuna TM treats the completion phase
+            // as asynchronous when commit is called with report_heuristics = false)
+            while (!ar.isFinished() && i++ < 50) {
+                Assertions.assertDoesNotThrow(() -> Thread.sleep(10), "interrupted ");
             }
-            assertTrue(completed[0], "AtomicAction still committing after 500 ms");
+            assertTrue(ar.abortCalled.get()); // fail if abort wasn't called
         }
+        Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled.get()));
 
-        // verify that prepare and abort were called and that the correct action was associated
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.prepareCalled));
-        Arrays.stream(ars).forEach(ar -> assertTrue(ar.abortCalled));
-        Arrays.stream(ars).forEach(ar -> assertFalse(ar.commitCalled));
-
+        // and verify that the correct action was associated
         Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.prepareAction));
         Arrays.stream(ars).forEach(ar -> assertEquals(aa, ar.abortAction));
         Arrays.stream(ars).forEach(ar -> assertNull(ar.commitAction));
 
         if (isVirtualThreadPerTaskExecutor) {
             long preparesOnVT = Arrays.stream(ars).filter(
-                            r -> r.getPrepareThreadGroup().equals("VirtualThreads"))
+                            r -> r.getPrepareThreadGroup().equals(VIRTUAL_THREADS_GROUP_NAME))
                     .count();
             long abortsOnVT = Arrays.stream(ars).filter(
                             r -> VIRTUAL_THREADS_GROUP_NAME.equals(r.getAbortThreadGroup()))
@@ -443,9 +417,9 @@ class VirtualThreadTest {
         private final int id;
         private final boolean failPrepare;
         private final long delayPrepareMillis;
-        private boolean commitCalled;
-        private boolean abortCalled;
-        private boolean prepareCalled;
+        private final AtomicBoolean commitCalled = new AtomicBoolean(false);
+        private final AtomicBoolean abortCalled = new AtomicBoolean(false);
+        private final AtomicBoolean prepareCalled = new AtomicBoolean(false);
         String prepareThreadGroup;
         String commitThreadGroup;
         String abortThreadGroup;
@@ -510,34 +484,39 @@ class VirtualThreadTest {
 
         @Override
         public int topLevelAbort() {
-            abortCalled = true;
             abortThreadGroup = Thread.currentThread().getThreadGroup().getName();
             abortAction = BasicAction.Current();
+            abortCalled.set(true);
             return 0;
         }
 
         @Override
         public int topLevelCommit() {
-            commitCalled = true;
             commitThreadGroup = Thread.currentThread().getThreadGroup().getName();
             commitAction = BasicAction.Current();
+            commitCalled.set(true);
             return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
         public int topLevelPrepare() {
-            prepareCalled = true;
             prepareThreadGroup = Thread.currentThread().getThreadGroup().getName();
             prepareAction = BasicAction.Current();
+
             if (delayPrepareMillis != 0) {
                 try {
                     Thread.sleep(delayPrepareMillis);
                 } catch (InterruptedException ignore) {
                 }
             }
+
             if (failPrepare) {
+                prepareCalled.set(true);
                 return TwoPhaseOutcome.PREPARE_NOTOK;
             }
+
+            prepareCalled.set(true);
+
             return TwoPhaseOutcome.PREPARE_OK;
         }
 
@@ -569,6 +548,10 @@ class VirtualThreadTest {
         @Override
         public boolean shouldReplace(AbstractRecord a) {
             return false;
+        }
+
+        public boolean isFinished() {
+            return commitCalled.get() || abortCalled.get();
         }
     }
 }
