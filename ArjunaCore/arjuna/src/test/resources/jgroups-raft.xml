@@ -1,0 +1,109 @@
+<!--
+  JGroups configuration for JGroups-Raft consensus with a persistent write-ahead log.
+
+  This configuration enables:
+  - Raft consensus algorithm for strong consistency
+  - FileBasedLog for persistent write-ahead logging
+  - Leader election with automatic failover
+  - SHARED_LOOPBACK_PING for localhost testing
+
+  For production use:
+  - Replace SHARED_LOOPBACK_PING with TCPPING or JDBC_PING
+  - Adjust raft_id and members list
+  - Set appropriate log_name directory
+
+  It defines the JGroups protocol stack config for JGroupsRaftSlots building on the same transport and reliability protocols
+  as jgroups.xml, but adds four Raft-specific protocols towards the bottom of the file:
+  - raft.NO_DUPES — deduplicates messages to prevent double-application to the state machine
+  - raft.ELECTION — handles Raft leader election (heartbeats, election timeouts, vote requests)
+  - raft.RAFT — the core Raft consensus protocol (log replication, commit index tracking). members and raft_id are set programmatically by JGroupsRaftSlots before connecting
+  - raft.REDIRECT — forwards writes that arrive at a follower to the current leader, so any node can accept writes
+-->
+<config xmlns="urn:org:jgroups"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
+
+    <!-- Transport layer - SHARED_LOOPBACK for localhost testing -->
+    <SHARED_LOOPBACK/>
+
+    <!-- Discovery protocol for localhost testing -->
+    <org.jgroups.protocols.SHARED_LOOPBACK_PING/>
+
+    <!--
+      For production, use one of these instead:
+
+      <TCPPING initial_hosts="node1[7800],node2[7800],node3[7800]"
+               port_range="2"/>
+
+      <JDBC_PING connection_driver="org.postgresql.Driver"
+                 connection_url="jdbc:postgresql://localhost/jgroups"
+                 connection_username="jgroups"
+                 connection_password="secret"
+                 initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ..."/>
+    -->
+
+    <!-- Merging partitions -->
+    <MERGE3 max_interval="30000"
+            min_interval="10000"/>
+
+    <!-- Failure detection -->
+    <FD_SOCK/>
+    <FD_ALL3 timeout="3000"
+             interval="1000"/>
+    <VERIFY_SUSPECT timeout="1500"/>
+
+    <!-- Barrier for flush protocol -->
+    <BARRIER/>
+
+    <!-- Reliable multicast -->
+    <pbcast.NAKACK2 use_mcast_xmit="false"
+                    discard_delivered_msgs="true"
+                    log_discard_msgs="false"
+                    log_not_found_msgs="false"/>
+
+    <!-- Reliable unicast -->
+    <UNICAST3 conn_expiry_timeout="0"/>
+
+    <!-- Stability protocol -->
+    <pbcast.STABLE desired_avg_gossip="50000"
+                   max_bytes="8M"/>
+
+    <!-- Group membership -->
+    <pbcast.GMS print_local_addr="true"
+                join_timeout="3000"/>
+
+    <!-- Flow control -->
+    <UFC max_credits="2M"
+         min_threshold="0.4"/>
+    <MFC max_credits="2M"
+         min_threshold="0.4"/>
+
+    <!-- Message fragmentation -->
+    <FRAG4 frag_size="60K"/>
+
+    <!-- Raft-specific protocols -->
+
+    <!-- Duplicate message detection -->
+    <raft.NO_DUPES/>
+
+    <!-- Leader election protocol - CRITICAL for leader election to work -->
+    <raft.ELECTION/>
+
+    <!-- Main Raft protocol
+
+         Note: members and raft_id will be set programmatically before connecting
+    -->
+    <raft.RAFT/>
+
+    <!-- Redirect non-leader requests to leader -->
+    <raft.REDIRECT/>
+
+    <!--
+      Optional: CLIENT protocol for external clients
+      Uncomment if you need external client connections
+
+      <raft.CLIENT bind_addr="0.0.0.0"
+                   bind_port="9000"/>
+    -->
+
+</config>

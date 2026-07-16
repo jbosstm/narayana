@@ -71,6 +71,10 @@ public class SlotStore {
         }
     }
 
+    public void stop() throws IOException {
+        slots.stop();
+    }
+
     /**
      * @return the "name" of the object store. Where in the hierarchy it appears, e.g., /ObjectStore/MyName/...
      */
