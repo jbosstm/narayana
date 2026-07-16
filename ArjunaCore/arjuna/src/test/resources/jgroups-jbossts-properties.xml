@@ -1,0 +1,20 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+
+    <entry key="SlotStoreEnvironmentBean.numberOfSlots">256</entry>
+    <entry key="SlotStoreEnvironmentBean.bytesPerSlot">4096</entry>
+    <entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsSlots</entry>
+    <entry key="SlotStoreEnvironmentBean.storeDir">jgroups-caches</entry>
+
+    <entry key="JGroupsStoreEnvironmentBean.nodeAddress">node1</entry>
+    <entry key="JGroupsStoreEnvironmentBean.slotKeyGeneratorClassName">com.hp.mwtests.ts.arjuna.objectstore.jgroups.SharedSlotKeyGenerator</entry>
+
+    <!-- JGroups config file name, resolved relative to the test resource directory -->
+    <entry key="JGroupsStoreEnvironmentBean.jGroupsConfigFileName">jgroups.xml</entry>
+    <!-- cluster name and cache name of the clustered object store  -->
+    <entry key="JGroupsStoreEnvironmentBean.clusterName">jGroupsClusteredObjectStore</entry>
+    <entry key="JGroupsStoreEnvironmentBean.cacheName">jGroupsClusteredCache</entry>
+</properties>

@@ -1,3 +1,7 @@
+
+<!--
+  Protocol stack config for in process testing with no network I/O (SHARED_LOOPBACK)
+-->
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">

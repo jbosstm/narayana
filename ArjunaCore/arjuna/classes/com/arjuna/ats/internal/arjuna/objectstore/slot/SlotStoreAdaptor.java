@@ -337,6 +337,10 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
 
     @Override
     public void stop() {
-        // no-op
+        try {
+            store.stop();
+        } catch (IOException e) {
+            tsLogger.logger.warn("Error stopping SlotStore", e);
+        }
     }
 }

@@ -1674,6 +1674,29 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_infinispan_config(@Cause() Throwable cause);
 
+	@Message(id = 12421, value = "The number of actual transaction logs, {0}, exceeds the number of configured " +
+			"slots, {1}. The number of configured slots should equal the maximum number of unresolved transactions " +
+			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
+	String get_jgroups_too_few_slots(int actual, int configured);
+
+	@Message(id = 12422, value = "JGroupsSlotStore: Initializing experimental feature. Do not use in production.",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_jgroups_slot_store();
+
+	@Message(id = 12423, value = "JGroupsSlotStore: jgroups config file invalid", format = MESSAGE_FORMAT)
+	String get_jgroups_config();
+
+	@Message(id = 12424, value = "JGroupsRaftSlotStore: Initializing experimental feature. Do not use in production.",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_jgroups_raft_slot_store();
+
+	@Message(id = 12425, value = "SlotStore: quarantining slot {0} after failed clear ({1} slots remain free)",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_jgroups_slot_store_quarantine(int slotId, int freeListSize);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

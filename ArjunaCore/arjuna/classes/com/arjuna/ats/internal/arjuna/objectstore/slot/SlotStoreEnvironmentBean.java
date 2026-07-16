@@ -27,6 +27,8 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
 
     private volatile boolean syncDeletes = true;
 
+    private volatile boolean recycleFailedSlots = true;
+
     private volatile String backingSlotsClassName = "com.arjuna.ats.internal.arjuna.objectstore.slot.VolatileSlots";
     private volatile BackingSlots backingSlots = null;
 
@@ -42,7 +44,8 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     /**
      * Sets the desired number of slots for the store.
      * Should equal the maximum number of unresolved transactions expected at any given time,
-     * including those in-flight and awaiting recovery.
+     * including those in-flight and awaiting recovery. Refer to the documentation for
+     * guidance on sizing and tuning the slot-based object stores.
      * <p>
      * Caution: reducing the number of slots in a non-empty store may result in data loss.
      * <p>
@@ -140,6 +143,32 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
      */
     public void setSyncDeletes(boolean syncDeletes) {
         this.syncDeletes = syncDeletes;
+    }
+
+    /**
+     * Returns whether slots should be returned to the free list after a failed write or clear.
+     * When true, a slot whose backing write or clear threw an exception is recycled for reuse.
+     * This prevents permanent slot exhaustion from transient failures but assumes the
+     * BackingSlots implementation handles partial writes safely (e.g. via checksums or atomic ops).
+     * When false, failed slots are quarantined (permanently removed from circulation),
+     * which is safer for BackingSlots implementations that may leave indeterminate data
+     * after a failed write, but risks slot exhaustion under repeated transient failures.
+     *
+     * @return true if failed slots should be recycled, false to quarantine them.
+     */
+    public boolean isRecycleFailedSlots() {
+        return recycleFailedSlots;
+    }
+
+    /**
+     * Sets whether slots should be returned to the free list after a failed write or clear.
+     * <p>
+     * Default: true.
+     *
+     * @param recycleFailedSlots true to recycle failed slots, false to quarantine them.
+     */
+    public void setRecycleFailedSlots(boolean recycleFailedSlots) {
+        this.recycleFailedSlots = recycleFailedSlots;
     }
 
     /**
