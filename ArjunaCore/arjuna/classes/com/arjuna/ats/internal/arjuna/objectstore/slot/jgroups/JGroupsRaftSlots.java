@@ -130,6 +130,7 @@ public class JGroupsRaftSlots implements BackingSlots {
             // Create replicated state machine and set raft_id
             cache = new ReplicatedStateMachine<>(channel);
             cache.raftId(nodeName);  // set the raft_id of this member (must be in raft.members)
+            cache.allowDirtyReads(true);
             cache.timeout(config.getRaftTimeout());
 
             // Connect to cluster

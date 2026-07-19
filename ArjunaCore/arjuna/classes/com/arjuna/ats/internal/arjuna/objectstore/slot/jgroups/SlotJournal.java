@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Write-Ahead Log for JGroupsSlots using Artemis Journal.
@@ -48,11 +46,6 @@ public class SlotJournal {
     private final boolean syncWrites;
     private final boolean syncDeletes;
     private final AtomicLong nextRecordId = new AtomicLong(0);
-    /*
-     * protect against writes interleaving on the same slot (similarly for write and delete)
-     * (note that journal I/O dominates so method-level synchronization adds negligible overhead)
-     */
-    private final Lock journalLock = new ReentrantLock();
 
     // Maps slotId to journal record ID for fast lookups
     private final Map<Integer, Long> slotToRecordId = new ConcurrentHashMap<>();
@@ -206,30 +199,17 @@ public class SlotJournal {
         buffer.put(data);
         byte[] encoded = buffer.array();
 
-        journalLock.lock();
-        try {
-            // Get old record ID if exists
-            Long oldRecordId = slotToRecordId.get(slotId);
+        Long oldRecordId = slotToRecordId.get(slotId);
 
-            if (oldRecordId != null) {
-                // Delete old record first
-                if (syncWrites) {
-                    journal.appendDeleteRecord(oldRecordId, true);
-                } else {
-                    journal.tryAppendDeleteRecord(oldRecordId, false, null, null);
-                }
-            }
-
-            // Add new record
+        if (oldRecordId != null) {
+            journal.appendUpdateRecord(oldRecordId, RECORD_TYPE, encoded, syncWrites);
+        } else {
             long newRecordId = nextRecordId.getAndIncrement();
             journal.appendAddRecord(newRecordId, RECORD_TYPE, encoded, syncWrites);
-
-            // Update in-memory maps
-            slotData.put(slotId, data);
             slotToRecordId.put(slotId, newRecordId);
-        } finally {
-            journalLock.unlock();
         }
+
+        slotData.put(slotId, data);
     }
 
     /**
@@ -249,20 +229,15 @@ public class SlotJournal {
      * @throws Exception if delete fails
      */
     public void delete(int slotId) throws Exception {
-        journalLock.lock();
-        try {
-            Long recordId = slotToRecordId.remove(slotId);
-            slotData.remove(slotId);
+        Long recordId = slotToRecordId.remove(slotId);
+        slotData.remove(slotId);
 
-            if (recordId != null) {
-                if (syncDeletes) {
-                    journal.appendDeleteRecord(recordId, true);
-                } else {
-                    journal.tryAppendDeleteRecord(recordId, false, null, null);
-                }
+        if (recordId != null) {
+            if (syncDeletes) {
+                journal.appendDeleteRecord(recordId, true);
+            } else {
+                journal.tryAppendDeleteRecord(recordId, false, null, null);
             }
-        } finally {
-            journalLock.unlock();
         }
     }
 
