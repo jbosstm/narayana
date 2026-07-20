@@ -19,6 +19,7 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jgroups.blocks.Cache;
 import org.jgroups.blocks.ReplCache;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,11 @@ public class JGroupsConfigFromFileTest extends JGroupsTestBase {
     public static void setupStore() {
         // define the jbossts properties file containing the config for a JGroupsSlot store
         System.setProperty("com.arjuna.ats.arjuna.common.propertiesFile", JBOSSTS_CONFIG_FILE);
+    }
+
+    @AfterAll
+    public static void teardownStore() {
+        System.clearProperty("com.arjuna.ats.arjuna.common.propertiesFile");
     }
 
     @BeforeEach

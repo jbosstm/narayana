@@ -166,6 +166,13 @@ public class JGroupsRaftRecoveryScanTest extends JGroupsTestBase {
                 return true; // not present, ie successfully recovered
             }
         });
+
+        // Verify that the atomic action was recovered
+        try {
+            recoveryStore.read_committed(aa.getSavingUid(), aa.type());
+            fail("The recovery scan should have committed the action");
+        } catch (ObjectStoreException ignore) {
+        }
     }
 
     /**

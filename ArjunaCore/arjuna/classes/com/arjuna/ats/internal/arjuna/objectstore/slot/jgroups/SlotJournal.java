@@ -77,7 +77,12 @@ public class SlotJournal {
         }
 
         // Buffer timeout calculation matches HornetqJournalStore
-        int bufferTimeoutNanos = (int)(1000000000d / config.getWalBufferFlushesPerSecond());
+        int flushesPerSecond = config.getWalBufferFlushesPerSecond();
+        if (flushesPerSecond <= 0) {
+            throw new IllegalArgumentException("walBufferFlushesPerSecond must be > 0");
+        }
+        // Buffer timeout calculation matches HornetqJournalStore
+        int bufferTimeoutNanos = (int)(1000000000d / flushesPerSecond);
 
         SequentialFileFactory fileFactory;
         if (config.isWalAsyncIO() && AIOSequentialFileFactory.isSupported()) {

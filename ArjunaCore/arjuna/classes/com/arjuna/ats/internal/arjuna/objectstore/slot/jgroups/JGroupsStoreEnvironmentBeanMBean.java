@@ -68,6 +68,16 @@ public interface JGroupsStoreEnvironmentBeanMBean extends SlotStoreEnvironmentBe
     void setCacheName(String cacheName);
 
     /**
+     * The name of the JGroups cluster to connect to.
+     * Falls back to {@link #getCacheName()} if not set.
+     *
+     * @return the cluster name, or null if not explicitly configured
+     */
+    String getClusterName();
+
+    void setClusterName(String clusterName);
+
+    /**
      * {@link SlotStoreEnvironmentBeanMBean#getNumberOfSlots()}
      */
     int getNumberOfSlots();

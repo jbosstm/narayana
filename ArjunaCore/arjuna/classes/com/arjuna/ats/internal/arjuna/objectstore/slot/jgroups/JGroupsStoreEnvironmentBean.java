@@ -68,7 +68,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
     public ReplCache<ByteArrayKey, byte[]> getCache() throws CoreEnvironmentBeanException {
         if (cache == null) {
             if (jGroupsConfigFileName == null) {
-                throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.warn_jgroups_config());
+                throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_jgroups_config());
             }
             synchronized (this) {
                 if (cache == null) { // double-checked locking
@@ -196,7 +196,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
     @Override
     public void setStoreDir(String storeDir) {
         if (storeDir != null) {
-            if (!storeDir.startsWith(String.valueOf(File.separatorChar))) {
+            if (!new File(storeDir).isAbsolute()) {
                 storeDir = System.getProperty("user.dir") + "/" + storeDir;
                 super.setStoreDir(storeDir);
             } else {

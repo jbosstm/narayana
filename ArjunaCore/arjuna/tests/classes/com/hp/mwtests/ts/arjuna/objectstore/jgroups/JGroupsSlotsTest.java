@@ -14,35 +14,41 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.REPLICATION_TIMEOUT_MS;
+import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.removeDirectory;
 import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.waitFor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class JGroupsSlotsTest {
-    public static void setupStore() throws IOException, CoreEnvironmentBeanException {
+    private JGroupsSlots slots;
+
+    public void setupStore() throws IOException, CoreEnvironmentBeanException {
         // common config for each slot store
         SlotStoreEnvironmentBean slotStoreConfig = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
         JGroupsStoreEnvironmentBean config = BeanPopulator.getDefaultInstance(JGroupsStoreEnvironmentBean.class);
         BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).setNodeIdentifier("1");
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).setObjectStoreType(SlotStoreAdaptor.class.getName());
-        var slots = new JGroupsSlots(); // slot store backed by an infinispan cache
+        slots = new JGroupsSlots();
 
         slotStoreConfig.setBackingSlotsClassName(JGroupsSlots.class.getName());
 
         config.setNumberOfSlots(slotStoreConfig.getNumberOfSlots());
         config.setBytesPerSlot(slotStoreConfig.getBytesPerSlot());
         config.setStoreDir(slotStoreConfig.getStoreDir());
-        config.setSyncWrites(true);
-        config.setSyncDeletes(true);
+        config.setWalSyncWrites(true);
+        config.setWalSyncDeletes(true);
         config.setNodeAddress("node1");
         config.setCacheName("replCache");
         config.setBackingSlots(slots);
+
+        removeDirectory(config.getStoreDir());
 
         slots.init(config); // can throw IOException
 
@@ -50,6 +56,14 @@ public class JGroupsSlotsTest {
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).
                 setObjectStoreType(SlotStoreAdaptor.class.getName());
         BeanPopulator.setBeanInstanceIfAbsent(JGroupsStoreEnvironmentBean.class.getName(), config);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (slots != null) {
+            slots.stop();
+            slots = null;
+        }
     }
 
     @Test

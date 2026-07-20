@@ -73,12 +73,16 @@ public class JGroupsRaftSlots implements BackingSlots {
             tsLogger.i18NLogger.warn_jgroups_raft_slot_store();
 
             // Check if channel and cache are pre-configured (for testing multi-node scenarios)
+            JChannel preConfiguredChannel = null;
+            ReplicatedStateMachine<Integer, byte[]> preConfiguredCache = null;
             if (slotStoreConfig instanceof JGroupsRaftStoreEnvironmentBean raftConfig) {
-                channel = raftConfig.getPreConfiguredChannel();
-                cache = raftConfig.getPreConfiguredStateMachine();
+                preConfiguredChannel = raftConfig.getPreConfiguredChannel();
+                preConfiguredCache = raftConfig.getPreConfiguredStateMachine();
             }
 
-            if (channel != null && cache != null) {
+            if (preConfiguredChannel != null && preConfiguredCache != null) {
+                channel = preConfiguredChannel;
+                cache = preConfiguredCache;
                 // Use pre-configured channel and cache
                 tsLogger.logger.debugf("Using pre-configured Raft channel and state machine for node: %s",
                         config.getNodeAddress());
@@ -303,6 +307,15 @@ public class JGroupsRaftSlots implements BackingSlots {
         }
     }
 
+    private REDIRECT getRedirectProtocol() {
+        checkInitialized();
+        REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+        if (redirect == null) {
+            throw new IllegalStateException("REDIRECT protocol not found in JGroups stack");
+        }
+        return redirect;
+    }
+
     /**
      * Add a member to the Raft cluster dynamically.
      * Uses the REDIRECT protocol to forward the request to the current leader.
@@ -311,9 +324,7 @@ public class JGroupsRaftSlots implements BackingSlots {
      * @throws Exception if the operation fails or times out
      */
     public void addServer(String name) throws Exception {
-        checkInitialized();
-        REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
-        redirect.addServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+        getRedirectProtocol().addServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -324,9 +335,7 @@ public class JGroupsRaftSlots implements BackingSlots {
      * @throws Exception if the operation fails or times out
      */
     public void removeServer(String name) throws Exception {
-        checkInitialized();
-        REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
-        redirect.removeServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+        getRedirectProtocol().removeServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
     }
 
     /**

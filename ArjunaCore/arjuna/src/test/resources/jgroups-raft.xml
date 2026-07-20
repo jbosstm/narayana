@@ -69,6 +69,8 @@
                    max_bytes="8M"/>
 
     <!-- Group membership -->
+    <!-- Duplicate message detection -->
+    <raft.NO_DUPES/>
     <pbcast.GMS print_local_addr="true"
                 join_timeout="3000"/>
 
@@ -82,9 +84,6 @@
     <FRAG4 frag_size="60K"/>
 
     <!-- Raft-specific protocols -->
-
-    <!-- Duplicate message detection -->
-    <raft.NO_DUPES/>
 
     <!-- Leader election protocol - CRITICAL for leader election to work -->
     <raft.ELECTION/>

@@ -419,17 +419,17 @@ Default: 2
 JGroupsStoreEnvironmentBean.walPoolSize::
 The upper limit for pre-created journal files.
 Only applies when `walEnabled` is true.
-Default: 20
+Default: 0
 
 JGroupsStoreEnvironmentBean.walCompactMinFiles::
 The minimal number of files before write-ahead log compaction can be considered.
 Only applies when `walEnabled` is true.
-Default: 10
+Default: 0
 
 JGroupsStoreEnvironmentBean.walCompactPercentage::
 The percentage minimum capacity usage at which to start write-ahead log compaction.
 Only applies when `walEnabled` is true.
-Default: 30
+Default: 0
 
 JGroupsStoreEnvironmentBean.walFilePrefix::
 The prefix used when naming each write-ahead log journal file.

@@ -89,6 +89,20 @@ public class JGroupsSlots implements BackingSlots {
                 loadFromWAL();
             }
         } catch (Exception e) {
+            // release anything already started before failing init
+            try {
+                if (cache != null) {
+                    cache.stop();
+                }
+            } catch (Exception ignore) {
+            }
+            try {
+                if (journal != null) {
+                    journal.stop();
+                }
+            } catch (Exception ignore) {
+            }
+
             throw new IOException(e);
         }
     }

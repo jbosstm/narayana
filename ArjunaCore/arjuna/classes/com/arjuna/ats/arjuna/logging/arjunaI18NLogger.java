@@ -1685,7 +1685,7 @@ public interface arjunaI18NLogger {
 	void warn_jgroups_slot_store();
 
 	@Message(id = 12423, value = "JGroupsSlotStore: jgroups config file invalid", format = MESSAGE_FORMAT)
-	String warn_jgroups_config();
+	String get_jgroups_config();
 
 	@Message(id = 12424, value = "JGroupsRaftSlotStore: Initializing experimental feature. Do not use in production.",
 			format = MESSAGE_FORMAT)
