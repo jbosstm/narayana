@@ -42,8 +42,10 @@ public class JGroupsRaftStoreEnvironmentBean extends JGroupsStoreEnvironmentBean
 
     /**
      * Optional static membership list for Raft cluster (e.g., "NodeA,NodeB,NodeC").
-     * When null or empty, the node bootstraps as a single-member cluster using nodeAddress
-     * and other nodes can join dynamically via jgroups-raft's dynamic_view_changes.
+     * When null or empty, the node auto-discovers an existing cluster and joins it
+     * via the REDIRECT protocol. If no existing cluster is found, the node bootstraps
+     * as a single-member cluster. On restart, membership is restored from the persistent
+     * Raft log regardless of this setting.
      *
      * @return comma-separated list of member names, or null if not configured
      */

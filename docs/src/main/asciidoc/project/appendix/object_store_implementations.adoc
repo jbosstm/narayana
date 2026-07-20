@@ -546,7 +546,10 @@ JGroupsRaftStoreEnvironmentBean.raftMembers::
 Optional comma-separated list of Raft member identifiers.
 Example: "node1,node2,node3"
 When set, all cluster members must have the same `raftMembers` configuration for the cluster to form correctly.
-When omitted, the node bootstraps as a single-member cluster using `nodeAddress` and other nodes can join dynamically via jgroups-raft's `dynamic_view_changes`.
+When omitted, the node auto-discovers an existing cluster and joins it via the REDIRECT protocol.
+If no existing cluster is found, the node bootstraps as a single-member cluster.
+On restart, membership is restored from the persistent Raft log regardless of this setting.
+Use `JGroupsRaftSlots.addServer(name)` / `removeServer(name)` to modify membership at runtime.
 
 JGroupsRaftStoreEnvironmentBean.raftLogFsync::
 When true, Raft log entries are immediately flushed to disk (fdatasync).
@@ -601,7 +604,7 @@ With Raft log buffered (`raftLogFsync=false`):
    - 5 members: tolerates 2 failures
    - 7 members: tolerates 3 failures
 
-2. **Static vs Dynamic Membership**: Use `raftMembers` for a fixed cluster, or omit it and use jgroups-raft's `addServer()`/`removeServer()` for dynamic membership
+2. **Static vs Dynamic Membership**: Use `raftMembers` for a fixed cluster, or omit it for auto-discovery. When `raftMembers` is omitted, a node joins an existing cluster via the REDIRECT protocol or bootstraps as a single-member cluster if none exists. Use `addServer()`/`removeServer()` to grow or shrink the cluster at runtime
 3. **Network Requirements**: Members must be able to communicate directly for leader election and heartbeats
 4. **Recovery Manager**: Only one member should run the recovery manager to avoid duplicate recovery attempts
 5. **Performance vs Durability**: Balance `raftLogFsync` setting based on durability requirements and acceptable performance

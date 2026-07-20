@@ -10,10 +10,14 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jgroups.JChannel;
+import org.jgroups.View;
 import org.jgroups.protocols.raft.RAFT;
+import org.jgroups.protocols.raft.REDIRECT;
+import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.blocks.ReplicatedStateMachine;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,7 +36,8 @@ import java.util.concurrent.TimeUnit;
  * <ul>
  *   <li>Odd number of nodes (minimum of 3)</li>
  *   <li>Optional static membership list via {@link JGroupsRaftStoreEnvironmentBean#setRaftMembers(String)}.
- *       If omitted, the node begins as a single-member cluster and other nodes can join dynamically.</li>
+ *       If omitted, the node auto-discovers an existing cluster and joins it via the REDIRECT protocol,
+ *       or bootstraps as a single-member cluster if no existing cluster is found.</li>
  *   <li>Unique node address via {@link JGroupsStoreEnvironmentBean#setNodeAddress(String)}</li>
  *   <li>Persistent storage directory via {@link JGroupsStoreEnvironmentBean#setStoreDir(String)}</li>
  * </ul>
@@ -123,13 +128,17 @@ public class JGroupsRaftSlots implements BackingSlots {
                 raft.members(java.util.Arrays.asList(raftMembers.split(",")));
                 tsLogger.logger.debugf("Configured RAFT members: %s", raftMembers);
             } else {
-                raft.members(java.util.List.of(nodeName));
-                tsLogger.logger.debugf("No raftMembers configured; bootstrapping single-node cluster for: %s", nodeName);
+                // Dynamic membership: start with empty members list.
+                // If this node has an existing Raft log, log replay during connect()
+                // will restore the correct membership and promote from Learner to Follower.
+                // If first start, we'll join an existing cluster or bootstrap below.
+                raft.members(Collections.emptyList());
+                tsLogger.logger.debugf("No raftMembers configured; will auto-join or bootstrap");
             }
 
             // Create replicated state machine and set raft_id
             cache = new ReplicatedStateMachine<>(channel);
-            cache.raftId(nodeName);  // set the raft_id of this member (must be in raft.members)
+            cache.raftId(nodeName);
             cache.allowDirtyReads(true);
             cache.timeout(config.getRaftTimeout());
 
@@ -141,6 +150,16 @@ public class JGroupsRaftSlots implements BackingSlots {
 
             tsLogger.logger.debugf("Connecting to Raft cluster: %s", clusterName);
             channel.connect(clusterName);
+
+            // Dynamic membership: join existing cluster or bootstrap if needed
+            if (raftMembers == null || raftMembers.isEmpty()) {
+                if (Role.Learner.name().equalsIgnoreCase(raft.role())) {
+                    joinOrBootstrap(raft, nodeName, clusterName);
+                } else {
+                    tsLogger.logger.debugf("Node %s restored as %s from persistent log",
+                            nodeName, raft.role());
+                }
+            }
 
             // Wait for Raft leader election before allowing reads
             // This is critical because SlotStore's constructor will immediately try to read all slots
@@ -285,24 +304,58 @@ public class JGroupsRaftSlots implements BackingSlots {
     }
 
     /**
+     * Add a member to the Raft cluster dynamically.
+     * Uses the REDIRECT protocol to forward the request to the current leader.
+     *
+     * @param name the raft_id of the node to add
+     * @throws Exception if the operation fails or times out
+     */
+    public void addServer(String name) throws Exception {
+        checkInitialized();
+        REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+        redirect.addServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Remove a member from the Raft cluster dynamically.
+     * Uses the REDIRECT protocol to forward the request to the current leader.
+     *
+     * @param name the raft_id of the node to remove
+     * @throws Exception if the operation fails or times out
+     */
+    public void removeServer(String name) throws Exception {
+        checkInitialized();
+        REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+        redirect.removeServer(name).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
      * Wait for Raft leader election to complete.
-     * This is called during initialization to ensure a leader is elected before any reads occur.
      *
      * @param millis maximum time to wait in milliseconds
      * @throws IOException if leader election doesn't complete within timeout
      */
     private void waitForLeaderElection(long millis) throws IOException {
+        if (!waitForLeader(millis)) {
+            throw new IOException("Timed out waiting for Raft leader election");
+        }
+    }
+
+    /**
+     * Wait for a Raft leader to appear.
+     *
+     * @param millis maximum time to wait in milliseconds
+     * @return true if a leader was found, false if timed out
+     */
+    private boolean waitForLeader(long millis) {
         long deadline = System.currentTimeMillis() + millis;
 
         while (System.currentTimeMillis() < deadline) {
-            // Check leader directly without requiring initialized flag
-            // (hasLeader() requires initialized=true, but we're still initializing)
             if (channel != null) {
                 try {
                     RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
                     if (raft != null && raft.leader() != null) {
-                        tsLogger.logger.infof("Raft leader elected");
-                        return;
+                        return true;
                     }
                 } catch (Exception e) {
                     // Continue waiting
@@ -310,12 +363,65 @@ public class JGroupsRaftSlots implements BackingSlots {
             }
 
             try {
-                TimeUnit.MILLISECONDS.sleep(millis);
+                TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new IOException("Interrupted while waiting for Raft leader election", e);
+                return false;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * Join an existing Raft cluster or bootstrap a new one with a single node.
+     * Called during init() when raftMembers is not configured and the node starts as a Learner.
+     */
+    private void joinOrBootstrap(RAFT raft, String nodeName, String clusterName) throws Exception {
+        long electionTimeout = config.getRaftElectionMaxInterval();
+
+        if (waitForLeader(electionTimeout)) {
+            // Existing cluster found — join via REDIRECT
+            REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+            redirect.addServer(nodeName).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+            tsLogger.logger.infof("Joined existing Raft cluster as member: %s", nodeName);
+            return;
+        }
+
+        // No leader found — check if we should bootstrap
+        View view = channel.getView();
+
+        if (view.size() <= 1 || view.getCoord().equals(channel.getAddress())) {
+            // We're alone OR we're the view coordinator — bootstrap as single-member cluster.
+            // Must create a new channel because RAFT's FileBasedLog cannot survive disconnect/reconnect.
+            channel.close();
+            bootstrapNewChannel(nodeName, clusterName);
+            tsLogger.logger.infof("Bootstrapped new Raft cluster with member: %s", nodeName);
+        } else {
+            // Not the coordinator — wait for coordinator to bootstrap, then join
+            if (!waitForLeader(config.getRaftTimeout())) {
+                throw new IOException("Timed out waiting for Raft cluster leader");
+            }
+            REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+            redirect.addServer(nodeName).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
+            tsLogger.logger.infof("Joined Raft cluster after coordinator bootstrap: %s", nodeName);
+        }
+    }
+
+    private void bootstrapNewChannel(String nodeName, String clusterName) throws Exception {
+        channel = new JChannel(config.getJGroupsConfigFileName()).name(nodeName);
+
+        RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
+        raft.logDir(config.getStoreDir());
+        raft.logUseFsync(config.isRaftLogFsync());
+        raft.members(java.util.List.of(nodeName));
+
+        cache = new ReplicatedStateMachine<>(channel);
+        cache.raftId(nodeName);
+        cache.allowDirtyReads(true);
+        cache.timeout(config.getRaftTimeout());
+
+        channel.connect(clusterName);
     }
 
     /**
@@ -333,10 +439,8 @@ public class JGroupsRaftSlots implements BackingSlots {
             if (raft == null) {
                 return "UNKNOWN";
             }
-            // raft.role() returns the impl class name (e.g. "Leader", "Follower", "Candidate")
-            // Convert to uppercase for consistency with expected test values
             String role = raft.role();
-            return role != null ? role.toUpperCase() : "UNKNOWN";
+            return role != null ? role : "UNKNOWN";
         } catch (Exception e) {
             return "UNKNOWN";
         }

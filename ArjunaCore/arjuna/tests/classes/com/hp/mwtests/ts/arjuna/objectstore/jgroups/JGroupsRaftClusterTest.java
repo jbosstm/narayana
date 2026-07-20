@@ -15,6 +15,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftStoreEnvironmentBean;
 import org.jgroups.JChannel;
 import org.jgroups.protocols.raft.RAFT;
+import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.blocks.ReplicatedStateMachine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -132,7 +133,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
                     }
                     String role = raft.role();
 
-                    return role != null ? role.toUpperCase() : "UNKNOWN";
+                    return role != null ? role : "UNKNOWN";
                 } catch (Exception e) {
                     return "UNKNOWN";
                 }
@@ -187,7 +188,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
 
         // Verify leader was elected
         store1.waitForLeader(10000);
-        assertEquals("LEADER", store1.getRole(), "Single node should be LEADER");
+        assertEquals(Role.Leader.name(), store1.getRole(), "Single node should be Leader");
 
         // Perform basic operations
         Uid uid = new Uid();
@@ -250,17 +251,17 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         int leaderCount = 0;
         int followerCount = 0;
 
-        if (store1.getRole().equals("LEADER"))
+        if (store1.getRole().equals(Role.Leader.name()))
             leaderCount += 1;
-        if (store2.getRole().equals("LEADER"))
+        if (store2.getRole().equals(Role.Leader.name()))
             leaderCount += 1;
-        if (store3.getRole().equals("LEADER"))
+        if (store3.getRole().equals(Role.Leader.name()))
             leaderCount += 1;
-        if (store1.getRole().equals("FOLLOWER"))
+        if (store1.getRole().equals(Role.Follower.name()))
             followerCount += 1;
-        if (store2.getRole().equals("FOLLOWER"))
+        if (store2.getRole().equals(Role.Follower.name()))
             followerCount += 1;
-        if (store3.getRole().equals("FOLLOWER"))
+        if (store3.getRole().equals(Role.Follower.name()))
             followerCount += 1;
 
         assertEquals(1, leaderCount, "Should have exactly one leader");
