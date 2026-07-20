@@ -24,6 +24,7 @@ public class JGroupsRaftStoreEnvironmentBean extends JGroupsStoreEnvironmentBean
     private String raftMembers = null;
     private int raftTimeout = 5000; // milliseconds
     private int raftElectionMaxInterval = 500; // milliseconds
+    private boolean allowDirtyReads = true;
 
     /**
      * Enable fsync for Raft log writes. When true, all writes are forced to disk
@@ -84,6 +85,23 @@ public class JGroupsRaftStoreEnvironmentBean extends JGroupsStoreEnvironmentBean
 
     public void setRaftElectionMaxInterval(int raftElectionMaxInterval) {
         this.raftElectionMaxInterval = raftElectionMaxInterval;
+    }
+
+    /**
+     * When true, reads are served from the node's local in-memory state machine
+     * without going through Raft consensus. This is faster but may return stale
+     * data on follower nodes that have not yet received the latest log entries.
+     * When false, reads go through the Raft leader for consistent results at the
+     * cost of higher latency.
+     *
+     * @return true if dirty reads are allowed
+     */
+    public boolean isAllowDirtyReads() {
+        return allowDirtyReads;
+    }
+
+    public void setAllowDirtyReads(boolean allowDirtyReads) {
+        this.allowDirtyReads = allowDirtyReads;
     }
 
     /**

@@ -478,11 +478,11 @@ With write-ahead log disabled (`walEnabled=false`):
 
 ==== JGroupsRaftSlotStore
 
-The JGroupsRaftSlotStore provides a clustered transaction log store with strong consistency guarantees using the Raft consensus protocol.
-This implementation is built on JGroups-Raft (for an overview see https://research.redhat.com/blog/2024/03/20/correctness-in-distributed-systems-the-case-of-jgroups-raft/) and ensures that all transaction log operations are consistently replicated across a majority of cluster members.
+The JGroupsRaftSlotStore provides a clustered transaction log store using the Raft consensus protocol for write operations.
+This implementation is built on JGroups-Raft (for an overview see https://research.redhat.com/blog/2024/03/20/correctness-in-distributed-systems-the-case-of-jgroups-raft/) and ensures that all write operations are replicated to a majority of cluster members before being acknowledged.
 
-Unlike JGroupsSlotStore which uses ReplCache for simple replication, this store uses Raft consensus to maintain a replicated state machine with strong consistency.
-Every write operation must be acknowledged by a majority of Raft members before being considered committed, providing stronger guarantees than simple replication.
+Unlike JGroupsSlotStore which uses ReplCache for simple replication, this store uses Raft consensus so that every write must be acknowledged by a majority of Raft members before being considered committed.
+Reads, however, are served from each node's local in-memory state machine and may return stale data.
 
 Like the other slot-based stores, this implementation is built on the Narayana SlotStore framework and is configured as a backend to the SlotStoreAdaptor.
 
@@ -572,7 +572,15 @@ The maximum time in milliseconds to wait for leader election during initializati
 If no leader is elected within this interval, initialization fails.
 Default: 500
 
-NOTE: Raft protocol-level election and heartbeat intervals (election min/max timeout, heartbeat interval) are configured in the JGroups XML configuration file via the `ELECTION` and `RAFT` protocol attributes, not via environment bean properties.
+JGroupsRaftStoreEnvironmentBean.allowDirtyReads::
+When true, reads are served from the node's local in-memory state machine without Raft consensus.
+This is faster but may return stale data on follower nodes that have not yet received the latest log entries.
+When false, reads go through the Raft leader for consistent results at the cost of higher latency.
+Default: true
+
+NOTE: Raft protocol-level heartbeat intervals and election min timeout are configured in the JGroups
+XML configuration file via the `ELECTION` and `RAFT` protocol attributes. The election maximum interval
+can be set either in JGroups XML or via `JGroupsRaftStoreEnvironmentBean.raftElectionMaxInterval`.
 
 .Performance Characteristics
 
@@ -592,9 +600,9 @@ With Raft log buffered (`raftLogFsync=false`):
 
 1. **Raft Majority Consensus**: Every write operation is replicated to a majority of cluster members before being acknowledged
 2. **Leader Election**: If the Raft leader fails, remaining members automatically elect a new leader
-3. **Log Replication**: The Raft log is replicated across all members and provides the source of truth for recovery
+3. **Log Replication**: The Raft log is replicated to a majority and propagated to other members as they catch up and provides the source of truth for recovery
 4. **Split-Brain Protection**: Raft's consensus mechanism prevents split-brain scenarios
-5. **Consistency**: All members see the same sequence of operations (linearizable consistency)
+5. **Reads**: Reads are served from each node's local in-memory state machine (dirty reads) and may return data that has not yet been replicated from the leader. Writes are strongly consistent; reads are eventually consistent.
 
 .Cluster Configuration Considerations
 

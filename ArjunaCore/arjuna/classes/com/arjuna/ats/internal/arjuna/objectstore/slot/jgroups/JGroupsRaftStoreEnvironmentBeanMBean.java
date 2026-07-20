@@ -58,4 +58,8 @@ public interface JGroupsRaftStoreEnvironmentBeanMBean extends JGroupsStoreEnviro
      * @param stateMachine the pre-configured state machine
      */
     void setPreConfiguredStateMachine(ReplicatedStateMachine<Integer, byte[]> stateMachine);
+
+    boolean isAllowDirtyReads();
+
+    void setAllowDirtyReads(boolean allowDirtyReads);
 }

@@ -26,7 +26,9 @@ import java.util.concurrent.TimeUnit;
  *
  * <p>Uses the Raft consensus algorithm for:
  * <ul>
- *   <li><b>Strong consistency</b>: Linearizable reads and writes</li>
+ *   <li><b>Write consistency</b>: Writes are replicated via Raft consensus to a majority before acknowledgment.
+ *       Reads are served from the local state machine by default (configurable via
+ *       {@link JGroupsRaftStoreEnvironmentBean#isAllowDirtyReads()})</li>
  *   <li><b>Persistent write-ahead log</b>: All committed data survives crashes via FileBasedLog</li>
  *   <li><b>Leader election</b>: Automatic failover on leader crash</li>
  *   <li><b>Split-brain protection</b>: Quorum-based operation prevents divergence of views on the membership</li>
@@ -143,7 +145,7 @@ public class JGroupsRaftSlots implements BackingSlots {
             // Create replicated state machine and set raft_id
             cache = new ReplicatedStateMachine<>(channel);
             cache.raftId(nodeName);
-            cache.allowDirtyReads(true);
+            cache.allowDirtyReads(config.isAllowDirtyReads());
             cache.timeout(config.getRaftTimeout());
 
             // Connect to cluster
@@ -427,7 +429,7 @@ public class JGroupsRaftSlots implements BackingSlots {
 
         cache = new ReplicatedStateMachine<>(channel);
         cache.raftId(nodeName);
-        cache.allowDirtyReads(true);
+        cache.allowDirtyReads(config.isAllowDirtyReads());
         cache.timeout(config.getRaftTimeout());
 
         channel.connect(clusterName);
