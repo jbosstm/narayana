@@ -12,12 +12,12 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -117,18 +117,18 @@ public class JGroupsClusterTest extends JGroupsTestBase {
         assertTrue(listener1.await(10, TimeUnit.SECONDS), "node1 should start");
         assertEquals(1, store1.config().getCache().getClusterSize(), "node1 should see cluster size 1");
 
+        // Register a view listener on store1 expecting size 2 BEFORE starting store2
+        ViewChangeListener store1Size2Listener = new ViewChangeListener(2);
+        store1.config().getCache().addReceiver(store1Size2Listener);
+
         // Configure cache2 and add listener expecting size 2
         ViewChangeListener listener2 = new ViewChangeListener(2);
         store2.config().getCache().addReceiver(listener2);
 
-        // Start cache2 and wait for cluster to form
+        // Start cache2 and wait for cluster to form on both sides
         store2.config().getCache().start();
         assertTrue(listener2.await(10, TimeUnit.SECONDS), "Cluster should form with 2 nodes");
-
-        // now wait for both caches to see each other
-        waitFor(REPLICATION_TIMEOUT_MS, "both nodes see cluster size 2",
-            () -> store1.config().getCache().getClusterSize() == 2
-               && store2.config().getCache().getClusterSize() == 2);
+        assertTrue(store1Size2Listener.await(10, TimeUnit.SECONDS), "node1 should see cluster size 2");
 
         // now the cluster is ready simulate writing to one store and reading from the other:
 
@@ -141,10 +141,14 @@ public class JGroupsClusterTest extends JGroupsTestBase {
         String DATA = "hello-from-node1";
         writeData.packString(DATA);
 
+        // Register a change listener on store2's cache to detect replication arrival
+        CountDownLatch replicationLatch = new CountDownLatch(1);
+        store2.config().getCache().addChangeListener(replicationLatch::countDown);
+
         assertTrue(recoveryStore1.write_committed(uid, AA_TYPE_NAME, writeData), "Write to node1 failed");
 
-        // wait a while for the data to replicate to the other node
-        assertDoesNotThrow(() -> TimeUnit.MILLISECONDS.sleep(100), "interrupted");
+        // Wait for the replicated data to arrive at store2
+        assertTrue(replicationLatch.await(10, TimeUnit.SECONDS), "Data should replicate to node2");
 
         // Step 2: shutdown the RecoveryStore and recreate it with cache2
         StoreManager.shutdown();

@@ -18,10 +18,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.REPLICATION_TIMEOUT_MS;
 import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.removeDirectory;
-import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.waitFor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -84,11 +84,13 @@ public class JGroupsSlotsTest {
         Uid uid = new Uid();
 
         try {
+            JGroupsStoreEnvironmentBean config = BeanPopulator.getDefaultInstance(JGroupsStoreEnvironmentBean.class);
+            CountDownLatch writeLatch = new CountDownLatch(1);
+            config.getCache().addChangeListener(writeLatch::countDown);
+
             assertTrue(recoveryStore.write_committed(uid, TYPE_NAME, oos));
-            // write to the cluster of 1 and wait for it to propagate
-            // (see JGroupsClusterTest.testTwoNodeReplication for a two node cluster test)
-            waitFor(REPLICATION_TIMEOUT_MS, "write propagation",
-                () -> recoveryStore.read_committed(uid, TYPE_NAME) != null);
+            assertTrue(writeLatch.await(10, TimeUnit.SECONDS), "write propagation");
+
             InputObjectState inputData = recoveryStore.read_committed(uid, TYPE_NAME);
             String tn = inputData.unpackString();
             assertEquals(DATA, tn);

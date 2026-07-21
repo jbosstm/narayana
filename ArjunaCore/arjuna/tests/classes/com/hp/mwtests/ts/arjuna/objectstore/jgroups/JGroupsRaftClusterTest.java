@@ -18,7 +18,6 @@ import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.blocks.ReplicatedStateMachine;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -104,23 +103,15 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
             config.setPreConfiguredStateMachine(stateMachine);
         }
 
-        void waitForLeader(long millis) throws Exception {
-            long deadline = System.currentTimeMillis() + millis;
-
-            while (System.currentTimeMillis() < deadline) {
-                if (channel != null) {
-                    RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
-                    if (raft != null && raft.leader() != null) {
-                        return;
-                    }
-                } else if (slots != null && slots.hasLeader()) {
-                    return;
-                }
-
-                Assertions.assertDoesNotThrow(() -> TimeUnit.MILLISECONDS.sleep(50), "interrupted");
+        void waitForLeader(long timeout, TimeUnit unit) throws Exception {
+            RAFT raft = null;
+            if (channel != null) {
+                raft = channel.getProtocolStack().findProtocol(RAFT.class);
+            } else if (slots != null && slots.getChannel() != null) {
+                raft = slots.getChannel().getProtocolStack().findProtocol(RAFT.class);
             }
-
-            throw new AssertionError("Timeout waiting for Raft leader election");
+            assertNotNull(raft, "RAFT protocol not available");
+            awaitLeaderElection(raft, timeout, unit);
         }
 
         String getRole() {
@@ -187,7 +178,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         RecoveryStore recoveryStore = startRecoveryStore(store1.config);
 
         // Verify leader was elected
-        store1.waitForLeader(10000);
+        store1.waitForLeader(10, TimeUnit.SECONDS);
         assertEquals(Role.Leader.name(), store1.getRole(), "Single node should be Leader");
 
         // Perform basic operations
@@ -243,9 +234,9 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         store3.createAndStartRaftChannel();
 
         // Wait for leader election to complete
-        store1.waitForLeader(10000);
-        store2.waitForLeader(10000);
-        store3.waitForLeader(10000);
+        store1.waitForLeader(10, TimeUnit.SECONDS);
+        store2.waitForLeader(10, TimeUnit.SECONDS);
+        store3.waitForLeader(10, TimeUnit.SECONDS);
 
         // Verify cluster formed - one leader, two followers
         int leaderCount = 0;
@@ -276,9 +267,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         writeData.packString(DATA);
 
         assertTrue(recoveryStore1.write_committed(uid, TYPE_NAME, writeData), "Write should succeed");
-
-        // Give Raft time to replicate (writes should be synchronous to majority, but let's check to make sure)
-        Assertions.assertDoesNotThrow(() -> TimeUnit.MILLISECONDS.sleep(500), "interrupted");
+        // Raft put() is synchronous: it blocks until committed to a majority, so no sleep needed.
 
         // Shutdown node1
         store1.stop();

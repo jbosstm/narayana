@@ -10,12 +10,12 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftStoreE
 
 import java.util.concurrent.TimeUnit;
 
+import org.jgroups.protocols.raft.RAFT;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,7 +59,9 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         slots.init(config);
 
         // Wait for Raft to elect leader (single node elects itself)
-        waitForLeader(slots, 5000);
+        awaitLeaderElection(
+                slots.getChannel().getProtocolStack().findProtocol(RAFT.class),
+                10, TimeUnit.SECONDS);
     }
 
     @AfterEach
@@ -166,7 +168,9 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         slots.init(config);
 
         // Wait for leader election (single node elects itself)
-        waitForLeader(slots, 5000);
+        awaitLeaderElection(
+                slots.getChannel().getProtocolStack().findProtocol(RAFT.class),
+                10, TimeUnit.SECONDS);
 
         // Verify that the data is recovered from Raft log
         byte[] recovered = slots.read(slotId);
@@ -174,16 +178,4 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         assertArrayEquals(data, recovered, "Recovered data mismatch");
     }
 
-    private void waitForLeader(JGroupsRaftSlots slots, long millis) throws InterruptedException {
-        long deadline = System.currentTimeMillis() + millis;
-
-        while (System.currentTimeMillis() < deadline) {
-            if (slots.hasLeader()) {
-                return;
-            }
-            assertDoesNotThrow(() -> TimeUnit.MILLISECONDS.sleep(50), "interrupted");
-        }
-
-        throw new AssertionError("No leader elected within " + millis + "ms");
-    }
 }

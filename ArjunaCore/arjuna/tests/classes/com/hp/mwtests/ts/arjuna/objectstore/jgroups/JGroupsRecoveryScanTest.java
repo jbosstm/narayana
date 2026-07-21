@@ -110,7 +110,7 @@ public class JGroupsRecoveryScanTest extends JGroupsTestBase {
         manager.scan();
 
         // Wait for recovery to complete (give it some time to process)
-        waitFor(REPLICATION_TIMEOUT_MS, "recovery to complete", () -> {
+        waitFor(RECOVERY_TIMEOUT_MS, "recovery to complete", () -> {
             try {
                 recoveryStore.read_committed(aa.getSavingUid(), aa.type());
                 return false; // Still present i.e. not recovered yet

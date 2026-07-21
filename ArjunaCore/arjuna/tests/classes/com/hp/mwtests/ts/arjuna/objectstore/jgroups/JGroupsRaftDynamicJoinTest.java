@@ -9,6 +9,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftStoreEnvironmentBean;
 import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
+import org.jgroups.raft.blocks.ReplicatedStateMachine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -147,8 +148,19 @@ public class JGroupsRaftDynamicJoinTest extends JGroupsTestBase {
             }
         }
 
-        // Verify node2 received the data written by node1 (replicated via Raft log)
-        waitFor(5000, "data replication to node2", () -> slots2.read(42) != null);
+        // Verify node2 received the data written by node1 (replicated via Raft log catchup)
+        CountDownLatch dataLatch = new CountDownLatch(1);
+        slots2.getStateMachine().addNotificationListener(new ReplicatedStateMachine.Notification<>() {
+            @Override public void put(Integer key, byte[] oldVal, byte[] newVal) {
+                if (key == 42) dataLatch.countDown();
+            }
+            @Override public void remove(Integer key, byte[] oldVal) {}
+            @Override public void get(Integer key, byte[] val) {}
+        });
+        if (slots2.read(42) == null) {
+            assertTrue(dataLatch.await(10, TimeUnit.SECONDS),
+                    "Data written by node1 should replicate to node2 via log catchup");
+        }
         assertArrayEquals(node1Msg.getBytes(), slots2.read(42),
                 "Data written by node1 should be replicated to node2");
 
@@ -159,8 +171,19 @@ public class JGroupsRaftDynamicJoinTest extends JGroupsTestBase {
         assertTrue(raft1.members().contains("node2"), "node1's members should include node2 after addServer");
 
         // Write new data via node1 and verify node2 receives it
+        CountDownLatch slot43Latch = new CountDownLatch(1);
+        slots2.getStateMachine().addNotificationListener(new ReplicatedStateMachine.Notification<>() {
+            @Override public void put(Integer key, byte[] oldVal, byte[] newVal) {
+                if (key == 43) slot43Latch.countDown();
+            }
+            @Override public void remove(Integer key, byte[] oldVal) {}
+            @Override public void get(Integer key, byte[] val) {}
+        });
         slots1.write(43, "afterJoin".getBytes(), true);
-        waitFor(5000, "new data replication to node2", () -> slots2.read(43) != null);
+        if (slots2.read(43) == null) {
+            assertTrue(slot43Latch.await(10, TimeUnit.SECONDS),
+                    "Slot 43 should replicate to node2");
+        }
         assertArrayEquals("afterJoin".getBytes(), slots2.read(43));
     }
 }

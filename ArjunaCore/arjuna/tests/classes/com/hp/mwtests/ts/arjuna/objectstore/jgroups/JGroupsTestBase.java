@@ -25,6 +25,9 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jgroups.Receiver;
 import org.jgroups.View;
 
+import org.jgroups.protocols.raft.RAFT;
+import org.jgroups.protocols.raft.Role;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -37,13 +40,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsTestBase {
     static final String JGROUPS_CONFIG_FILE = "jgroups.xml";
     static final String CLUSTER_NAME = "clusteredObjectStore"; // a name for the cluster of shared stores
     // location of the file system store (with surefire it will be the build directory)
     static final String STORE_DIR = System.getProperty("user.dir") + "/jgroups-caches";
-    public static final long REPLICATION_TIMEOUT_MS = 10_000;
+    public static final long RECOVERY_TIMEOUT_MS = 10_000;
 
     @FunctionalInterface
     public interface ThrowingBooleanSupplier {
@@ -57,6 +61,32 @@ public class JGroupsTestBase {
                 throw new AssertionError("Timed out waiting for: " + description);
             }
             assertDoesNotThrow(() -> TimeUnit.MILLISECONDS.sleep(50), "interrupted");
+        }
+    }
+
+    /**
+     * Wait for Raft leader election using a role change listener instead of polling.
+     * A role change to Leader or Follower implies a leader has been elected.
+     */
+    static void awaitLeaderElection(RAFT raft, long timeout, TimeUnit unit) throws InterruptedException {
+        if (raft.leader() != null) {
+            return;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        RAFT.RoleChange listener = role -> {
+            if (role == Role.Leader || role == Role.Follower) {
+                latch.countDown();
+            }
+        };
+        raft.addRoleListener(listener);
+        try {
+            if (raft.leader() != null) {
+                return;
+            }
+            assertTrue(latch.await(timeout, unit), "Leader election timed out");
+        } finally {
+            raft.remRoleListener(listener);
         }
     }
 
