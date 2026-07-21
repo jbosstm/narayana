@@ -1,5 +1,5 @@
 
-:sectnums!: all
+:sectnums: all
 
 [appendix]
 = Object store implementations
@@ -335,7 +335,8 @@ For single node clusters a good choice is CoreEnvironmentBean#getNodeIdentifier(
 
 JGroupsStoreEnvironmentBean.clusterName::
 The name of the JGroups cluster to join.
-Default: "defaultJGroupsClusterName"
+Falls back to `cacheName` if not set.
+Default: null (uses cacheName)
 
 JGroupsStoreEnvironmentBean.cacheName::
 The name of the ReplCache instance used to store transaction states.
@@ -373,12 +374,15 @@ If unset then a strategy based on `com.arjuna.ats.arjuna.common.Uid` will be use
 JGroupsStoreEnvironmentBean.walEnabled::
 Enables the write-ahead log for persistence.
 When enabled, all writes are persisted to disk using an Artemis Journal before being applied to the ReplCache.
-Must be set to true for transaction types with durability guarantees.
+Full durability (surviving power failure) additionally requires `walSyncWrites=true` (the default);
+without fsync, buffered writes may be lost on crash.
 Default: true
 
 JGroupsStoreEnvironmentBean.storeDir::
 The filesystem location for the write-ahead log files.
 If not an absolute path, it is interpreted relative to the user's current working directory.
+When multiple store instances run on the same node (e.g., transaction log, state store, communication store),
+each must use a distinct `storeDir` to avoid WAL file collisions.
 Only applies when `walEnabled` is true.
 Default: "$user.dir/SlotStore"
 
@@ -419,17 +423,17 @@ Default: 2
 JGroupsStoreEnvironmentBean.walPoolSize::
 The upper limit for pre-created journal files.
 Only applies when `walEnabled` is true.
-Default: 0
+Default: 20
 
 JGroupsStoreEnvironmentBean.walCompactMinFiles::
 The minimal number of files before write-ahead log compaction can be considered.
 Only applies when `walEnabled` is true.
-Default: 0
+Default: 10
 
 JGroupsStoreEnvironmentBean.walCompactPercentage::
 The percentage minimum capacity usage at which to start write-ahead log compaction.
 Only applies when `walEnabled` is true.
-Default: 0
+Default: 30
 
 JGroupsStoreEnvironmentBean.walFilePrefix::
 The prefix used when naming each write-ahead log journal file.
@@ -443,13 +447,14 @@ Default: "log"
 
 JGroupsStoreEnvironmentBean.walMaxIO::
 The maximum write requests queue depth for the write-ahead log.
-For NIO this has no effect and is hard coded to 1. For AIO, the recommended value is 500.
+For NIO this setting has no effect — the effective value is always 1.
+For AIO, the configured value is used; recommended value for AIO is 500.
 Only applies when `walEnabled` is true.
-Default: 2
+Default: 2 (only effective with AIO; NIO always uses 1)
 
 JGroupsStoreEnvironmentBean.walAsyncIO::
 Whether to use AIO (async I/O) for the write-ahead log journal.
-Falls back silently to NIO if AIO native libraries are not available.
+If AIO is requested but native libraries are not available, SlotJournal logs a warning and falls back to NIO.
 Only applies when `walEnabled` is true.
 Default: false (NIO)
 
@@ -470,7 +475,7 @@ With write-ahead log disabled (`walEnabled=false`):
 
 .Cluster Configuration Considerations
 
-1. For transaction logs with durability requirements, enable write-ahead logging on at least one cluster member
+1. WAL is local to each node's `storeDir`. For durable recovery after a member is lost, WAL must be enabled on every member that may need to recover independently — enabling it on a single member only protects that member
 2. A single member must run the recovery manager (HA singleton pattern)
 3. Any member can create and commit transactions
 4. The `TransactionStatusManager` is used during recovery to determine if the transaction creator is still running
@@ -529,7 +534,8 @@ For single node clusters a good choice is CoreEnvironmentBean#getNodeIdentifier(
 JGroupsStoreEnvironmentBean.clusterName::
 The name of the JGroups cluster to join.
 All nodes in the Raft cluster must use the same cluster name.
-Default: "defaultJGroupsClusterName"
+Falls back to `cacheName` if not set.
+Default: null (uses cacheName)
 
 JGroupsStoreEnvironmentBean.jGroupsConfigFileName::
 The JGroups XML configuration file.
@@ -578,9 +584,11 @@ This is faster but may return stale data on follower nodes that have not yet rec
 When false, reads go through the Raft leader for consistent results at the cost of higher latency.
 Default: true
 
-NOTE: Raft protocol-level heartbeat intervals and election min timeout are configured in the JGroups
-XML configuration file via the `ELECTION` and `RAFT` protocol attributes. The election maximum interval
-can be set either in JGroups XML or via `JGroupsRaftStoreEnvironmentBean.raftElectionMaxInterval`.
+NOTE: Raft protocol-level heartbeat intervals and election timeouts are configured in the JGroups
+XML configuration file via the `ELECTION` protocol attributes (e.g. `min_interval`, `max_interval`).
+`JGroupsRaftStoreEnvironmentBean.raftElectionMaxInterval` is a separate setting that controls how long
+the store waits during initialization for a leader to be elected — it does not change the Raft election
+protocol timing.
 
 .Performance Characteristics
 
@@ -600,9 +608,9 @@ With Raft log buffered (`raftLogFsync=false`):
 
 1. **Raft Majority Consensus**: Every write operation is replicated to a majority of cluster members before being acknowledged
 2. **Leader Election**: If the Raft leader fails, remaining members automatically elect a new leader
-3. **Log Replication**: The Raft log is replicated to a majority and propagated to other members as they catch up and provides the source of truth for recovery
+3. **Log Replication**: Every write is replicated to a majority of cluster members before being acknowledged. Remaining members receive the entries asynchronously as they catch up. The Raft log is the source of truth for recovery
 4. **Split-Brain Protection**: Raft's consensus mechanism prevents split-brain scenarios
-5. **Reads**: Reads are served from each node's local in-memory state machine (dirty reads) and may return data that has not yet been replicated from the leader. Writes are strongly consistent; reads are eventually consistent.
+5. **Reads**: With `allowDirtyReads=true` (the default), reads are served from each node's local in-memory state machine and may return data that has not yet been replicated from the leader. With `allowDirtyReads=false`, reads are routed through the Raft leader for consistent results. Writes are always strongly consistent.
 
 .Cluster Configuration Considerations
 
@@ -633,6 +641,6 @@ Use JGroupsSlotStore (ReplCache) when:
 - The cluster is deployed on a network where partitions are unlikely (e.g., a single rack or availability zone)
 - Cluster membership is relatively stable
 
-WARNING: ReplCache has no quorum mechanism. In a network partition, both sides accept writes independently with no conflict resolution on merge. For a transaction log store this can mean silently lost records. If split-brain protection is needed, use JGroupsRaftSlotStore instead.
+WARNING: ReplCache has no quorum mechanism. In a network partition, both sides accept writes independently, with no conflict resolution on merge. For a transaction log store this can mean silently lost records. If split-brain protection is needed, use JGroupsRaftSlotStore instead.
 
 :sectnums:

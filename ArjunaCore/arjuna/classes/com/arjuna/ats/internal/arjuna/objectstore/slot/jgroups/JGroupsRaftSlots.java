@@ -82,6 +82,11 @@ public class JGroupsRaftSlots implements BackingSlots {
                 preConfiguredCache = raftConfig.getPreConfiguredStateMachine();
             }
 
+            if ((preConfiguredChannel == null) != (preConfiguredCache == null)) {
+                throw new IllegalArgumentException(
+                        "preConfiguredChannel and preConfiguredStateMachine must both be set or both be null");
+            }
+
             if (preConfiguredChannel != null && preConfiguredCache != null) {
                 channel = preConfiguredChannel;
                 cache = preConfiguredCache;
@@ -309,13 +314,17 @@ public class JGroupsRaftSlots implements BackingSlots {
         }
     }
 
-    private REDIRECT getRedirectProtocol() {
-        checkInitialized();
+    private REDIRECT requireRedirectProtocol() {
         REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
         if (redirect == null) {
             throw new IllegalStateException("REDIRECT protocol not found in JGroups stack");
         }
         return redirect;
+    }
+
+    private REDIRECT getRedirectProtocol() {
+        checkInitialized();
+        return requireRedirectProtocol();
     }
 
     /**
@@ -393,7 +402,7 @@ public class JGroupsRaftSlots implements BackingSlots {
 
         if (waitForLeader(electionTimeout)) {
             // Existing cluster found — join via REDIRECT
-            REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+            REDIRECT redirect = requireRedirectProtocol();
             redirect.addServer(nodeName).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
             tsLogger.logger.infof("Joined existing Raft cluster as member: %s", nodeName);
             return;
@@ -413,7 +422,7 @@ public class JGroupsRaftSlots implements BackingSlots {
             if (!waitForLeader(config.getRaftTimeout())) {
                 throw new IOException("Timed out waiting for Raft cluster leader");
             }
-            REDIRECT redirect = channel.getProtocolStack().findProtocol(REDIRECT.class);
+            REDIRECT redirect = requireRedirectProtocol();
             redirect.addServer(nodeName).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
             tsLogger.logger.infof("Joined Raft cluster after coordinator bootstrap: %s", nodeName);
         }

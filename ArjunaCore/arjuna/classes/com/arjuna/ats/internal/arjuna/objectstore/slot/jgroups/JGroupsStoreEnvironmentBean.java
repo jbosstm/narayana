@@ -26,12 +26,12 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
 
     private String jGroupsConfigFileName = "jgroups-transport-config.xml"; // "jgroups.xml";
     private volatile ReplCache<ByteArrayKey, byte[]> cache;
-    private String clusterName = "defaultJGroupsClusterName";
+    private String clusterName = null;
     private String cacheName = "defaultJGroupsCache";
     private short replicationCount = -1;
     private String nodeAddress;
     private String slotKeyGeneratorClassName;
-    private JGroupsSlotKeyGenerator jGroupsSlotKeyGenerator;
+    private volatile JGroupsSlotKeyGenerator jGroupsSlotKeyGenerator;
     private long cachingTime = 0L;  // L2 cache time in millis (0 = disabled for consistency)
     private long callTimeout = 1500L; // maximum time (in milliseconds) a cache operation—such will wait for responses
     private boolean migrateData = true;
@@ -72,11 +72,11 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
             }
             synchronized (this) {
                 if (cache == null) { // double-checked locking
-                    cache = new ReplCache<>(jGroupsConfigFileName, getCacheName());
-                    // TODO are these properties configurable via jGroupsConfigFileName is the callTimeout
-                    cache.setCallTimeout(callTimeout);
-                    cache.setCachingTime(cachingTime);
-                    cache.setMigrateData(migrateData);
+                    ReplCache<ByteArrayKey, byte[]> tmp = new ReplCache<>(jGroupsConfigFileName, getCacheName());
+                    tmp.setCallTimeout(callTimeout);
+                    tmp.setCachingTime(cachingTime);
+                    tmp.setMigrateData(migrateData);
+                    cache = tmp;
                 }
             }
         }
@@ -351,7 +351,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
 
     /**
      * Get how many WAL journal files can be reused.
-     * Default: 0 (no pooling)
+     * Default: 20
      *
      * @return the number of files that can be reused
      */
@@ -365,7 +365,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
 
     /**
      * Get the minimal number of files before WAL compaction can be considered.
-     * Default: 0 (automatic compaction disabled)
+     * Default: 10
      *
      * @return the threshold file count
      */
@@ -379,7 +379,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
 
     /**
      * Get the percentage minimum capacity usage at which to start WAL compaction.
-     * Default: 0 (compaction disabled)
+     * Default: 30
      *
      * @return the threshold percentage
      */

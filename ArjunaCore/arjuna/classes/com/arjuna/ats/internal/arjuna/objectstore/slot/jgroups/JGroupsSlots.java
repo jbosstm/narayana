@@ -121,23 +121,27 @@ public class JGroupsSlots implements BackingSlots {
         int recoveredCount = 0;
         int skippedCount = 0;
         for (Integer slotId : journal.getSlotIds()) {
-            if (slotId >= 0 && slotId < slots.length) {
-                ByteArrayKey key = slots[slotId];
+            if (slotId < 0 || slotId >= slots.length) {
+                tsLogger.logger.warnf("JGroupsSlots: WAL contains out-of-range slot ID %d (valid range 0..%d), skipping",
+                    slotId, slots.length - 1);
+                continue;
+            }
 
-                // Check if cache already has this data (from replication)
-                byte[] existingData = cache.get(key);
-                if (existingData != null) {
-                    // Cache already has data (likely from replication) - don't overwrite
-                    skippedCount++;
-                    continue;
-                }
+            ByteArrayKey key = slots[slotId];
 
-                // Cache is empty for this slot - restore from WAL
-                byte[] data = journal.read(slotId);
-                if (data != null) {
-                    cache.put(key, data, replicationCount, 0);
-                    recoveredCount++;
-                }
+            // Check if cache already has this data (from replication)
+            byte[] existingData = cache.get(key);
+            if (existingData != null) {
+                // Cache already has data (likely from replication) - don't overwrite
+                skippedCount++;
+                continue;
+            }
+
+            // Cache is empty for this slot - restore from WAL
+            byte[] data = journal.read(slotId);
+            if (data != null) {
+                cache.put(key, data, replicationCount, 0);
+                recoveredCount++;
             }
         }
 
