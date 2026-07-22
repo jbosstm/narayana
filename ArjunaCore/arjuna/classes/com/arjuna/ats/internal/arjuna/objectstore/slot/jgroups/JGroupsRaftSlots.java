@@ -72,7 +72,7 @@ public class JGroupsRaftSlots implements BackingSlots {
         }
 
         try {
-            tsLogger.i18NLogger.warn_jgroups_raft_slot_store();
+            tsLogger.i18NLogger.warn_jgroups_raft_slot_store_is_experimental();
 
             // Check if channel and cache are pre-configured (for testing multi-node scenarios)
             JChannel preConfiguredChannel = null;
@@ -87,7 +87,7 @@ public class JGroupsRaftSlots implements BackingSlots {
                         "preConfiguredChannel and preConfiguredStateMachine must both be set or both be null");
             }
 
-            if (preConfiguredChannel != null && preConfiguredCache != null) {
+            if (preConfiguredChannel != null) {
                 channel = preConfiguredChannel;
                 cache = preConfiguredCache;
                 // Use pre-configured channel and cache
@@ -97,8 +97,7 @@ public class JGroupsRaftSlots implements BackingSlots {
                 // Wait for leader election if not already complete
                 waitForLeaderElection(config.getRaftElectionMaxInterval());
 
-                tsLogger.logger.debugf("Raft state machine has %d entries after log replay",
-                        cache.size());
+                tsLogger.logger.debugf("Raft state machine has %d entries after log replay", cache.size());
                 initialized = true;
                 tsLogger.logger.debugf("JGroupsRaftSlots initialized successfully for node: %s",
                         config.getNodeAddress());
@@ -401,24 +400,24 @@ public class JGroupsRaftSlots implements BackingSlots {
         long electionTimeout = config.getRaftElectionMaxInterval();
 
         if (waitForLeader(electionTimeout)) {
-            // Existing cluster found — join via REDIRECT
+            // Existing cluster found - join via REDIRECT
             REDIRECT redirect = requireRedirectProtocol();
             redirect.addServer(nodeName).get(config.getRaftTimeout(), TimeUnit.MILLISECONDS);
             tsLogger.logger.infof("Joined existing Raft cluster as member: %s", nodeName);
             return;
         }
 
-        // No leader found — check if we should bootstrap
+        // No leader found - check if we should bootstrap
         View view = channel.getView();
 
         if (view.size() <= 1 || view.getCoord().equals(channel.getAddress())) {
-            // We're alone OR we're the view coordinator — bootstrap as single-member cluster.
+            // We're alone OR we're the view coordinator - bootstrap as single-member cluster.
             // Must create a new channel because RAFT's FileBasedLog cannot survive disconnect/reconnect.
             channel.close();
             bootstrapNewChannel(nodeName, clusterName);
             tsLogger.logger.infof("Bootstrapped new Raft cluster with member: %s", nodeName);
         } else {
-            // Not the coordinator — wait for coordinator to bootstrap, then join
+            // Not the coordinator - wait for coordinator to bootstrap, then join
             if (!waitForLeader(config.getRaftTimeout())) {
                 throw new IOException("Timed out waiting for Raft cluster leader");
             }

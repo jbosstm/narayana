@@ -38,6 +38,8 @@ public class JGroupsRecoveryScanTest extends JGroupsTestBase {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
+        removeDirectory(STORE_DIR);
+
         // Register the record type for recovery
         RecordTypeManager.manager().add(new RecoverableCrashRecordTypeMap());
 

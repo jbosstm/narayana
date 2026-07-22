@@ -8,14 +8,22 @@ package com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class  ByteArrayKey implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final byte[] key;
+    private final int hashcode;
 
     public ByteArrayKey(byte[] key) {
-        this.key = key != null ? key.clone() : null;
+        if (key == null) {
+            this.key = null;
+            hashcode = 0;
+        } else {
+            this.key = key.clone();
+            hashcode = Arrays.hashCode(key);
+        }
     }
 
     public byte[] getKey() {
@@ -24,8 +32,7 @@ public class  ByteArrayKey implements Serializable {
 
     @Override
     public int hashCode() {
-        // Don't cache - recalculate each time to avoid issues with transient fields
-        return key != null ? Arrays.hashCode(key) : 0;
+        return hashcode;
     }
 
     @Override

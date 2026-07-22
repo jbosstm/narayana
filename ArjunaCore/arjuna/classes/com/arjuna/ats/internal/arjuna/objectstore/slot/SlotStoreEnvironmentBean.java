@@ -18,17 +18,11 @@ import java.io.File;
 public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
 
     private volatile int numberOfSlots = 256;
-
     private volatile int bytesPerSlot = 4096;
-
     private volatile String storeDir = System.getProperty("user.dir") + File.separator + "SlotStore";
-
     private volatile boolean syncWrites = true;
-
     private volatile boolean syncDeletes = true;
-
     private volatile boolean recycleFailedSlots = true;
-
     private volatile String backingSlotsClassName = "com.arjuna.ats.internal.arjuna.objectstore.slot.VolatileSlots";
     private volatile BackingSlots backingSlots = null;
 
@@ -126,7 +120,6 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     /**
      * Returns the sync setting for transaction store delete operations.
      * For optimal crash recovery this value should be set to true.
-     * Asynchronous deletes may give rise to unnecessary crash recovery complications.
      *
      * @return true if log deletes should be synchronous, false otherwise.
      */
@@ -147,14 +140,22 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
 
     /**
      * Returns whether slots should be returned to the free list after a failed write or clear.
-     * When true, a slot whose backing write or clear threw an exception is recycled for reuse.
-     * This prevents permanent slot exhaustion from transient failures but assumes the
-     * BackingSlots implementation handles partial writes safely (e.g. via checksums or atomic ops).
-     * When false, failed slots are quarantined (permanently removed from circulation),
-     * which is safer for BackingSlots implementations that may leave indeterminate data
-     * after a failed write, but risks slot exhaustion under repeated transient failures.
+     * <p>
+     * When true (the default), a slot whose backing write or clear threw an exception is
+     * immediately returned to the free list without cleanup. This prevents slot exhaustion from
+     * transient failures but assumes the BackingSlots implementation handles partial
+     * writes safely. This is safe for all built-in BackingSlots implementations because they guard
+     * against indeterminate state: DiskSlots uses checksums, JGroupsRaftSlots blocks until majority commit,
+     * JGroupsSlots uses synchronous RPC, and InfinispanSlotStore uses synchronous replication.
+     * If any of the settings are changed then reconsider what value makes sense for recycleFailedSlots.
+     <p>
+     * When false, SlotStore attempts to clear the slot before reuse: if the clear
+     * succeeds the slot is returned to the free list; if the clear also fails the slot
+     * is quarantined (removed from circulation until the store is restarted).
+     * Use false for BackingSlots implementations that may leave indeterminate data
+     * after a failed write operation.
      *
-     * @return true if failed slots should be recycled, false to quarantine them.
+     * @return true if failed slots should be recycled, false to retry cleanup first.
      */
     public boolean isRecycleFailedSlots() {
         return recycleFailedSlots;
@@ -165,16 +166,17 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
      * <p>
      * Default: true.
      *
-     * @param recycleFailedSlots true to recycle failed slots, false to quarantine them.
+     * @param recycleFailedSlots true to recycle failed slots immediately,
+     *                           false to retry cleanup and quarantine on failure.
      */
     public void setRecycleFailedSlots(boolean recycleFailedSlots) {
         this.recycleFailedSlots = recycleFailedSlots;
     }
 
     /**
-     * Returns the class name of the com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots implementation
+     * Returns the class name of the {@link BackingSlots} implementation
      * <p>
-     * Default: "com.arjuna.ats.internal.arjuna.objectstore.slot.VolatileSlots"
+     * Default: {@link VolatileSlots}
      *
      * @return the name of the class implementing BackingSlots.
      */
@@ -194,7 +196,7 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     }
 
     /**
-     * Returns an instance of a class implementing com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots
+     * Returns an instance of a class implementing {@link BackingSlots}
      * <p>
      * If there is no pre-instantiated instance set and classloading or instantiation fails,
      * this method will log an appropriate warning and return null, not throw an exception.
@@ -215,7 +217,7 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     /**
      * Sets the instance of BackingSlots
      *
-     * @param instance an Object that implements com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots
+     * @param instance an Object that implements {@link BackingSlots}
      */
     public void setBackingSlots(BackingSlots instance) {
         synchronized (this) {
@@ -225,8 +227,7 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
             if (instance == null) {
                 this.backingSlotsClassName = null;
             } else if (instance != oldInstance) {
-                String name = ClassloadingUtility.getNameForClass(instance);
-                this.backingSlotsClassName = name;
+                this.backingSlotsClassName = ClassloadingUtility.getNameForClass(instance);
             }
         }
     }

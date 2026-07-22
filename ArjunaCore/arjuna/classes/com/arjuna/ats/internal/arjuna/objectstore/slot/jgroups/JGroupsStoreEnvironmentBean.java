@@ -24,7 +24,7 @@ import java.io.File;
  */
 public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implements JGroupsStoreEnvironmentBeanMBean {
 
-    private String jGroupsConfigFileName = "jgroups-transport-config.xml"; // "jgroups.xml";
+    private String jGroupsConfigFileName = "jgroups-config.xml";
     private volatile ReplCache<ByteArrayKey, byte[]> cache;
     private String clusterName = null;
     private String cacheName = "defaultJGroupsCache";
@@ -33,7 +33,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
     private String slotKeyGeneratorClassName;
     private volatile JGroupsSlotKeyGenerator jGroupsSlotKeyGenerator;
     private long cachingTime = 0L;  // L2 cache time in millis (0 = disabled for consistency)
-    private long callTimeout = 1500L; // maximum time (in milliseconds) a cache operation—such will wait for responses
+    private long callTimeout = 1500L; // maximum time (in milliseconds) a cache operation will wait for responses
     private boolean migrateData = true;
 
     // WAL (Write-Ahead Log) persistence for crash recovery

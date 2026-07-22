@@ -6,7 +6,7 @@
 package com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups;
 
 /**
- * A strategy for generating unique keys for slot entries {@see SlotStoreEnvironmentBean}
+ * A strategy for generating unique keys for slot entries {@code SlotStoreEnvironmentBean}
  */
 public interface JGroupsSlotKeyGenerator {
     // generate a unique slot key for the given index (which is different from SlotStoreKey)

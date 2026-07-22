@@ -10,6 +10,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import org.jgroups.blocks.Cache;
 import org.jgroups.blocks.ReplCache;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class JGroupsSlots implements BackingSlots {
     public void init(SlotStoreEnvironmentBean slotStoreConfig) throws IOException {
         JGroupsStoreEnvironmentBean config;
 
-        tsLogger.i18NLogger.warn_jgroups_slot_store();
+        tsLogger.i18NLogger.warn_jgroups_slot_store_is_experimental();
 
         if (slotStoreConfig instanceof JGroupsStoreEnvironmentBean) {
             config = (JGroupsStoreEnvironmentBean) slotStoreConfig;
@@ -78,14 +79,12 @@ public class JGroupsSlots implements BackingSlots {
             replicationCount = config.getReplicationCount();
             cache.start();
 
-            // Initialize slots array BEFORE loadFromWAL
-            // First, try to load existing keys from cache
+            // load existing keys from cache (start will have synchronised state with other cluster members)
             Set<ByteArrayKey> existingKeys = cache.getL2Cache().getInternalMap().keySet();
             load(existingKeys);
 
-            // Now load from WAL (slots[] is fully initialized)
+            // and then load from WAL (slots[] is fully initialized) making sure not to overwrite cache entries
             if (journal != null) {
-                // WAL enabled: load from journal, but don't overwrite cache data
                 loadFromWAL();
             }
         } catch (Exception e) {
@@ -120,33 +119,66 @@ public class JGroupsSlots implements BackingSlots {
 
         int recoveredCount = 0;
         int skippedCount = 0;
+        boolean warned = false;
         for (Integer slotId : journal.getSlotIds()) {
             if (slotId < 0 || slotId >= slots.length) {
-                tsLogger.logger.warnf("JGroupsSlots: WAL contains out-of-range slot ID %d (valid range 0..%d), skipping",
-                    slotId, slots.length - 1);
+                if (!warned) {
+                    tsLogger.i18NLogger.warn_slot_store_too_few_slots(journal.size(), slots.length);
+                    warned = true;
+                }
+                tsLogger.logger.debugf("JGroupsSlots: WAL contains out-of-range slot ID %d (valid range 0..%d)",
+                        slotId.intValue(), slots.length - 1);
                 continue;
             }
 
             ByteArrayKey key = slots[slotId];
-
-            // Check if cache already has this data (from replication)
-            byte[] existingData = cache.get(key);
-            if (existingData != null) {
-                // Cache already has data (likely from replication) - don't overwrite
-                skippedCount++;
-                continue;
-            }
-
-            // Cache is empty for this slot - restore from WAL
             byte[] data = journal.read(slotId);
-            if (data != null) {
+            // In the single-node crashed/restarted case (with other cluster members), putIfAbsent returns false
+            // (data already there from replication) so the next cache.put() is skipped.
+            // In the all nodes crashed/restarted case (with other cluster members), putIfAbsent returns true
+            // so the next cache.put() restores the replicated state to the full cluster
+            if (data != null && putIfAbsent(cache, key, data, 0)) {
                 cache.put(key, data, replicationCount, 0);
                 recoveredCount++;
+            } else {
+                skippedCount++;
             }
         }
 
-        tsLogger.logger.infof("JGroupsSlots: Recovered %d slots from write-ahead log to cache%s",
+        tsLogger.logger.debugf("JGroupsSlots: Recovered %d slots from write-ahead log to cache%s",
             recoveredCount, skippedCount > 0 ? " (skipped " + skippedCount + " already in cache)" : "");
+    }
+
+    /*
+     * The slots initialisation algorithm is:
+     * 1.  Initialise the slots array using the cache (load method)
+     * 2a. Read keys from the write-ahead log (loadFromWAL method)
+     * 2b. For each WAL entry, attempt to insert the value into the local cache using putIfAbsent on the
+     *     internal jgroups map (cache.getL2Cache().getInternalMap().putIfAbsent). This is atomic against
+     *     the JGroups receiver thread, so if replicated data arrives concurrently, putIfAbsent keeps the
+     *     replicated value and discards the stale WAL value — correct because the WAL is frozen at crash
+     *     (or shutdown) time while replicated data reflects the cluster's current state.
+     *     If putIfAbsent succeeds, cache.put() is called to replicate the recovered data to other nodes.
+     *
+     * Scenarios:
+     *     Single-node crash or restart with surviving nodes: the surviving nodes already have the data
+     *     via replication, so putIfAbsent returns false and WAL entries are skipped.
+     *
+     *     All-nodes crash or restart: each node recovers its own WAL locally via putIfAbsent, then
+     *     replicates the recovered data to the cluster via cache.put() to restore the full replicated
+     *     state.
+     *
+     *     A graceful restart behaves the same as a crash from this algorithm's perspective — the WAL
+     *     may contain entries for transactions that were active at shutdown time, and the same
+     *     putIfAbsent-then-replicate logic applies.
+     */
+    private static <K, V> boolean putIfAbsent(ReplCache<K, V> cache, K key, V val, long timeout) {
+        // remark the ReplCache.Value constructor uses an arbitrary value for the second parameter (replication_count)
+        // because put is to the local internal map which bypasses replication (see ReplCache.mcastPut)
+        ReplCache.Value<V> replValue = new ReplCache.Value<>(val, (short) -1);
+        Cache.Value<ReplCache.Value<V>> cacheValue = new Cache.Value<>(replValue, timeout);
+
+        return cache.getL2Cache().getInternalMap().putIfAbsent(key, cacheValue) == null;
     }
 
     /**
@@ -242,7 +274,7 @@ public class JGroupsSlots implements BackingSlots {
                 journal.stop();
                 tsLogger.logger.debugf("JGroupsSlots: write-ahead log stopped");
             } catch (Exception e) {
-                tsLogger.logger.warnf("JGroupsSlots: Error stopping write-ahead log: %s", e.getMessage());
+                tsLogger.logger.infof("JGroupsSlots: Error stopping write-ahead log: %s", e.getMessage());
             }
         }
         if (cache != null) {

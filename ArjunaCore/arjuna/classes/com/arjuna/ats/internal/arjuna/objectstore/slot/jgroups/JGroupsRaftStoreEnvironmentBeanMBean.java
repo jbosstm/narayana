@@ -13,11 +13,7 @@ import org.jgroups.raft.blocks.ReplicatedStateMachine;
  * Extends the base JGroups store MBean with Raft-specific pre-configuration methods.
  *
  * <p>The pre-configured channel and state machine properties are primarily intended
- * for testing scenarios where multiple Raft nodes need to be started in parallel
- * before RecoveryStore creation. See {@link com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsRaftClusterTest}
- * for usage examples.
- *
- * @since 5.13.2
+ * for testing scenarios where multiple Raft nodes need to be started in parallel.
  */
 public interface JGroupsRaftStoreEnvironmentBeanMBean extends JGroupsStoreEnvironmentBeanMBean {
 
@@ -25,8 +21,8 @@ public interface JGroupsRaftStoreEnvironmentBeanMBean extends JGroupsStoreEnviro
      * Get the pre-configured JChannel, if any.
      * <p>
      * This is useful for testing because Raft store initialisation must wait for leader election before allowing reads
-     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring the channel
-     * "cluster formation" can happen before "RecoveryStore creation"
+     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring both the channel
+     * and the state machine, cluster formation can happen before the RecoveryStore is started.
      *
      * @return the pre-configured channel, or null if not set
      */
@@ -44,8 +40,8 @@ public interface JGroupsRaftStoreEnvironmentBeanMBean extends JGroupsStoreEnviro
      * Get the pre-configured ReplicatedStateMachine, if any.
      * <p>
      * This is useful for testing because Raft store initialisation must wait for leader election before allowing reads
-     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring the channel
-     * "cluster formation" can happen before "RecoveryStore creation"
+     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring both the channel
+     * and the state machine, cluster formation can happen before the RecoveryStore is started.
      *
      * @return the pre-configured state machine, or null if not set
      */

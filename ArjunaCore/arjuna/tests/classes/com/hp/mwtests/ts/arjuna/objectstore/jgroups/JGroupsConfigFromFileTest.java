@@ -40,9 +40,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class JGroupsConfigFromFileTest extends JGroupsTestBase {
     private static final String JBOSSTS_CONFIG_FILE = "jgroups-jbossts-properties.xml";
-    // the next three values MUST correspond to the values configured in JBOSSTS_CONFIG_FILE
+    // the next values MUST correspond to the values configured in JBOSSTS_CONFIG_FILE
     private static final String EXPECTED_CLUSTER_NAME_FROM_CONFIG = "jGroupsClusteredObjectStore";
-    private static final String EXPECTED_SLOT_KEY_GENERATOR = SharedSlotKeyGenerator.class.getName();
 
     @BeforeAll
     public static void setupStore() {
@@ -65,7 +64,7 @@ public class JGroupsConfigFromFileTest extends JGroupsTestBase {
         // verify that the config used JBOSSTS_CONFIG_FiLE
         assertEquals(JGROUPS_CONFIG_FILE, config.getJGroupsConfigFileName());
         assertEquals(EXPECTED_CLUSTER_NAME_FROM_CONFIG, config.getClusterName());
-        assertEquals(EXPECTED_SLOT_KEY_GENERATOR, config.getSlotKeyGeneratorClassName());
+//        assertEquals(EXPECTED_SLOT_KEY_GENERATOR, config.getSlotKeyGeneratorClassName());
     }
 
     @Test

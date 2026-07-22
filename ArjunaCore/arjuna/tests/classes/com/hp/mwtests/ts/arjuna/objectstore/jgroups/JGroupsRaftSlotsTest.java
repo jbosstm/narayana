@@ -1,7 +1,7 @@
 /*
  * Copyright The Narayana Authors
  *
- * SPDX-License-Identifier: LGPL-2.1-only
+ * SPDX-License-Identifier: Apache-2.0
  */
 package com.hp.mwtests.ts.arjuna.objectstore.jgroups;
 
@@ -40,14 +40,13 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         // Create configuration
         config = new JGroupsRaftStoreEnvironmentBean();
 
-        config.setJGroupsConfigFileName("jgroups-raft.xml");
+        config.setJGroupsConfigFileName("jgroups-raft-config.xml");
         config.setNodeAddress(NODE_NAME);
         config.setClusterName("raft-test-" + System.currentTimeMillis());
         config.setCacheName(config.getClusterName());
         config.setStoreDir(STORE_DIR);
         config.setNumberOfSlots(256);
         config.setReplicationCount((short) -1);
-        config.setSlotKeyGeneratorClassName(SharedSlotKeyGenerator.class.getName());
 
         // Raft config
         config.setRaftMembers(NODE_NAME);  // Single node for basic tests see JGroupsRaftClusterTest for multi-node

@@ -1,7 +1,7 @@
 /*
  * Copyright The Narayana Authors
  *
- * SPDX-License-Identifier: LGPL-2.1-only
+ * SPDX-License-Identifier: Apache-2.0
  */
 package com.hp.mwtests.ts.arjuna.objectstore.jgroups;
 
@@ -29,6 +29,7 @@ import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.file.Files;
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsTestBase {
-    static final String JGROUPS_CONFIG_FILE = "jgroups.xml";
+    static final String JGROUPS_CONFIG_FILE = "jgroups-config.xml";
     static final String CLUSTER_NAME = "clusteredObjectStore"; // a name for the cluster of shared stores
     // location of the file system store (with surefire it will be the build directory)
     static final String STORE_DIR = System.getProperty("user.dir") + "/jgroups-caches";
@@ -104,7 +105,7 @@ public class JGroupsTestBase {
                             }
                         });
             }
-        } catch (IOException ignore) {
+        } catch (IOException | UncheckedIOException ignore) {
         }
     }
 
@@ -154,8 +155,6 @@ public class JGroupsTestBase {
             config.setCacheName(clusterName); // Use clusterName so all stores join the same cluster
             config.setJGroupsConfigFileName(configFile);
             config.setBackingSlots(slots);
-            // Use SharedSlotKeyGenerator so all nodes in the cluster share the same slot keys
-            config.setSlotKeyGeneratorClassName(SharedSlotKeyGenerator.class.getName());
 
             config.setCallTimeout(1500L);
             config.setCachingTime(30000L);
@@ -172,12 +171,7 @@ public class JGroupsTestBase {
                     try {
                         config.getCache().stop();
                     } catch (Throwable e) {
-                        if ("null".equals(config.getCache().getView())) {
-                            System.err.printf("ERROR: null view while stopping cache %s%n",
-                                    config.getCache().getClusterName());
-                        } else {
-                            throw new RuntimeException(e);
-                        }
+                        throw new RuntimeException("ERROR: null view while stopping cache: " + config.getCacheName());
                     }
                 }
             } catch (CoreEnvironmentBeanException ignore) {

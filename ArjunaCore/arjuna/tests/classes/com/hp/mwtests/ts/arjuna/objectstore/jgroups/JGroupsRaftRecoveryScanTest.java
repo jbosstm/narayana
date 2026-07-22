@@ -52,13 +52,12 @@ public class JGroupsRaftRecoveryScanTest extends JGroupsTestBase {
             this.config = new JGroupsRaftStoreEnvironmentBean();
 
             // Basic configuration
-            config.setJGroupsConfigFileName("jgroups-raft.xml");
+            config.setJGroupsConfigFileName("jgroups-raft-config.xml");
             config.setNodeAddress(nodeName);
             config.setClusterName(clusterName);
             config.setCacheName(clusterName);
             config.setStoreDir(RAFT_STORE_DIR + "/" + nodeName);
             config.setNumberOfSlots(256);
-            config.setSlotKeyGeneratorClassName(SharedSlotKeyGenerator.class.getName());
 
             // Raft-specific configuration
             config.setRaftMembers(nodeName);  // Single node for recovery test
