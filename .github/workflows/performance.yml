@@ -186,6 +186,10 @@ jobs:
         env:
           OVERRIDE_NARAYANA_VERSION: ${{ needs.build-narayana.outputs.narayana-version }}
         run: |
+          if [ -n "$JMH_MEASUREMENT_TIME" ] || [ -n "$JMH_FORKS" ] || [ -n "$JMH_WARMUP_ITERATIONS" ] || [ -n "$JMH_MEASUREMENT_ITERATIONS" ]; then
+            export JMHARGS="-r ${JMH_MEASUREMENT_TIME:-30} -f ${JMH_FORKS:-3} -wi ${JMH_WARMUP_ITERATIONS:-5} -i ${JMH_MEASUREMENT_ITERATIONS:-5} -foe true"
+            echo "Using custom JMHARGS: $JMHARGS"
+          fi
           cd performance
           WORKSPACE=$(pwd) ./.github/scripts/run-benchmark.sh "${{ matrix.benchmark }}"
 

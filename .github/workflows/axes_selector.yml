@@ -291,7 +291,11 @@ jobs:
               const possibleEnvVars = [
                 'AS_BRANCH',
                 'SPI_BRANCH',
-                'PERF_PR_NUMBER'
+                'PERF_PR_NUMBER',
+                'JMH_MEASUREMENT_TIME',
+                'JMH_FORKS',
+                'JMH_WARMUP_ITERATIONS',
+                'JMH_MEASUREMENT_ITERATIONS'
               ];
               
               const extractedEnvVars = {};
