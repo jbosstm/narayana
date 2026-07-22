@@ -21,6 +21,11 @@ on:
         required: false
         type: string
         default: '{}'
+      benchmarks:
+        description: 'JSON array of benchmark groups to run (default: all)'
+        required: false
+        type: string
+        default: '["stores", "comparisons", "rts", "transports", "journal"]'
 
 # Only run the latest job
 concurrency:
@@ -114,7 +119,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        benchmark: [stores, comparisons, rts, transports, journal]
+        benchmark: ${{ fromJSON(inputs.benchmarks) }}
 
     steps:
       - name: Load Dynamic Environment Variables

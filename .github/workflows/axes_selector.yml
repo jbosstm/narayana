@@ -95,6 +95,11 @@ on:
         description: 'PERF_PR_NUMBER: PR number to checkout for the performance repo tests.'
         required: false
         type: string
+      benchmarks:
+        description: 'JSON array of benchmark groups to run (default: all)'
+        required: false
+        type: string
+        default: '["stores", "comparisons", "rts", "transports", "journal"]'
   workflow_call:
     inputs:
       jdk_versions:
@@ -157,6 +162,11 @@ on:
         required: false
         type: string
         default: '{}'
+      benchmarks:
+        description: 'JSON array of benchmark groups to run (default: all)'
+        required: false
+        type: string
+        default: '["stores", "comparisons", "rts", "transports", "journal"]'
 
 permissions:
   actions: write
@@ -181,6 +191,7 @@ jobs:
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || inputs.enabled_databases }}
       jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || inputs.jdk_versions }}
       environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || inputs.environment_variables }}
+      benchmarks: ${{ steps.parse.outputs.benchmarks || inputs.benchmarks || '["stores", "comparisons", "rts", "transports", "journal"]' }}
       pr_number: ${{ steps.set-pr-data.outputs.pr_number }}
       pr_ref: ${{ steps.set-pr-data.outputs.pr_ref }}
       pr_repo: ${{ steps.set-pr-data.outputs.pr_repo }}
@@ -298,6 +309,15 @@ jobs:
               }
               
               core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
+
+              // Parse BENCHMARKS=stores,journal (comma-separated list of benchmark groups)
+              const benchmarkRegex = /\bBENCHMARKS=([^\s]+)/;
+              const benchmarkMatch = prBody.match(benchmarkRegex);
+              if (benchmarkMatch) {
+                const benchmarkList = benchmarkMatch[1].split(',').map(s => s.trim()).filter(Boolean);
+                core.info(`Benchmarks detected in PR body: ${benchmarkList}`);
+                core.setOutput('benchmarks', JSON.stringify(benchmarkList));
+              }
             }
 
       - name: Set axes according to triggering event
@@ -433,3 +453,4 @@ jobs:
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
+      benchmarks: ${{ needs.axes_selector.outputs.benchmarks }}
