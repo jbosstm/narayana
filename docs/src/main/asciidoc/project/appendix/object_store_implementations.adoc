@@ -224,6 +224,16 @@ Modifying the size of slots in a non-empty store may result in data loss.
 ====
 Default: 4096
 
+SlotStoreEnvironmentBean.recycleFailedSlots::
+Controls whether slots are returned to the free list after a failed write or clear operation.
+When `true`, failed slots are immediately recycled, preventing slot exhaustion from transient failures.
+When `false`, the store first attempts to clear the slot; if the clear succeeds the slot is recycled,
+otherwise the slot is quarantined (permanently removed from circulation) and a warning is logged.
+Use `false` for BackingSlots implementations that may leave indeterminate data after a failed write operation (in
+which case the slot can only be recycled by restarting the store)
+would free it again.
+Default: true
+
 InfinispanStoreEnvironmentBean.infinispanConfigFileName::
 The infinispan xml based cache configuration. The config file name relative to the resource directory
 so begins with a slash char
@@ -326,6 +336,13 @@ A typical transaction record is less than 1KB.
 Modifying the size of slots in a non-empty store may result in data loss.
 ====
 Default: 4096
+
+SlotStoreEnvironmentBean.recycleFailedSlots::
+Controls whether slots are returned to the free list after a failed write or clear operation.
+When `true`, failed slots are immediately recycled, preventing slot exhaustion from transient failures.
+When `false`, the store first attempts to clear the slot; if the clear succeeds the slot is recycled, otherwise the slot is quarantined (permanently removed from circulation) and a warning is logged.
+Use `false` for BackingSlots implementations that may leave indeterminate data after a failed write.
+Default: true
 
 JGroupsStoreEnvironmentBean.nodeAddress::
 The address of the node within a cluster.
@@ -524,6 +541,13 @@ A typical transaction record is less than 1KB.
 Modifying the size of slots in a non-empty store may result in data loss.
 ====
 Default: 4096
+
+SlotStoreEnvironmentBean.recycleFailedSlots::
+Controls whether slots are returned to the free list after a failed write or clear operation.
+When `true`, failed slots are immediately recycled, preventing slot exhaustion from transient failures.
+When `false`, the store first attempts to clear the slot; if the clear succeeds the slot is recycled, otherwise the slot is quarantined (permanently removed from circulation) and a warning is logged.
+Use `false` for BackingSlots implementations that may leave indeterminate data after a failed write.
+Default: true
 
 JGroupsStoreEnvironmentBean.nodeAddress::
 The address of the node within a cluster.

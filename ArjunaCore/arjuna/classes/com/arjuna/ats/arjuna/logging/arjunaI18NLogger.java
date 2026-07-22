@@ -1692,6 +1692,11 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_jgroups_raft_slot_store();
 
+	@Message(id = 12425, value = "SlotStore: quarantining slot {0} after failed clear ({1} slots remain free)",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_jgroups_slot_store_quarantine(int slotId, int freeListSize);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
