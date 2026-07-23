@@ -229,9 +229,8 @@ Controls whether slots are returned to the free list after a failed write or cle
 When `true`, failed slots are immediately recycled, preventing slot exhaustion from transient failures.
 When `false`, the store first attempts to clear the slot; if the clear succeeds the slot is recycled,
 otherwise the slot is quarantined (permanently removed from circulation) and a warning is logged.
-Use `false` for BackingSlots implementations that may leave indeterminate data after a failed write operation (in
-which case the slot can only be recycled by restarting the store)
-would free it again.
+Use `false` for BackingSlots implementations that may leave indeterminate data after a failed write operation.
+Quarantined slots remain unavailable until the store is restarted, at which point empty slots are returned to the free list.
 Default: true
 
 InfinispanStoreEnvironmentBean.infinispanConfigFileName::
