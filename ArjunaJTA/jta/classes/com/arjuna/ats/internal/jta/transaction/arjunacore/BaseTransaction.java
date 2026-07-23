@@ -30,6 +30,12 @@ public class BaseTransaction
 	public void begin() throws jakarta.transaction.NotSupportedException,
 			jakarta.transaction.SystemException
 	{
+		begin(false);
+	}
+
+	public void begin(boolean readOnly) throws jakarta.transaction.NotSupportedException,
+			jakarta.transaction.SystemException
+	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("BaseTransaction.begin");
         }
@@ -71,11 +77,11 @@ public class BaseTransaction
 		else
 		    v = TxControl.getDefaultTimeout();
 
-		// TODO set default timeout
+		// TODO: set default timeout
 
-		TransactionImple.putTransaction(new TransactionImple(v));
+		TransactionImple.putTransaction(new TransactionImple(v, readOnly));
 	}
-
+	
 	/**
 	 * We will never throw a HeuristicRollbackException because if we get a
 	 * HeuristicRollback from a resource, and can successfully rollback the
@@ -100,6 +106,14 @@ public class BaseTransaction
 			throw new IllegalStateException(
 					"BaseTransaction.commit - "
 							+ jtaLogger.i18NLogger.get_transaction_arjunacore_notx());
+
+		if (theTransaction.isReadOnly()) {
+			// Spec §begin(boolean): the only possible outcome of a read-only transaction is rollback.
+			// Roll back, then raise RollbackException as required.
+			theTransaction.rollbackAndDisassociate();
+			throw new jakarta.transaction.RollbackException(
+					jtaLogger.i18NLogger.get_transaction_arjunacore_readonly());
+		}
 
 		theTransaction.commitAndDisassociate();
 	}
@@ -255,7 +269,7 @@ public class BaseTransaction
 		if (theTransaction == null)
 			throw new IllegalStateException("BaseTransaction.commit - "
 					+ jtaLogger.i18NLogger.get_transaction_arjunacore_notx());
-		
+
 		AtomicAction.suspend();
 
 		return wrap(new Callable<Void>() {
@@ -272,6 +286,11 @@ public class BaseTransaction
 				}
 				if (!AtomicAction.resume(theTransaction.getAtomicAction()))
 					throw new InvalidTransactionException();
+				if (theTransaction.isReadOnly()) {
+					theTransaction.rollbackAndDisassociate();
+					throw new jakarta.transaction.RollbackException(
+							jtaLogger.i18NLogger.get_transaction_arjunacore_readonly());
+				}
 				theTransaction.commitAndDisassociate();
 				return null;
 			}
@@ -303,7 +322,7 @@ public class BaseTransaction
 			return new Thread(r, name + "-Thread_" + counter.incrementAndGet());
 		}
 	}
-
+	
 	private static final ThreadFactory transactionThreadFactory = new NamedThreadFactory("Narayana-Transaction");
 
 	private static final ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, _asyncCommitPoolSize, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3), transactionThreadFactory);

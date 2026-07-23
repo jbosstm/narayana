@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import jakarta.transaction.HeuristicMixedException;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -198,7 +199,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
         }
 
 		if (_theTransaction != null)
-		{   
+		{
 			/*
 			 * Call end on any suspended resources. If this fails, then the
 			 * transaction will be rolled back.
@@ -842,7 +843,7 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				return true;
 			}
 
-            return false;
+			return false;
         }
 		catch (Exception e)
 		{
@@ -1878,6 +1879,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
         return Collections.EMPTY_MAP;
     }
 
+	public boolean isReadOnly() {
+		return false;
+	}
+
     protected AtomicTransaction _theTransaction;
 
 	private Hashtable _resources;
@@ -1907,5 +1912,4 @@ public class TransactionImple implements jakarta.transaction.Transaction,
     private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
-
 }

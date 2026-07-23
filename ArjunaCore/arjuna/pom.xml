@@ -224,6 +224,7 @@
                   <!-- inspired by workaround https://github.com/apache/maven-surefire/issues/2007 -->
                   <classesDirectory>${project.build.directory}/classes/META-INF/versions/21</classesDirectory>
                   <additionalClasspathElements>
+                    <additionalClasspathElement>${project.build.directory}/classes/META-INF/versions/17</additionalClasspathElement>
                     <additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
                   </additionalClasspathElements>
                 </configuration>
@@ -306,6 +307,7 @@
                   <!-- inspired by workaround https://github.com/apache/maven-surefire/issues/2007 -->
                   <classesDirectory>${project.build.directory}/classes/META-INF/versions/25</classesDirectory>
                   <additionalClasspathElements>
+                    <additionalClasspathElement>${project.build.directory}/classes/META-INF/versions/17</additionalClasspathElement>
                     <additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
                   </additionalClasspathElements>
                 </configuration>

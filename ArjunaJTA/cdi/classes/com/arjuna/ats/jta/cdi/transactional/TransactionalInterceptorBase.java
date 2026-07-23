@@ -25,6 +25,10 @@ import jakarta.interceptor.InvocationContext;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.Transactional;
+import jakarta.transaction.TransactionalException;
+import jakarta.transaction.InvalidTransactionException;
+
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.security.PrivilegedAction;
@@ -170,8 +174,9 @@ public abstract class TransactionalInterceptorBase implements Serializable {
     }
 
     protected Object invokeInOurTx(InvocationContext ic, TransactionManager tm, RunnableWithException afterEndTransaction) throws Exception {
+        Transactional transactional = getTransactional(ic);
 
-        tm.begin();
+        tm.begin(transactional.isReadOnly());
         Transaction tx = tm.getTransaction();
 
         boolean throwing = false;
@@ -186,7 +191,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
             AtomicReference<Object> retRef = new AtomicReference<>(ret);
             boolean asyncReturnType =
                     ContextPropagationAsyncHandler.tryHandleAsynchronously(
-                            tm, tx, getTransactional(ic), retRef, ic.getMethod().getReturnType(), afterEndTransaction);
+                            tm, tx, transactional, retRef, ic.getMethod().getReturnType(), afterEndTransaction);
             if (throwing || ret == null || !asyncReturnType) {
                 // is throwing (OR) is null (OR) is not asynchronous type (OR) no async handler classes on classpath : handle synchronously
                 TransactionHandler.endTransaction(tm, tx, afterEndTransaction);
@@ -199,6 +204,12 @@ public abstract class TransactionalInterceptorBase implements Serializable {
     }
 
     protected Object invokeInCallerTx(InvocationContext ic, Transaction tx) throws Exception {
+        // Only propagating modes (REQUIRED, MANDATORY, SUPPORTS) call this path.
+        // Validate that the active transaction's read-only flag matches the annotation.
+        Transactional transactional = getTransactional(ic);
+        if (tx.isReadOnly() != transactional.isReadOnly()) {
+            throw new TransactionalException("isReadOnly() mismatch", new InvalidTransactionException());
+        }
 
         try {
             return ic.proceed();

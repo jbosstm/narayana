@@ -10,6 +10,7 @@ package com.arjuna.ats.jta.transaction;
 import java.util.Map;
 
 import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -43,4 +44,10 @@ public interface Transaction extends jakarta.transaction.Transaction
     public Uid get_uid(); // get the tx id.
     
     public Xid getTxId ();  // get the global Xid (no branch qualifier).
+
+    // Declared here to surface the spec method on the Narayana extension interface.
+    // Inherited from jakarta.transaction.Transaction but re-declared so callers
+    // holding a com.arjuna.ats.jta.transaction.Transaction reference can call it
+    // without casting.
+    boolean isReadOnly() throws SystemException;
 }

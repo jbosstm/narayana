@@ -21,6 +21,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
+import jakarta.transaction.xa.ExtendedXAResource;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -87,6 +88,11 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
         _txLocalResources = Collections.synchronizedMap(new HashMap());
     }
+
+	public TransactionImple(int timeout, boolean readOnly) {
+		this(timeout);
+		_readOnly = readOnly;
+	}
 
 	/**
 	 * Overloads Object.equals()
@@ -170,6 +176,14 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
+			}
+
+			// Spec §begin(boolean): the only possible outcome of a read-only transaction is rollback.
+			// Roll back, then raise RollbackException as required.
+			if (_readOnly) {
+				rollback();
+				throw new jakarta.transaction.RollbackException(
+						jtaLogger.i18NLogger.get_transaction_arjunacore_readonly());
 			}
 
 			/*
@@ -590,10 +604,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				}
 
 				xid = createXid(branchRequired, theModifier, xaRes);
-
+	
 				boolean associatedWork = false;
 				int retry = 20;
-
+	
 				/*
 				 * If another process has (or is about to) create the same
 				 * transaction association then we will probably get a failure
@@ -606,15 +620,28 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				 *
 				 * Is there a benefit to a zero branch?
 				 */
-
+		
 				while (!associatedWork)
 				{
+					// Spec: setReadOnly must be called before xa_start, with the same xid.
+					// This call is outside the XAException retry-catch block below so that
+					// an XAException from setReadOnly (e.g. XAER_RMERR) is NOT misinterpreted
+					// as an XID collision and does not trigger an xa_start retry with a new xid.
+					if (_readOnly) {
+						try {
+							setResourceReadOnly(xaRes, xid);
+						} catch (XAException ex) {
+							markRollbackOnly();
+							throw ex;
+						}
+					}
+	
 					try
 					{
 						if (_xaTransactionTimeoutEnabled)
 						{
 							int timeout = _theTransaction.getTimeout();
-
+	
 							if (timeout > 0)
 							{
 								try
@@ -623,34 +650,34 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 								}
 								catch (XAException te)
 								{
-                                    jtaLogger.i18NLogger.warn_transaction_arjunacore_timeouterror("TransactionImple.enlistResource",XAHelper.xidToString(xid),  XAHelper.printXAErrorCode(te), te);
+				                                 jtaLogger.i18NLogger.warn_transaction_arjunacore_timeouterror("TransactionImple.enlistResource",XAHelper.xidToString(xid),  XAHelper.printXAErrorCode(te), te);
 								}
 							}
 						}
-
+	
 						int xaStartNormal = ((theModifier == null) ? XAResource.TMNOFLAGS
 								: theModifier
 										.xaStartParameters(XAResource.TMNOFLAGS));
-
-
-                        // Pay attention now, this bit is hairy. We need to add a new AbstractRecord (XAResourceRecord)
-                        // to the BasicAction, which will thereafter drive its completion. However, the transaction
-                        // core is not directly XA aware, so it's our job to start the XAResource. Problem is, if
-                        // adding the record fails, BasicAction will never end the resource via the XAResourceRecord,
-                        // so we must do so directly.  start may fail due to dupl xid or other reason, and transactions
-                        // may rollback async, for which reasons we can't call add before start.
-                        // The xid will change on each pass of the loop, so we need to create a new record on each pass.
-                        // The add will fail in the case of multiple last resources being disallowed
-                        // see JBTM-362 and JBTM-363
-                        AbstractRecord abstractRecord = createRecord(xaRes, params, xid);
-                        String reasonForEnlistFailure = null;
-                        if(abstractRecord != null) {
-                            xaRes.start(xid, xaStartNormal);
-                            int addOutcome = _theTransaction.add(abstractRecord);
-                            if(addOutcome == AddOutcome.AR_ADDED) {
-                                _resources.put(xaRes, new TxInfo(xid));
-                                return true; // dive out, no need to set associatedWork = true;
-                            } else {
+	
+	
+				                     // Pay attention now, this bit is hairy. We need to add a new AbstractRecord (XAResourceRecord)
+				                     // to the BasicAction, which will thereafter drive its completion. However, the transaction
+				                     // core is not directly XA aware, so it's our job to start the XAResource. Problem is, if
+				                     // adding the record fails, BasicAction will never end the resource via the XAResourceRecord,
+				                     // so we must do so directly.  start may fail due to dupl xid or other reason, and transactions
+				                     // may rollback async, for which reasons we can't call add before start.
+				                     // The xid will change on each pass of the loop, so we need to create a new record on each pass.
+				                     // The add will fail in the case of multiple last resources being disallowed
+				                     // see JBTM-362 and JBTM-363
+				                     AbstractRecord abstractRecord = createRecord(xaRes, params, xid);
+				                     String reasonForEnlistFailure = null;
+				                     if(abstractRecord != null) {
+				                         xaRes.start(xid, xaStartNormal);
+				                         int addOutcome = _theTransaction.add(abstractRecord);
+				                         if(addOutcome == AddOutcome.AR_ADDED) {
+				                             _resources.put(xaRes, new TxInfo(xid));
+				                             associatedWork = true;
+				                         } else {
                                 // we called start on the resource, but _theTransaction did not accept it.
                                 // we therefore have a mess which we must now clean up by ensuring the start is undone:
                                 if (addOutcome == AddOutcome.AR_DUPLICATE &&
@@ -715,7 +742,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 						}
 					}
 				}
-			}
+				if (associatedWork) {
+					return true;
+				}
+				}
 			else
 			{
 				/*
@@ -730,12 +760,20 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				 */
 
 				xid = existingRM.xid();
-
+	
+				// Spec: setReadOnly must be called before xa_start.
+				try {
+					setResourceReadOnly(xaRes, xid);
+				} catch (XAException ex) {
+					markRollbackOnly();
+					throw ex;
+				}
+	
 				try
 				{
 					int xaStartJoin = ((theModifier == null) ? XAResource.TMJOIN
 							: theModifier.xaStartParameters(XAResource.TMJOIN));
-
+	
 					xaRes.start(xid, xaStartJoin);
 				}
 				catch (XAException ex)
@@ -744,25 +782,24 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 						jtaLogger.i18NLogger.warn_transaction_arjunacore_xastart("TransactionImple.enlistResource - xa_start ",
 								XAHelper.xidToString(xid), XAHelper.printXAErrorCode(ex), ex); // JBTM-3990
 					}
-
+	
 					markRollbackOnly();
-
+	
 					throw ex;
 				}
-
+	
 				/*
 				 * Add to duplicate resources list so we can keep track of it
 				 * (particularly if we later have to delist).
 				 */
-
+	
 				_duplicateResources.put(xaRes, new TxInfo(xid));
-
 				return true;
 			}
-
-            return false;
-        }
-		catch (Exception e)
+	
+				return false;
+			}
+			catch (Exception e)
 		{
 			jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(xaRes, e);
 			/*
@@ -776,6 +813,45 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			return false;
 		}
 	}
+
+
+    /**
+     * If this transaction is read-only, notify the resource before it is started via xa_start.
+     *
+     * <p>Spec (Jakarta Transactions §Resource Enlistment):
+     * <ul>
+     *   <li>The transaction manager must attempt {@link ExtendedXAResource#setReadOnly(Xid)} on the
+     *       resource <em>before</em> invoking {@link XAResource#start(Xid, int)}.</li>
+     *   <li>If the resource does not implement {@link ExtendedXAResource}, or if
+     *       {@code setReadOnly} fails, the transaction must be marked rollback-only so that any
+     *       subsequent commit attempt raises {@link jakarta.transaction.RollbackException}.</li>
+     * </ul>
+     * Errors from {@code setReadOnly} are propagated; the caller must not proceed to {@code xa_start}.
+     */
+    private void setResourceReadOnly(XAResource xaRes, Xid xid) throws XAException {
+        if (!_readOnly) {
+            return;
+        }
+        if (xaRes instanceof ExtendedXAResource exaRes) {
+            try {
+                exaRes.setReadOnly(xid);
+            }
+            catch (XAException ex) {
+                if (arjPropertyManager.getCoreEnvironmentBean().isLogAndRethrow()) {
+                    jtaLogger.i18NLogger.warn_transaction_arjunacore_xastart(
+                            "TransactionImple.enlistResource - xa_setReadOnly or xa_rollback() ",
+                            XAHelper.xidToString(xid), XAHelper.printXAErrorCode(ex), ex);
+                }
+                markRollbackOnly();
+                throw ex;
+            }
+        } else {
+            // Resource does not support ExtendedXAResource; it cannot be put into read-only mode.
+            // Spec: the transaction manager must ensure commit raises RollbackException.
+            markRollbackOnly();
+        }
+    }
+
 
     /**
      * Attempt to create an AbstractRecord wrapping the given XAResource. Return null if this fails, or
@@ -1290,8 +1366,20 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			java.lang.IllegalStateException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("TransactionImple.commitAndDisassociate");
-        }
+	           jtaLogger.logger.trace("TransactionImple.commitAndDisassociate");
+	       }
+
+		if (_readOnly) {
+			// Spec: the only possible outcome of a read-only transaction is rollback.
+			// Guard here as defense-in-depth in case a caller bypasses the check in BaseTransaction.commit().
+			try {
+				rollbackAndDisassociate();
+			} catch (Exception e) {
+				// ignore rollback errors; we are about to throw RollbackException
+			}
+			throw addSuppressedThrowables(new jakarta.transaction.RollbackException(
+					jtaLogger.i18NLogger.get_transaction_arjunacore_readonly()));
+		}
 
 		try
 		{
@@ -1738,6 +1826,11 @@ public class TransactionImple implements jakarta.transaction.Transaction,
         return Collections.EMPTY_MAP;
     }
 
+	public boolean isReadOnly()
+    {
+        return _readOnly;
+    }
+
     protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
 	private Hashtable _resources;
@@ -1778,4 +1871,6 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			.getCommitMarkableResourceJNDINames();
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
+
+	private boolean _readOnly = false;
 }
