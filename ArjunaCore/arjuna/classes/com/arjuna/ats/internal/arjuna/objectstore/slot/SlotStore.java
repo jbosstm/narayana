@@ -176,7 +176,7 @@ public class SlotStore {
         // If it's a rewrite, we need to release the older version's slot
         if (previousSlot != null) {
             try {
-                slots.clear(previousSlot, config.isSyncWrites());
+                slots.clear(previousSlot, config.isSyncDeletes());
             } catch (IOException e) {
                 recycleSlot(previousSlot);
                 throw e;
