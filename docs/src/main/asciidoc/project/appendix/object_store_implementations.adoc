@@ -843,14 +843,17 @@ Lowering this value causes writes to fail faster under overload rather than queu
 Default: 5000
 
 `JGroupsRaftStoreEnvironmentBean.allowDirtyReads`::
-When `true`, reads are served from the local in-memory state machine without Raft consensus. This is the recommended setting for transaction log stores, where reads during recovery only need to find entries that were previously committed.
+When `true`, reads are served from the local in-memory state machine without going through Raft consensus.
+The local state machine is rebuilt from the persistent Raft log during startup, so it reflects all entries that were committed before the node stopped.
+However, a follower that has fallen behind may have a stale state machine until log catch-up completes, and `init()` does not wait for catch-up.
+Because recovery scans must see every committed record to avoid orphaned resources, set `allowDirtyReads=false` when the store is used as a transaction log so that recovery reads are forwarded to the leader and return a complete, up-to-date view.
 Default: true
 
 ===== Choosing between Raft and ReplCache
 
 For workloads where write throughput is the primary concern:
 
-* Prefer JGroupsSlotStore (ReplCache) with WAL enabled (`walEnabled=true`, `walSyncWrites=true`). This provides concurrent writes with local durability and cluster-wide replication, without the Raft serialization bottleneck.
+* Prefer JGroupsSlotStore (ReplCache) with WAL enabled (`walEnabled=true`, `walSyncWrites=true`). This provides concurrent writes with local durability, without the Raft serialization bottleneck. For cluster-wide replication set `replicationCount=-1` (the default), which replicates every write to all cluster nodes.
 * Use JGroupsRaftSlotStore when strong consistency and split-brain protection are more important than write throughput - for example, in environments with unreliable networks where partition tolerance is critical.
 
 :sectnums:
