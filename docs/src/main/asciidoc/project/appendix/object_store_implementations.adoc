@@ -404,7 +404,7 @@ Only applies when `walEnabled` is true.
 Default: "$user.dir/SlotStore"
 
 JGroupsStoreEnvironmentBean.walSyncWrites::
-When true, write operations are immediately flushed to disk (fsync) — recommended for transaction types with durability guarantees.
+When true, write operations are immediately flushed to disk (fsync) - recommended for transaction types with durability guarantees.
 When false, writes are buffered and flushed periodically.
 Only applies when `walEnabled` is true.
 Default: true
@@ -464,7 +464,7 @@ Default: "log"
 
 JGroupsStoreEnvironmentBean.walMaxIO::
 The maximum write requests queue depth for the write-ahead log.
-For NIO this setting has no effect — the effective value is always 1.
+For NIO this setting has no effect - the effective value is always 1.
 For AIO, the configured value is used; recommended value for AIO is 500.
 Only applies when `walEnabled` is true.
 Default: 2 (only effective with AIO; NIO always uses 1)
@@ -479,7 +479,7 @@ Default: false (NIO)
 
 With write-ahead log enabled and fsync (`walEnabled=true`, `walSyncWrites=true`, the default):
 
-* Durability means the logs survive process crashes and power failures
+- Durability means the logs survive process crashes and power failures
 * Reads are still served from the in-memory cache
 * Write-ahead log provides recovery capability from cold starts
 
@@ -492,7 +492,7 @@ With write-ahead log disabled (`walEnabled=false`):
 
 .Cluster Configuration Considerations
 
-1. WAL is local to each node's `storeDir`. For durable recovery after a member is lost, WAL must be enabled on every member that may need to recover independently — enabling it on a single member only protects that member
+1. WAL is local to each node's `storeDir`. For durable recovery after a member is lost, WAL must be enabled on every member that may need to recover independently - enabling it on a single member only protects that member
 2. A single member must run the recovery manager (HA singleton pattern)
 3. Any member can create and commit transactions
 4. The `TransactionStatusManager` is used during recovery to determine if the transaction creator is still running
@@ -611,7 +611,7 @@ Default: true
 NOTE: Raft protocol-level heartbeat intervals and election timeouts are configured in the JGroups
 XML configuration file via the `ELECTION` protocol attributes (e.g. `min_interval`, `max_interval`).
 `JGroupsRaftStoreEnvironmentBean.raftElectionMaxInterval` is a separate setting that controls how long
-the store waits during initialization for a leader to be elected — it does not change the Raft election
+the store waits during initialization for a leader to be elected - it does not change the Raft election
 protocol timing.
 
 .Performance Characteristics
@@ -666,5 +666,192 @@ Use JGroupsSlotStore (ReplCache) when:
 - Cluster membership is relatively stable
 
 WARNING: ReplCache has no quorum mechanism. In a network partition, both sides accept writes independently, with no conflict resolution on merge. For a transaction log store this can mean silently lost records. If split-brain protection is needed, use JGroupsRaftSlotStore instead.
+
+=== Capacity Planning and Performance Tuning
+
+This section provides guidance on sizing and tuning the slot-based object stores (DiskSlots, InfinispanSlots, JGroupsSlots, and JGroupsRaftSlots) for different workloads.
+
+==== Slot count sizing
+
+All SlotStore-based implementations use a fixed-size pool of slots.
+Each in-flight transaction occupies one slot for the duration of its lifecycle (write at prepare, remove at commit or rollback).
+When the slot pool is exhausted, new transactions are rolled back.
+
+`SlotStoreEnvironmentBean.numberOfSlots` must accommodate the maximum number of unresolved transactions expected at any given time, including:
+
+* Transactions currently in-flight (between prepare and commit/rollback)
+* Transactions awaiting recovery (orphaned by a crash)
+
+For high-throughput systems, oversize by 20–50% above the expected peak concurrent transaction count to absorb bursts.
+
+[WARNING]
+====
+If transactions are rolled back with `ARJUNA016053: Could not commit transaction` and the log shows `intentions list write failed`, the slot pool is likely exhausted. Increase `numberOfSlots`.
+====
+
+==== Concurrency model comparison
+
+The slot-based stores differ significantly in how they handle concurrent write operations:
+
+[cols="1,2,2,2", options="header"]
+|===
+|Store
+|Write concurrency
+|Primary bottleneck
+|Practical scaling limit
+
+|DiskSlots
+|Per-slot parallel. Each slot has its own file and lock; writes to different slots proceed concurrently.
+|Per-file fsync (when `syncWrites=true`) and OS I/O bandwidth.
+|Limited by OS file handles and disk I/O throughput. Scales well with concurrent writers.
+
+|InfinispanSlotStore
+|Depends on cache mode. With replicated or distributed caches, `Cache.put()` may block until replication completes (synchronous mode) or return immediately (asynchronous mode). Multiple concurrent puts to different keys proceed in parallel.
+|Cache persistence mode (write-through or write-behind), replication mode (sync vs async), and network bandwidth.
+|Limited by Infinispan cache configuration. Synchronous replication adds per-write latency proportional to cluster size; asynchronous replication scales better but weakens consistency.
+
+|JGroupsSlotStore (ReplCache)
+|Fully concurrent. `ReplCache.put()` uses asynchronous fire-and-forget replication; the calling thread does not block waiting for acknowledgment from other nodes.
+|WAL fsync (when `walSyncWrites=true`) and network bandwidth for replication.
+|Limited by network and disk I/O. Scales well with concurrent writers.
+
+|JGroupsRaftSlotStore (Raft)
+|Single-threaded consensus. All write proposals pass through a single internal processing queue and are committed by one thread, regardless of the number of cluster members.
+|The Raft processing thread, which must serialize each command, append to the persistent log (with fsync by default), and apply to the state machine - all sequentially.
+|Bounded by single-thread throughput of the Raft leader. Adding cluster members improves fault tolerance but does not increase write throughput.
+|===
+
+==== DiskSlots tuning
+
+DiskSlots provides the simplest concurrency model: each slot is backed by its own file, and writes to different slots execute in parallel with per-file locking.
+
+`SlotStoreEnvironmentBean.syncWrites`::
+When `true`, each write is flushed to disk (fsync), providing full durability at the cost of throughput.
+When `false`, writes are buffered by the OS, improving throughput but risking data loss on power failure.
+Default: true
+
+`SlotStoreEnvironmentBean.syncDeletes`::
+Controls whether slot clears (at commit/rollback time) are fsynced.
+Disabling fsync on deletes is generally safe - at worst, recovery will re-process an already-completed transaction.
+Default: true
+
+==== InfinispanSlotStore tuning
+
+InfinispanSlotStore delegates write concurrency and persistence to the underlying Infinispan cache configuration.
+The `sync` parameter on `write()` and `clear()` is not used - durability and replication behaviour are controlled entirely by the Infinispan cache mode.
+
+Both the cache mode and the persistence strategy are configured in the Infinispan XML file specified by `InfinispanStoreEnvironmentBean.infinispanConfigFileName` (default: `/infinispan-config.xml`).
+
+Cache mode::
+Configured in the Infinispan XML by choosing the cache element type and its `mode` attribute:
++
+* **Replicated synchronous** (`<replicated-cache>`): every write blocks until all cluster members acknowledge. Strongest consistency but highest per-write latency. This is the default mode for `<replicated-cache>`.
+* **Replicated asynchronous** (`<replicated-cache mode="ASYNC">`): writes return immediately after the local update; replication happens in the background. Higher throughput but a window where remote nodes may return stale data.
+* **Distributed** (`<distributed-cache>` or `<distributed-cache mode="ASYNC">`): entries are stored on a subset of nodes (determined by consistent hashing). Better scalability on large clusters at the cost of fewer replicas. The `owners` attribute controls how many copies are maintained (default: 2).
++
+Example for synchronous replicated cache:
++
+[source,xml]
+----
+<replicated-cache name="clusteredObjectStore">
+  <!-- mode defaults to SYNC; add mode="ASYNC" for asynchronous replication -->
+  ...
+</replicated-cache>
+----
++
+For transaction log stores, synchronous replicated or distributed modes with write-through persistence are recommended.
+
+Persistence mode::
+Configured in the Infinispan XML via the `<persistence>` element within the cache definition.
+* **Write-through** (the default when a store is configured without `write-behind`): every `Cache.put()` writes to the persistent store synchronously before returning. This ensures durability but adds disk I/O latency to every transaction write.
+* **Write-behind**: writes are batched and flushed to the persistent store asynchronously. Higher throughput but a crash may lose unflushed entries. Not recommended for transaction log stores that require durability.
++
+Example Infinispan XML snippet for write-through file persistence:
++
+[source,xml]
+----
+<replicated-cache name="clusteredObjectStore">
+  <persistence passivation="false">
+    <file-store shared="false" fetch-state="true"
+                path="${infinispan.store.dir:infinispan-caches}">
+    </file-store>
+  </persistence>
+</replicated-cache>
+----
++
+To enable write-behind instead, add `<write-behind/>` inside the `<file-store>` element. This improves throughput but weakens durability.
+
+`InfinispanStoreEnvironmentBean.ignoreReturnValues`::
+When `true`, the return value of cache write operations is ignored, avoiding needless remote calls on distributed caches.
+Default: true
+
+==== JGroupsSlotStore tuning
+
+JGroupsSlotStore combines asynchronous in-memory replication with an optional write-ahead log (WAL) for persistence.
+
+`JGroupsStoreEnvironmentBean.walSyncWrites`::
+When `true` (the default), WAL writes are fsynced for full durability.
+When `false`, WAL writes are buffered, significantly improving throughput but risking loss of the last few milliseconds of writes on power failure. Raft consensus is not used, so durability depends entirely on the WAL and replication.
+
+`JGroupsStoreEnvironmentBean.replicationCount`::
+Controls how many cluster members receive each write. With `-1` (full replication), every member receives every write - maximum redundancy but higher network overhead on large clusters.
+With `1`, entries are stored on a single node via consistent hashing - lower overhead but no redundancy.
+
+`JGroupsStoreEnvironmentBean.walSyncDeletes`::
+Setting to `false` reduces I/O on commit by buffering delete operations.
+The tradeoff: after a crash, recovery may re-process already-completed transactions (producing warnings but no data corruption).
+
+==== JGroupsRaftSlotStore tuning
+
+The Raft consensus protocol guarantees strong consistency by serializing all write operations through a single processing thread on the leader node.
+This design ensures correctness but imposes an inherent throughput ceiling.
+
+===== Why Raft serializes writes
+
+The Raft protocol's processing queue is explicitly single-threaded: one thread dequeues write proposals,
+appends them to the persistent log, multicasts them to followers, and applies them to the state machine.
+This serialization is fundamental to Raft's correctness guarantee - it ensures a total ordering of all
+state transitions across the cluster.
+
+Each call to the Raft state machine's `put()` method blocks the calling thread until the Raft leader
+has committed the entry (majority acknowledgment in a multi-node cluster, or local commit in a single-node
+cluster).
+Under high concurrent load, all writer threads are effectively queued behind this single processing thread.
+
+===== Write throughput considerations
+
+* **Single-node clusters**: The majority requirement of 1 is trivially satisfied,
+but writes are still serialized through the single processing thread. Throughput is bounded
+by how quickly that thread can process each entry (appending it to the persistent log, flushing
+to disk when fsync is enabled, and applying it to the in-memory state machine.
+* **Multi-node clusters**: Each write additionally requires network round-trips for majority acknowledgment.
+This increases per-write latency but does not improve throughput - the same single thread processes all
+proposals.
+* **Slot pool exhaustion**: When concurrent writers exceed the Raft processing thread's throughput,
+slot lifecycles (write -> commit -> remove -> recycle) cannot complete fast enough to return slots to the
+free pool. New transactions find no available slots and are rolled back.
+
+===== Tuning parameters
+
+`JGroupsRaftStoreEnvironmentBean.raftLogFsync`::
+When `false`, Raft log entries are buffered instead of being fsynced on each write. This can significantly improve throughput but risks losing the last few entries on power failure.
+For environments where process-crash recovery (but not power-failure recovery) is sufficient, this is a reasonable tradeoff.
+Default: true
+
+`JGroupsRaftStoreEnvironmentBean.raftTimeout`::
+The maximum time (in milliseconds) a write will wait for Raft consensus before timing out. In a healthy cluster this should be well above the expected commit latency.
+Lowering this value causes writes to fail faster under overload rather than queuing indefinitely.
+Default: 5000
+
+`JGroupsRaftStoreEnvironmentBean.allowDirtyReads`::
+When `true`, reads are served from the local in-memory state machine without Raft consensus. This is the recommended setting for transaction log stores, where reads during recovery only need to find entries that were previously committed.
+Default: true
+
+===== Choosing between Raft and ReplCache
+
+For workloads where write throughput is the primary concern:
+
+* Prefer JGroupsSlotStore (ReplCache) with WAL enabled (`walEnabled=true`, `walSyncWrites=true`). This provides concurrent writes with local durability and cluster-wide replication, without the Raft serialization bottleneck.
+* Use JGroupsRaftSlotStore when strong consistency and split-brain protection are more important than write throughput - for example, in environments with unreliable networks where partition tolerance is critical.
 
 :sectnums:

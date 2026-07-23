@@ -44,7 +44,8 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     /**
      * Sets the desired number of slots for the store.
      * Should equal the maximum number of unresolved transactions expected at any given time,
-     * including those in-flight and awaiting recovery.
+     * including those in-flight and awaiting recovery. Refer to the documentation for
+     * guidance on sizing and tuning the slot-based object stores.
      * <p>
      * Caution: reducing the number of slots in a non-empty store may result in data loss.
      * <p>
