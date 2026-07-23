@@ -4,6 +4,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputBuffer;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -71,6 +72,10 @@ public class SlotStore {
         }
     }
 
+    public void stop() throws IOException {
+        slots.stop();
+    }
+
     /**
      * @return the "name" of the object store. Where in the hierarchy it appears, e.g., /ObjectStore/MyName/...
      */
@@ -120,7 +125,12 @@ public class SlotStore {
             return false;
         }
 
-        slots.clear(slotId, config.isSyncDeletes());
+        try {
+            slots.clear(slotId, config.isSyncDeletes());
+        } catch (IOException e) {
+            recycleSlot(slotId);
+            throw e;
+        }
 
         freeList.add(slotId);
 
@@ -154,13 +164,23 @@ public class SlotStore {
             return false;
         }
 
-        slots.write(slotId, data, config.isSyncWrites());
+        try {
+            slots.write(slotId, data, config.isSyncWrites());
+        } catch (IOException e) {
+            recycleSlot(slotId);
+            throw e;
+        }
 
         Integer previousSlot = slotIdIndex.put(key, slotId);
 
         // If it's a rewrite, we need to release the older version's slot
         if (previousSlot != null) {
-            slots.clear(previousSlot, config.isSyncWrites());
+            try {
+                slots.clear(previousSlot, config.isSyncDeletes());
+            } catch (IOException e) {
+                recycleSlot(previousSlot);
+                throw e;
+            }
             freeList.add(previousSlot);
         }
 
@@ -212,5 +232,19 @@ public class SlotStore {
         }
 
         return matchingKeys.toArray(new SlotStoreKey[0]);
+    }
+
+    private void recycleSlot(int slotId) {
+        if (config.isRecycleFailedSlots()) {
+            freeList.add(slotId);
+            return;
+        }
+
+        try {
+            slots.clear(slotId, config.isSyncDeletes());
+            freeList.add(slotId);
+        } catch (IOException clearFailed) {
+            tsLogger.i18NLogger.warn_jgroups_slot_store_quarantine(slotId, freeList.size());
+        }
     }
 }

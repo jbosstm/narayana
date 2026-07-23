@@ -47,4 +47,12 @@ public interface BackingSlots {
      * @param sync true for immediate persistence, false otherwise
      */
     void clear(int slot, boolean sync) throws IOException;
+
+    /**
+     * Release resources held by this instance.
+     * Called once when the store is being shut down.
+     * The default implementation is a no-op.
+     */
+    default void stop() throws IOException {
+    }
 }
