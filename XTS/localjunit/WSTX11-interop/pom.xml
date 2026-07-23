@@ -43,9 +43,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <argLine>${server.jvm.args}</argLine>
-          <systemProperties>
-
-          </systemProperties>
+          <systemProperties></systemProperties>
         </configuration>
       </plugin>
     </plugins>

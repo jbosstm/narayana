@@ -225,6 +225,17 @@
       <name>JBoss Public Maven Repository Group</name>
       <url>https://repository.jboss.org/nexus/content/groups/public/</url>
     </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>central-snapshots</id>
+      <name>Sonatype Central Snapshots</name>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>

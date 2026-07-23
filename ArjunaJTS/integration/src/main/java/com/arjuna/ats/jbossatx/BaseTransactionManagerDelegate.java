@@ -70,6 +70,19 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     }
 
     /**
+     * Begin a readOnly transaction and associate it with the current thread.
+     */
+    public void begin(boolean readOnly)
+        throws NotSupportedException, SystemException
+    {
+        if (readOnly) {
+            throw new NotSupportedException("JTS read-only transactions are not supported");
+        }
+
+        transactionManager.begin();
+    }
+
+    /**
      * Commit the current transaction and disassociate from the thread.
      */
     public void commit()

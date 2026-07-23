@@ -612,6 +612,9 @@ public interface jtaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_xa_rollback_optimization_deprecated();
 
+    @Message(id = 16156, value = "transaction is read-only!", format = MESSAGE_FORMAT)
+    public String get_transaction_arjunacore_readonly();
+
     /*
      * Allocate new messages directly above this notice.
      * - id: use the next id number in sequence. Don't reuse ids.
