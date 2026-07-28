@@ -216,4 +216,14 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
 
         return transactionImple;
     }
+
+    @Override
+    public boolean isReadOnly() {
+        TransactionImple tx = TransactionImple.getTransaction();
+        try {
+            return tx != null && tx.isReadOnly();
+        } catch (jakarta.transaction.SystemException e) {
+            return false;
+        }
+    }
 }

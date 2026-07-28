@@ -21,6 +21,9 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
+import jakarta.transaction.xa.CommitPriority;
+import jakarta.transaction.xa.ExtendedXAResource;
+import jakarta.transaction.xa.PreparePriority;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -645,6 +648,12 @@ public class TransactionImple implements jakarta.transaction.Transaction,
                         AbstractRecord abstractRecord = createRecord(xaRes, params, xid);
                         String reasonForEnlistFailure = null;
                         if(abstractRecord != null) {
+                            try {
+                                checkExclusiveEnlistment(xaRes);
+                            } catch (SystemException ex) {
+                                markRollbackOnly();
+                                throw ex;
+                            }
                             xaRes.start(xid, xaStartNormal);
                             int addOutcome = _theTransaction.add(abstractRecord);
                             if(addOutcome == AddOutcome.AR_ADDED) {
@@ -762,20 +771,57 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
             return false;
         }
-		catch (Exception e)
-		{
-			jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(xaRes, e);
-			/*
-			 * Some exceptional condition arose and we probably could not enlist
-			 * the resouce. So, for safety mark the transaction as rollback
-			 * only.
-			 */
+        catch (SystemException e)
+        {
+            // Re-throw SystemException directly — callers (e.g. duplicate exclusive
+            // enlistment guard) need to receive it rather than have it swallowed.
+            throw e;
+        }
+        catch (Exception e)
+        {
+            jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(xaRes, e);
+            /*
+             * Some exceptional condition arose and we probably could not enlist
+             * the resource. So, for safety mark the transaction as rollback
+             * only.
+             */
 
-			markRollbackOnly();
+            markRollbackOnly();
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
+
+    /**
+     * Enforces the spec requirement that at most one EXCLUSIVE_LAST and one EXCLUSIVE_FIRST resource
+     * may be enlisted in a single transaction. Must be called before xa_start.
+     *
+     * @throws SystemException if a second resource with the same exclusive priority is enlisted
+     */
+    private void checkExclusiveEnlistment(XAResource xaRes) throws SystemException {
+        if (!(xaRes instanceof ExtendedXAResource)) {
+            return;
+        }
+        ExtendedXAResource ext = (ExtendedXAResource) xaRes;
+        if (ext.getPreparePriority() == PreparePriority.EXCLUSIVE_LAST) {
+            synchronized (this) {
+                if (_hasExclusiveLast) {
+                    throw new SystemException(
+                            "TransactionImple.enlistResource - only one EXCLUSIVE_LAST resource may be enlisted per transaction");
+                }
+                _hasExclusiveLast = true;
+            }
+        }
+        if (ext.getCommitPriority() == CommitPriority.EXCLUSIVE_FIRST) {
+            synchronized (this) {
+                if (_hasExclusiveFirst) {
+                    throw new SystemException(
+                            "TransactionImple.enlistResource - only one EXCLUSIVE_FIRST resource may be enlisted per transaction");
+                }
+                _hasExclusiveFirst = true;
+            }
+        }
+    }
 
     /**
      * Attempt to create an AbstractRecord wrapping the given XAResource. Return null if this fails, or
@@ -1778,4 +1824,13 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			.getCommitMarkableResourceJNDINames();
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
+
+	private boolean _hasExclusiveLast = false;
+
+	private boolean _hasExclusiveFirst = false;
+
+	@Override
+	public boolean isReadOnly() throws jakarta.transaction.SystemException {
+		return false;
+	}
 }

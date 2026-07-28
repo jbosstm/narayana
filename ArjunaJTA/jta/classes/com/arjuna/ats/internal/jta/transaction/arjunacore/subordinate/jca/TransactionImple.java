@@ -105,4 +105,9 @@ public class TransactionImple
 	{
 		return ((SubordinateAtomicAction) _theTransaction).activated();
 	}
+
+	@Override
+	public boolean isReadOnly() throws jakarta.transaction.SystemException {
+		return false;
+	}
 }
