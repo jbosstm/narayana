@@ -423,7 +423,7 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
      * Get the maximum write requests queue depth for WAL.
      * For NIO this property has no effect and will be hard coded to 1.
      * For AIO, the default is 2 but the recommended value is 500.
-     * Default: 1
+     * Default: 2
      *
      * @return the max number of outstanding requests
      */

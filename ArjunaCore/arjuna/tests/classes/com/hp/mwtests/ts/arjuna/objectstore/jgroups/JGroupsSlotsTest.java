@@ -1,47 +1,39 @@
 package com.hp.mwtests.ts.arjuna.objectstore.jgroups;
 
 import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
-import com.arjuna.ats.arjuna.common.CoreEnvironmentBeanException;
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor;
-import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.removeDirectory;
+import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.resetAtomicActionRecoveryModule;
+import static com.hp.mwtests.ts.arjuna.objectstore.jgroups.JGroupsTestBase.startRecoveryStore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class JGroupsSlotsTest {
     private JGroupsSlots slots;
+    private JGroupsStoreEnvironmentBean config;
 
-    public void setupStore() throws IOException, CoreEnvironmentBeanException {
-        // common config for each slot store
-        SlotStoreEnvironmentBean slotStoreConfig = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
-        JGroupsStoreEnvironmentBean config = BeanPopulator.getDefaultInstance(JGroupsStoreEnvironmentBean.class);
+    public void setupStore() throws Throwable {
         BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).setNodeIdentifier("1");
-        BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).setObjectStoreType(SlotStoreAdaptor.class.getName());
+
+        config = new JGroupsStoreEnvironmentBean();
         slots = new JGroupsSlots();
 
-        slotStoreConfig.setBackingSlotsClassName(JGroupsSlots.class.getName());
-
-        config.setNumberOfSlots(slotStoreConfig.getNumberOfSlots());
-        config.setBytesPerSlot(slotStoreConfig.getBytesPerSlot());
-        config.setStoreDir(slotStoreConfig.getStoreDir());
+        config.setBackingSlotsClassName(JGroupsSlots.class.getName());
         config.setWalSyncWrites(true);
         config.setWalSyncDeletes(true);
         config.setNodeAddress("node1");
@@ -50,29 +42,25 @@ public class JGroupsSlotsTest {
 
         removeDirectory(config.getStoreDir());
 
-        slots.init(config); // can throw IOException
-
-        // tell the recovery manager that we are using the slot store (note beans can only be set once)
-        BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).
-                setObjectStoreType(SlotStoreAdaptor.class.getName());
-        BeanPopulator.setBeanInstanceIfAbsent(JGroupsStoreEnvironmentBean.class.getName(), config);
+        resetAtomicActionRecoveryModule();
+        startRecoveryStore(config);
     }
 
     @AfterEach
     public void tearDown() {
-        if (slots != null) {
-            slots.stop();
-            slots = null;
+        try {
+            if (slots != null) {
+                slots.stop();
+                slots = null;
+            }
+        } catch (Exception ignore) {
         }
+        StoreManager.shutdown();
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() throws Throwable {
         setupStore();
-
-        SlotStoreEnvironmentBean slotStoreConfig = BeanPopulator.getDefaultInstance(SlotStoreEnvironmentBean.class);
-        String backingSlotsClassName = slotStoreConfig.getBackingSlotsClassName();
-        assertEquals(JGroupsSlots.class.getName(), backingSlotsClassName);
 
         RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
@@ -84,7 +72,6 @@ public class JGroupsSlotsTest {
         Uid uid = new Uid();
 
         try {
-            JGroupsStoreEnvironmentBean config = BeanPopulator.getDefaultInstance(JGroupsStoreEnvironmentBean.class);
             CountDownLatch writeLatch = new CountDownLatch(1);
             config.getCache().addChangeListener(writeLatch::countDown);
 

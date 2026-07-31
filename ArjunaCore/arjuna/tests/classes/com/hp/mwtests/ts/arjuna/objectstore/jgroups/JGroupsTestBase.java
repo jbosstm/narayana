@@ -171,7 +171,7 @@ public class JGroupsTestBase {
                     try {
                         config.getCache().stop();
                     } catch (Throwable e) {
-                        throw new RuntimeException("ERROR: null view while stopping cache: " + config.getCacheName());
+                        throw new RuntimeException("Error stopping cache: " + config.getCacheName(), e);
                     }
                 }
             } catch (CoreEnvironmentBeanException ignore) {

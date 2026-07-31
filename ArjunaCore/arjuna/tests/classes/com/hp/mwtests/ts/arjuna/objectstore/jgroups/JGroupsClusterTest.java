@@ -35,12 +35,18 @@ public class JGroupsClusterTest extends JGroupsTestBase {
 
     @AfterEach
     public void tearDown() {
-        if (store1 != null) {
-            store1.stop();
+        try {
+            if (store1 != null) {
+                store1.stop();
+            }
+        } catch (Exception ignore) {
         }
 
-        if (store2 != null) {
-            store2.stop();
+        try {
+            if (store2 != null) {
+                store2.stop();
+            }
+        } catch (Exception ignore) {
         }
 
         StoreManager.shutdown();

@@ -26,7 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Write-Ahead Log for JGroupsSlots using Artemis Journal.
+ * Write-Ahead Log for JGroupsSlots using Artemis Journal
+ * (based on {@link com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalStore}).
  * Provides crash recovery for slot data with efficient append-only logging.
  *
  * <p>Features:
@@ -38,7 +39,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * </ul>
  *
  * <p>Journal Format:
- * Each record contains: [slotId (4 bytes)] [data length (4 bytes)] [data (N bytes)]
+ * Each record contains:
+ * [FORMAT_MARKER (4 bytes)] [slotId (4 bytes)] [keyLen (4 bytes)] [key (K bytes)] [data length (4 bytes)] [data (N bytes)]
  */
 public class SlotJournal {
 
@@ -53,7 +55,12 @@ public class SlotJournal {
     // Maps slotId to data (in-memory cache loaded from journal)
     private final Map<Integer, byte[]> slotData = new ConcurrentHashMap<>();
 
-    private static final byte RECORD_TYPE = 0x01;
+    // Maps slotId to the original ByteArrayKey used in the cache at write time
+    private final Map<Integer, ByteArrayKey> slotKeys = new ConcurrentHashMap<>();
+
+    private static final byte RECORD_TYPE = 0x00; // same as HornetqJournal (AIO vs NIO?)
+    // valid slot IDs are always >= 0, so use a negative value to unambiguously identify the record format
+    private static final int FORMAT_MARKER = -1;
 
     /**
      * Create a new SlotJournal using configuration from JGroupsStoreEnvironmentBean.
@@ -137,7 +144,7 @@ public class SlotJournal {
         List<RecordInfo> committedRecords = new LinkedList<>();
         List<PreparedTransactionInfo> preparedTransactions = new LinkedList<>();
         TransactionFailureCallback failureCallback = (txId, records, recordsToDelete) -> {
-            tsLogger.logger.warn("SlotJournal: Transaction " + txId + " failed to load");
+            tsLogger.i18NLogger.warn_journal_transaction_load(txId);
         };
 
         // Load journal and replay records
@@ -145,27 +152,39 @@ public class SlotJournal {
         nextRecordId.set(loadInfo.getMaxID() + 1);
 
         if (!preparedTransactions.isEmpty()) {
-            tsLogger.logger.warn("SlotJournal: Found " + preparedTransactions.size() +
-                " prepared transactions, ignoring (slots don't use tx)");
+            tsLogger.i18NLogger.warn_journal_load_error(); // generic warning: I think failureCallback will report these
+            tsLogger.logger.debugf("SlotJournal: Found %d prepared transactions",
+                    preparedTransactions.size());
         }
 
         // Replay records into memory
         for (RecordInfo record : committedRecords) {
             try {
                 ByteBuffer buffer = ByteBuffer.wrap(record.data);
+                int marker = buffer.getInt();
+                if (marker != FORMAT_MARKER) {
+                    tsLogger.logger.debugf("SlotJournal: Skipping record %d with unrecognised format marker %d",
+                            record.id, marker);
+                    continue;
+                }
+
                 int slotId = buffer.getInt();
+                int keyLen = buffer.getInt();
+                byte[] keyBytes = new byte[keyLen];
+                buffer.get(keyBytes);
                 int dataLength = buffer.getInt();
                 byte[] data = new byte[dataLength];
                 buffer.get(data);
 
                 slotData.put(slotId, data);
                 slotToRecordId.put(slotId, record.id);
+                slotKeys.put(slotId, new ByteArrayKey(keyBytes));
             } catch (Exception e) {
-                tsLogger.logger.warn("SlotJournal: Failed to load record " + record.id + ": " + e.getMessage());
+                tsLogger.i18NLogger.warn_journal_replay(record.id, e.getMessage());
             }
         }
 
-        tsLogger.logger.infof("SlotJournal: Loaded %d slots from journal", slotData.size());
+        tsLogger.logger.debugf("SlotJournal: Loaded %d slots from journal", slotData.size());
     }
 
     /**
@@ -179,7 +198,7 @@ public class SlotJournal {
         try {
             journal.scheduleCompactAndBlock(5000); // 5 second timeout
         } catch (Exception e) {
-            tsLogger.logger.warn("SlotJournal: Compaction failed during stop: " + e.getMessage());
+            tsLogger.i18NLogger.warn_journal_compaction(e.getMessage());
         }
         journal.stop();
     }
@@ -192,14 +211,17 @@ public class SlotJournal {
      * @param data the data to write
      * @throws Exception if write fails
      */
-    public void write(int slotId, byte[] data) throws Exception {
+    public void write(int slotId, ByteArrayKey key, byte[] data) throws Exception {
         if (data == null) {
             throw new IllegalArgumentException("Cannot write null data for slot " + slotId);
         }
 
-        // Pack data: [slotId (4 bytes)] [length (4 bytes)] [data (N bytes)]
-        ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + data.length);
+        byte[] keyBytes = key != null ? key.getKey() : new byte[0];
+        ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + 4 + keyBytes.length + 4 + data.length);
+        buffer.putInt(FORMAT_MARKER);
         buffer.putInt(slotId);
+        buffer.putInt(keyBytes.length);
+        buffer.put(keyBytes);
         buffer.putInt(data.length);
         buffer.put(data);
         byte[] encoded = buffer.array();
@@ -215,6 +237,9 @@ public class SlotJournal {
         }
 
         slotData.put(slotId, data);
+        if (key != null) {
+            slotKeys.put(slotId, key);
+        }
     }
 
     /**
@@ -228,6 +253,16 @@ public class SlotJournal {
     }
 
     /**
+     * Get the original cache key persisted with a slot's write-ahead log entry.
+     *
+     * @param slotId the slot ID
+     * @return the ByteArrayKey, or null if the slot has no entry
+     */
+    public ByteArrayKey getKey(int slotId) {
+        return slotKeys.get(slotId);
+    }
+
+    /**
      * Delete slot data from journal.
      *
      * @param slotId the slot ID
@@ -236,6 +271,7 @@ public class SlotJournal {
     public void delete(int slotId) throws Exception {
         Long recordId = slotToRecordId.remove(slotId);
         slotData.remove(slotId);
+        slotKeys.remove(slotId);
 
         if (recordId != null) {
             if (syncDeletes) {

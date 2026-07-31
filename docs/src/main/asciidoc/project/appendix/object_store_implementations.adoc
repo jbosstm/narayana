@@ -970,7 +970,7 @@ Default: true
 
 ==== JGroupsSlotStore tuning
 
-JGroupsSlotStore combines asynchronous in-memory replication with an optional write-ahead log (WAL) for persistence.
+JGroupsSlotStore combines in-memory replication (synchronous or asynchronous, depending on the ReplCache configuration) with an optional write-ahead log (WAL) for persistence.
 
 `JGroupsStoreEnvironmentBean.walSyncWrites`::
 When `true` (the default), WAL writes are fsynced for full durability.
@@ -1045,11 +1045,13 @@ transaction is never recovered and its resources remain locked indefinitely.
 This requirement should guide the choice of clustered store.
 
 * **Default recommendation: JGroupsRaftSlotStore (Raft).**
-Raft's majority-commit protocol guarantees that every acknowledged write survives the loss of a minority of
-nodes, and its leader-election mechanism prevents split-brain scenarios where two partitions accept conflicting
-writes.
+With `raftLogFsync=true`, Raft's majority-commit protocol guarantees that acknowledged writes survive the loss
+of a minority of nodes, and its leader-election mechanism prevents split-brain scenarios where two partitions
+accept conflicting writes. With fsync disabled, recently acknowledged entries may still be lost on process or
+power failure.
 For transaction log stores, where a single lost record can leave resources locked, these guarantees outweigh
 the write-throughput advantage of ReplCache.
+
 * **JGroupsSlotStore (ReplCache)** is an alternative when all nodes share a reliable, low-latency network
 and the risk of network partition is acceptably low.
 Enable WAL with fsync (`walEnabled=true`, `walSyncWrites=true`) and full replication (`replicationCount=-1`)
@@ -1059,8 +1061,9 @@ with no conflict resolution on merge, which can silently lose transaction log re
 
 NOTE: The two stores have different write-path characteristics that affect relative performance depending on
 the environment.
-JGroupsSlotStore performs a dual write (WAL fsync then `ReplCache.put()`), while JGroupsRaftSlotStore performs
-a single Raft commit.
+When `walEnabled=true`, JGroupsSlotStore writes to the WAL before calling `ReplCache.put()`;
+the WAL write is fsynced only when `walSyncWrites=true`. With WAL disabled, it performs only the
+`ReplCache.put()`. JGroupsRaftSlotStore performs a single Raft commit.
 `ReplCache.put()` also incurs per-message overhead even on a single-node cluster (message construction,
 serialisation of `ByteArrayKey`, protocol stack traversal, reflection during dispatch), JGroupsRaftSlotStore avoids
 this overhead by using an `Integer` key applied directly to the local state machine.

@@ -109,48 +109,20 @@ public class JGroupsRaftSlots implements BackingSlots {
             // Validate configuration
             validateConfiguration(config);
 
-            // Create JGroups channel
             String jgroupsConfig = config.getJGroupsConfigFileName();
             String nodeName = config.getNodeAddress();
 
-            tsLogger.logger.debugf("Creating Raft channel with config: %s and node: %s",
-                    jgroupsConfig, nodeName);
-            channel = new JChannel(jgroupsConfig).name(nodeName);
-
-            // Configure RAFT protocol BEFORE creating ReplicatedStateMachine
-            RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
-            if (raft == null) {
-                throw new IllegalStateException("RAFT protocol not found in JGroups stack");
-            }
-
-            // Configure Raft log directory (where FileBasedLog stores data)
-            String storeDir = config.getStoreDir();
-            raft.logDir(storeDir);
-            tsLogger.logger.debugf("Configured Raft log directory: %s", storeDir);
-
-            // Configure Raft log fsync behavior
-            raft.logUseFsync(config.isRaftLogFsync());
-            tsLogger.logger.debugf("Configured Raft log fsync: %s", config.isRaftLogFsync());
-
-            // Set members list
             String raftMembers = config.getRaftMembers();
+            java.util.List<String> members;
             if (raftMembers != null && !raftMembers.isEmpty()) {
-                raft.members(java.util.Arrays.asList(raftMembers.split(",")));
+                members = java.util.Arrays.asList(raftMembers.split(","));
                 tsLogger.logger.debugf("Configured RAFT members: %s", raftMembers);
             } else {
-                // Dynamic membership: start with empty members list.
-                // If this node has an existing Raft log, log replay during connect()
-                // will restore the correct membership and promote from Learner to Follower.
-                // If first start, we'll join an existing cluster or bootstrap below.
-                raft.members(Collections.emptyList());
+                members = Collections.emptyList();
                 tsLogger.logger.debugf("No raftMembers configured; will auto-join or bootstrap");
             }
 
-            // Create replicated state machine and set raft_id
-            cache = new ReplicatedStateMachine<>(channel);
-            cache.raftId(nodeName);
-            cache.allowDirtyReads(config.isAllowDirtyReads());
-            cache.timeout(config.getRaftTimeout());
+            createRaftChannelAndCache(jgroupsConfig, nodeName, members);
 
             // Connect to cluster
             String clusterName = config.getClusterName();
@@ -163,6 +135,7 @@ public class JGroupsRaftSlots implements BackingSlots {
 
             // Dynamic membership: join existing cluster or bootstrap if needed
             if (raftMembers == null || raftMembers.isEmpty()) {
+                RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
                 if (Role.Learner.name().equalsIgnoreCase(raft.role())) {
                     joinOrBootstrap(raft, nodeName, clusterName);
                 } else {
@@ -427,19 +400,32 @@ public class JGroupsRaftSlots implements BackingSlots {
         }
     }
 
-    private void bootstrapNewChannel(String nodeName, String clusterName) throws Exception {
-        channel = new JChannel(config.getJGroupsConfigFileName()).name(nodeName);
+    private void createRaftChannelAndCache(String jgroupsConfig, String nodeName, java.util.List<String> members) throws Exception {
+        tsLogger.logger.debugf("Creating Raft channel with config: %s and node: %s",
+                jgroupsConfig, nodeName);
+        channel = new JChannel(jgroupsConfig).name(nodeName);
 
         RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
+        if (raft == null) {
+            throw new IllegalStateException("RAFT protocol not found in JGroups stack");
+        }
+
         raft.logDir(config.getStoreDir());
+        tsLogger.logger.debugf("Configured Raft log directory: %s", config.getStoreDir());
+
         raft.logUseFsync(config.isRaftLogFsync());
-        raft.members(java.util.List.of(nodeName));
+        tsLogger.logger.debugf("Configured Raft log fsync: %s", config.isRaftLogFsync());
+
+        raft.members(members);
 
         cache = new ReplicatedStateMachine<>(channel);
         cache.raftId(nodeName);
         cache.allowDirtyReads(config.isAllowDirtyReads());
         cache.timeout(config.getRaftTimeout());
+    }
 
+    private void bootstrapNewChannel(String nodeName, String clusterName) throws Exception {
+        createRaftChannelAndCache(config.getJGroupsConfigFileName(), nodeName, java.util.List.of(nodeName));
         channel.connect(clusterName);
     }
 
@@ -486,10 +472,10 @@ public class JGroupsRaftSlots implements BackingSlots {
         if (raftMembers != null && !raftMembers.isEmpty()) {
             String[] members = raftMembers.split(",");
             if (members.length % 2 == 0) {
-                tsLogger.logger.warnf("Raft cluster has even number of nodes (%d). Odd numbers (3, 5, 7) are recommended for proper quorum.", members.length);
+                tsLogger.i18NLogger.warn_cluster_size_is_even(members.length);
             }
             if (members.length < 3) {
-                tsLogger.logger.warnf("Raft cluster has only %d nodes. Minimum 3 nodes recommended for fault tolerance.", members.length);
+                tsLogger.i18NLogger.warn_cluster_size_too_small(members.length);
             }
         }
     }

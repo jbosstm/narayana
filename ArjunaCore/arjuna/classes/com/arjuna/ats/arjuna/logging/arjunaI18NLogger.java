@@ -1679,29 +1679,58 @@ public interface arjunaI18NLogger {
 			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
 	String get_jgroups_too_few_slots(int actual, int configured);
 
-	@Message(id = 12422, value = "JGroupsSlotStore: Initializing experimental feature. Do not use in production.",
+	@Message(id = 12422, value = "The number of actual transaction logs, exceeds the number of configured " +
+			"slots, {0}. The number of configured slots should equal the maximum number of unresolved transactions " +
+			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
+	String get_jgroups_too_few_slots(int configured);
+
+	@Message(id = 12423, value = "JGroupsSlotStore: Initializing experimental feature. Do not use in production.",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_jgroups_slot_store_is_experimental();
 
-	@Message(id = 12423, value = "JGroupsSlotStore: jgroups config file invalid", format = MESSAGE_FORMAT)
+	@Message(id = 12424, value = "JGroupsSlotStore: jgroups config file invalid", format = MESSAGE_FORMAT)
 	String get_jgroups_config();
 
-	@Message(id = 12424, value = "JGroupsRaftSlotStore: Initializing experimental feature. Do not use in production.",
+	@Message(id = 12425, value = "JGroupsRaftSlotStore: Initializing experimental feature. Do not use in production.",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_jgroups_raft_slot_store_is_experimental();
 
-	@Message(id = 12425, value = "SlotStore: quarantining slot {0} after failed clear ({1} slots remain free)",
+	@Message(id = 12426, value = "SlotStore: quarantining slot {0} after failed clear ({1} slots remain free)",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_jgroups_slot_store_quarantine(int slotId, int freeListSize);
 
-	@Message(id = 12426, value = "The number of actual transaction logs, {0}, exceeds the number of configured " +
+	@Message(id = 12427, value = "The number of actual transaction logs, {0}, exceeds the number of configured " +
 			"slots, {1}. The number of configured slots should equal the maximum number of unresolved transactions " +
 			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
-	@LogMessage
+	@LogMessage(level = WARN)
 	void warn_slot_store_too_few_slots(int actual, int configured);
+
+    @Message(id = 12428, value = "Transaction {0} failed to load (record was never formally committed or rolled back)",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_journal_transaction_load(long txId);
+
+	@Message(id = 12429, value = "Journal: Failed to load record id {0} reason {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_journal_replay(long id, String message);
+
+	@Message(id= 12430, value = "Journal: Compaction failed: {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_journal_compaction(String message);
+
+	@Message(id = 12431, value = "Raft cluster has even number of nodes {0}. Odd numbers (3, 5, 7, ...) are recommended" +
+			" for proper quorum",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cluster_size_is_even(int clusterSize);
+
+	@Message(id = 12432, value = "Raft cluster has only {0} nodes. Minimum 3 nodes recommended for fault tolerance.",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cluster_size_too_small(int clusterSize);
 
     /*
         Allocate new messages directly above this notice.

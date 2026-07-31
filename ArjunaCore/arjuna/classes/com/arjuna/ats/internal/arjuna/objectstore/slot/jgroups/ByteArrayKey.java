@@ -18,11 +18,11 @@ public class  ByteArrayKey implements Serializable {
 
     public ByteArrayKey(byte[] key) {
         if (key == null) {
-            this.key = null;
             hashcode = 0;
+            this.key = null;
         } else {
-            this.key = key.clone();
             hashcode = Arrays.hashCode(key);
+            this.key = key.clone();
         }
     }
 

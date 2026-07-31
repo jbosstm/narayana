@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -237,25 +238,13 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         store2.waitForLeader(10, TimeUnit.SECONDS);
         store3.waitForLeader(10, TimeUnit.SECONDS);
 
-        // Verify cluster formed - one leader, two followers
-        int leaderCount = 0;
-        int followerCount = 0;
-
-        if (store1.getRole().equals(Role.Leader.name()))
-            leaderCount += 1;
-        if (store2.getRole().equals(Role.Leader.name()))
-            leaderCount += 1;
-        if (store3.getRole().equals(Role.Leader.name()))
-            leaderCount += 1;
-        if (store1.getRole().equals(Role.Follower.name()))
-            followerCount += 1;
-        if (store2.getRole().equals(Role.Follower.name()))
-            followerCount += 1;
-        if (store3.getRole().equals(Role.Follower.name()))
-            followerCount += 1;
-
-        assertEquals(1, leaderCount, "Should have exactly one leader");
-        assertEquals(2, followerCount, "Should have exactly two followers");
+        // Verify cluster formed - one leader, two followers.
+        // Read each role once so a transition between reads cannot drop a node from both counts.
+        List<String> roles = List.of(store1.getRole(), store2.getRole(), store3.getRole());
+        long leaderCount = roles.stream().filter(Role.Leader.name()::equals).count();
+        long followerCount = roles.stream().filter(Role.Follower.name()::equals).count();
+        assertEquals(1, leaderCount, "Should have exactly one leader, roles were " + roles);
+        assertEquals(2, followerCount, "Should have exactly two followers, roles were " + roles);
 
         // Now create a RecoveryStore with store1 and write data to it
         resetAtomicActionRecoveryModule();

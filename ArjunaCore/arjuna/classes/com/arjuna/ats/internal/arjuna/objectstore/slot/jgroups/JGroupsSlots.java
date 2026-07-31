@@ -65,7 +65,8 @@ public class JGroupsSlots implements BackingSlots {
         try {
             // Initialize write-ahead log if enabled
             if (config.isWalEnabled()) {
-                tsLogger.logger.infof("JGroupsSlots: Enabling write-ahead log with storeDir=%s, syncWrites=%s, syncDeletes=%s, fileSize=%d, minFiles=%d, asyncIO=%s",
+                tsLogger.logger.infof("JGroupsSlots: Enabling write-ahead log with " +
+                                "storeDir=%s, syncWrites=%s, syncDeletes=%s, fileSize=%d, minFiles=%d, asyncIO=%s",
                     config.getStoreDir(), config.isWalSyncWrites(), config.isWalSyncDeletes(),
                     config.getWalFileSize(), config.getWalMinFiles(), config.isWalAsyncIO());
 
@@ -107,19 +108,22 @@ public class JGroupsSlots implements BackingSlots {
     }
 
     /**
-     * Load slots from WAL into cache.
-     * Called during initialization if WAL is enabled.
+     * Load slots from the write-ahead log, when enabled, into cache.
      * Only loads data if not already present in cache (avoids overwriting
-     * newer replicated data with stale WAL data).
+     * newer replicated data with stale log entries).
      */
     private void loadFromWAL() throws Exception {
         if (journal == null) {
             return;
         }
 
-        int recoveredCount = 0;
-        int skippedCount = 0;
+        int recoveredCount = 0; // incremented when an entry is recovered from the log
+        int skippedCount = 0; // incremented if the cache already contains the log entry
         boolean warned = false;
+
+        Set<ByteArrayKey> cacheKeys = cache.getL2Cache().getInternalMap().keySet();
+        int nextFree = 0; // next slot to populate
+
         for (Integer slotId : journal.getSlotIds()) {
             if (slotId < 0 || slotId >= slots.length) {
                 if (!warned) {
@@ -131,14 +135,25 @@ public class JGroupsSlots implements BackingSlots {
                 continue;
             }
 
-            ByteArrayKey key = slots[slotId];
+            ByteArrayKey originalKey = journal.getKey(slotId);
             byte[] data = journal.read(slotId);
-            // In the single-node crashed/restarted case (with other cluster members), putIfAbsent returns false
-            // (data already there from replication) so the next cache.put() is skipped.
-            // In the all nodes crashed/restarted case (with other cluster members), putIfAbsent returns true
-            // so the next cache.put() restores the replicated state to the full cluster
-            if (data != null && putIfAbsent(cache, key, data, 0)) {
-                cache.put(key, data, replicationCount, 0);
+
+            if (putIfAbsent(cache, originalKey, data)) {
+                while (nextFree < slots.length && cacheKeys.contains(slots[nextFree])) {
+                    nextFree++;
+                }
+
+                if (nextFree >= slots.length) {
+                    throw new IOException(tsLogger.i18NLogger.get_jgroups_too_few_slots(slots.length));
+                }
+
+                slots[nextFree] = originalKey;
+                cache.put(originalKey, data, replicationCount, 0);
+                if (nextFree != slotId) {
+                    journal.delete(slotId);
+                    journal.write(nextFree, originalKey, data);
+                }
+                nextFree++;
                 recoveredCount++;
             } else {
                 skippedCount++;
@@ -151,14 +166,17 @@ public class JGroupsSlots implements BackingSlots {
 
     /*
      * The slots initialisation algorithm is:
-     * 1.  Initialise the slots array using the cache (load method)
-     * 2a. Read keys from the write-ahead log (loadFromWAL method)
-     * 2b. For each WAL entry, attempt to insert the value into the local cache using putIfAbsent on the
-     *     internal jgroups map (cache.getL2Cache().getInternalMap().putIfAbsent). This is atomic against
-     *     the JGroups receiver thread, so if replicated data arrives concurrently, putIfAbsent keeps the
-     *     replicated value and discards the stale WAL value — correct because the WAL is frozen at crash
-     *     (or shutdown) time while replicated data reflects the cluster's current state.
-     *     If putIfAbsent succeeds, cache.put() is called to replicate the recovered data to other nodes.
+     * 1.  Initialise the slots array using the cache (load method). Cache key iteration order is
+     *     non-deterministic, so slots[i] may map to a different ByteArrayKey than before a crash.
+     * 2a. Read keys and data from the write-ahead log (loadFromWAL method).
+     * 2b. For each WAL entry, check putIfAbsent against the original ByteArrayKey persisted with the
+     *     entry — not slots[slotId], which may have been reassigned by load(). This prevents data
+     *     loss when load() shuffles key-to-slot assignments. If the original key is not in the cache,
+     *     assign it to a free slot position and replicate via cache.put().
+     *
+     *     putIfAbsent on the internal JGroups map is atomic against the receiver thread, so if
+     *     replicated data arrives concurrently, putIfAbsent keeps the replicated value and discards
+     *     the stale WAL value.
      *
      * Scenarios:
      *     Single-node crash or restart with surviving nodes: the surviving nodes already have the data
@@ -168,15 +186,18 @@ public class JGroupsSlots implements BackingSlots {
      *     replicates the recovered data to the cluster via cache.put() to restore the full replicated
      *     state.
      *
+     *     Partial-crash with unreplicated data: the WAL entries original key is not in the cache.
+     *     putIfAbsent succeeds, and the data is assigned to a free slot and replicated.
+     *
      *     A graceful restart behaves the same as a crash from this algorithm's perspective — the WAL
      *     may contain entries for transactions that were active at shutdown time, and the same
      *     putIfAbsent-then-replicate logic applies.
      */
-    private static <K, V> boolean putIfAbsent(ReplCache<K, V> cache, K key, V val, long timeout) {
+    private static <K, V> boolean putIfAbsent(ReplCache<K, V> cache, K key, V val) {
         // remark the ReplCache.Value constructor uses an arbitrary value for the second parameter (replication_count)
         // because put is to the local internal map which bypasses replication (see ReplCache.mcastPut)
         ReplCache.Value<V> replValue = new ReplCache.Value<>(val, (short) -1);
-        Cache.Value<ReplCache.Value<V>> cacheValue = new Cache.Value<>(replValue, timeout);
+        Cache.Value<ReplCache.Value<V>> cacheValue = new Cache.Value<>(replValue, 0L);
 
         return cache.getL2Cache().getInternalMap().putIfAbsent(key, cacheValue) == null;
     }
@@ -199,7 +220,7 @@ public class JGroupsSlots implements BackingSlots {
         try {
             // Write to WAL first (if enabled) for durability
             if (journal != null) {
-                journal.write(slot, data);
+                journal.write(slot, slots[slot], data);
             }
 
             /*
