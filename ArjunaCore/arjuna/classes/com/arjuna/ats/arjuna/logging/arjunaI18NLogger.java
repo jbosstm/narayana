@@ -1679,9 +1679,9 @@ public interface arjunaI18NLogger {
 			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
 	String get_jgroups_too_few_slots(int actual, int configured);
 
-	@Message(id = 12422, value = "The number of actual transaction logs, exceeds the number of configured " +
-			"slots, {0}. The number of configured slots should equal the maximum number of unresolved transactions " +
-			"expected at any given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
+	@Message(id = 12422, value = "Configured slot count {0} is insufficient for recovered entries. " +
+			"The slot store size should equal the maximum number of unresolved transactions expected at any " +
+			"given time, including those in-flight and awaiting recovery.", format = MESSAGE_FORMAT)
 	String get_jgroups_too_few_slots(int configured);
 
 	@Message(id = 12423, value = "JGroupsSlotStore: Initializing experimental feature. Do not use in production.",

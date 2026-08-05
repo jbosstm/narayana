@@ -194,7 +194,7 @@ public class JGroupsTestBase {
      * @param bean config for the recovery manager
      * @return the new store
      */
-    static RecoveryStore startRecoveryStore(JGroupsStoreEnvironmentBean bean) {
+    static RecoveryStore startRecoveryStore(SlotStoreEnvironmentBean bean) {
         StoreManager.shutdown(); // remove any existing store
 
         // tell the recovery manager that we are using the slot store

@@ -5,15 +5,24 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups;
 
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import org.jgroups.JChannel;
 import org.jgroups.raft.blocks.ReplicatedStateMachine;
+
+import java.io.File;
 
 /**
  * Extended environment bean for JGroups Raft-based stores.
  * Allows pre-configuration of JChannel and ReplicatedStateMachine for testing scenarios
  * where multiple Raft nodes need to be started in parallel before RecoveryStore creation.
+ *
+ * <p>Extends {@link SlotStoreEnvironmentBean} directly (not {@link JGroupsStoreEnvironmentBean})
+ * because the Raft store does not use the ReplCache, WAL, or slot-key-generator infrastructure.
+ * This also ensures that {@code BeanPopulator.configureFromProperties}, which uses
+ * {@code getDeclaredFields()}, can discover all Raft-relevant fields under the
+ * {@code JGroupsRaftStoreEnvironmentBean.*} prefix without field re-declaration.
  */
-public class JGroupsRaftStoreEnvironmentBean extends JGroupsStoreEnvironmentBean {
+public class JGroupsRaftStoreEnvironmentBean extends SlotStoreEnvironmentBean {
     private JChannel preConfiguredChannel;
     private ReplicatedStateMachine<Integer, byte[]> preConfiguredStateMachine;
 
@@ -23,8 +32,78 @@ public class JGroupsRaftStoreEnvironmentBean extends JGroupsStoreEnvironmentBean
     private int raftElectionMaxInterval = 500; // milliseconds
     private boolean allowDirtyReads = false;
 
-    public JGroupsRaftStoreEnvironmentBean() {
-        setJGroupsConfigFileName("jgroups-raft-config.xml");
+    private String jGroupsRaftConfigFileName = "jgroups-raft-config.xml";
+    private String clusterName = null;
+    private String cacheName = "defaultRaftCache";
+    private String nodeAddress;
+
+    // re-declared so BeanPopulator.getDeclaredFields() can discover it under this bean's property prefix
+    private String storeDir = System.getProperty("user.dir") + File.separator + "raft-log";
+
+    @Override
+    public String getStoreDir() {
+        return storeDir;
+    }
+
+    @Override
+    public void setStoreDir(String storeDir) {
+        if (storeDir != null && !new File(storeDir).isAbsolute()) {
+            storeDir = System.getProperty("user.dir") + "/" + storeDir;
+        }
+        this.storeDir = storeDir;
+    }
+
+    /**
+     * Get the filename of the JGroups protocol stack config.
+     *
+     * @return the name of config file
+     */
+    public String getJGroupsConfigFileName() {
+        return jGroupsRaftConfigFileName;
+    }
+
+    public void setJGroupsConfigFileName(String jGroupsConfigFileName) {
+        this.jGroupsRaftConfigFileName = jGroupsConfigFileName;
+    }
+
+    /**
+     * The address of the node within a cluster.
+     *
+     * @return the node address
+     */
+    public String getNodeAddress() {
+        return nodeAddress;
+    }
+
+    public void setNodeAddress(String nodeAddress) {
+        this.nodeAddress = nodeAddress;
+    }
+
+    /**
+     * The name of the JGroups cluster to connect to.
+     * Falls back to {@link #getCacheName()} if not set.
+     *
+     * @return the cluster name, or null if not explicitly configured
+     */
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    /**
+     * The name of the Raft cluster group.
+     *
+     * @return the cache/group name
+     */
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
     }
 
     /**

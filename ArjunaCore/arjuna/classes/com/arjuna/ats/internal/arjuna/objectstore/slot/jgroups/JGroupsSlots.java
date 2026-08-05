@@ -170,7 +170,7 @@ public class JGroupsSlots implements BackingSlots {
      *     non-deterministic, so slots[i] may map to a different ByteArrayKey than before a crash.
      * 2a. Read keys and data from the write-ahead log (loadFromWAL method).
      * 2b. For each WAL entry, check putIfAbsent against the original ByteArrayKey persisted with the
-     *     entry — not slots[slotId], which may have been reassigned by load(). This prevents data
+     *     entry - not slots[slotId], which may have been reassigned by load(). This prevents data
      *     loss when load() shuffles key-to-slot assignments. If the original key is not in the cache,
      *     assign it to a free slot position and replicate via cache.put().
      *
@@ -189,7 +189,7 @@ public class JGroupsSlots implements BackingSlots {
      *     Partial-crash with unreplicated data: the WAL entries original key is not in the cache.
      *     putIfAbsent succeeds, and the data is assigned to a free slot and replicated.
      *
-     *     A graceful restart behaves the same as a crash from this algorithm's perspective — the WAL
+     *     A graceful restart behaves the same as a crash from this algorithm's perspective - the WAL
      *     may contain entries for transactions that were active at shutdown time, and the same
      *     putIfAbsent-then-replicate logic applies.
      */

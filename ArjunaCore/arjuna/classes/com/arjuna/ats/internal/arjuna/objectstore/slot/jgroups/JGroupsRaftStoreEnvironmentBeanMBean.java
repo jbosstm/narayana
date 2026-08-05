@@ -5,57 +5,47 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups;
 
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBeanMBean;
 import org.jgroups.JChannel;
 import org.jgroups.raft.blocks.ReplicatedStateMachine;
 
 /**
  * MBean interface for JGroupsRaftStoreEnvironmentBean.
- * Extends the base JGroups store MBean with Raft-specific pre-configuration methods.
- *
- * <p>The pre-configured channel and state machine properties are primarily intended
- * for testing scenarios where multiple Raft nodes need to be started in parallel.
+ * Declares Raft-specific configuration and the subset of JGroups settings
+ * that the Raft store actually uses.
  */
-public interface JGroupsRaftStoreEnvironmentBeanMBean extends JGroupsStoreEnvironmentBeanMBean {
+public interface JGroupsRaftStoreEnvironmentBeanMBean extends SlotStoreEnvironmentBeanMBean {
 
-    /**
-     * Get the pre-configured JChannel, if any.
-     * <p>
-     * This is useful for testing because Raft store initialisation must wait for leader election before allowing reads
-     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring both the channel
-     * and the state machine, cluster formation can happen before the RecoveryStore is started.
-     *
-     * @return the pre-configured channel, or null if not set
-     */
-    JChannel getPreConfiguredChannel();
+    String getJGroupsConfigFileName();
+    void setJGroupsConfigFileName(String jGroupsConfigFileName);
 
-    /**
-     * Set a pre-configured JChannel. If set, JGroupsRaftSlots will use this channel
-     * instead of creating a new one during init().
-     *
-     * @param channel the pre-configured channel
-     */
-    void setPreConfiguredChannel(JChannel channel);
+    String getNodeAddress();
+    void setNodeAddress(String nodeAddress);
 
-    /**
-     * Get the pre-configured ReplicatedStateMachine, if any.
-     * <p>
-     * This is useful for testing because Raft store initialisation must wait for leader election before allowing reads
-     * but the RecoveryStore is a singleton so a second store could never be started. By pre-configuring both the channel
-     * and the state machine, cluster formation can happen before the RecoveryStore is started.
-     *
-     * @return the pre-configured state machine, or null if not set
-     */
-    ReplicatedStateMachine<Integer, byte[]> getPreConfiguredStateMachine();
+    String getClusterName();
+    void setClusterName(String clusterName);
 
-    /**
-     * Set a pre-configured ReplicatedStateMachine. If set, JGroupsRaftSlots will use
-     * this state machine instead of creating a new one during init().
-     *
-     * @param stateMachine the pre-configured state machine
-     */
-    void setPreConfiguredStateMachine(ReplicatedStateMachine<Integer, byte[]> stateMachine);
+    String getCacheName();
+    void setCacheName(String cacheName);
+
+    boolean isRaftLogFsync();
+    void setRaftLogFsync(boolean raftLogFsync);
+
+    String getRaftMembers();
+    void setRaftMembers(String raftMembers);
+
+    int getRaftTimeout();
+    void setRaftTimeout(int raftTimeout);
+
+    int getRaftElectionMaxInterval();
+    void setRaftElectionMaxInterval(int raftElectionMaxInterval);
 
     boolean isAllowDirtyReads();
-
     void setAllowDirtyReads(boolean allowDirtyReads);
+
+    JChannel getPreConfiguredChannel();
+    void setPreConfiguredChannel(JChannel channel);
+
+    ReplicatedStateMachine<Integer, byte[]> getPreConfiguredStateMachine();
+    void setPreConfiguredStateMachine(ReplicatedStateMachine<Integer, byte[]> stateMachine);
 }
