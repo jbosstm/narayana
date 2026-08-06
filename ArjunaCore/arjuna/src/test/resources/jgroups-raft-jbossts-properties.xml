@@ -1,0 +1,21 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+    <entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor</entry>
+
+    <entry key="SlotStoreEnvironmentBean.numberOfSlots">256</entry>
+    <entry key="SlotStoreEnvironmentBean.bytesPerSlot">4096</entry>
+    <entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots</entry>
+
+    <entry key="JGroupsRaftStoreEnvironmentBean.nodeAddress">node1</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.clusterName">raftClusteredObjectStore</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.cacheName">raftClusteredCache</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.raftMembers">node1</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.raftLogFsync">false</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.raftTimeout">10000</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.raftElectionMaxInterval">1000</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.allowDirtyReads">true</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.jGroupsConfigFileName">jgroups-raft-alt-config.xml</entry>
+    <entry key="JGroupsRaftStoreEnvironmentBean.storeDir">jgroups-raft-config-test</entry>
+</properties>

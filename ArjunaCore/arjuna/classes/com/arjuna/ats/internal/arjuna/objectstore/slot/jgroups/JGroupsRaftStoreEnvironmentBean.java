@@ -32,7 +32,7 @@ public class JGroupsRaftStoreEnvironmentBean extends SlotStoreEnvironmentBean {
     private int raftElectionMaxInterval = 500; // milliseconds
     private boolean allowDirtyReads = false;
 
-    private String jGroupsRaftConfigFileName = "jgroups-raft-config.xml";
+    private String jGroupsConfigFileName = "jgroups-raft-config.xml";
     private String clusterName = null;
     private String cacheName = "defaultRaftCache";
     private String nodeAddress;
@@ -59,11 +59,11 @@ public class JGroupsRaftStoreEnvironmentBean extends SlotStoreEnvironmentBean {
      * @return the name of config file
      */
     public String getJGroupsConfigFileName() {
-        return jGroupsRaftConfigFileName;
+        return jGroupsConfigFileName;
     }
 
     public void setJGroupsConfigFileName(String jGroupsConfigFileName) {
-        this.jGroupsRaftConfigFileName = jGroupsConfigFileName;
+        this.jGroupsConfigFileName = jGroupsConfigFileName;
     }
 
     /**
