@@ -8,6 +8,8 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -21,7 +23,6 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
-import jakarta.transaction.xa.ExtendedXAResource;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -824,13 +825,47 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 	 * not an error and must not mark the transaction rollback-only: the
 	 * resource will simply be rolled back when the transaction completes,
 	 * since the only possible outcome of a read-only transaction is rollback.
+	 *
+	 * ExtendedXAResource is loaded and invoked reflectively so that this class
+	 * still links against jakarta.transaction-api versions that do not have it.
 	 */
 	private void setResourceReadOnly (XAResource xaRes, Xid xid)
 			throws XAException
 	{
-		if (_readOnly && (xaRes instanceof ExtendedXAResource))
+		if (_readOnly && (EXTENDED_XA_RESOURCE_INTERFACE != null)
+				&& EXTENDED_XA_RESOURCE_INTERFACE.isInstance(xaRes))
 		{
-			if (!((ExtendedXAResource) xaRes).setReadOnly(xid))
+			boolean accepted;
+
+			try
+			{
+				accepted = (Boolean) EXTENDED_XA_RESOURCE_SET_READ_ONLY.invoke(xaRes, xid);
+			}
+			catch (InvocationTargetException e)
+			{
+				if (e.getCause() instanceof XAException)
+				{
+					throw (XAException) e.getCause();
+				}
+
+				if (e.getCause() instanceof RuntimeException)
+				{
+					throw (RuntimeException) e.getCause();
+				}
+
+				if (e.getCause() instanceof Error)
+				{
+					throw (Error) e.getCause();
+				}
+
+				throw new RuntimeException(e.getCause());
+			}
+			catch (IllegalAccessException e)
+			{
+				throw new RuntimeException(e);
+			}
+
+			if (!accepted)
 			{
 				if (jtaLogger.logger.isTraceEnabled()) {
 					jtaLogger.logger.trace("TransactionImple.setResourceReadOnly - resource declined read-only mode: "
@@ -1869,4 +1904,34 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
 
 	private boolean _readOnly = false;
+
+	/*
+	 * jakarta.transaction.xa.ExtendedXAResource is loaded reflectively: it only
+	 * exists from jakarta.transaction-api 2.0.2, and read-only resource support
+	 * is unavailable when running against an older version of the API.
+	 */
+
+	private static final Class<?> EXTENDED_XA_RESOURCE_INTERFACE;
+
+	private static final Method EXTENDED_XA_RESOURCE_SET_READ_ONLY;
+
+	static
+	{
+		Class<?> extendedXAResource = null;
+		Method setReadOnly = null;
+
+		try
+		{
+			extendedXAResource = Class.forName("jakarta.transaction.xa.ExtendedXAResource");
+			setReadOnly = extendedXAResource.getMethod("setReadOnly", Xid.class);
+		}
+		catch (ClassNotFoundException | NoSuchMethodException | LinkageError e)
+		{
+			extendedXAResource = null;
+			setReadOnly = null;
+		}
+
+		EXTENDED_XA_RESOURCE_INTERFACE = extendedXAResource;
+		EXTENDED_XA_RESOURCE_SET_READ_ONLY = setReadOnly;
+	}
 }

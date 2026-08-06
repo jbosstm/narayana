@@ -26,7 +26,8 @@ class TransactionalLiteral extends AnnotationLiteral<Transactional> implements T
         return new Class[] {};
     }
 
-    @Override
+    // no @Override: Transactional only declares isReadOnly() from
+    // jakarta.transaction-api 2.0.2, and narayana compiles against 2.0.1
     public boolean isReadOnly() {
         return false;
     }
