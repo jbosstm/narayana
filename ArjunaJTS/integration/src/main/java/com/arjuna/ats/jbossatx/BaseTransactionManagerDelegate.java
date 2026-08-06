@@ -17,6 +17,7 @@ import jakarta.transaction.Status;
 
 import org.jboss.tm.listener.TransactionTypeNotSupported;
 
+import com.arjuna.ats.internal.jta.utils.ReadOnlyTransactionSupport;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -77,7 +78,9 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     public void begin(boolean readOnly)
         throws NotSupportedException, SystemException
     {
-        transactionManager.begin(readOnly) ;
+        // accessed reflectively: TransactionManager only declares begin(boolean)
+        // from jakarta.transaction-api 2.0.2, and narayana compiles against 2.0.1
+        ReadOnlyTransactionSupport.begin(transactionManager, readOnly) ;
     }
 
     /**
