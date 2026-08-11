@@ -1,0 +1,106 @@
+#
+# JBoss, Home of Professional Open Source
+# Copyright 2008, Red Hat Middleware LLC, and individual contributors
+# as indicated by the @author tags.
+# See the copyright.txt in the distribution for a
+# full listing of individual contributors.
+# This copyrighted material is made available to anyone wishing to use,
+# modify, copy, or redistribute it subject to the terms and conditions
+# of the GNU Lesser General Public License, v. 2.1.
+# This program is distributed in the hope that it will be useful, but WITHOUT A
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License,
+# v.2.1 along with this distribution; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA  02110-1301, USA.
+#
+# (C) 2005-2008,
+# @author JBoss Inc.
+
+######################################################################
+# PostgreSQL JNDI Pair
+######################################################################
+
+# /var/lib/pgsql/data - conf files for tcp/ip and auth
+# su - postgres
+# createdb jbossts
+# CREATE USER dtf11 PASSWORD 'dtf11';
+# GRANT ALL ON DATABASE jbossts TO dtf11;
+
+DB1_PGSQL_JNDI_NumberOfDrivers=2
+DB1_PGSQL_JNDI_Driver0=org.postgresql.Driver
+DB1_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_PGSQL_JNDI_Binding=pgsql1
+DB1_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql1
+DB1_PGSQL_JNDI_DatabaseUser=dtf11
+DB1_PGSQL_JNDI_DatabasePassword=dtf11
+DB1_PGSQL_JNDI_DatabaseName=jbossts
+DB1_PGSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+
+DB2_PGSQL_JNDI_NumberOfDrivers=2
+DB2_PGSQL_JNDI_Driver0=org.postgresql.Driver
+DB2_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_PGSQL_JNDI_Binding=pgsql2
+DB2_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql2
+DB2_PGSQL_JNDI_DatabaseUser=dtf12
+DB2_PGSQL_JNDI_DatabasePassword=dtf12
+DB2_PGSQL_JNDI_DatabaseName=jbossts
+DB2_PGSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+
+######################################################################
+# MySQL JNDI Pair
+######################################################################
+
+# create database jbossts;
+# grant all on jbossts.* to 'dtf11'@'%' identified by 'dtf11';
+# flush privileges;
+ 
+DB1_MYSQL_JNDI_NumberOfDrivers=2
+DB1_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_MYSQL_JNDI_Binding=mysql1
+DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
+DB1_MYSQL_JNDI_DatabaseUser=dtf11
+DB1_MYSQL_JNDI_DatabasePassword=dtf11
+DB1_MYSQL_JNDI_DatabaseName=jbossts
+DB1_MYSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+
+DB2_MYSQL_JNDI_NumberOfDrivers=2
+DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB2_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_MYSQL_JNDI_Binding=mysql2
+DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
+DB2_MYSQL_JNDI_DatabaseUser=dtf12
+DB2_MYSQL_JNDI_DatabasePassword=dtf12
+DB2_MYSQL_JNDI_DatabaseName=jbossts
+DB2_MYSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+
+######################################################################
+# Oracle thin JNDI Pair
+######################################################################
+
+# CREATE USER dtf11 IDENTIFIED BY dtf11; GRANT CONNECT, RESOURCE TO dtf11;
+# CREATE USER dtf12 IDENTIFIED BY dtf12; GRANT CONNECT, RESOURCE TO dtf12;
+
+DB1_THIN_JNDI_NumberOfDrivers=2
+DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
+DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_THIN_JNDI_Binding=oracle_thin1
+DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
+DB1_THIN_JNDI_DatabaseUser=dtf11
+DB1_THIN_JNDI_DatabasePassword=dtf11
+DB1_THIN_JNDI_DatabaseName=orcl
+DB1_THIN_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB1_THIN_JNDI_Port=1521
+
+DB2_THIN_JNDI_NumberOfDrivers=2
+DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
+DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_THIN_JNDI_Binding=oracle_thin2
+DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
+DB2_THIN_JNDI_DatabaseUser=dtf12
+DB2_THIN_JNDI_DatabasePassword=dtf12
+DB2_THIN_JNDI_DatabaseName=orcl
+DB2_THIN_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB2_THIN_JNDI_Port=1521

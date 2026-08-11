@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>About This Guide</title>
+  <para>
+    The TxCore and TXOJ Programmers Guide contains information on how to use &PRODUCT;.
+    This document provides a detailed look at the design and operation of the TxCore
+    transaction
+    engine and the Transactional Objects for Java toolkit. It describes the architecture
+    and the
+    interaction of components within this architecture.
+  </para>
+  <section>
+    <title>Audience</title>
+    <para>
+      This guide is most relevant to engineers who want to use &PRODUCT;
+      in
+      installations that are not covered elsewhere. It is assumed that the reader is already
+      familiar with the core &PRODUCT;
+      documentation set.
+    </para>
+  </section>
+  <section>
+    <title>Prerequisites</title>
+    <para>
+      This guide assumes a basic familiarity with Java service development and object-oriented
+      programming.
+      A
+      fundamental level of understanding in the following areas will also be useful:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>General understanding of the APIs, components, and objects that are present in Java
+          applications.</para>
+      </listitem>
+      <listitem>
+        <para>A general understanding of the Windows and UNIX operating systems.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</chapter>
+

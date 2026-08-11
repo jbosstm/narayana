@@ -1,0 +1,88 @@
+########################################################################
+#
+# byteman script used to ensure that tests can synchronize with various
+# actions performed by the recovery code
+
+#########################################################################
+# rules to identify progress of the periodic recovery listener thread
+#
+
+# if a test has set up a rendezvous under key "PR recovery pass begin" then
+# enter the rendezvous before starting the recovery run
+RULE periodic recovery rendezvous before recovery begin
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD doWorkInternal
+AT ENTRY
+BIND pr : PeriodicRecovery = $0
+IF isRendezvous("PR recovery pass begin", 2)
+DO debug("PR rendezvous at recovery pass begin @ " + System.currentTimeMillis()),
+   rendezvous("PR recovery pass begin")
+ENDRULE
+
+# if a test has set up a rendezvous under key "PR recovery pass end" then
+# enter the rendezvous after completing the recovery run
+RULE periodic recovery rendezvous after recovery end
+CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
+METHOD doWorkInternal
+AT EXIT
+BIND pr : PeriodicRecovery = $0
+IF isRendezvous("PR recovery pass end", 2)
+DO debug("PR rendezvous at recovery pass end @ " + System.currentTimeMillis()),
+   rendezvous("PR recovery pass end")
+ENDRULE
+
+#########################################################################
+#
+# rules appropriate to specific tests
+
+#########################################################################
+# CrashRecovery wants periodic recovery to pause until the second
+# resource is told to commit and run a recovery scan at that point.
+# the commit should not return until the recovery scan has completed
+#
+
+# at test start create a rendezvous to be entered when the recovery thread
+# begins a recovery pass and another for when it ends. also create a CountDown
+# which will fire at the second call to countDown
+
+RULE CrashRecovery set up
+CLASS com.hp.mwtests.ts.jta.recovery.CrashRecovery
+METHOD test()
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO createRendezvous("PR recovery pass begin", 2),
+   createRendezvous("PR recovery pass end", 2),
+   addCountDown("CrashRecovery countdown", 1)
+ENDRULE
+
+# the second call to the resource commit method will count down
+# and fire this rule. the thread rendezvous with the PR thread
+# allowing it to perform a recovery scan and rendezvous again
+# ensuring that the commit call does not return until the scan has
+# completed
+RULE CrashRecovery rendezvous at commit
+CLASS com.hp.mwtests.ts.jta.common.CrashXAResource
+METHOD commit(Xid, boolean)
+AT ENTRY
+BIND NOTHING
+IF countDown("CrashRecovery countdown")
+DO debug("CrashRecovery rendezvous at recovery pass begin @ " + System.currentTimeMillis()),
+   rendezvous("PR recovery pass begin"),
+   debug("CrashRecovery rendezvous at recovery pass end @ " + System.currentTimeMillis()),
+   rendezvous("PR recovery pass end"),
+   RETURN
+ENDRULE
+
+# if the previous rule did not fire then we want to return
+# anyway to avoid the resource waiting
+
+RULE CrashRecovery don't sleep at commit
+CLASS com.hp.mwtests.ts.jta.common.CrashXAResource
+METHOD commit(Xid, boolean)
+AT CALL Thread.sleep
+BIND NOTHING
+IF TRUE
+DO RETURN
+ENDRULE
+

@@ -1,0 +1,27 @@
+# Sample configuration for JDK logging.  To activate this, specify
+# this file to the JVM with property
+#
+#   -Djava.util.logging.config.file=/path/to/logging.properties
+#
+
+# global definitions
+# ------------------
+
+# log to a file
+handlers = java.util.logging.FileHandler  
+java.util.logging.FileHandler.formatter = org.jacorb.config.JacORBLogFormatter
+java.util.logging.FileHandler.pattern = /tmp/jacorb.log
+
+# Log file rotation: 10 files, no maximum size, new file for each run
+java.util.logging.FileHandler.count = 10
+java.util.logging.FileHandler.limit = 0
+java.util.logging.FileHandler.append = false
+
+# log to console
+# handlers = java.util.logging.ConsoleHandler
+
+# configuration of individual loggers
+# -----------------------------------
+
+jacorb.level = INFO
+# jacorb.giop.level = FINE

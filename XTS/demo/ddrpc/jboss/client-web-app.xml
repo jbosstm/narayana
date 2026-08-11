@@ -1,0 +1,149 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+    <display-name>XML Transaction Service Demo Client</display-name>
+
+    <description>XML Transaction Service Demo Client</description>
+
+    <servlet>
+        <servlet-name>Basic Client Servlet</servlet-name>
+        <servlet-class>com.arjuna.xts.nightout.clients.jboss.BasicClient</servlet-class>
+        <init-param>
+            <param-name>restaurantATURL</param-name>
+            <param-value>@restaurantATURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>restaurantBAURL</param-name>
+            <param-value>@restaurantBAURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>taxiATURL</param-name>
+            <param-value>@taxiATURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>taxiBAURL</param-name>
+            <param-value>@taxiBAURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>theatreATURL</param-name>
+            <param-value>@theatreATURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>theatreBAURL</param-name>
+            <param-value>@theatreBAURL@</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Basic Client Servlet</servlet-name>
+        <url-pattern>/basicclientrpc</url-pattern>
+    </servlet-mapping>
+    
+    <service-ref>
+        <service-ref-name>service/RestaurantServiceAT</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/RestaurantServiceAT.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Restaurant">demo:IRestaurantServiceService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.restaurant.IRestaurantServiceAT</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/RestaurantServiceBA</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/RestaurantServiceBA.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Restaurant">demo:IRestaurantServiceBAService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.restaurant.IRestaurantServiceBA</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/TaxiServiceAT</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/TaxiServiceAT.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Taxi">demo:ITaxiServiceService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.taxi.ITaxiServiceAT</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/TaxiServiceBA</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/TaxiServiceBA.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Taxi">demo:ITaxiServiceBAService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.taxi.ITaxiServiceBA</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/TheatreServiceAT</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/TheatreServiceAT.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Theatre">demo:ITheatreServiceService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.theatre.ITheatreServiceAT</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/TheatreServiceBA</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/TheatreServiceBA.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Theatre">demo:ITheatreServiceBAService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.theatre.ITheatreServiceBA</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+
+</web-app>

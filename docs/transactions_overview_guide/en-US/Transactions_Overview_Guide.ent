@@ -1,0 +1,7 @@
+<!ENTITY PRODUCT "JBoss Transactions">
+<!ENTITY BOOKID "Transactions_Overview_Guide">
+<!ENTITY VERSION "4.15">
+<!ENTITY YEAR "2011">
+<!ENTITY HOLDER "JBoss.org">
+<!ENTITY APPSERVER "JBoss Application Server">
+<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->
