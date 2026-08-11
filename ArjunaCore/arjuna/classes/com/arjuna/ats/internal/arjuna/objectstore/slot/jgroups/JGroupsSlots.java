@@ -14,6 +14,7 @@ import org.jgroups.blocks.Cache;
 import org.jgroups.blocks.ReplCache;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -136,6 +137,13 @@ public class JGroupsSlots implements BackingSlots {
         Set<Integer> journalDeletes = new LinkedHashSet<>();
         Map<Integer, Object[]> journalWrites = new LinkedHashMap<>();
 
+        Map<ByteArrayKey, Integer> slotIndex = new HashMap<>();
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] != null) {
+                slotIndex.put(slots[i], i);
+            }
+        }
+
         for (Integer slotId : journal.getSlotIds()) {
             if (slotId < 0 || slotId >= slots.length) {
                 if (!warned) {
@@ -160,6 +168,7 @@ public class JGroupsSlots implements BackingSlots {
                 }
 
                 slots[nextFree] = originalKey;
+                slotIndex.put(originalKey, nextFree);
                 cache.put(originalKey, data, replicationCount, 0);
                 if (nextFree != slotId) {
                     journalDeletes.add(slotId);
@@ -169,7 +178,13 @@ public class JGroupsSlots implements BackingSlots {
                 recoveredCount++;
             } else {
                 byte[] cacheData = cache.get(originalKey);
-                int currentSlot = findSlot(originalKey);
+                if (cacheData == null) {
+                    journalDeletes.add(slotId);
+                    skippedCount++;
+                    continue;
+                }
+                Integer indexedSlot = slotIndex.get(originalKey);
+                int currentSlot = indexedSlot != null ? indexedSlot : -1;
                 if (currentSlot < 0) {
                     while (nextFree < slots.length && cacheKeys.contains(slots[nextFree])) {
                         nextFree++;
@@ -179,6 +194,7 @@ public class JGroupsSlots implements BackingSlots {
                     }
                     currentSlot = nextFree;
                     slots[currentSlot] = originalKey;
+                    slotIndex.put(originalKey, currentSlot);
                     nextFree++;
                 }
                 if (currentSlot != slotId) {
@@ -200,15 +216,6 @@ public class JGroupsSlots implements BackingSlots {
 
         tsLogger.logger.debugf("JGroupsSlots: Recovered %d slots from write-ahead log to cache%s",
             recoveredCount, skippedCount > 0 ? " (skipped " + skippedCount + " already in cache)" : "");
-    }
-
-    private int findSlot(ByteArrayKey key) {
-        for (int i = 0; i < slots.length; i++) {
-            if (key.equals(slots[i])) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /*
