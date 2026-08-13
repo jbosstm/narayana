@@ -226,7 +226,8 @@
                     <exclude>**/ExampleXAResource.java</exclude>
                     <exclude>**/JTSTestCase.java</exclude>
                     <exclude>**/LastOnePhaseResource.java</exclude>
-                    <exclude>**/implicit/**</exclude>
+                    <exclude>**/implicit/client/ImplicitClient.java</exclude>
+                    <exclude>**/implicit/server/ImplicitServer.java</exclude>
                   </excludes>
                   <reportsDirectory>${project.build.directory}/idlj-openjdk-surefire-reports</reportsDirectory>
                   <systemPropertyVariables combine.children="append">
