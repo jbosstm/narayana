@@ -566,8 +566,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <!-- stress tests are not unit tests -->
-                <exclude>**/LogStressTest2.java</exclude>
               </excludes>
               <systemProperties>
                 <property>
@@ -636,8 +634,6 @@
                 <exclude>**/RecoveryTransaction.java</exclude>
                 <exclude>**/UserDefFirst0Setup.java</exclude>
                 <exclude>**/CachedTest.java</exclude>
-                <!-- LogStressTest2 takes too long - needs moving to /qa -->
-                <exclude>**/LogStressTest2.java</exclude>
                 <!-- auxilairy code used by reaper test classes -->
                 <exclude>**/reaper/ReaperTestCaseControl.java</exclude>
               </excludes>
@@ -660,6 +656,27 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!--
+        Stress tests are excluded from the default build because they run for an
+        extended period (LogStressTest2 runs for ~4 hours). Activate this profile
+        to include them: mvn test -Pstress-tests
+      -->
+      <id>stress-tests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/LogStressTest2.java</include>
+              </includes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
