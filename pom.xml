@@ -111,8 +111,7 @@
     </developer>
   </developers>
   <modules>
-    <module>boms/main</module>
-    <module>boms/test</module>
+    <module>boms</module>
     <module>tools</module>
     <module>ext</module>
     <module>common</module>

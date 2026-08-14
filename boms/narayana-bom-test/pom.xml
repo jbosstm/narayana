@@ -8,9 +8,9 @@
 
   <parent>
     <groupId>org.jboss.narayana</groupId>
-    <artifactId>narayana-all</artifactId>
+    <artifactId>boms</artifactId>
     <version>7.3.5.Final-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.jboss.narayana</groupId>
   <artifactId>test-dependency-management</artifactId>
