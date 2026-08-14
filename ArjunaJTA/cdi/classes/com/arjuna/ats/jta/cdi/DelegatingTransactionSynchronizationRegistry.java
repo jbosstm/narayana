@@ -15,6 +15,8 @@ import jakarta.transaction.Transaction; // for javadoc only
 import jakarta.transaction.TransactionManager; // for javadoc only
 import jakarta.transaction.TransactionSynchronizationRegistry;
 
+import com.arjuna.ats.internal.jta.utils.ReadOnlyTransactionSupport;
+
 /**
  * An {@code abstract} {@link TransactionSynchronizationRegistry}
  * implementation that delegates all method invocations to another
@@ -309,6 +311,15 @@ public abstract class DelegatingTransactionSynchronizationRegistry implements Se
             throw new IllegalStateException("delegate == null");
         }
         return this.delegate.getRollbackOnly();
+    }
+
+    // no @Override: TransactionSynchronizationRegistry only declares isReadOnly()
+    // from jakarta.transaction-api 2.0.2, and narayana compiles against 2.0.1
+    public boolean isReadOnly() {
+        if (this.delegate == null) {
+            throw new IllegalStateException("delegate == null");
+        }
+        return ReadOnlyTransactionSupport.isReadOnly(this.delegate);
     }
 
 }

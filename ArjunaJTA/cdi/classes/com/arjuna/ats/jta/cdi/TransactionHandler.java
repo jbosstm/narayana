@@ -6,6 +6,7 @@
 
 package com.arjuna.ats.jta.cdi;
 
+import com.arjuna.ats.internal.jta.utils.ReadOnlyTransactionSupport;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import jakarta.transaction.Status;
@@ -60,8 +61,10 @@ public final class TransactionHandler {
             if (tx != tm.getTransaction()) {
                 throw new RuntimeException(jtaLogger.i18NLogger.get_wrong_tx_on_thread());
             }
-
-            if (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
+            // a read-only transaction can only roll back; isReadOnly is accessed
+            // reflectively because narayana compiles against jakarta.transaction-api
+            // 2.0.1, which does not have it
+            if (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK || ReadOnlyTransactionSupport.isReadOnly(tx)) {
                 tm.rollback();
             } else {
                 tm.commit();
