@@ -60,8 +60,8 @@ public final class TransactionHandler {
             if (tx != tm.getTransaction()) {
                 throw new RuntimeException(jtaLogger.i18NLogger.get_wrong_tx_on_thread());
             }
-
-            if (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
+            // a read-only transaction can only roll back
+            if (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK || tx.isReadOnly()) {
                 tm.rollback();
             } else {
                 tm.commit();

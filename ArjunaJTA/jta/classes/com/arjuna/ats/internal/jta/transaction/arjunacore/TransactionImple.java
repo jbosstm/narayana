@@ -21,6 +21,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
+import jakarta.transaction.xa.ExtendedXAResource;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -87,6 +88,17 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
         _txLocalResources = Collections.synchronizedMap(new HashMap());
     }
+
+	/**
+	 * Create a new transaction with the specified timeout and read-only mode.
+	 */
+
+	public TransactionImple(int timeout, boolean readOnly)
+	{
+		this(timeout);
+
+		_readOnly = readOnly;
+	}
 
 	/**
 	 * Overloads Object.equals()
@@ -170,6 +182,18 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
+			}
+
+			/*
+			 * The only possible outcome of a read-only transaction is rollback.
+			 */
+
+			if (_readOnly)
+			{
+				rollback();
+
+				throw new RollbackException(
+						jtaLogger.i18NLogger.get_transaction_arjunacore_readonly());
 			}
 
 			/*
@@ -609,6 +633,15 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
 				while (!associatedWork)
 				{
+					/*
+					 * If the transaction is read-only, tell the resource before
+					 * xa_start. This is done outside the try block below so that
+					 * an XAException from setReadOnly is not mistaken for an XID
+					 * collision and retried.
+					 */
+
+					setResourceReadOnly(xaRes, xid);
+
 					try
 					{
 						if (_xaTransactionTimeoutEnabled)
@@ -731,6 +764,10 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 
 				xid = existingRM.xid();
 
+				// if the transaction is read-only, tell the resource before xa_start
+
+				setResourceReadOnly(xaRes, xid);
+
 				try
 				{
 					int xaStartJoin = ((theModifier == null) ? XAResource.TMJOIN
@@ -774,6 +811,32 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			markRollbackOnly();
 
 			return false;
+		}
+	}
+
+	/**
+	 * If this transaction is read-only, attempt to put the resource into
+	 * read-only mode. The spec requires this to be attempted before the
+	 * resource is started via xa_start, at most once for a given Xid.
+	 *
+	 * If the resource does not implement ExtendedXAResource, or setReadOnly
+	 * returns false, the resource cannot be put into read-only mode. That is
+	 * not an error and must not mark the transaction rollback-only: the
+	 * resource will simply be rolled back when the transaction completes,
+	 * since the only possible outcome of a read-only transaction is rollback.
+	 */
+	private void setResourceReadOnly (XAResource xaRes, Xid xid)
+			throws XAException
+	{
+		if (_readOnly && (xaRes instanceof ExtendedXAResource))
+		{
+			if (!((ExtendedXAResource) xaRes).setReadOnly(xid))
+			{
+				if (jtaLogger.logger.isTraceEnabled()) {
+					jtaLogger.logger.trace("TransactionImple.setResourceReadOnly - resource declined read-only mode: "
+							+ xaRes);
+				}
+			}
 		}
 	}
 
@@ -1293,6 +1356,27 @@ public class TransactionImple implements jakarta.transaction.Transaction,
             jtaLogger.logger.trace("TransactionImple.commitAndDisassociate");
         }
 
+		/*
+		 * The only possible outcome of a read-only transaction is rollback.
+		 */
+
+		if (_readOnly)
+		{
+			RollbackException rollbackException = new RollbackException(
+					jtaLogger.i18NLogger.get_transaction_arjunacore_readonly());
+
+			try
+			{
+				rollbackAndDisassociate();
+			}
+			catch (Exception e)
+			{
+				rollbackException.addSuppressed(e);
+			}
+
+			throw rollbackException;
+		}
+
 		try
 		{
 			if (_theTransaction != null)
@@ -1738,6 +1822,11 @@ public class TransactionImple implements jakarta.transaction.Transaction,
         return Collections.EMPTY_MAP;
     }
 
+    public boolean isReadOnly()
+    {
+        return _readOnly;
+    }
+
     protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
 	private Hashtable _resources;
@@ -1778,4 +1867,6 @@ public class TransactionImple implements jakarta.transaction.Transaction,
 			.getCommitMarkableResourceJNDINames();
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
+
+	private boolean _readOnly = false;
 }

@@ -30,6 +30,12 @@ public class BaseTransaction
 	public void begin() throws jakarta.transaction.NotSupportedException,
 			jakarta.transaction.SystemException
 	{
+		begin(false);
+	}
+
+	public void begin(boolean readOnly) throws jakarta.transaction.NotSupportedException,
+			jakarta.transaction.SystemException
+	{
 		if (jtaLogger.logger.isTraceEnabled()) {
             jtaLogger.logger.trace("BaseTransaction.begin");
         }
@@ -73,7 +79,7 @@ public class BaseTransaction
 
 		// TODO set default timeout
 
-		TransactionImple.putTransaction(new TransactionImple(v));
+		TransactionImple.putTransaction(new TransactionImple(v, readOnly));
 	}
 
 	/**

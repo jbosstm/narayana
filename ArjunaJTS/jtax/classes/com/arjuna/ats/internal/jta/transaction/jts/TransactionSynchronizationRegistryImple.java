@@ -218,4 +218,11 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
 
         return transactionImple;
     }
+
+    public boolean isReadOnly() {
+        // Validates that a transaction is active (throws IllegalStateException if not),
+        // then returns false since JTS does not support read-only transactions.
+        getTransactionImple();
+        return false;
+    }
 }

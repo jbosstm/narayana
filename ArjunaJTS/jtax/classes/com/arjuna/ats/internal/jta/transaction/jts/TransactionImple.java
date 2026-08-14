@@ -1878,6 +1878,12 @@ public class TransactionImple implements jakarta.transaction.Transaction,
         return Collections.EMPTY_MAP;
     }
 
+    public boolean isReadOnly()
+    {
+        // JTS transactions cannot be started in read-only mode
+        return false;
+    }
+
     protected AtomicTransaction _theTransaction;
 
 	private Hashtable _resources;

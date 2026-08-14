@@ -82,6 +82,15 @@ public class BaseTransaction
 		}
 	}
 
+	public void begin (boolean readOnly) throws jakarta.transaction.NotSupportedException,
+			jakarta.transaction.SystemException
+	{
+		if (readOnly) {
+			throw new NotSupportedException("JTS read-only transactions are not supported");
+		}
+		begin();
+	}
+
 	/**
 	 * We will never throw a HeuristicRollbackException because if we get a
 	 * HeuristicRollback from a resource, and can successfully rollback the
@@ -101,6 +110,11 @@ public class BaseTransaction
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
+
+		if (theTransaction == null)
+			throw new IllegalStateException(
+					"BaseTransaction.commit - "
+							+ jtaxLogger.i18NLogger.get_jtax_transaction_jts_notxe());
 
 		try
 		{

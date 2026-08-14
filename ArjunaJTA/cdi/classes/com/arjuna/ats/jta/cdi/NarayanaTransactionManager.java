@@ -277,6 +277,14 @@ class NarayanaTransactionManager extends DelegatingTransactionManager {
     }
   }
 
+  @Override
+  public void begin(boolean readOnly) throws NotSupportedException, SystemException {
+    super.begin(readOnly);
+    if (this.transactionScopeInitializedBroadcaster != null) {
+      this.transactionScopeInitializedBroadcaster.fire(this.getTransaction());
+    }
+  }
+
   /**
    * Overrides {@link DelegatingTransactionManager#commit()} to
    * additionally {@linkplain Event#fire(Object) fire} an {@link Object} representing
