@@ -311,4 +311,12 @@ public abstract class DelegatingTransactionSynchronizationRegistry implements Se
         return this.delegate.getRollbackOnly();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        if (this.delegate == null) {
+            throw new IllegalStateException("delegate == null");
+        }
+        return this.delegate.isReadOnly();
+    }
+
 }

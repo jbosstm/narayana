@@ -26,4 +26,9 @@ class TransactionalLiteral extends AnnotationLiteral<Transactional> implements T
         return new Class[] {};
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
 }

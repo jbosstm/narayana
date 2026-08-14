@@ -78,6 +78,24 @@ public abstract class DelegatingTransactionManager implements Serializable, Tran
   }
 
   /**
+   * Creates a new readOnly transaction and associates it with the current thread.
+   *
+   * @exception NotSupportedException if the thread is already
+   * associated with a transaction and this {@link TransactionManager}
+   * implementation does not support nested transactions
+   *
+   * @exception SystemException if this {@link TransactionManager}
+   * encounters an unexpected error condition
+   */
+  @Override
+  public void begin(boolean readOnly) throws NotSupportedException, SystemException {
+    if (this.delegate == null) {
+      throw new SystemException("delegate == null");
+    }
+    this.delegate.begin(readOnly);
+  }
+
+  /**
    * Completes the transaction associated with the current thread.
    *
    * <p>When this method completes, the thread is no longer associated
