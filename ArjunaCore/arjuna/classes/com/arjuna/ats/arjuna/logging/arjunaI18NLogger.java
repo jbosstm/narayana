@@ -1700,7 +1700,7 @@ public interface arjunaI18NLogger {
 	@Message(id = 12426, value = "SlotStore: quarantining slot {0} after failed clear ({1} slots remain free)",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	void warn_jgroups_slot_store_quarantine(int slotId, int freeListSize);
+	void warn_slot_store_quarantine(int slotId, int freeListSize);
 
 	@Message(id = 12427, value = "The number of actual transaction logs, {0}, exceeds the number of configured " +
 			"slots, {1}. The number of configured slots should equal the maximum number of unresolved transactions " +
@@ -1731,6 +1731,11 @@ public interface arjunaI18NLogger {
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_cluster_size_too_small(int clusterSize);
+
+	@Message(id = 12435, value = "Error stopping SlotStore",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_slot_store_stop_error(@Cause IOException e);
 
     /*
         Allocate new messages directly above this notice.

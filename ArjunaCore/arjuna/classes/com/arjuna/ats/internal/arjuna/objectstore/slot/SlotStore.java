@@ -59,11 +59,10 @@ public class SlotStore {
         slots = config.getBackingSlots();
         slots.init(config);
 
-        // internal recovery to rebuild the slotIdIndex and freeList
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
             byte[] data = slots.read(i);
             if (data == null || data.length == 0) {
-                freeList.add(i); // slot does not contain a valid entry, is free for use
+                freeList.add(i);
             } else {
                 InputBuffer inputBuffer = new InputBuffer(data);
                 SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
@@ -74,6 +73,37 @@ public class SlotStore {
 
     public void stop() throws IOException {
         slots.stop();
+    }
+
+    /**
+     * Re-read all slots from the backing store and rebuild the in-memory index.
+     * For backends where the store can be modified externally (e.g. via Raft
+     * replication), this method reconciles the index with the current state
+     * of the backing store.
+     *
+     * @throws IOException if a slot cannot be read
+     */
+    public void refreshIndex() throws IOException {
+        ConcurrentHashMap<SlotStoreKey, Integer> newIndex = new ConcurrentHashMap<>();
+        ConcurrentLinkedDeque<Integer> newFreeList = new ConcurrentLinkedDeque<>();
+
+        for (int i = 0; i < config.getNumberOfSlots(); i++) {
+            byte[] data = slots.read(i);
+            if (data == null || data.length == 0) {
+                newFreeList.add(i);
+            } else {
+                InputBuffer inputBuffer = new InputBuffer(data);
+                SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
+                newIndex.put(slotStoreKey, i);
+            }
+        }
+
+        slotIdIndex.putAll(newIndex);
+        slotIdIndex.keySet().retainAll(newIndex.keySet());
+        freeList.clear();
+        freeList.addAll(newFreeList);
+
+        slots.clearIndexStale();
     }
 
     /**
@@ -93,6 +123,10 @@ public class SlotStore {
     public InputObjectState read(SlotStoreKey key) throws IOException {
 
         Integer slotId = slotIdIndex.get(key);
+        if (slotId == null && slots.isIndexStale()) {
+            refreshIndex();
+            slotId = slotIdIndex.get(key);
+        }
         if (slotId == null) {
             throw new IOException("record not found for " + key);
         }
@@ -133,7 +167,6 @@ public class SlotStore {
         }
 
         freeList.add(slotId);
-
         return true;
     }
 
@@ -171,16 +204,14 @@ public class SlotStore {
             throw e;
         }
 
-        Integer previousSlot = slotIdIndex.put(key, slotId);
+        Integer prev = slotIdIndex.put(key, slotId);
 
-        // If it's a rewrite, we need to release the older version's slot
-        if (previousSlot != null) {
+        if (prev != null) {
             try {
-                slots.clear(previousSlot, config.isSyncDeletes());
-                freeList.add(previousSlot);
+                slots.clear(prev, config.isSyncDeletes());
+                freeList.add(prev);
             } catch (IOException e) {
-                // the new state is already stored, so do not report the write as failed
-                recycleSlot(previousSlot);
+                recycleSlot(prev);
             }
         }
 
@@ -204,6 +235,8 @@ public class SlotStore {
      */
     public String[] getKnownTypes() {
 
+        refreshIndexIfStale();
+
         Set<String> types = new HashSet<>();
 
         for (SlotStoreKey key : slotIdIndex.keySet()) {
@@ -221,6 +254,8 @@ public class SlotStore {
      */
     public SlotStoreKey[] getMatchingKeys(SlotStoreKey templateKey) {
 
+        refreshIndexIfStale();
+
         List<SlotStoreKey> matchingKeys = new ArrayList<>();
 
         for (SlotStoreKey candidateKey : slotIdIndex.keySet()) {
@@ -234,6 +269,16 @@ public class SlotStore {
         return matchingKeys.toArray(new SlotStoreKey[0]);
     }
 
+    private void refreshIndexIfStale() {
+        if (slots.isIndexStale()) {
+            try {
+                refreshIndex();
+            } catch (IOException e) {
+                tsLogger.logger.warn("Failed to refresh slot store index", e);
+            }
+        }
+    }
+
     private void recycleSlot(int slotId) {
         if (config.isRecycleFailedSlots()) {
             freeList.add(slotId);
@@ -244,7 +289,8 @@ public class SlotStore {
             slots.clear(slotId, config.isSyncDeletes());
             freeList.add(slotId);
         } catch (IOException clearFailed) {
-            tsLogger.i18NLogger.warn_jgroups_slot_store_quarantine(slotId, freeList.size());
+            tsLogger.logger.warn("Failed to clear slot " + slotId + " during recycle", clearFailed);
+            tsLogger.i18NLogger.warn_slot_store_quarantine(slotId, freeList.size());
         }
     }
 }

@@ -342,10 +342,11 @@ The class must implement `com.arjuna.ats.internal.arjuna.objectstore.slot.jgroup
 Default: a strategy based on `com.arjuna.ats.arjuna.common.Uid` will be used.
 
 JGroupsStoreEnvironmentBean.walEnabled::
-Enables the write-ahead log for persistence.
-When enabled, all writes are persisted to disk using an Artemis Journal before being applied to the ReplCache.
-Full durability (surviving crashes) additionally requires `walSyncWrites=true` (the default);
-without fsync, buffered writes may be lost on crash.
+Enables the write-ahead log for local durability.
+When enabled, all writes are appended to an Artemis Journal WAL before being applied to the ReplCache.
+Crash durability requires `walSyncWrites=true` (the default), which fsyncs each WAL entry to disk;
+with `walSyncWrites=false`, buffered entries may be lost after process crashes or power failures
+depending on the OS flush policy.
 +
 Default: true
 
@@ -460,7 +461,9 @@ With write-ahead log disabled (`walEnabled=false`):
 
 * Faster throughput but no local persistence
 * Object states are only in memory but are still replicated across the cluster
-* Crash recovery relies on other cluster members
+* Crash recovery relies on other cluster members retaining a copy. With `replicationCount=-1` (full replication)
+  every member holds a complete copy, so recovery after a single node loss is possible. With `replicationCount=1`
+  the sole copy is lost when that node fails
 * Not suitable for transaction types that require durability guarantees.
 
 .Cluster Configuration Considerations
@@ -471,6 +474,28 @@ With write-ahead log disabled (`walEnabled=false`):
 3. Any member can create and commit transactions
 4. The `TransactionStatusManager` is used during recovery to determine if the transaction creator is still running
 5. In production, configure JGroups for your network topology (refer to the JGroups documentation for more detail)
+
+.Crash Recovery Considerations
+
+`AtomicActionRecoveryModule` scans the entire object store for in-doubt transactions regardless of which node
+created them. When the store uses full replication (`replicationCount=-1`, the default), every node has a
+complete copy, so every recovery manager sees every node's transactions. With partial replication, a node only
+sees the subset of records replicated to it. `TransactionStatusConnectionManager` provides a soft guard: before
+recovering a transaction, it contacts the originating process to check whether the transaction is still in-flight.
+If the originating process is dead or unreachable, recovery proceeds.
+
+Because ReplCache has no single-writer constraint, multiple surviving nodes may independently recover the same
+in-doubt transaction after a node failure. For XA transactions this is expected to be harmless because the XA
+specification requires `commit()` to be idempotent. Other transaction models that use the slot store may not
+offer the same guarantee. Any model where concurrent recovery can cause side-effects — duplicate compensations,
+repeated state transitions, or similar — should be assessed on a case-by-case basis against its idempotency
+and concurrency requirements.
+
+[WARNING]
+====
+To avoid duplicate recovery, deploy only a single recovery manager instance across the cluster (HA singleton pattern).
+If the recovery manager node fails, start a replacement - but ensure only one is active at any time.
+====
 
 ==== JGroupsRaftSlotStore
 
@@ -638,14 +663,14 @@ Default: false
 With Raft log fsync (`raftLogFsync=true`, the default):
 
 - Full durability with majority consensus
-- Survives both process crashes and power failures on majority of nodes
+- Acknowledged writes survive loss of a minority of nodes (process crashes or power failures)
 - Reduced performance due to disk sync
 
 With Raft log buffered (`raftLogFsync=false`):
 
 - Higher throughput due to reduced disk I/O
 - Raft ensures majority consensus before acknowledging writes
-- May lose last few milliseconds of operations on process crashes or power failure
+- Recently acknowledged entries may be lost on process crash or power failure if the OS has not flushed them to disk
 
 .Consensus and Recovery Guarantees
 
@@ -659,6 +684,13 @@ With Raft log buffered (`raftLogFsync=false`):
 5. **Reads**: With `allowDirtyReads=true`, reads are served from each node's local in-memory state machine and may
      return data that has not yet been replicated from the leader. With `allowDirtyReads=false` (the default),
      reads are routed through the Raft leader for consistent results. Writes are always strongly consistent.
+
+.Crash Recovery Considerations
+
+Raft serialises all write operations through a single leader. If two recovery managers overlap briefly during a
+leader election, only the leader's writes succeed — this provides serialised write ordering but does not eliminate
+the possibility of concurrent recovery attempts. To avoid duplicate recovery, deploy only a single recovery manager
+instance on the current Raft leader node.
 
 .Cluster Configuration Considerations
 
@@ -682,7 +714,7 @@ With Raft log buffered (`raftLogFsync=false`):
 
 Use JGroupsRaftSlotStore when:
 
-- Strong consistency guarantees are required
+- Strong write ordering is required (reads are strongly consistent only when `allowDirtyReads=false`)
 - Protection against split-brain scenarios is critical
 - Automatic leader election and failover is needed
 - You can tolerate higher write latency for stronger guarantees
@@ -882,14 +914,15 @@ immediately without waiting for acknowledgment.
 nodes; asynchronous replication scales better but weakens consistency.
 
 |JGroupsRaftSlotStore (Raft)
-|Serialised consensus with batching. All write proposals pass through a single Raft processing thread, but JGroups-Raft
-batches pending proposals so that multiple entries share a single log append and fsync. Throughput scales with
-contention: more concurrent writers means more proposals batched per fsync.
+|Serialised consensus with batching. All write proposals pass through a single Raft leader thread, but JGroups-Raft
+batches pending proposals so that multiple entries share a single log append and fsync (when `raftLogFsync=true`).
+Batching improves throughput when there is sufficient concurrency and available slot capacity.
 |Per-batch fsync latency (when `raftLogFsync=true`) and, in multi-node clusters, network round-trips for majority
-acknowledgment.
-|With a single writer, throughput is bounded by per-entry fsync cost. Under concurrent load, batching amortises that
-cost and throughput scales better. Adding cluster members improves fault tolerance but adds per-batch network
-latency.
+acknowledgment. With `raftLogFsync=false`, fsync latency is eliminated but durability is reduced.
+|With a single writer, throughput is bounded by per-entry fsync cost (when `raftLogFsync=true`).
+Under concurrent load, batching amortises that cost provided enough slots are available; if slot lifecycles cannot
+keep up, new transactions are rolled back. Adding cluster members improves fault tolerance but adds per-batch
+network latency.
 |===
 
 ==== DiskSlots tuning
@@ -939,7 +972,7 @@ Example for synchronous replicated cache:
 </replicated-cache>
 ----
 
-For transaction log stores, synchronous replicated or distributed modes with write-through persistence are recommended.
+For transaction log stores, use synchronous replicated or synchronous distributed mode with write-through persistence.
 
 Persistence mode::
 Configured in the Infinispan XML via the `<persistence>` element within the cache definition.
@@ -1021,8 +1054,8 @@ complete fast enough to return slots to the free pool, new transactions find no 
 
 `JGroupsRaftStoreEnvironmentBean.raftLogFsync`::
 When `false`, Raft log entries are buffered instead of being fsynced on each write. This can improve
-throughput but risks losing the last few entries on power failure.
-For environments where process-crash recovery (but not power-failure recovery) is sufficient, this is a reasonable tradeoff.
+throughput but risks losing recently acknowledged entries after either a process crash or power failure.
+Use this setting only when losing the last few committed entries is acceptable.
 +
 Default: true
 
@@ -1067,9 +1100,9 @@ the WAL write is fsynced only when `walSyncWrites=true`. With WAL disabled, it p
 `ReplCache.put()` also incurs per-message overhead even on a single-node cluster (message construction,
 serialisation of `ByteArrayKey`, protocol stack traversal, reflection during dispatch), JGroupsRaftSlotStore avoids
 this overhead by using an `Integer` key applied directly to the local state machine.
-However, on hardware with real fsync latency both stores are typically fsync-bound at low thread counts,
-so the ReplCache overhead may not be visible.
-The difference is more pronounced in environments where fsync is fast.
+However, when `walEnabled=true` and `walSyncWrites=true`, both stores are typically fsync-bound at low thread
+counts on hardware with real fsync latency, so the ReplCache overhead may not be visible.
+The difference is more pronounced in environments where fsync is fast or when WAL is disabled.
 Under concurrent load, JGroups-Raft batches pending proposals into a single log append and fsync, so throughput
 scales well with writer threads (see the <<Write serialisation and batching>> benchmarks above).
 

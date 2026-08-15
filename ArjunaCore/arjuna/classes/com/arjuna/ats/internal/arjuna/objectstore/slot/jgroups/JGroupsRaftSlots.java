@@ -52,6 +52,7 @@ public class JGroupsRaftSlots implements BackingSlots {
     private ReplicatedStateMachine<Integer, byte[]> cache;
     private JGroupsRaftStoreEnvironmentBean config;
     private volatile boolean initialized = false;
+    private volatile boolean indexStale;
 
     /**
      * Initialize the Raft-based slot store.
@@ -90,9 +91,13 @@ public class JGroupsRaftSlots implements BackingSlots {
             if (preConfiguredChannel != null) {
                 channel = preConfiguredChannel;
                 cache = preConfiguredCache;
-                // Use pre-configured channel and cache
                 tsLogger.logger.debugf("Using pre-configured Raft channel and state machine for node: %s",
                         config.getNodeAddress());
+
+                RAFT preConfiguredRaft = channel.getProtocolStack().findProtocol(RAFT.class);
+                if (preConfiguredRaft != null) {
+                    preConfiguredRaft.addRoleListener(role -> indexStale = true);
+                }
 
                 // Wait for leader election if not already complete
                 waitForLeaderElection(config.getRaftElectionMaxInterval());
@@ -183,7 +188,7 @@ public class JGroupsRaftSlots implements BackingSlots {
         try {
             return cache.get(slotId);
         } catch (Exception e) {
-            tsLogger.logger.debugf("Raft read failed for slot " + slotId, e);
+            tsLogger.logger.warn("Raft read failed for slot " + slotId, e);
             throw new IOException("Raft read failed", e);
         }
     }
@@ -236,9 +241,20 @@ public class JGroupsRaftSlots implements BackingSlots {
             } catch (Exception e) {
                 tsLogger.logger.warn("Error closing Raft channel", e);
             }
-            channel = null;
         }
+        channel = null;
+        cache = null;
         initialized = false;
+    }
+
+    @Override
+    public boolean isIndexStale() {
+        return indexStale;
+    }
+
+    @Override
+    public void clearIndexStale() {
+        indexStale = false;
     }
 
     /**
@@ -418,10 +434,22 @@ public class JGroupsRaftSlots implements BackingSlots {
 
         raft.members(members);
 
-        cache = new ReplicatedStateMachine<>(channel);
+        cache = new ReplicatedStateMachine<>(channel) {
+            @Override
+            public void readContentFrom(java.io.DataInput in) {
+                try {
+                    super.readContentFrom(in);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to read snapshot content", e);
+                }
+                indexStale = true;
+            }
+        };
         cache.raftId(nodeName);
         cache.allowDirtyReads(config.isAllowDirtyReads());
         cache.timeout(config.getRaftTimeout());
+
+        raft.addRoleListener(role -> indexStale = true);
     }
 
     private void bootstrapNewChannel(String nodeName, String clusterName) throws Exception {

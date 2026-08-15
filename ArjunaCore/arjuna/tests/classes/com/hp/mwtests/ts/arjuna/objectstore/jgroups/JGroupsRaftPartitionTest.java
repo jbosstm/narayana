@@ -12,9 +12,12 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputBuffer;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreKey;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftStoreEnvironmentBean;
 import org.jgroups.Address;
@@ -41,6 +44,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -520,5 +524,60 @@ public class JGroupsRaftPartitionTest extends JGroupsTestBase {
             assertTrue(containsAtomicAction(followerRs, probe),
                     "Follower store should contain replicated txn " + uid);
         }
+    }
+
+    /**
+     * Verifies that the SlotStore index is rebuilt when a Raft role change occurs.
+     * <p>
+     * When data arrives in a follower's RSM via Raft replication (bypassing
+     * {@code SlotStore.write()}), the follower's in-memory index is not updated.
+     * A subsequent role change (e.g. follower promoted to leader) sets the
+     * {@code indexStale} flag, and the next index-dependent query triggers
+     * {@code refreshIndex()} to reconcile the index with the backing store.
+     */
+    @Test
+    void testIndexRefreshOnLeaderChange() throws Throwable {
+        String cluster = "raft-idx-" + System.currentTimeMillis();
+        List<String> members = List.of("R1", "R2", "R3");
+
+        createAndStartNode("R1", cluster, members);
+        createAndStartNode("R2", cluster, members);
+        createAndStartNode("R3", cluster, members);
+        awaitAllLeaders();
+
+        RaftNode leader = findLeader();
+        RaftNode follower = nodes.stream()
+                .filter(n -> !n.isLeader()).findFirst().orElseThrow();
+
+        // Activate the follower's store — its SlotStore scans all slots (all empty)
+        RecoveryStore followerRs = activateStore(follower);
+
+        // Write a record directly to the leader's RSM. Raft replicates the entry
+        // to the follower's RSM via apply(), bypassing the follower's SlotStore,
+        // so the follower's in-memory index is not updated.
+        Uid txnUid = new Uid();
+        OutputBuffer record = new OutputBuffer();
+        new SlotStoreKey(txnUid, TYPE_NAME, StateStatus.OS_COMMITTED).packInto(record);
+        new OutputObjectState().packInto(record);
+        leader.sm.put(0, record.buffer());
+
+        // The entry is in the follower's RSM but NOT in its SlotStore index
+        AtomicAction probe = new AtomicAction(txnUid);
+        assertFalse(containsAtomicAction(followerRs, probe),
+                "Before role change: follower's index should not contain the replicated entry");
+
+        // Isolate the leader — the followers elect a new leader, triggering
+        // role change notifications that set indexStale = true
+        List<RaftNode> followers = nodes.stream().filter(n -> !n.isLeader()).toList();
+        partition(followers, List.of(leader));
+
+        // Wait for the follower's backing slots to detect the role change
+        waitFor(30_000, "follower to detect stale index after role change",
+                follower.slots::isIndexStale);
+
+        // The next index-dependent query triggers refreshIndexIfStale(),
+        // which re-scans all slots and discovers the replicated entry
+        assertTrue(containsAtomicAction(followerRs, probe),
+                "After role change: refreshed index should contain the replicated entry");
     }
 }

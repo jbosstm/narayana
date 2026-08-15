@@ -50,6 +50,18 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
     }
 
     /**
+     * Re-read all slots from the backing store and rebuild the in-memory index.
+     * For backends where the store can be modified externally (e.g. via Raft
+     * replication), this reconciles the index with the current state of the
+     * backing store.
+     *
+     * @throws IOException if a slot cannot be read
+     */
+    public void refreshIndex() throws IOException {
+        store.refreshIndex();
+    }
+
+    /**
      * Obtain all of the Uids for a specified type.
      *
      * @param typeName       The type to scan for.
@@ -340,7 +352,7 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
         try {
             store.stop();
         } catch (IOException e) {
-            tsLogger.logger.warn("Error stopping SlotStore", e);
+            tsLogger.i18NLogger.warn_slot_store_stop_error(e);
         }
     }
 }
