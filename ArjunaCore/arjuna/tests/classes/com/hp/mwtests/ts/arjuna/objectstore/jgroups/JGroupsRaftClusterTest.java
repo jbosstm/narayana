@@ -8,9 +8,12 @@ package com.hp.mwtests.ts.arjuna.objectstore.jgroups;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputBuffer;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreKey;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftStoreEnvironmentBean;
 import org.jgroups.JChannel;
@@ -25,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -274,5 +278,87 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         InputObjectState readData = recoveryStore2.read_committed(uid, TYPE_NAME);
         assertNotNull(readData, "Data should be replicated to node2 via Raft");
         assertEquals(DATA, readData.unpackString(), "Replicated data mismatch");
+    }
+
+    /**
+     * Verify that the notification listener detects a remotely replicated mutation
+     * without any Raft role change.
+     * <p>
+     * Pattern:
+     * 1. Start 3 Raft nodes and wait for leader election
+     * 2. Create a RecoveryStore on a follower (registers the notification listener)
+     * 3. Write slot data directly through the leader's ReplicatedStateMachine
+     * 4. Assert the follower's isIndexStale() becomes true (via notification listener)
+     * 5. Read from the follower's RecoveryStore - index refresh should expose the data
+     */
+    @Test
+    public void testNotificationListenerDetectsRemoteMutation() throws Throwable {
+        String DATA = "notification-data";
+        String clusterName = "raft-notification-" + System.currentTimeMillis();
+        String raftMembers = "node1,node2,node3";
+
+        store1 = new RaftStore("node1", clusterName, STORE_DIR + "/raft-notification/node1", raftMembers);
+        store2 = new RaftStore("node2", clusterName, STORE_DIR + "/raft-notification/node2", raftMembers);
+        store3 = new RaftStore("node3", clusterName, STORE_DIR + "/raft-notification/node3", raftMembers);
+
+        store1.createAndStartRaftChannel();
+        store2.createAndStartRaftChannel();
+        store3.createAndStartRaftChannel();
+
+        store1.waitForLeader(10, TimeUnit.SECONDS);
+        store2.waitForLeader(10, TimeUnit.SECONDS);
+        store3.waitForLeader(10, TimeUnit.SECONDS);
+
+        // Identify leader and a follower
+        RaftStore leaderStore = null, followerStore = null;
+        for (RaftStore s : List.of(store1, store2, store3)) {
+            if (leaderStore == null && Role.Leader.name().equals(s.getRole())) {
+                leaderStore = s;
+            } else if (followerStore == null && Role.Follower.name().equals(s.getRole())) {
+                followerStore = s;
+            }
+        }
+        assertNotNull(leaderStore, "Must have a leader");
+        assertNotNull(followerStore, "Must have a follower");
+        final RaftStore leader = leaderStore;
+        final RaftStore follower = followerStore;
+
+        // Create RecoveryStore on the follower. This calls JGroupsRaftSlots.init(),
+        // which registers the notification listener. The store starts empty.
+        resetAtomicActionRecoveryModule();
+        RecoveryStore followerRecoveryStore = startRecoveryStore(follower.config);
+
+        // Clear any staleness from init (role listener may have fired during setup)
+        follower.slots.clearIndexStale();
+        assertFalse(follower.slots.isIndexStale(), "Index should not be stale after clearing");
+
+        // Pack slot data in SlotStore's format: SlotStoreKey + OutputObjectState
+        Uid uid = new Uid();
+        SlotStoreKey key = new SlotStoreKey(uid, TYPE_NAME, StateStatus.OS_COMMITTED);
+        OutputBuffer record = new OutputBuffer();
+        key.packInto(record);
+        OutputObjectState payload = new OutputObjectState();
+        payload.packString(DATA);
+        payload.packInto(record);
+
+        // Write through the leader's state machine directly (bypassing SlotStore).
+        // This simulates what happens on a follower when the leader's SlotStore.write()
+        // replicates a Raft entry: the state machine is updated without going through
+        // the local SlotStore, so only the notification listener can detect it.
+        int slotId = 0;
+        leader.stateMachine.put(slotId, record.buffer());
+
+        // The Raft put is synchronous on the leader: it blocks until committed to a
+        // majority. The follower's notification listener fires when the entry is applied,
+        // which may lag slightly behind the leader's return.
+        waitFor(5000, "follower index becomes stale",
+                () -> follower.slots.isIndexStale());
+
+        // Query the follower's RecoveryStore. getMatchingKeys/read_committed check
+        // isIndexStale() and call refreshIndex(), which re-scans all slots and rebuilds
+        // slotIdIndex from the replicated data.
+        InputObjectState readData = followerRecoveryStore.read_committed(uid, TYPE_NAME);
+        assertNotNull(readData, "Follower should see replicated data after index refresh");
+        assertEquals(DATA, readData.unpackString(), "Data mismatch on follower");
     }
 }

@@ -55,10 +55,18 @@ file - the index is always fully reconstructable from the slot contents alone.
 The constructor scans all slots 0..numberOfSlots-1:
 
 * Empty slots (null or zero-length data) go on the freeList.
-* Occupied slots have their SlotStoreKey deserialized from the front of the data
-  to rebuild slotIdIndex.
+* Occupied slots are validated by unpacking the complete record (SlotStoreKey +
+  payload). If both unpack successfully, the key is added to slotIdIndex. If
+  either unpack throws (corrupt header or truncated/malformed payload), the slot
+  is treated as empty and added to the freeList.
 
-No separate index file is needed.
+This ensures that every key visible in slotIdIndex corresponds to a record that
+read() can return. Without full-record validation, getMatchingKeys() could
+expose entries that read() subsequently rejects, causing spurious failures in
+recovery scans.
+
+No separate index file is needed. refreshIndex() applies the same validation
+when rebuilding the index from a stale backing store.
 
 === Index Refresh (Staleness Protocol)
 
@@ -109,11 +117,12 @@ prevents slot exhaustion under high-contention workloads (e.g. Raft timeout
 retries).
 
 The trade-off is that on restart, a recycled slot may still contain data from a
-failed write or from a previous record whose clear failed. If the data has a
-valid SlotStoreKey header, the constructor will index it as a live record. In
-practice this is benign: the record will either be a duplicate of one already
-completed (recovery re-checks and skips it) or corrupt enough that unpackFrom
-rejects it and the slot is treated as empty.
+failed write or from a previous record whose clear failed. The constructor
+validates the complete record (key + payload); if either part is malformed the
+slot is treated as empty and returned to the freeList. A valid record from a
+failed write is indexed as a live record. In practice this is benign: the
+record will be a duplicate of one already completed and recovery re-checks and
+skips it.
 
 === Constraints
 
@@ -300,8 +309,15 @@ elected leader. Polls every 50ms up to raftElectionMaxInterval (default 500ms).
 JGroupsRaftSlots overrides isIndexStale() and clearIndexStale() to signal when
 Raft-replicated data may have arrived without going through SlotStore.write().
 
-A `volatile boolean indexStale` flag is set to true in two places:
+A `volatile boolean indexStale` flag is set to true in three places:
 
+. *Notification listener*: registered via
+  `cache.addNotificationListener(...)`. The put and remove callbacks set
+  `indexStale = true` whenever the state machine is updated, including
+  replicated entries applied while the node remains in the same Raft role.
+  On the leader this is redundant (SlotStore.write() already updated the
+  index) but harmless; on followers it is the primary trigger for detecting
+  remotely replicated mutations.
 . *Role change listener*: `raft.addRoleListener(role -> indexStale = true)`.
   Registered in both the standard and pre-configured init paths. When a
   follower is promoted to leader, the new leader's SlotStore index may be

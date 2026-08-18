@@ -96,14 +96,15 @@ public class JGroupsTestBase {
         try {
             Path storePath = Paths.get(dir);
             if (Files.exists(storePath)) {
-                Files.walk(storePath)
-                        .sorted(Comparator.reverseOrder()) // depth first
-                        .forEach(path -> {
-                            try {
-                                Files.delete(path);
-                            } catch (IOException ignore) {
-                            }
-                        });
+                try (var paths = Files.walk(storePath)) {
+                    paths.sorted(Comparator.reverseOrder()) // depth first
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException ignore) {
+                                }
+                            });
+                }
             }
         } catch (IOException | UncheckedIOException ignore) {
         }

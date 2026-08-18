@@ -1732,7 +1732,7 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_cluster_size_too_small(int clusterSize);
 
-	@Message(id = 12435, value = "Error stopping SlotStore",
+	@Message(id = 12433, value = "Error stopping SlotStore",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_slot_store_stop_error(@Cause IOException e);

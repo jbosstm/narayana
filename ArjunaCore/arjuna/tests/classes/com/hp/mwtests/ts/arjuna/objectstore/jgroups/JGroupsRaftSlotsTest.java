@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test single-node JGroupsRaftSlots operations (read/write/clear).
- * <p>
- * For multi-node cluster tests, @see {@link JGroupsRaftClusterTest}.
+ * For multi-node cluster tests, see {@link JGroupsRaftClusterTest}.
  */
 public class JGroupsRaftSlotsTest extends JGroupsTestBase {
 

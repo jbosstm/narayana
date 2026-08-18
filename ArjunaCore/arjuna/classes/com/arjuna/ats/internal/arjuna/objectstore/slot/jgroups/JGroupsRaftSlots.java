@@ -105,6 +105,8 @@ public class JGroupsRaftSlots implements BackingSlots {
                     preConfiguredRaft.addRoleListener(role -> indexStale = true);
                 }
 
+                addNotificationListener();
+
                 // Wait for leader election if not already complete
                 waitForLeaderElection(config.getRaftElectionMaxInterval());
 
@@ -457,6 +459,8 @@ public class JGroupsRaftSlots implements BackingSlots {
 
         // listen for role changes and mark the index as stale
         raft.addRoleListener(role -> indexStale = true);
+
+        addNotificationListener();
     }
 
     private void bootstrapNewChannel(String nodeName, String clusterName) throws Exception {
@@ -487,6 +491,14 @@ public class JGroupsRaftSlots implements BackingSlots {
     }
 
     // Private helper methods
+
+    private void addNotificationListener() {
+        cache.addNotificationListener(new ReplicatedStateMachine.Notification<>() {
+            @Override public void put(Integer key, byte[] oldVal, byte[] newVal) { indexStale = true; }
+            @Override public void remove(Integer key, byte[] oldVal) { indexStale = true; }
+            @Override public void get(Integer key, byte[] val) {}
+        });
+    }
 
     private void checkInitialized() {
         if (!initialized) {

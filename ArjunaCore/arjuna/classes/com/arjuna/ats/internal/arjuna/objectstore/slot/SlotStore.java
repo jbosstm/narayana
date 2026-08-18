@@ -61,12 +61,11 @@ public class SlotStore {
 
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
             byte[] data = slots.read(i);
-            if (data == null || data.length == 0) {
-                freeList.add(i);
-            } else {
-                InputBuffer inputBuffer = new InputBuffer(data);
-                SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
+            SlotStoreKey slotStoreKey = validateSlotRecord(data);
+            if (slotStoreKey != null) {
                 slotIdIndex.put(slotStoreKey, i);
+            } else {
+                freeList.add(i);
             }
         }
     }
@@ -89,12 +88,11 @@ public class SlotStore {
 
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
             byte[] data = slots.read(i);
-            if (data == null || data.length == 0) {
-                newFreeList.add(i);
-            } else {
-                InputBuffer inputBuffer = new InputBuffer(data);
-                SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
+            SlotStoreKey slotStoreKey = validateSlotRecord(data);
+            if (slotStoreKey != null) {
                 newIndex.put(slotStoreKey, i);
+            } else {
+                newFreeList.add(i);
             }
         }
 
@@ -276,6 +274,25 @@ public class SlotStore {
             } catch (IOException e) {
                 tsLogger.logger.warn("Failed to refresh slot store index", e);
             }
+        }
+    }
+
+    // Unpack the full record (key + payload) to verify structural integrity.
+    // unpackFrom throws on truncated or garbled data, so a partial write that
+    // left a valid key header but a corrupt payload is caught here rather than
+    // surfacing later when read() rejects a record that getMatchingKeys() listed.
+    private SlotStoreKey validateSlotRecord(byte[] data) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        try {
+            InputBuffer inputBuffer = new InputBuffer(data);
+            SlotStoreKey key = SlotStoreKey.unpackFrom(inputBuffer);
+            InputObjectState probe = new InputObjectState();
+            probe.unpackFrom(inputBuffer);
+            return key;
+        } catch (Exception e) {
+            return null;
         }
     }
 
