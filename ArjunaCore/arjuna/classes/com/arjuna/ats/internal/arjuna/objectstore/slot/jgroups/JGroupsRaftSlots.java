@@ -72,6 +72,12 @@ public class JGroupsRaftSlots implements BackingSlots {
             config = BeanPopulator.getDefaultInstance(JGroupsRaftStoreEnvironmentBean.class);
         }
 
+        if (!config.isExperimentalEnabled()) {
+            throw new IOException(
+                    "JGroupsRaftSlotStore is experimental and disabled by default. " +
+                    "Call JGroupsRaftStoreEnvironmentBean.setExperimentalEnabled(true) to enable it.");
+        }
+
         try {
             tsLogger.i18NLogger.warn_jgroups_raft_slot_store_is_experimental();
 
@@ -449,6 +455,7 @@ public class JGroupsRaftSlots implements BackingSlots {
         cache.allowDirtyReads(config.isAllowDirtyReads());
         cache.timeout(config.getRaftTimeout());
 
+        // listen for role changes and mark the index as stale
         raft.addRoleListener(role -> indexStale = true);
     }
 

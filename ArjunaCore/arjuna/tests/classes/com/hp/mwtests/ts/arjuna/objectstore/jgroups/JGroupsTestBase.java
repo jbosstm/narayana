@@ -156,6 +156,7 @@ public class JGroupsTestBase {
             config.setJGroupsConfigFileName(configFile);
             config.setBackingSlots(slots);
 
+            config.setExperimentalEnabled(true);
             config.setCallTimeout(1500L);
             config.setCachingTime(30000L);
             config.setMigrateData(true);

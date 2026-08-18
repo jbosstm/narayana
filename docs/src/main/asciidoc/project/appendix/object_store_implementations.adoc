@@ -208,6 +208,12 @@ These should be garbage collected by the system,(or the recovery sub-system, eve
 Check the Configuration Options table for how to configure the LogStore.
 
 === Clustered and Persistent object stores
+
+The stores in this section are built on the SlotStore framework, which provides
+a fixed-capacity, index-free store optimised for transaction logs. For internal
+design details (key embedding, index refresh, write-to-new-slot protocol, WAL
+recovery) see xref:appendix/extras/slot-store-design.adoc[SlotStore Design].
+
 ==== JGroupsSlotStore
 
 The JGroupsSlotStore provides a clustered object store backed by JGroups ReplCache to replicate object states across

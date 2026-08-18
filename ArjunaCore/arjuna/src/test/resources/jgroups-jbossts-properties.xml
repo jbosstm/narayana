@@ -9,6 +9,7 @@
     <entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsSlots</entry>
     <entry key="SlotStoreEnvironmentBean.storeDir">jgroups-caches</entry>
 
+    <entry key="JGroupsStoreEnvironmentBean.experimentalEnabled">true</entry>
     <entry key="JGroupsStoreEnvironmentBean.nodeAddress">node1</entry>
 
     <!-- JGroups config file name, resolved relative to the test resource directory -->

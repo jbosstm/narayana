@@ -31,6 +31,7 @@ public class JGroupsSlotsTest {
         BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class).setNodeIdentifier("1");
 
         config = new JGroupsStoreEnvironmentBean();
+        config.setExperimentalEnabled(true);
         slots = new JGroupsSlots();
 
         config.setBackingSlotsClassName(JGroupsSlots.class.getName());

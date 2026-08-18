@@ -24,6 +24,9 @@ import java.util.Set;
  * A {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore} implementation backed by a jGroups cache.
  * It is an in-memory datastore running as a jGroups cluster to maintain data availability
  * (provided the caches are suitably configured to manage replication of data across the cluster).
+ *
+ * <p><b>NOTE</b>: This is an Experimental feature and is not recommended for production systems.
+ * May contain breaking changes in future releases.
  */
 public class JGroupsSlots implements BackingSlots {
     private ByteArrayKey[] slots = null;
@@ -41,13 +44,19 @@ public class JGroupsSlots implements BackingSlots {
     public void init(SlotStoreEnvironmentBean slotStoreConfig) throws IOException {
         JGroupsStoreEnvironmentBean config;
 
-        tsLogger.i18NLogger.warn_jgroups_slot_store_is_experimental();
-
         if (slotStoreConfig instanceof JGroupsStoreEnvironmentBean) {
             config = (JGroupsStoreEnvironmentBean) slotStoreConfig;
         } else {
             config = BeanPopulator.getDefaultInstance(JGroupsStoreEnvironmentBean.class);
         }
+
+        if (!config.isExperimentalEnabled()) {
+            throw new IOException(
+                    "JGroupsSlotStore is experimental and disabled by default. " +
+                    "Call JGroupsStoreEnvironmentBean.setExperimentalEnabled(true) to enable it.");
+        }
+
+        tsLogger.i18NLogger.warn_jgroups_slot_store_is_experimental();
 
         slots = new ByteArrayKey[slotStoreConfig.getNumberOfSlots()];
         jGroupsSlotKeyGenerator = config.getSlotKeyGenerator();

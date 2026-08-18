@@ -56,6 +56,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
             this.nodeName = nodeName;
             this.storeDir = storeDir;
             this.config = new JGroupsRaftStoreEnvironmentBean();
+            config.setExperimentalEnabled(true);
             this.slots = new JGroupsRaftSlots();
 
             // Basic configuration

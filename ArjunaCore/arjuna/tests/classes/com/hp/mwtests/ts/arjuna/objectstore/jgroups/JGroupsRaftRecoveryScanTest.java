@@ -50,6 +50,7 @@ public class JGroupsRaftRecoveryScanTest extends JGroupsTestBase {
         RaftStore(String nodeName, String clusterName) throws Exception {
             this.nodeName = nodeName;
             this.config = new JGroupsRaftStoreEnvironmentBean();
+            config.setExperimentalEnabled(true);
 
             // Basic configuration
             config.setJGroupsConfigFileName("jgroups-raft-config.xml");

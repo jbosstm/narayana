@@ -26,6 +26,7 @@ public class JGroupsRaftStoreEnvironmentBean extends SlotStoreEnvironmentBean {
     private JChannel preConfiguredChannel;
     private ReplicatedStateMachine<Integer, byte[]> preConfiguredStateMachine;
 
+    private boolean experimentalEnabled = false;
     private boolean raftLogFsync = true;
     private String raftMembers = null;
     private int raftTimeout = 5000; // milliseconds
@@ -51,6 +52,19 @@ public class JGroupsRaftStoreEnvironmentBean extends SlotStoreEnvironmentBean {
             storeDir = System.getProperty("user.dir") + "/" + storeDir;
         }
         this.storeDir = storeDir;
+    }
+
+    /**
+     * Whether this experimental feature has been explicitly enabled.
+     * Defaults to {@code false}; callers must set this to {@code true}
+     * before calling {@link JGroupsRaftSlots#init} or initialization will fail.
+     */
+    public boolean isExperimentalEnabled() {
+        return experimentalEnabled;
+    }
+
+    public void setExperimentalEnabled(boolean experimentalEnabled) {
+        this.experimentalEnabled = experimentalEnabled;
     }
 
     /**

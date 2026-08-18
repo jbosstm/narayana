@@ -142,6 +142,7 @@ public class JGroupsRaftPartitionTest extends JGroupsTestBase {
             this.name = name;
             this.storeDir = storeDir;
             this.config = new JGroupsRaftStoreEnvironmentBean();
+            config.setExperimentalEnabled(true);
             this.slots = new JGroupsRaftSlots();
 
             config.setStoreDir(storeDir);

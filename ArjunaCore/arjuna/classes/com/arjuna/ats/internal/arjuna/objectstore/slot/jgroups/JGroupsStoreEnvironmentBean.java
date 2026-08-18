@@ -52,6 +52,21 @@ public class JGroupsStoreEnvironmentBean extends SlotStoreEnvironmentBean implem
     private volatile int walBufferSize = 490 * 1024;
     private volatile boolean walAsyncIO = false;
 
+    private boolean experimentalEnabled = false;
+
+    /**
+     * Whether this experimental feature has been explicitly enabled.
+     * Defaults to {@code false}; callers must set this to {@code true}
+     * before calling {@link JGroupsSlots#init} or initialization will fail.
+     */
+    public boolean isExperimentalEnabled() {
+        return experimentalEnabled;
+    }
+
+    public void setExperimentalEnabled(boolean experimentalEnabled) {
+        this.experimentalEnabled = experimentalEnabled;
+    }
+
     /**
      * get the filename of the protocol stack config (transport, discovery, failure detection, etc.).
      * <p>

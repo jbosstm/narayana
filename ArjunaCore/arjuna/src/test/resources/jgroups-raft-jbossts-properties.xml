@@ -8,6 +8,7 @@
     <entry key="SlotStoreEnvironmentBean.bytesPerSlot">4096</entry>
     <entry key="SlotStoreEnvironmentBean.backingSlotsClassName">com.arjuna.ats.internal.arjuna.objectstore.slot.jgroups.JGroupsRaftSlots</entry>
 
+    <entry key="JGroupsRaftStoreEnvironmentBean.experimentalEnabled">true</entry>
     <entry key="JGroupsRaftStoreEnvironmentBean.nodeAddress">node1</entry>
     <entry key="JGroupsRaftStoreEnvironmentBean.clusterName">raftClusteredObjectStore</entry>
     <entry key="JGroupsRaftStoreEnvironmentBean.cacheName">raftClusteredCache</entry>
