@@ -84,8 +84,11 @@ in-memory index can become stale. The protocol:
 . refreshIndex() re-scans all slots, rebuilds slotIdIndex and freeList, then
   calls clearIndexStale() to acknowledge the refresh.
 
-This is a pull-based design: the backing store sets a flag, SlotStore checks it
-lazily thereby avoiding designs that include callbacks or listeners.
+This is a pull-based design: SlotStore polls the staleness flag lazily rather
+than receiving callbacks itself. The backing store implementation may use
+internal listeners (e.g. JGroupsRaftSlots registers a
+`ReplicatedStateMachine.Notification` listener) to detect external mutations
+and set its flag, but SlotStore is decoupled from that mechanism.
 
 === Write-to-New-Slot Protocol
 
@@ -365,6 +368,14 @@ A `volatile boolean indexStale` flag is set to true in three places:
   rebuilt.
 
 The flag is cleared by `clearIndexStale()` after SlotStore.refreshIndex() runs.
+
+*Limitation*: a replicated mutation that arrives while `refreshIndex()` is
+already scanning can be missed because `clearIndexStale()` clears the flag at
+the end of the scan. This only affects followers — the notification listener
+suppresses `indexStale` on the leader, so the race cannot occur on the node
+running recovery. In a correctly configured cluster only the leader runs
+recovery (see `JGroupsRaftLeaderRecoveryExample`), so this limitation has no
+practical impact.
 
 === Pre-configured Channel
 

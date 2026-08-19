@@ -1040,8 +1040,10 @@ JGroupsSlotStore combines in-memory replication (synchronous or asynchronous, de
 
 `JGroupsStoreEnvironmentBean.walSyncWrites`::
 When `true` (the default), WAL writes are fsynced for full durability.
-When `false`, WAL writes are buffered, improving throughput but risking loss of the last few milliseconds
-of writes on power failure. Raft consensus is not used, so durability depends entirely on the WAL and replication.
+When `false`, WAL writes are buffered, improving throughput but reducing crash durability: entries since the
+last successful flush may be lost after a process crash or power failure. The size of this loss window depends
+on `walBufferFlushesPerSecond`, buffer pressure from concurrent writers, and OS-level flush behaviour.
+Raft consensus is not used, so durability depends entirely on the WAL and replication.
 
 `JGroupsStoreEnvironmentBean.replicationCount`::
 Controls how many cluster members receive each write. With `-1` (full replication), every member receives every
@@ -1066,18 +1068,24 @@ to the state machine. Each call to the Raft state machine's `put()` method block
 the entry is committed (requires a majority acknowledgment in a multi-node cluster, or local commit in a single-node
 cluster).
 
-However, JGroups-Raft batches pending proposals: when multiple writer threads are queued, their entries are
-coalesced into a single log append and fsync. Remark: a similar technique is also used to good effect with
-the Journal Store (configured via the HornetqJournalEnvironmentBean).
+When `raftLogFsync=true` (the default), JGroups-Raft batches pending proposals: when multiple writer threads are
+queued, their entries are coalesced into a single log append and fsync. Remark: a similar technique is also used to
+good effect with the Journal Store (configured via the HornetqJournalEnvironmentBean).
 This means the expensive fsync cost is amortised across all entries in the batch, and throughput scales with
 the number of concurrent writers. With a single writer, throughput is bounded by per-entry fsync latency.
 Under concurrent load, batching drives throughput well beyond that limit.
 
+When `raftLogFsync=false`, log entries are appended without an explicit fsync, so the OS may buffer writes before
+flushing to disk. This yields higher throughput (no per-batch fsync stall) but reduces crash durability: committed
+entries that the OS has not yet flushed may be lost after a power failure or process crash. The fsync batching
+described above does not apply because there is no fsync to amortise.
+
 ===== Write throughput considerations
 
 * **Single-node clusters**: The majority requirement of 1 is trivially satisfied.
-With a single writer, throughput is bounded by per-entry fsync cost.
-With concurrent writers, batching amortises the fsync and throughput scales well.
+With `raftLogFsync=true`, a single writer's throughput is bounded by per-entry fsync cost; with concurrent writers,
+batching amortises the fsync and throughput scales well.
+With `raftLogFsync=false`, the fsync bottleneck is removed and throughput is higher, at the cost of crash durability.
 * **Multi-node clusters**: Each batch additionally requires network round-trips for majority acknowledgment,
 adding per-batch latency. More cluster members improves fault tolerance but does not increase throughput.
 * **Slot pool exhaustion**: Under high load, if slot lifecycles (write -> commit -> remove -> recycle) cannot
