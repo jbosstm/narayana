@@ -349,11 +349,12 @@ A `volatile boolean indexStale` flag is set to true in three places:
 
 . *Notification listener*: registered via
   `cache.addNotificationListener(...)`. The put and remove callbacks set
-  `indexStale = true` whenever the state machine is updated, including
-  replicated entries applied while the node remains in the same Raft role.
-  On the leader this is redundant (SlotStore.write() already updated the
-  index) but harmless; on followers it is the primary trigger for detecting
-  remotely replicated mutations.
+  `indexStale = true` only when the node is not the leader. On a follower
+  this is the primary trigger for detecting remotely replicated mutations.
+  On the leader the notification is suppressed because SlotStore.write()
+  already updates the index, and a redundant `indexStale = true` would let
+  a concurrent read trigger `refreshIndex()` while a write is still
+  updating `slotIdIndex` and `freeList`.
 . *Role change listener*: `raft.addRoleListener(role -> indexStale = true)`.
   Registered in both the standard and pre-configured init paths. When a
   follower is promoted to leader, the new leader's SlotStore index may be

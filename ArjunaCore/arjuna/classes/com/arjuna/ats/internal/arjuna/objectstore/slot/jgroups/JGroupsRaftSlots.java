@@ -493,9 +493,19 @@ public class JGroupsRaftSlots implements BackingSlots {
     // Private helper methods
 
     private void addNotificationListener() {
+        RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
         cache.addNotificationListener(new ReplicatedStateMachine.Notification<>() {
-            @Override public void put(Integer key, byte[] oldVal, byte[] newVal) { indexStale = true; }
-            @Override public void remove(Integer key, byte[] oldVal) { indexStale = true; }
+            // Only followers need the notification — on the leader, SlotStore.write()
+            // already updates the index and a redundant indexStale=true would let a
+            // concurrent read trigger refreshIndex() mid-write.
+            @Override public void put(Integer key, byte[] oldVal, byte[] newVal) {
+                if (!Role.Leader.name().equals(raft.role()))
+                    indexStale = true;
+            }
+            @Override public void remove(Integer key, byte[] oldVal) {
+                if (!Role.Leader.name().equals(raft.role()))
+                    indexStale = true;
+            }
             @Override public void get(Integer key, byte[] val) {}
         });
     }
