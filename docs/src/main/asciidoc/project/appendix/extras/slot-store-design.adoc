@@ -120,9 +120,9 @@ The trade-off is that on restart, a recycled slot may still contain data from a
 failed write or from a previous record whose clear failed. The constructor
 validates the complete record (key + payload); if either part is malformed the
 slot is freed (with a warning) since a record that was never valid cannot be
-recovered. A valid record from a failed write is indexed as a live record. In
-practice this is benign: the record will be a duplicate of one already completed
-and recovery re-checks and skips it.
+recovered. A valid leftover record may be a stale completed record or a
+partially accepted write. Recovery must re-evaluate its transaction status and
+idempotency before processing it.
 
 === Constraints
 
