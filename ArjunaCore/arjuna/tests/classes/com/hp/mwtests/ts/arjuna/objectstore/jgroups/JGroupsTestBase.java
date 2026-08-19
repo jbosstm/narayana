@@ -49,6 +49,9 @@ public class JGroupsTestBase {
     // location of the file system store (with surefire it will be the build directory)
     static final String STORE_DIR = System.getProperty("user.dir") + "/jgroups-caches";
     public static final long RECOVERY_TIMEOUT_MS = 10_000;
+    // Safety net only — awaitLeaderElection uses a latch that returns immediately
+    // on election; this timeout is only reached if the cluster fails to elect.
+    static final long LEADER_ELECTION_TIMEOUT_S = 30;
 
     @FunctionalInterface
     public interface ThrowingBooleanSupplier {

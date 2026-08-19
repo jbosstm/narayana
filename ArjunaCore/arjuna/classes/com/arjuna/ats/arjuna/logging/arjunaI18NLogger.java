@@ -1737,7 +1737,7 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_slot_store_stop_error(@Cause IOException e);
 
-	@Message(id = 12434, value = "SlotStore: quarantining slot {0} — non-empty data failed validation ({1} slots remain free)",
+	@Message(id = 12434, value = "SlotStore: freeing slot {0} — non-empty data failed validation ({1} slots free before requeue)",
 			format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_slot_store_malformed(int slotId, int freeListSize);

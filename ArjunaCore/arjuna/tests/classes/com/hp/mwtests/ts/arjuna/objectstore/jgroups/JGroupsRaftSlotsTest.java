@@ -58,7 +58,7 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         // Wait for Raft to elect leader (single node elects itself)
         awaitLeaderElection(
                 slots.getChannel().getProtocolStack().findProtocol(RAFT.class),
-                10, TimeUnit.SECONDS);
+                LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
     }
 
     @AfterEach
@@ -167,7 +167,7 @@ public class JGroupsRaftSlotsTest extends JGroupsTestBase {
         // Wait for leader election (single node elects itself)
         awaitLeaderElection(
                 slots.getChannel().getProtocolStack().findProtocol(RAFT.class),
-                10, TimeUnit.SECONDS);
+                LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
 
         // Verify that the data is recovered from Raft log
         byte[] recovered = slots.read(slotId);

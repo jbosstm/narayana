@@ -186,7 +186,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         RecoveryStore recoveryStore = startRecoveryStore(store1.config);
 
         // Verify leader was elected
-        store1.waitForLeader(10, TimeUnit.SECONDS);
+        store1.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
         assertEquals(Role.Leader.name(), store1.getRole(), "Single node should be Leader");
 
         // Perform basic operations
@@ -242,9 +242,9 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         store3.createAndStartRaftChannel();
 
         // Wait for leader election to complete
-        store1.waitForLeader(10, TimeUnit.SECONDS);
-        store2.waitForLeader(10, TimeUnit.SECONDS);
-        store3.waitForLeader(10, TimeUnit.SECONDS);
+        store1.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store2.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store3.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
 
         // Verify cluster formed - one leader, two followers.
         // Read each role once so a transition between reads cannot drop a node from both counts.
@@ -305,9 +305,9 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         store2.createAndStartRaftChannel();
         store3.createAndStartRaftChannel();
 
-        store1.waitForLeader(10, TimeUnit.SECONDS);
-        store2.waitForLeader(10, TimeUnit.SECONDS);
-        store3.waitForLeader(10, TimeUnit.SECONDS);
+        store1.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store2.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store3.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
 
         // Identify leader and a follower
         RaftStore leaderStore = null, followerStore = null;
