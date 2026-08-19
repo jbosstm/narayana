@@ -50,28 +50,32 @@ public class JGroupsWALRecoveryTest extends JGroupsTestBase {
         // Phase 1: write entries and stop
         SlotJournal journal1 = new SlotJournal(config);
         journal1.start();
-        for (int i = 0; i < entryCount; i++) {
-            journal1.write(i, keys[i], data[i]);
+        try {
+            for (int i = 0; i < entryCount; i++) {
+                journal1.write(i, keys[i], data[i]);
+            }
+        } finally {
+            journal1.stop();
         }
-        journal1.stop();
 
         // Phase 2: restart on the same directory and verify
         SlotJournal journal2 = new SlotJournal(config);
         journal2.start();
+        try {
+            assertEquals(entryCount, journal2.size(), "All entries should be recovered");
 
-        assertEquals(entryCount, journal2.size(), "All entries should be recovered");
+            for (int i = 0; i < entryCount; i++) {
+                byte[] recovered = journal2.read(i);
+                assertNotNull(recovered, "Slot " + i + " data should be recovered");
+                assertArrayEquals(data[i], recovered, "Slot " + i + " data mismatch");
 
-        for (int i = 0; i < entryCount; i++) {
-            byte[] recovered = journal2.read(i);
-            assertNotNull(recovered, "Slot " + i + " data should be recovered");
-            assertArrayEquals(data[i], recovered, "Slot " + i + " data mismatch");
-
-            ByteArrayKey recoveredKey = journal2.getKey(i);
-            assertNotNull(recoveredKey, "Slot " + i + " key should be recovered");
-            assertEquals(keys[i], recoveredKey, "Slot " + i + " key mismatch");
+                ByteArrayKey recoveredKey = journal2.getKey(i);
+                assertNotNull(recoveredKey, "Slot " + i + " key should be recovered");
+                assertEquals(keys[i], recoveredKey, "Slot " + i + " key mismatch");
+            }
+        } finally {
+            journal2.stop();
         }
-
-        journal2.stop();
     }
 
     // --- Helpers ---
