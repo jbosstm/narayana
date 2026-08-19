@@ -60,13 +60,7 @@ public class SlotStore {
         slots.init(config);
 
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
-            byte[] data = slots.read(i);
-            SlotStoreKey slotStoreKey = validateSlotRecord(data);
-            if (slotStoreKey != null) {
-                slotIdIndex.put(slotStoreKey, i);
-            } else {
-                freeList.add(i);
-            }
+            classifySlot(i, slots.read(i), slotIdIndex, freeList);
         }
     }
 
@@ -87,13 +81,7 @@ public class SlotStore {
         ConcurrentLinkedDeque<Integer> newFreeList = new ConcurrentLinkedDeque<>();
 
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
-            byte[] data = slots.read(i);
-            SlotStoreKey slotStoreKey = validateSlotRecord(data);
-            if (slotStoreKey != null) {
-                newIndex.put(slotStoreKey, i);
-            } else {
-                newFreeList.add(i);
-            }
+            classifySlot(i, slots.read(i), newIndex, newFreeList);
         }
 
         slotIdIndex.putAll(newIndex);
@@ -277,22 +265,25 @@ public class SlotStore {
         }
     }
 
-    // Unpack the full record (key + payload) to verify structural integrity.
-    // unpackFrom throws on truncated or garbled data, so a partial write that
-    // left a valid key header but a corrupt payload is caught here rather than
-    // surfacing later when read() rejects a record that getMatchingKeys() listed.
-    private SlotStoreKey validateSlotRecord(byte[] data) {
+    // Validate a slot's data and add it to either the index (valid record) or
+    // the free list (empty or malformed). Malformed data is freed because a
+    // record that was never a valid SlotStore record cannot be recovered.
+    private void classifySlot(int slotId, byte[] data,
+                              ConcurrentHashMap<SlotStoreKey, Integer> index,
+                              Deque<Integer> free) {
         if (data == null || data.length == 0) {
-            return null;
+            free.add(slotId);
+            return;
         }
         try {
             InputBuffer inputBuffer = new InputBuffer(data);
             SlotStoreKey key = SlotStoreKey.unpackFrom(inputBuffer);
             InputObjectState probe = new InputObjectState();
             probe.unpackFrom(inputBuffer);
-            return key;
+            index.put(key, slotId);
         } catch (Exception e) {
-            return null;
+            tsLogger.i18NLogger.warn_slot_store_malformed(slotId, free.size());
+            free.add(slotId);
         }
     }
 

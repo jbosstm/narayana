@@ -58,12 +58,12 @@ The constructor scans all slots 0..numberOfSlots-1:
 * Occupied slots are validated by unpacking the complete record (SlotStoreKey +
   payload). If both unpack successfully, the key is added to slotIdIndex. If
   either unpack throws (corrupt header or truncated/malformed payload), the slot
-  is treated as empty and added to the freeList.
+  is added to freeList and a warning is logged. A record that was never a valid
+  SlotStore record cannot be recovered, so freeing the slot avoids a permanent
+  capacity leak.
 
-This ensures that every key visible in slotIdIndex corresponds to a record that
-read() can return. Without full-record validation, getMatchingKeys() could
-expose entries that read() subsequently rejects, causing spurious failures in
-recovery scans.
+Without full-record validation, getMatchingKeys() could expose entries that
+read() subsequently rejects, causing spurious failures in recovery scans.
 
 No separate index file is needed. refreshIndex() applies the same validation
 when rebuilding the index from a stale backing store.
@@ -119,10 +119,10 @@ retries).
 The trade-off is that on restart, a recycled slot may still contain data from a
 failed write or from a previous record whose clear failed. The constructor
 validates the complete record (key + payload); if either part is malformed the
-slot is treated as empty and returned to the freeList. A valid record from a
-failed write is indexed as a live record. In practice this is benign: the
-record will be a duplicate of one already completed and recovery re-checks and
-skips it.
+slot is freed (with a warning) since a record that was never valid cannot be
+recovered. A valid record from a failed write is indexed as a live record. In
+practice this is benign: the record will be a duplicate of one already completed
+and recovery re-checks and skips it.
 
 === Constraints
 
