@@ -271,7 +271,8 @@ Controls whether slots are returned to the free list after a failed write or cle
 +
 When `true` (the default), failed slots are immediately recycled without cleanup. This is safe for all
 built-in BackingSlots implementations because they guard against indeterminate state: DiskSlots uses checksums,
-JGroupsRaftSlots blocks until majority commit, JGroupsSlots uses synchronous RPC, and InfinispanSlotStore uses
+JGroupsRaftSlots blocks until majority commit, JGroupsSlots updates the local cache synchronously (remote
+replication is asynchronous — failures on other members are not reported back), and InfinispanSlotStore uses
 synchronous cache operations when configured with SYNC replication mode (the default for replicated-cache).
 If any of the settings are changed then reconsider what value makes sense for recycleFailedSlots.
 +
@@ -467,15 +468,19 @@ With write-ahead log disabled (`walEnabled=false`):
 
 * Faster throughput but no local persistence
 * Object states are only in memory but are still replicated across the cluster
-* Crash recovery relies on other cluster members retaining a copy. With `replicationCount=-1` (full replication)
-  every member holds a complete copy, so recovery after a single node loss is possible. With `replicationCount=1`
-  the sole copy is lost when that node fails
+* ReplCache replication is asynchronous (`ResponseMode.GET_NONE`): `put()` returns before other members
+  have stored the entry. With `replicationCount=-1` (full replication) entries are eventually propagated
+  to every member, but a node crash immediately after a write may lose data that has not yet reached any
+  other member. With `replicationCount=1` the sole copy is lost when that node fails
 * Not suitable for transaction types that require durability guarantees.
 
 .Cluster Configuration Considerations
 
-1. WAL is local to each node's `storeDir`. For durable recovery after a member is lost, WAL must be enabled
-   on every member that may need to recover independently - enabling it on a single member only protects that member
+1. **WAL is the primary durability mechanism.** Because ReplCache replication is asynchronous, the local
+   write-ahead log is the only guarantee that a committed write survives a crash on the writing node.
+   Replication provides eventual redundancy across the cluster but does not provide synchronous durability.
+   Enable WAL with fsync (`walEnabled=true`, `walSyncWrites=true`) on every member that may need to
+   recover independently
 2. A single member must run the recovery manager (HA singleton pattern)
 3. Any member can create and commit transactions
 4. The `TransactionStatusManager` is used during recovery to determine if the transaction creator is still running
@@ -484,24 +489,41 @@ With write-ahead log disabled (`walEnabled=false`):
 .Crash Recovery Considerations
 
 `AtomicActionRecoveryModule` scans the entire object store for in-doubt transactions regardless of which node
-created them. When the store uses full replication (`replicationCount=-1`, the default), every node has a
-complete copy, so every recovery manager sees every node's transactions. With partial replication, a node only
-sees the subset of records replicated to it. `TransactionStatusConnectionManager` provides a soft guard: before
-recovering a transaction, it contacts the originating process to check whether the transaction is still in-flight.
-If the originating process is dead or unreachable, recovery proceeds.
+created them. When the store uses full replication (`replicationCount=-1`, the default), entries are eventually
+propagated to every member, so each recovery manager can eventually see every node's transactions. With partial
+replication, a node only sees the subset of records replicated to it. `TransactionStatusConnectionManager`
+provides a soft guard: before recovering a transaction, it contacts the originating process to check whether
+the transaction is still in-flight. If the originating process is dead or unreachable, recovery proceeds.
+
+Because both `put()` and `remove()` use asynchronous replication (`ResponseMode.GET_NONE`), two failure
+scenarios affect recovery:
+
+* **Lost writes**: if a node crashes immediately after a `put()`, other members may not yet have received
+  the entry. Without WAL, the in-doubt transaction record is permanently lost and its resources remain locked.
+  With WAL enabled, the writing node can recover the entry from its own log on restart, but other members
+  cannot recover it on the writing node's behalf until the entry has propagated.
+* **Phantom records**: if a node removes a completed transaction record and crashes before the `remove()`
+  propagates, the stale entry persists on other members. A recovery scan on a surviving member will see the
+  record as in-doubt and attempt to re-recover an already-completed transaction.
+  For XA transactions this is expected to be harmless because the XA specification requires `commit()` and
+  `rollback()` to be idempotent. Other transaction models should be assessed against their idempotency
+  guarantees.
 
 Because ReplCache has no single-writer constraint, multiple surviving nodes may independently recover the same
-in-doubt transaction after a node failure. For XA transactions this is expected to be harmless because the XA
-specification requires `commit()` to be idempotent. Other transaction models that use the slot store may not
-offer the same guarantee. Any model where concurrent recovery can cause side-effects — duplicate compensations,
-repeated state transitions, or similar — should be assessed on a case-by-case basis against its idempotency
-and concurrency requirements.
+in-doubt transaction after a node failure. Any model where concurrent recovery can cause side-effects — duplicate
+compensations, repeated state transitions, or similar — should be assessed on a case-by-case basis against its
+idempotency and concurrency requirements.
 
 [WARNING]
 ====
 To avoid duplicate recovery, deploy only a single recovery manager instance across the cluster (HA singleton pattern).
 If the recovery manager node fails, start a replacement - but ensure only one is active at any time.
 ====
+
+NOTE: If the risks of asynchronous replication — lost writes, phantom records, or split-brain divergence — are
+unacceptable for your durability requirements, use JGroupsRaftSlotStore instead. Raft's synchronous
+majority-commit protocol guarantees that acknowledged writes are stored on a majority of members before
+returning, and its leader-election mechanism prevents split-brain scenarios.
 
 ==== JGroupsRaftSlotStore
 
@@ -569,7 +591,8 @@ Controls whether slots are returned to the free list after a failed write or cle
 +
 When `true` (the default), failed slots are immediately recycled without cleanup. This is safe for all
 built-in BackingSlots implementations because they guard against indeterminate state: DiskSlots uses checksums,
-JGroupsRaftSlots blocks until majority commit, JGroupsSlots uses synchronous RPC, and InfinispanSlotStore uses
+JGroupsRaftSlots blocks until majority commit, JGroupsSlots updates the local cache synchronously (remote
+replication is asynchronous — failures on other members are not reported back), and InfinispanSlotStore uses
 synchronous cache operations when configured with SYNC replication mode (the default for replicated-cache).
 If any of the settings are changed then reconsider what value makes sense for recycleFailedSlots.
 +
@@ -730,6 +753,9 @@ Use JGroupsSlotStore (ReplCache) when:
 - Maximum performance is the priority
 - The cluster is deployed on a network where partitions are unlikely
 - Cluster membership is relatively stable
+- WAL with fsync is enabled on every member (`walEnabled=true`, `walSyncWrites=true`) to provide local
+  durability, since ReplCache replication is asynchronous and cannot guarantee that other members have stored
+  an entry before the writing node acknowledges it
 
 WARNING: ReplCache has no quorum mechanism. In a network partition, both sides accept writes independently,
 with no conflict resolution on merge. For a transaction log store this can mean silently lost records.
@@ -794,7 +820,8 @@ Controls whether slots are returned to the free list after a failed write or cle
 +
 When `true` (the default), failed slots are immediately recycled without cleanup. This is safe for all
 built-in BackingSlots implementations because they guard against indeterminate state: DiskSlots uses checksums,
-JGroupsRaftSlots blocks until majority commit, JGroupsSlots uses synchronous RPC, and InfinispanSlotStore uses
+JGroupsRaftSlots blocks until majority commit, JGroupsSlots updates the local cache synchronously (remote
+replication is asynchronous — failures on other members are not reported back), and InfinispanSlotStore uses
 synchronous cache operations when configured with SYNC replication mode (the default for replicated-cache).
 If any of the settings are changed then reconsider what value makes sense for recycleFailedSlots.
 +
@@ -1095,8 +1122,10 @@ the write-throughput advantage of ReplCache.
 and the risk of network partition is acceptably low.
 Enable WAL with fsync (`walEnabled=true`, `walSyncWrites=true`) and full replication (`replicationCount=-1`)
 to maximise local durability and redundancy.
-Be aware that ReplCache has no quorum mechanism: in a network partition both sides accept writes independently
-with no conflict resolution on merge, which can silently lose transaction log records.
+Be aware that ReplCache replication is asynchronous: `put()` returns before other members have stored the
+entry, so a crash immediately after a write may lose data that has not yet propagated. ReplCache also has no
+quorum mechanism: in a network partition both sides accept writes independently with no conflict resolution on
+merge, which can silently lose transaction log records.
 
 NOTE: The two stores have different write-path characteristics that affect relative performance depending on
 the environment.

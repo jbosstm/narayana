@@ -230,6 +230,27 @@ During init():
 If there are more existing keys in the cache than configured slots, init() throws
 an IOException ("too few slots").
 
+=== Limitation: Per-Node Key Divergence
+
+When two nodes both initialize with empty caches, each generates independent
+ByteArrayKey values via `new Uid()`. A write on node A replicates to node B's
+cache under node A's key, but node B's `slots[]` holds a different key for that
+index, so `read(slotIndex)` returns null. JGroupsSlots does not override
+`isIndexStale()`, so there is no trigger for SlotStore to re-scan.
+
+*Impact*: a running node cannot recover transactions that originated on another
+node unless it restarts first. If node A crashes while holding in-doubt
+transactions, node B cannot perform cross-node recovery until its JGroupsSlots is
+re-initialized. Crash recovery itself is unaffected: on restart, `cache.start()`
+synchronizes replicated state before `load()` runs, so the restarted node's
+`slots[]` picks up the surviving keys correctly.
+
+*Mitigation*: supply a deterministic `JGroupsSlotKeyGenerator` that produces the
+same ByteArrayKey sequence on every node (e.g. derived from the slot index), or
+use `JGroupsRaftSlots` instead, which eliminates the problem by using
+`ReplicatedStateMachine<Integer, byte[]>` where the slot index is the cache key
+directly.
+
 === Key Persistence Across Restarts
 
 ByteArrayKeys are NOT persisted separately. On restart they are recovered from:
@@ -255,14 +276,29 @@ ByteArrayKeys are NOT persisted separately. On restart they are recovered from:
 
 The WAL uses Apache Artemis Journal (append-only log) for crash recovery.
 
-Record format: [slotId (4 bytes)] [data length (4 bytes)] [data (N bytes)]
+Record format:
+
+[source]
+----
+[FORMAT_MARKER (4 bytes)] [slotId (4 bytes)] [keyLen (4 bytes)] [key (K bytes)] [data length (4 bytes)] [data (N bytes)]
+----
+
+* FORMAT_MARKER: a fixed negative integer (-1) that distinguishes the current
+  format from legacy records. On replay, records with an unrecognised marker are
+  skipped.
+* key: the raw bytes of the ByteArrayKey used as the ReplCache cache key at
+  write time. Persisting the key alongside the data allows loadFromWAL() to
+  restore the original cache entry with the correct key, even when slots[] has
+  been reassigned after a restart.
 
 In-memory state:
 
 * slotToRecordId (Map<Integer, Long>): slot index to journal record ID.
 * slotData (Map<Integer, byte[]>): in-memory cache of slot contents.
+* slotKeys (Map<Integer, ByteArrayKey>): the original cache key persisted with
+  each slot's WAL entry, used by loadFromWAL() for putIfAbsent lookups.
 
-On startup, all committed records are replayed to populate both maps. Uses
+On startup, all committed records are replayed to populate all three maps. Uses
 journal.replaceableRecord() so updates replace records in-place rather than
 appending new + deleting old.
 
