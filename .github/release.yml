@@ -1,0 +1,12 @@
+changelog:
+  categories:
+    - title: Contributions from the Narayana community
+      labels:
+        - '*'
+      exclude:
+        authors:
+          - dependabot
+          - dependabot[bot]
+    - title: Dependencies updates
+      labels:
+        - dependencies
