@@ -212,7 +212,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
     }
 
     /**
-     * Test that data written to one Raft node is replicated to a econd Raft node.
+     * Test that data written to one Raft node is replicated to a second Raft node.
      * <p>
      * Unlike JGroupsClusterTest, Raft requires a quorum to elect a leader, so we use
      * a 3-node cluster where we can verify replication by shutting down one node and
@@ -351,8 +351,7 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         // The Raft put is synchronous on the leader: it blocks until committed to a
         // majority. The follower's notification listener fires when the entry is applied,
         // which may lag slightly behind the leader's return.
-        waitFor(5000, "follower index becomes stale",
-                () -> follower.slots.isIndexStale());
+        waitFor(5000, "follower index becomes stale", follower.slots::isIndexStale);
 
         // Query the follower's RecoveryStore. getMatchingKeys/read_committed check
         // isIndexStale() and call refreshIndex(), which re-scans all slots and rebuilds
@@ -360,5 +359,83 @@ public class JGroupsRaftClusterTest extends JGroupsTestBase {
         InputObjectState readData = followerRecoveryStore.read_committed(uid, TYPE_NAME);
         assertNotNull(readData, "Follower should see replicated data after index refresh");
         assertEquals(DATA, readData.unpackString(), "Data mismatch on follower");
+    }
+
+    /**
+     * Verify that a remote mutation on the same slot as a pending local write
+     * still marks the index stale, ensuring slotIdIndex is refreshed consistently.
+     * <p>
+     * Pattern:
+     * 1. Start 3 Raft nodes, activate a RecoveryStore on the leader
+     * 2. Write a record via the leader's RecoveryStore (local write to slot 0)
+     * 3. Overwrite the same slot directly through the leader's state machine,
+     *    bypassing SlotStore, simulating a concurrent mutation on the same slot
+     * 4. Assert the leader's isIndexStale() becomes true
+     * 5. Read from the leader's RecoveryStore and verify the refreshed index
+     *    reflects the latest state
+     */
+    @Test
+    public void testConcurrentSameSlotMutation() throws Throwable {
+        String clusterName = "raft-sameslot-" + System.currentTimeMillis();
+        String raftMembers = "node1,node2,node3";
+
+        store1 = new RaftStore("node1", clusterName, STORE_DIR + "/raft-sameslot/node1", raftMembers);
+        store2 = new RaftStore("node2", clusterName, STORE_DIR + "/raft-sameslot/node2", raftMembers);
+        store3 = new RaftStore("node3", clusterName, STORE_DIR + "/raft-sameslot/node3", raftMembers);
+
+        store1.createAndStartRaftChannel();
+        store2.createAndStartRaftChannel();
+        store3.createAndStartRaftChannel();
+
+        store1.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store2.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+        store3.waitForLeader(LEADER_ELECTION_TIMEOUT_S, TimeUnit.SECONDS);
+
+        // Identify the leader
+        RaftStore leaderStore = null;
+        for (RaftStore s : List.of(store1, store2, store3)) {
+            if (Role.Leader.name().equals(s.getRole())) {
+                leaderStore = s;
+                break;
+            }
+        }
+        assertNotNull(leaderStore, "Must have a leader");
+        final RaftStore leader = leaderStore;
+
+        // Activate a RecoveryStore on the leader
+        resetAtomicActionRecoveryModule();
+        RecoveryStore leaderRecoveryStore = startRecoveryStore(leader.config);
+
+        // Write an initial record via the leader's RecoveryStore (local write)
+        Uid uid1 = new Uid();
+        OutputObjectState data1 = new OutputObjectState();
+        data1.packString("original");
+        assertTrue(leaderRecoveryStore.write_committed(uid1, TYPE_NAME, data1), "Initial write should succeed");
+
+        // Clear staleness from the initial write
+        leader.slots.clearIndexStale();
+        assertFalse(leader.slots.isIndexStale(), "Index should not be stale after clearing");
+
+        // Overwrite slot 0 directly through the leader's state machine with a
+        // different record, simulating a remote mutation that targets the same
+        // slot as the local write above.
+        Uid uid2 = new Uid();
+        SlotStoreKey key2 = new SlotStoreKey(uid2, TYPE_NAME, StateStatus.OS_COMMITTED);
+        OutputBuffer record2 = new OutputBuffer();
+        key2.packInto(record2);
+        OutputObjectState payload2 = new OutputObjectState();
+        payload2.packString("overwritten");
+        payload2.packInto(record2);
+        leader.stateMachine.put(0, record2.buffer());
+
+        // The notification listener should mark indexStale on the leader
+        waitFor(5000, "leader index becomes stale after same-slot mutation",
+                leader.slots::isIndexStale);
+
+        // After the index refresh, the leader's RecoveryStore should see the
+        // overwritten record (uid2) and no longer find the original (uid1)
+        InputObjectState readData = leaderRecoveryStore.read_committed(uid2, TYPE_NAME);
+        assertNotNull(readData, "Leader should see overwritten record after index refresh");
+        assertEquals("overwritten", readData.unpackString(), "Data mismatch after same-slot overwrite");
     }
 }

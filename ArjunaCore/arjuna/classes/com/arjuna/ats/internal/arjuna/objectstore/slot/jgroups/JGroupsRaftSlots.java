@@ -101,9 +101,10 @@ public class JGroupsRaftSlots implements BackingSlots {
                         config.getNodeAddress());
 
                 RAFT preConfiguredRaft = channel.getProtocolStack().findProtocol(RAFT.class);
-                if (preConfiguredRaft != null) {
-                    preConfiguredRaft.addRoleListener(role -> indexStale = true);
+                if (preConfiguredRaft == null) {
+                    throw new IllegalStateException("RAFT protocol not found in JGroups stack");
                 }
+                preConfiguredRaft.addRoleListener(role -> indexStale = true);
 
                 addNotificationListener();
 
@@ -214,7 +215,6 @@ public class JGroupsRaftSlots implements BackingSlots {
     public void write(int slotId, byte[] data, boolean sync) throws IOException {
         checkInitialized();
         try {
-            // Raft put() blocks until majority commit
             cache.put(slotId, data);
         } catch (Exception e) {
             tsLogger.logger.warn("Raft write failed for slot " + slotId, e);
@@ -445,12 +445,12 @@ public class JGroupsRaftSlots implements BackingSlots {
         cache = new ReplicatedStateMachine<>(channel) {
             @Override
             public void readContentFrom(java.io.DataInput in) {
+                indexStale = true;
                 try {
                     super.readContentFrom(in);
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to read snapshot content", e);
                 }
-                indexStale = true;
             }
         };
         cache.raftId(nodeName);
@@ -494,17 +494,15 @@ public class JGroupsRaftSlots implements BackingSlots {
 
     private void addNotificationListener() {
         RAFT raft = channel.getProtocolStack().findProtocol(RAFT.class);
+        if (raft == null) {
+            throw new IllegalStateException("RAFT protocol not found in JGroups stack");
+        }
         cache.addNotificationListener(new ReplicatedStateMachine.Notification<>() {
-            // Only followers need the notification — on the leader, SlotStore.write()
-            // already updates the index and a redundant indexStale=true would let a
-            // concurrent read trigger refreshIndex() mid-write.
             @Override public void put(Integer key, byte[] oldVal, byte[] newVal) {
-                if (!Role.Leader.name().equals(raft.role()))
-                    indexStale = true;
+                indexStale = true;
             }
             @Override public void remove(Integer key, byte[] oldVal) {
-                if (!Role.Leader.name().equals(raft.role()))
-                    indexStale = true;
+                indexStale = true;
             }
             @Override public void get(Integer key, byte[] val) {}
         });

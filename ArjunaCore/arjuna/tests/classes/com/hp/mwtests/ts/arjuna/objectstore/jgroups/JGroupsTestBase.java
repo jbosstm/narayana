@@ -49,7 +49,7 @@ public class JGroupsTestBase {
     // location of the file system store (with surefire it will be the build directory)
     static final String STORE_DIR = System.getProperty("user.dir") + "/jgroups-caches";
     public static final long RECOVERY_TIMEOUT_MS = 10_000;
-    // Safety net only — awaitLeaderElection uses a latch that returns immediately
+    // Safety net only - awaitLeaderElection uses a latch that returns immediately
     // on election; this timeout is only reached if the cluster fails to elect.
     static final long LEADER_ELECTION_TIMEOUT_S = 30;
 
@@ -85,10 +85,15 @@ public class JGroupsTestBase {
         };
         raft.addRoleListener(listener);
         try {
-            if (raft.leader() != null) {
-                return;
+            long deadlineMillis = System.currentTimeMillis() + unit.toMillis(timeout);
+            while (raft.leader() == null) {
+                long remainingMillis = deadlineMillis - System.currentTimeMillis();
+                if (remainingMillis <= 0) {
+                    break;
+                }
+                latch.await(Math.min(remainingMillis, 500), TimeUnit.MILLISECONDS);
             }
-            assertTrue(latch.await(timeout, unit), "Leader election timed out");
+            assertTrue(raft.leader() != null, "Leader election timed out");
         } finally {
             raft.remRoleListener(listener);
         }

@@ -352,30 +352,35 @@ A `volatile boolean indexStale` flag is set to true in three places:
 
 . *Notification listener*: registered via
   `cache.addNotificationListener(...)`. The put and remove callbacks set
-  `indexStale = true` only when the node is not the leader. On a follower
-  this is the primary trigger for detecting remotely replicated mutations.
-  On the leader the notification is suppressed because SlotStore.write()
-  already updates the index, and a redundant `indexStale = true` would let
-  a concurrent read trigger `refreshIndex()` while a write is still
-  updating `slotIdIndex` and `freeList`.
+  `indexStale = true` for mutations not in `pendingLocalWrites` — a
+  `ConcurrentHashMap`-backed set of slot IDs currently being written or
+  cleared by this node's `SlotStore`. Local writes are excluded because
+  `SlotStore.write()` and `remove()` update `slotIdIndex` and `freeList`
+  themselves; an unnecessary `indexStale = true` would let a concurrent read
+  trigger `refreshIndex()` mid-write. Writes originating from other nodes
+  (replicated via Raft or forwarded via REDIRECT) are not in the set, so
+  their notifications correctly mark the index stale.
 . *Role change listener*: `raft.addRoleListener(role -> indexStale = true)`.
   Registered in both the standard and pre-configured init paths. When a
   follower is promoted to leader, the new leader's SlotStore index may be
   missing entries that were written by the old leader and replicated via Raft.
 . *Snapshot install*: The ReplicatedStateMachine subclass overrides
-  `readContentFrom()` to set `indexStale = true` after `super.readContentFrom()`.
-  A snapshot replaces the entire state machine contents, so the index must be
-  rebuilt.
+  `readContentFrom()` to set `indexStale = true` after
+  `super.readContentFrom()`. A snapshot replaces the entire state machine
+  contents, so the index must be rebuilt.
 
 The flag is cleared by `clearIndexStale()` after SlotStore.refreshIndex() runs.
 
-*Limitation*: a replicated mutation that arrives while `refreshIndex()` is
-already scanning can be missed because `clearIndexStale()` clears the flag at
-the end of the scan. This only affects followers — the notification listener
-suppresses `indexStale` on the leader, so the race cannot occur on the node
-running recovery. In a correctly configured cluster only the leader runs
-recovery (see `JGroupsRaftLeaderRecoveryExample`), so this limitation has no
-practical impact.
+*Race window*: if a replicated mutation sets `indexStale = true` while
+`refreshIndex()` is already scanning, `clearIndexStale()` at the end of the
+scan clears the flag even though the mutation may have arrived after its slot
+was read. The index remains stale until the next notification, role change, or
+snapshot install re-sets the flag. In practice this is self-correcting: the
+next replicated mutation triggers another refresh. The only scenario where the
+stale index persists is if the missed mutation is the last one before the
+cluster goes idle — and even then, a role change (e.g. leader crash) re-sets
+the flag, triggering a full refresh before any subsequent `read()`,
+`getMatchingKeys()`, or `getKnownTypes()` call on the promoted node.
 
 === Pre-configured Channel
 
