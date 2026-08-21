@@ -149,7 +149,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 	        }
 	        catch (org.omg.CosTransactions.InvalidControl e1)
 	        {
-                throw new InvalidTransactionException(e1.getMessage());
+                InvalidTransactionException itc = new InvalidTransactionException(e1.getMessage());
+                itc.detail = e1;
+                throw itc;
 	        }
 	        catch (org.omg.CORBA.SystemException e2)
 	        {
