@@ -32,6 +32,8 @@ public class JTAHelper
             return "jakarta.transaction.Status.STATUS_PREPARING";
 	case jakarta.transaction.Status.STATUS_ROLLEDBACK:
 	    return "jakarta.transaction.Status.STATUS_ROLLEDBACK";
+	case jakarta.transaction.Status.STATUS_COMMITTING:
+            return "jakarta.transaction.Status.STATUS_COMMITTING";
 	case jakarta.transaction.Status.STATUS_ROLLING_BACK:
             return "jakarta.transaction.Status.STATUS_ROLLING_BACK";
 	case jakarta.transaction.Status.STATUS_UNKNOWN:
