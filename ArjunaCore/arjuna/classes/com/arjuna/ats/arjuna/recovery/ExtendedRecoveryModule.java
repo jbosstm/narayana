@@ -11,13 +11,20 @@ package com.arjuna.ats.arjuna.recovery;
  */
 public interface ExtendedRecoveryModule extends RecoveryModule {
     /**
-     * Report whether or not the last recovery pass was successful.
-     * A successful recovery pass means that no warnings or errors
-     * were logged. This means that any failure conditions are
-     * guaranteed to be obtainable by inspecting the logs.
+     * Report whether the last periodic recovery pass completed
+     * without errors. Implementations should return {@code false}
+     * when an exception was caught or a failure was detected
+     * during the recovery pass (for example, an
+     * {@link com.arjuna.ats.arjuna.objectstore.ObjectStore ObjectStore}
+     * access failure or an {@code XAResource} recovery error).
      *
-     * @return false if any RecoveryModule logged a warning or error
-     * on the previous recovery pass.
+     * <p>The default implementation returns {@code true}, indicating
+     * no problems. Implementations that override this method should
+     * reset the flag at the start of each recovery cycle and set it
+     * to {@code false} whenever an error condition is encountered.
+     *
+     * @return {@code true} if the last recovery pass completed
+     * without errors, {@code false} if any error was encountered
      */
     default boolean isPeriodicWorkSuccessful() {
         return true;
