@@ -58,6 +58,7 @@ public class UtilsUnitTest
         assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_PREPARED), "jakarta.transaction.Status.STATUS_PREPARED");
         assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_PREPARING), "jakarta.transaction.Status.STATUS_PREPARING");
         assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_ROLLEDBACK), "jakarta.transaction.Status.STATUS_ROLLEDBACK");
+        assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_COMMITTING), "jakarta.transaction.Status.STATUS_COMMITTING");
         assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_ROLLING_BACK), "jakarta.transaction.Status.STATUS_ROLLING_BACK");
         assertEquals(JTAHelper.stringForm(jakarta.transaction.Status.STATUS_UNKNOWN), "jakarta.transaction.Status.STATUS_UNKNOWN");
     }
