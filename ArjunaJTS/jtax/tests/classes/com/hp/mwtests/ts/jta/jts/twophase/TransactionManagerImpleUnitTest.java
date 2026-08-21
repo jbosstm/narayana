@@ -8,6 +8,8 @@
 package com.hp.mwtests.ts.jta.jts.twophase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import jakarta.transaction.InvalidTransactionException;
@@ -86,6 +88,8 @@ public class TransactionManagerImpleUnitTest extends TestBase
             // (which extends RemoteException) threw IllegalStateException here
             // instead of propagating as InvalidTransactionException
             assertEquals("IDL:omg.org/CosTransactions/InvalidControl:1.0", e.getMessage());
+            assertNotNull("cause should be preserved via detail", e.getCause());
+            assertTrue(e.getCause() instanceof org.omg.CosTransactions.InvalidControl);
         }
     }
 
