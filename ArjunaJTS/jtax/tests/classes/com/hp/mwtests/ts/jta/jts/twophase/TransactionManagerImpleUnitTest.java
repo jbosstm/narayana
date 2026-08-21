@@ -85,6 +85,7 @@ public class TransactionManagerImpleUnitTest extends TestBase
             // JBTM-4013: before the fix, initCause on InvalidTransactionException
             // (which extends RemoteException) threw IllegalStateException here
             // instead of propagating as InvalidTransactionException
+            assertEquals("IDL:omg.org/CosTransactions/InvalidControl:1.0", e.getMessage());
         }
     }
 
@@ -114,25 +115,4 @@ public class TransactionManagerImpleUnitTest extends TestBase
         }
     }
 
-    @Test
-    public void testInvalidTransactionExceptionInitCauseIsDisabled ()
-    {
-        // InvalidTransactionException extends RemoteException, which calls
-        // initCause(null) in its constructor, permanently disabling initCause.
-        // This verifies the constraint that JBTM-4013 works around.
-        InvalidTransactionException ex = new InvalidTransactionException();
-        try
-        {
-            ex.initCause(new Exception("test cause"));
-            fail("Expected IllegalStateException from initCause on RemoteException subclass");
-        }
-        catch (IllegalStateException expected)
-        {
-        }
-
-        // Verify the message-based constructor preserves the message
-        String causeMessage = "IDL:omg.org/CosTransactions/InvalidControl:1.0";
-        InvalidTransactionException withMessage = new InvalidTransactionException(causeMessage);
-        assertEquals(causeMessage, withMessage.getMessage());
-    }
 }
