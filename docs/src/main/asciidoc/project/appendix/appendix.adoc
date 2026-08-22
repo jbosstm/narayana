@@ -3,6 +3,7 @@
 :doctype: book
 :sectnums:
 :toc: {toc}
+:toclevels: 3
 :icons: {icons}
 
 :leveloffset: +1
