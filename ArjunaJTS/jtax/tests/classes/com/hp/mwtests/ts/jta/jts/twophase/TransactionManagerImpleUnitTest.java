@@ -95,7 +95,7 @@ public class TransactionManagerImpleUnitTest extends TestBase
             // Full message includes the nested exception detail:
             // "IDL:omg.org/CosTransactions/InvalidControl:1.0; nested exception is: \n\torg.omg.CosTransactions.InvalidControl: IDL:omg.org/CosTransactions/InvalidControl:1.0"
             assertTrue("message should contain nested exception",
-                e.getMessage().contains("; nested exception is:"));
+                e.getMessage().equals("IDL:omg.org/CosTransactions/InvalidControl:1.0; nested exception is: \n\torg.omg.CosTransactions.InvalidControl: IDL:omg.org/CosTransactions/InvalidControl:1.0"));
             assertNotNull("cause should be preserved via detail", e.getCause());
             assertTrue(e.getCause() instanceof org.omg.CosTransactions.InvalidControl);
         }
