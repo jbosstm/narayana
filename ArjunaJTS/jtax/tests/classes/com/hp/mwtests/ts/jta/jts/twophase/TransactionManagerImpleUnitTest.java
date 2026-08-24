@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import jakarta.transaction.InvalidTransactionException;
 import jakarta.transaction.Transaction;
@@ -87,7 +89,13 @@ public class TransactionManagerImpleUnitTest extends TestBase
             // JBTM-4013: before the fix, initCause on InvalidTransactionException
             // (which extends RemoteException) threw IllegalStateException here
             // instead of propagating as InvalidTransactionException
-            assertEquals("IDL:omg.org/CosTransactions/InvalidControl:1.0", e.getMessage());
+            // RemoteException.getMessage() appends nested exception when detail is set,
+            // so we check that the message starts with the repo ID
+            assertThat(e.getMessage(), startsWith("IDL:omg.org/CosTransactions/InvalidControl:1.0"));
+            // Full message includes the nested exception detail:
+            // "IDL:omg.org/CosTransactions/InvalidControl:1.0; nested exception is: \n\torg.omg.CosTransactions.InvalidControl: IDL:omg.org/CosTransactions/InvalidControl:1.0"
+            assertTrue("message should contain nested exception",
+                e.getMessage().contains("; nested exception is:"));
             assertNotNull("cause should be preserved via detail", e.getCause());
             assertTrue(e.getCause() instanceof org.omg.CosTransactions.InvalidControl);
         }
