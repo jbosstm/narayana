@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WARNING: EXPERIMENTAL FEATURE
+
+  This module contains experimental Infinispan ObjectStore functionality that is
+  not recommended for production use. The API and behavior may change or be
+  removed in future releases without notice.
+
+  Copyright The Narayana Authors
+  SPDX-License-Identifier: Apache-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.narayana</groupId>
+        <artifactId>narayana-all</artifactId>
+        <version>7.3.5.Final-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.jboss.narayana.experimental</groupId>
+    <artifactId>arjuna-objectstore-distributed-experimental</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Narayana: Distributed ObjectStore - Infinispan and JGroups (Experimental)</name>
+    <description>
+        EXPERIMENTAL: Infinispan-backed SlotStore for Narayana ObjectStore.
+
+        This module provides an Infinispan-backed distributed, in-memory ObjectStore
+        implementation suitable for clustered environments.
+
+        Note: Additional distributed implementations (JGroups, JGroups-Raft) will be
+        added to this module when JBTM-4038 is merged.
+
+        WARNING: This is an experimental feature. It is not recommended for production
+        systems and may contain breaking changes in future releases. Use of this
+        implementation requires careful configuration of Infinispan clustering,
+        consistency guarantees, and recovery management as documented.
+    </description>
+
+    <properties>
+        <!-- Experimental feature tracking -->
+        <narayana.stability.level>experimental</narayana.stability.level>
+        <narayana.experimental.sponsor>Michael Musgrove</narayana.experimental.sponsor>
+        <narayana.experimental.jira>JBTM-845</narayana.experimental.jira>
+
+        <skipTests>false</skipTests>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.narayana</groupId>
+                <artifactId>main-dependency-management</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.narayana</groupId>
+                <artifactId>test-dependency-management</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-bom</artifactId>
+                <version>${version.infinispan}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Core Narayana dependency (required) -->
+        <dependency>
+            <groupId>org.jboss.narayana.arjunacore</groupId>
+            <artifactId>arjuna</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Infinispan core for Infinispan-backed SlotStore -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+        </dependency>
+
+        <!-- Note: JGroups is transitively included via Infinispan -->
+        <!-- Additional distributed implementations (JGroups SlotStore, JGroups-Raft SlotStore)
+             will be added when JBTM-4038 is merged -->
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-submit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-install</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+
+        <plugins>
+            <!-- Ensure Java version compatibility -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <!-- JAR manifest with experimental warning -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Narayana-Stability-Level>experimental</Narayana-Stability-Level>
+                            <Narayana-Feature-Sponsor>${narayana.experimental.sponsor}</Narayana-Feature-Sponsor>
+                            <Narayana-Feature-Tracking>${narayana.experimental.jira}</Narayana-Feature-Tracking>
+                            <Automatic-Module-Name>org.jboss.narayana.arjuna.objectstore.infinispan.experimental</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Surefire for running tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>${skipTests}</skip>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -6,7 +6,7 @@
                         https://infinispan.org/schemas/infinispan-config-16.0.xsd">
 
     <jgroups>
-        <stack-file name="udp-stack" path="jgroups.xml" />
+        <stack-file name="udp-stack" path="jgroups-config.xml" />
     </jgroups>
 
     <cache-container name="clusteredObjectStore" default-cache="clusteredObjectStore">

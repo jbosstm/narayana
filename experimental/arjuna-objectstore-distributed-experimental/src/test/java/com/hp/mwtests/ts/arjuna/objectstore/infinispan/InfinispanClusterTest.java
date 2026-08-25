@@ -1,7 +1,7 @@
 /*
  * Copyright The Narayana Authors
  *
- * SPDX-License-Identifier: LGPL-2.1-only
+ * SPDX-License-Identifier: Apache-2.0
  */
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
@@ -65,7 +65,7 @@ public class InfinispanClusterTest {
         GlobalConfigurationBuilder globalConfig = GlobalConfigurationBuilder.defaultClusteredBuilder();
 
         globalConfig.transport().nodeName(nodeName)
-                .clusterName(CLUSTER_NAME).addProperty("configurationFile", "jgroups.xml");;
+                .clusterName(CLUSTER_NAME).addProperty("configurationFile", "jgroups-config.xml");;
 
         var manager = new DefaultCacheManager(globalConfig.build());
 

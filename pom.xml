@@ -497,6 +497,16 @@
     </plugins>
   </build>
   <profiles>
+    <!-- Experimental features profile - NOT activated by default -->
+    <profile>
+      <id>experimental</id>
+      <activation>
+        <!-- NOT activated by default - must explicitly use -Pexperimental -->
+      </activation>
+      <modules>
+        <module>experimental/arjuna-objectstore-distributed-experimental</module>
+      </modules>
+    </profile>
     <profile>
       <id>documentation</id>
       <activation>

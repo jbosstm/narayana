@@ -15,7 +15,12 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * A {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore} implementation backed by an infinispan cache.
+ * EXPERIMENTAL: Infinispan-backed SlotStore implementation.
+ *
+ * <p><strong>WARNING:</strong> This is an experimental feature. It is not recommended for
+ * production systems and may contain breaking changes or be removed in future releases.
+ *
+ * <p>A {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStore} implementation backed by an infinispan cache.
  * It is an in-memory datastore and can be backed by a cluster of infinispan nodes to maintain data
  * availability provided the caches are suitably configured to manage replication of data across the cluster.
  * If the store is to be used with a recovery manager it is important that the environment is configured such that the
@@ -28,6 +33,11 @@ import java.util.Set;
  * <p>
  * The interface is internal and is used by the {@link com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor}
  * and should not be called independently of the transaction and recovery systems.
+ *
+ * <p><strong>Sponsor:</strong> Michael Musgrove (mmusgrov@redhat.com)
+ * <p><strong>Tracking:</strong> JBTM-845
+ *
+ * @since 7.0.0
  */
 /*
  * Implementation notes:
@@ -57,6 +67,16 @@ import java.util.Set;
  * read(byte[] read(int slot) method which does the actual infinispan cache lookup to get the data).
  */
 public class InfinispanSlots implements BackingSlots {
+
+    // Static initializer to warn about experimental status
+    static {
+        tsLogger.logger.warn("ARJUNA-INFINISPAN-EXPERIMENTAL: " +
+                "Infinispan ObjectStore (InfinispanSlots) is EXPERIMENTAL and not recommended for production use. " +
+                "This feature may change or be removed in future releases. " +
+                "Sponsor: Michael Musgrove. Tracking: JBTM-845. " +
+                "For more information, see module README.md");
+    }
+
     private byte[][] slots = null;
     private Cache<byte[], byte[]> cache;
     private InfinispanSlotKeyGenerator infinispanSlotKeyGenerator;
