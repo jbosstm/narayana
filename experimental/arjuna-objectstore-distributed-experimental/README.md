@@ -12,32 +12,17 @@ The API and behavior may change or be removed in future releases without notice.
 
 ## Overview
 
-This module provides an Distributed implementation of Narayana's `SlotStore` ObjectStore. It enables distributed, in-memory transaction log storage across a cluster of Infinispan nodes, offering an alternative to traditional file-based ObjectStores.
+This module provides a distributed implementation of Narayana's `SlotStore` ObjectStore backed by Infinispan distributed caches. It enables in-memory transaction log storage across a cluster of nodes, offering an alternative to traditional file-based ObjectStores for clustered environments.
 
-### Key Features
+Transaction logs are stored in Infinispan distributed or replicated caches, allowing multiple Narayana instances to share transaction state across a cluster. The implementation supports different Infinispan cache modes (LOCAL, REPL_SYNC, DIST_SYNC) for configurable consistency guarantees and can be configured with Infinispan cache stores for optional persistence.
 
-- **Distributed Storage**: Transaction logs stored in Infinispan distributed or replicated caches
-- **Cluster-Aware**: Multiple Narayana instances can share transaction state across a cluster
-- **In-Memory Performance**: Faster than disk-based stores for high-throughput scenarios
-- **Configurable Consistency**: Support for different Infinispan cache modes (LOCAL, REPL_SYNC, DIST_SYNC)
-- **Optional Persistence**: Can be configured with Infinispan cache stores for durability
-
-### Architecture
-
-The implementation consists of:
-
-- **`InfinispanSlots`**: Main `BackingSlots` implementation using Infinispan cache
-- **`InfinispanStoreEnvironmentBean`**: Configuration bean for Infinispan settings
-- **`InfinispanSlotKeyGenerator`**: Interface for generating unique cache entry keys
+The implementation consists of three main components. `InfinispanSlots` provides the main `BackingSlots` implementation using an Infinispan cache as the backing store. `InfinispanStoreEnvironmentBean` supplies configuration settings for the Infinispan store including cache references and JNDI names. `InfinispanSlotKeyGenerator` defines an interface for generating unique cache entry keys for slot entries.
 
 The store integrates with Narayana's standard `SlotStoreAdaptor` and requires no changes to transaction management code.
 
 ## Requirements
 
-- Java 11 or later
-- Maven 3.6+
-- Narayana 7.0.0 or later
-- Infinispan 16.2.2 or later
+This experimental feature requires Java 11 or later, Maven 3.6 or higher, Narayana 7.0.0 or later, and Infinispan 16.2.2 or later.
 
 ## Installation
 
@@ -181,55 +166,21 @@ try {
 }
 ```
 
-### WildFly Integration
-
-See [INTEGRATION.md](INTEGRATION.md) for WildFly module and subsystem configuration.
-
 ## Important Considerations
 
-### Consistency Requirements
+When using this store in a clustered environment with recovery management, several aspects require careful configuration. Configure Infinispan cache modes appropriately, using `REPL_SYNC` or `DIST_SYNC` for clustered setups to ensure consistency across nodes. Ensure only one recovery manager acts as the leader at any given time, and configure Infinispan partition handling to prevent split-brain scenarios. Stable network connectivity between cluster nodes is essential for reliable operation.
 
-When using this store in a clustered environment with recovery management:
+Performance characteristics of this distributed implementation differ from traditional file-based stores. In-memory storage may provide different latency characteristics for transaction log writes compared to disk-based stores, though comprehensive benchmarking has not been performed. Replication modes add network round-trip latency to write operations. Transaction logs consume JVM heap memory rather than filesystem space, and high transaction rates may increase garbage collection pressure.
 
-1. **Configure appropriate cache modes**: Use `REPL_SYNC` or `DIST_SYNC` for clustered setups
-2. **Recovery leader election**: Ensure only one recovery manager acts as the leader
-4. **Split-brain handling**: Configure Infinispan partition handling appropriately
-5. **Network reliability**: Ensure stable network connectivity between cluster nodes
-
-### Performance Characteristics
-
-- **Faster than disk**: In-memory storage provides lower latency for transaction log writes
-- **Network overhead**: Replication adds network round-trip latency
-- **Memory usage**: Transaction logs consume JVM heap memory
-- **GC pressure**: High transaction rates can increase garbage collection overhead
-
-### Limitations
-
-- **Experimental status**: Not recommended for production use
-- **Recovery complexity**: Cluster-wide recovery requires careful coordination
-- **Memory bounds**: Limited by available heap space, unlike filesystem stores
-- **Configuration complexity**: Requires understanding of both Narayana and Infinispan
+This experimental implementation has several important limitations. It is not recommended for production use due to its experimental status. Cluster-wide recovery requires careful coordination and understanding of distributed systems concepts. Memory usage is bounded by available heap space unlike filesystem stores which can grow as needed. Proper configuration requires understanding of both Narayana transaction management and Infinispan distributed caching.
 
 ## Testing
 
-Run the test suite:
-
-```bash
-cd experimental/arjuna-objectstore-distributed-experimental
-mvn clean test
-```
-
-Key test classes:
-
-- `InfinispanClusterTest`: Multi-node cluster scenarios
-- `InfinispanRecoveryScanTest`: Recovery manager functionality
-- `InfinispanReplicatedAndPersistentTest`: Persistence and replication
+The test suite can be run from the experimental module directory using `mvn clean test`. Key test classes include `InfinispanClusterTest` for multi-node cluster scenarios, `InfinispanRecoveryScanTest` for recovery manager functionality, and `InfinispanReplicatedAndPersistentTest` for persistence and replication behavior.
 
 ## Known Issues
 
-- **JBTM-845**: Initial experimental implementation - see JIRA for open sub-tasks
-- Configuration via JNDI requires application server environment
-- Embedded cache manager usage in standalone apps requires manual lifecycle management
+This is the initial experimental implementation tracked under JBTM-845 - see the JIRA issue for open sub-tasks and known limitations. Configuration via JNDI requires an application server environment. Embedded cache manager usage in standalone applications requires manual lifecycle management.
 
 ## Troubleshooting
 
@@ -251,48 +202,15 @@ ERROR: Could not instantiate backing slots class
 
 ### Recovery Leader Split-Brain
 
-If multiple nodes attempt recovery simultaneously:
-
-
-## Future Plans
-
-### Path to Tech Preview
-
-Criteria for promotion to Tech Preview status:
-
-- [ ] Complete recovery manager integration with leader election
-- [ ] Performance benchmarking vs. filesystem stores
-- [ ] WildFly Galleon feature pack layer
-- [ ] Quarkus extension with dev services
-- [ ] Documentation in main Narayana user guide
-- [ ] >85% test coverage
-- [ ] Integration testing in CI
-
-### Path to Stable
-
-Additional requirements for stable release:
-
-- [ ] Production deployment validation
-- [ ] Long-running stability testing
-- [ ] Performance tuning and optimization
-- [ ] Backward compatibility guarantees
-- [ ] Support for upgrade scenarios
+If multiple nodes attempt recovery simultaneously, ensure your cluster coordination mechanism prevents conflicts.
 
 ## Related Documentation
 
-- [INTEGRATION.md](INTEGRATION.md) - WildFly and Quarkus integration guide
-- [JBTM-845](https://issues.redhat.com/browse/JBTM-845) - Original feature request
-- [Narayana Documentation](https://narayana.io/docs/project/index.html) - Main documentation
-- [Infinispan Documentation](https://infinispan.org/docs/stable/titles/overview/overview.html) - Infinispan guide
+Additional documentation and context for this experimental feature can be found in the following resources. The original feature request and design discussion is tracked in [JBTM-845](https://issues.redhat.com/browse/JBTM-845). Detailed information about ObjectStore implementations and architecture is available in the [Narayana ObjectStore documentation](../../docs/src/main/asciidoc/project/appendix/object_store_implementations.adoc). General Narayana documentation is at [narayana.io](https://narayana.io/docs/project/index.html), and Infinispan documentation can be found at [infinispan.org](https://infinispan.org/docs/stable/titles/overview/overview.html).
 
 ## Contributing
 
-This experimental feature welcomes contributions. Please:
-
-1. Discuss changes on [Narayana Zulip](https://narayana.zulipchat.com) or GitHub issue first
-2. Follow Narayana coding standards
-3. Add tests for new functionality
-4. Update documentation as needed
+This experimental feature welcomes contributions. Please discuss changes on [Narayana Zulip](https://narayana.zulipchat.com) or in a GitHub issue first, follow Narayana coding standards, add tests for new functionality, and update documentation as needed.
 
 ## License
 
