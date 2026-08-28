@@ -1,0 +1,51 @@
+#pragma prefix "jacorb.org"
+
+#include <TimeBase.idl>
+
+module org
+{
+
+  module jacorb
+  {
+
+    module transport
+    {
+      /// A type used to represent counters
+      typedef unsigned long long CounterT;
+
+      // Used to signal that a call was made outside the
+      // correct invocation context.
+
+      exception NoContext
+      {
+      };
+
+      // The main interface, providing access to the Transport-specific
+      // information (traits), available to the current thread of
+      // execution.
+
+      local interface Current
+      {
+          /// Transport ID, unique within the process.
+        long id() raises (NoContext);
+
+          /// Bytes sent/received through the transport.
+          CounterT bytes_sent() raises (NoContext);
+          CounterT bytes_received() raises (NoContext);
+
+          /// Messages (requests and replies) sent/received using the current
+          /// protocol.
+          CounterT messages_sent() raises (NoContext);
+          CounterT messages_received() raises (NoContext);
+
+          /// The absolute time (miliseconds) since the transport has been
+          /// open.
+          TimeBase::TimeT open_since() raises (NoContext);
+      };
+
+    };
+
+  };
+
+};
+

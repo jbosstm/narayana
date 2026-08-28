@@ -1,0 +1,22 @@
+First Pass:
+< create a transaction vector for transaction Uids. >
+< read in all transactions for a transaction type AtomicAction. >
+while < there are transactions in the vector of transactions. >
+do
+ < add the transaction to the vector of transactions. >
+end while.
+
+Second Pass:
+while < there are transactions in the transaction vector >
+do
+ if < the intention list for the transaction still exists >
+ then
+ < create new transaction cached item >
+ < obtain the status of the transaction >
+ 
+ if < the transaction is not in progress >
+ then
+ < replay phase two of the commit protocol >
+ endif.
+ endif.
+end while.

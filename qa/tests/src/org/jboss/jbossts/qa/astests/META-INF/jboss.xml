@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<jboss>
+   <enterprise-beans>
+      <session>
+         <ejb-name>CrashBMTRemEJB</ejb-name>
+         <jndi-name>org.jboss.jbossts.qa.astests.crash.CrashBMTRem</jndi-name>
+      </session>
+       
+      <session>
+         <ejb-name>CrashCMTRemEJB</ejb-name>
+         <jndi-name>org.jboss.jbossts.qa.astests.crash.CrashCMTRem</jndi-name>
+      </session>
+
+<!--
+      <message-driven>
+         <ejb-name>TextMdb</ejb-name>
+         <destination-jndi-name>queue/sndQ</destination-jndi-name>
+      </message-driven>
+-->
+
+   </enterprise-beans>
+</jboss>

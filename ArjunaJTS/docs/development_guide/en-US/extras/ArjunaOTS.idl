@@ -1,0 +1,54 @@
+#ifndef ARJUNAOTS_IDL_
+#define ARJUNAOTS_IDL_
+
+#include <idl/CosTransactions.idl>
+module ArjunaOTS
+{
+    exception ActiveTransaction {};
+    exception BadControl {};
+    exception Destroyed {};
+    exception ActiveThreads {};
+    exception InterpositionFailed {};
+
+    interface UidCoordinator : CosTransactions::Coordinator
+    {
+   readonly attribute string uid;
+   readonly attribute string topLevelUid;
+    };
+    interface ActionControl : CosTransactions::Control
+    {
+        CosTransactions::Control getParentControl ()
+                                                raises (CosTransactions::Unavailable,
+                                                  CosTransactions::NotSubtransaction);
+        void destroy () raises (ActiveTransaction, ActiveThreads, BadControl,
+                                Destroyed);
+    };
+
+    interface ArjunaSubtranAwareResource : 
+                                     CosTransactions::SubtransactionAwareResource
+    {
+   CosTransactions::Vote prepare_subtransaction ();
+    };
+    interface ArjunaTransaction : UidCoordinator, CosTransactions::Terminator
+    {
+    };
+
+    interface OTSAbstractRecord : ArjunaSubtranAwareResource
+    {
+        readonly attribute long typeId;
+        readonly attribute string uid;
+
+        boolean propagateOnAbort ();
+        boolean propagateOnCommit ();
+
+        boolean saveRecord ();
+
+        void merge (in OTSAbstractRecord record);
+        void alter (in OTSAbstractRecord record);
+
+        boolean shouldAdd (in OTSAbstractRecord record);
+        boolean shouldAlter (in OTSAbstractRecord record);
+        boolean shouldMerge (in OTSAbstractRecord record);
+        boolean shouldReplace (in OTSAbstractRecord record);
+    };
+};
