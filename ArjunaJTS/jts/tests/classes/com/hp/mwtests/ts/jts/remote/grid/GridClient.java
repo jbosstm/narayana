@@ -9,6 +9,7 @@ package com.hp.mwtests.ts.jts.remote.grid;
 
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Terminator;
@@ -26,6 +27,7 @@ import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 
 public class GridClient
 {
+    @Ignore("Client-side component of a remote multi-JVM grid test requiring an external grid server. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {
