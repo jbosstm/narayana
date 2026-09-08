@@ -12,11 +12,8 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreAdaptor;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlots;
@@ -35,17 +32,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InfinispanClusterTest {
+public class InfinispanClusterTest extends InfinispanTestBase {
     // a name for the cluster
     private final String CLUSTER_NAME = "objectStoreCluster";
     // which will be sharing the same object store
@@ -141,48 +135,6 @@ public class InfinispanClusterTest {
             // This will ensure all caches within its scope are properly stopped as well.
             cacheManagers.forEach(EmbeddedCacheManager::stop);
         }
-    }
-
-    /**
-     * start a new recovery manager, shutting down the current one if it is running
-     * @param bean config for the recovery manager
-     * @return the new store
-     */
-    private RecoveryStore startRecoveryStore(InfinispanStoreEnvironmentBean bean) {
-        StoreManager.shutdown(); // remove any existing store
-
-        try {
-            /*
-             * The intent is to have one recovery store per JVM, and we want to start each with a different config.
-             * However, environment bean instances are global to the JVM and can only be set once so replace the current
-             * bean using MethodHandles to update the BeanPopulator bean instances map (an alternative could be
-             * to update all the fields of the existing bean instance).
-             */
-            replaceEnvironmentBean(bean);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-
-        return StoreManager.getRecoveryStore();
-    }
-
-    // update the slot store environment bean
-    private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
-        MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
-                BeanPopulator.class,
-                MethodHandles.lookup()
-        );
-
-        // Get a VarHandle for the private static field
-        VarHandle varHandle = lookup.findStaticVarHandle(
-                BeanPopulator.class,
-                "beanInstances",
-                ConcurrentMap.class
-        );
-
-        ConcurrentMap<String, Object> beanInstances = (ConcurrentMap<String, Object>) varHandle.get();
-
-        beanInstances.put(SlotStoreEnvironmentBean.class.getName(), bean);
     }
 
     // verify that a value written to the store can be read back correctly
@@ -286,31 +238,6 @@ public class InfinispanClusterTest {
         } catch (ObjectStoreException expected) {
             // should be ISPN000323 which indicates that the cache is in the TERMINATED state
         }
-    }
-
-    private boolean containsAtomicAction(RecoveryStore recoveryStore, AtomicAction aa) {
-        InputObjectState ios = new InputObjectState();
-
-        try {
-            if (recoveryStore.allObjUids(aa.type(), ios, StateStatus.OS_UNKNOWN)) {
-                Uid id;
-
-                do {
-                    try {
-                        id = UidHelper.unpackFrom(ios);
-                        if (id.equals(aa.get_uid())) {
-                            return true;
-                        }
-                    } catch (Exception ex) {
-                        return false;
-                    }
-                }
-                while (id.notEquals(Uid.nullUid()));
-            }
-        } catch (ObjectStoreException ignore) {
-        }
-
-        return false;
     }
 
     private Collection<String> getAllTypes(RecoveryStore store) throws Exception {
