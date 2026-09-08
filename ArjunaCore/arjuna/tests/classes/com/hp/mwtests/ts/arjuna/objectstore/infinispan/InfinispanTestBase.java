@@ -25,6 +25,7 @@ import org.infinispan.conflict.MergePolicy;
 import org.infinispan.distribution.group.Grouper;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.partitionhandling.PartitionHandling;
+import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -137,6 +138,20 @@ public class InfinispanTestBase {
         return manager;
     }
 
+    /*
+     * Stop the store and remove any config that the test installed
+     */
+    @AfterEach
+    public void resetRecoveryStore() {
+        StoreManager.shutdown();
+
+        try {
+            getBeanInstances().remove(SlotStoreEnvironmentBean.class.getName());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * start a new recovery manager, shutting down the current one if it is running
      * @param bean config for the recovery manager
@@ -164,11 +179,8 @@ public class InfinispanTestBase {
         return StoreManager.getRecoveryStore();
     }
 
-    /*
-     * update the slot store environment bean which normally gets set once per VM, but we need different
-     * values of the SlotStoreEnvironmentBean for various tests
-     */
-    static private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
+    // the map of environment bean instances held by BeanPopulator, which are global to the JVM
+    static private ConcurrentMap<String, Object> getBeanInstances() throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
                 BeanPopulator.class,
                 MethodHandles.lookup()
@@ -181,9 +193,15 @@ public class InfinispanTestBase {
                 ConcurrentMap.class
         );
 
-        ConcurrentMap<String, Object> beanInstances = (ConcurrentMap<String, Object>) varHandle.get();
+        return (ConcurrentMap<String, Object>) varHandle.get();
+    }
 
-        beanInstances.put(SlotStoreEnvironmentBean.class.getName(), bean);
+    /*
+     * update the slot store environment bean which normally gets set once per VM, but we need different
+     * values of the SlotStoreEnvironmentBean for various tests
+     */
+    static private void replaceEnvironmentBean(SlotStoreEnvironmentBean bean) throws Throwable {
+        getBeanInstances().put(SlotStoreEnvironmentBean.class.getName(), bean);
     }
 
     /*
