@@ -4,6 +4,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputBuffer;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -58,17 +59,37 @@ public class SlotStore {
         slots = config.getBackingSlots();
         slots.init(config);
 
-        // internal recovery to rebuild the slotIdIndex and freeList
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
-            byte[] data = slots.read(i);
-            if (data == null || data.length == 0) {
-                freeList.add(i); // slot does not contain a valid entry, is free for use
-            } else {
-                InputBuffer inputBuffer = new InputBuffer(data);
-                SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
-                slotIdIndex.put(slotStoreKey, i);
-            }
+            classifySlot(i, slots.read(i), slotIdIndex, freeList);
         }
+    }
+
+    public void stop() throws IOException {
+        slots.stop();
+    }
+
+    /**
+     * Re-read all slots from the backing store and rebuild the in-memory index.
+     * For backends where the store can be modified externally (e.g. via Raft
+     * replication), this method reconciles the index with the current state
+     * of the backing store.
+     *
+     * @throws IOException if a slot cannot be read
+     */
+    public void refreshIndex() throws IOException {
+        ConcurrentHashMap<SlotStoreKey, Integer> newIndex = new ConcurrentHashMap<>();
+        ConcurrentLinkedDeque<Integer> newFreeList = new ConcurrentLinkedDeque<>();
+
+        for (int i = 0; i < config.getNumberOfSlots(); i++) {
+            classifySlot(i, slots.read(i), newIndex, newFreeList);
+        }
+
+        slotIdIndex.putAll(newIndex);
+        slotIdIndex.keySet().retainAll(newIndex.keySet());
+        freeList.clear();
+        freeList.addAll(newFreeList);
+
+        slots.clearIndexStale();
     }
 
     /**
@@ -88,6 +109,10 @@ public class SlotStore {
     public InputObjectState read(SlotStoreKey key) throws IOException {
 
         Integer slotId = slotIdIndex.get(key);
+        if (slotId == null && slots.isIndexStale()) {
+            refreshIndex();
+            slotId = slotIdIndex.get(key);
+        }
         if (slotId == null) {
             throw new IOException("record not found for " + key);
         }
@@ -120,10 +145,14 @@ public class SlotStore {
             return false;
         }
 
-        slots.clear(slotId, config.isSyncDeletes());
+        try {
+            slots.clear(slotId, config.isSyncDeletes());
+        } catch (IOException e) {
+            recycleSlot(slotId);
+            throw e;
+        }
 
         freeList.add(slotId);
-
         return true;
     }
 
@@ -154,14 +183,22 @@ public class SlotStore {
             return false;
         }
 
-        slots.write(slotId, data, config.isSyncWrites());
+        try {
+            slots.write(slotId, data, config.isSyncWrites());
+        } catch (IOException e) {
+            recycleSlot(slotId);
+            throw e;
+        }
 
-        Integer previousSlot = slotIdIndex.put(key, slotId);
+        Integer prev = slotIdIndex.put(key, slotId);
 
-        // If it's a rewrite, we need to release the older version's slot
-        if (previousSlot != null) {
-            slots.clear(previousSlot, config.isSyncWrites());
-            freeList.add(previousSlot);
+        if (prev != null) {
+            try {
+                slots.clear(prev, config.isSyncDeletes());
+                freeList.add(prev);
+            } catch (IOException e) {
+                recycleSlot(prev);
+            }
         }
 
         return true;
@@ -184,6 +221,8 @@ public class SlotStore {
      */
     public String[] getKnownTypes() {
 
+        refreshIndexIfStale();
+
         Set<String> types = new HashSet<>();
 
         for (SlotStoreKey key : slotIdIndex.keySet()) {
@@ -201,6 +240,8 @@ public class SlotStore {
      */
     public SlotStoreKey[] getMatchingKeys(SlotStoreKey templateKey) {
 
+        refreshIndexIfStale();
+
         List<SlotStoreKey> matchingKeys = new ArrayList<>();
 
         for (SlotStoreKey candidateKey : slotIdIndex.keySet()) {
@@ -212,5 +253,52 @@ public class SlotStore {
         }
 
         return matchingKeys.toArray(new SlotStoreKey[0]);
+    }
+
+    private void refreshIndexIfStale() {
+        if (slots.isIndexStale()) {
+            try {
+                refreshIndex();
+            } catch (IOException e) {
+                tsLogger.logger.warn("Failed to refresh slot store index", e);
+            }
+        }
+    }
+
+    // Validate a slot's data and add it to either the index (valid record) or
+    // the free list (empty or malformed). Malformed data is freed because a
+    // record that was never a valid SlotStore record cannot be recovered.
+    private void classifySlot(int slotId, byte[] data,
+                              ConcurrentHashMap<SlotStoreKey, Integer> index,
+                              Deque<Integer> free) {
+        if (data == null || data.length == 0) {
+            free.add(slotId);
+            return;
+        }
+        try {
+            InputBuffer inputBuffer = new InputBuffer(data);
+            SlotStoreKey key = SlotStoreKey.unpackFrom(inputBuffer);
+            InputObjectState probe = new InputObjectState();
+            probe.unpackFrom(inputBuffer);
+            index.put(key, slotId);
+        } catch (Exception e) {
+            tsLogger.i18NLogger.warn_slot_store_malformed(slotId, free.size());
+            free.add(slotId);
+        }
+    }
+
+    private void recycleSlot(int slotId) {
+        if (config.isRecycleFailedSlots()) {
+            freeList.add(slotId);
+            return;
+        }
+
+        try {
+            slots.clear(slotId, config.isSyncDeletes());
+            freeList.add(slotId);
+        } catch (IOException clearFailed) {
+            tsLogger.logger.warn("Failed to clear slot " + slotId + " during recycle", clearFailed);
+            tsLogger.i18NLogger.warn_slot_store_quarantine(slotId, freeList.size());
+        }
     }
 }
