@@ -31,6 +31,9 @@ import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 
+import jakarta.transaction.xa.CommitPriority;
+import jakarta.transaction.xa.ExtendedXAResource;
+import jakarta.transaction.xa.PreparePriority;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -126,6 +129,22 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
     }
 
     public Uid order() {
+        if (_theXAResource instanceof ExtendedXAResource) {
+            ExtendedXAResource extendedXAResource = (ExtendedXAResource) _theXAResource;
+            PreparePriority preparePriority = extendedXAResource.getPreparePriority();
+            if (preparePriority == PreparePriority.EXCLUSIVE_LAST) {
+                return BEFORE_END_XARESOURCE;
+            } else if (preparePriority == PreparePriority.EARLY) {
+                return START_XARESOURCE;
+            }
+            CommitPriority commitPriority = extendedXAResource.getCommitPriority();
+            if (commitPriority == CommitPriority.EXCLUSIVE_FIRST) {
+                return START_XARESOURCE;
+            } else if (commitPriority == CommitPriority.LATE) {
+                return BEFORE_END_XARESOURCE;
+            }
+        }
+
         if (_theXAResource instanceof FirstResource) {
             return START_XARESOURCE;
         } else if (_theXAResource instanceof LastResource) {
@@ -1209,6 +1228,14 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
     public static final int XACONNECTION = 0;
 
     private static final Uid START_XARESOURCE = Uid.minUid();
+
+    /**
+     * Ordering anchor for resources that must be prepared/committed just before the
+     * legacy LastResource (END_XARESOURCE) slot. Used for ExtendedXAResource with
+     * PreparePriority.EXCLUSIVE_LAST or CommitPriority.LATE.
+     */
+    private static final Uid BEFORE_END_XARESOURCE =
+            new Uid("7fffffffffffffff:7fffffffffffffff:7fffffff:7fffffff:7ffffffe");
 
     private static final Uid END_XARESOURCE = Uid.maxUid();
 

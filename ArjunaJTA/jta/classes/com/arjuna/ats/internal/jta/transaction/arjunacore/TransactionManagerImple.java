@@ -119,4 +119,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 	{
 		return this;
 	}
+
+	@Override
+	public void begin(boolean isReadOnly) throws jakarta.transaction.NotSupportedException, jakarta.transaction.SystemException {
+		begin();
+	}
 }

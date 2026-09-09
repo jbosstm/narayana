@@ -34,4 +34,15 @@ public class UserTransactionImple extends BaseTransaction
     {
         return new Reference(this.getClass().getCanonicalName(), this.getClass().getCanonicalName(), null);
     }
+
+    @Override
+    public void begin(boolean isReadOnly) throws jakarta.transaction.NotSupportedException, jakarta.transaction.SystemException {
+        begin();
+    }
+
+    @Override
+    public boolean isReadOnly() throws jakarta.transaction.SystemException {
+        TransactionImple tx = TransactionImple.getTransaction();
+        return tx != null && tx.isReadOnly();
+    }
 }
