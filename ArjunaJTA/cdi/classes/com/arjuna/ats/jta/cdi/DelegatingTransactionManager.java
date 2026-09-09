@@ -18,6 +18,8 @@ import jakarta.transaction.SystemException;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 
+import com.arjuna.ats.internal.jta.utils.ReadOnlyTransactionSupport;
+
 /**
  * An {@code abstract} {@link TransactionManager} implementation that
  * delegates all method invocations to another {@link
@@ -75,6 +77,25 @@ public abstract class DelegatingTransactionManager implements Serializable, Tran
       throw new SystemException("delegate == null");
     }
     this.delegate.begin();
+  }
+
+  /**
+   * Creates a new readOnly transaction and associates it with the current thread.
+   *
+   * @exception NotSupportedException if the thread is already
+   * associated with a transaction and this {@link TransactionManager}
+   * implementation does not support nested transactions
+   *
+   * @exception SystemException if this {@link TransactionManager}
+   * encounters an unexpected error condition
+   */
+  // no @Override: TransactionManager only declares begin(boolean) from
+  // jakarta.transaction-api 2.0.2, and narayana compiles against 2.0.1
+  public void begin(boolean readOnly) throws NotSupportedException, SystemException {
+    if (this.delegate == null) {
+      throw new SystemException("delegate == null");
+    }
+    ReadOnlyTransactionSupport.begin(this.delegate, readOnly);
   }
 
   /**

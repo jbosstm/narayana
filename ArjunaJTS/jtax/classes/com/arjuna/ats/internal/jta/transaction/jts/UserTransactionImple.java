@@ -43,4 +43,9 @@ public class UserTransactionImple extends BaseTransaction
     {
         return new Reference(this.getClass().getCanonicalName(), this.getClass().getCanonicalName(), null);
     }
+
+    public boolean isReadOnly() {
+        // JTS does not support read-only transactions; any active transaction is always non-read-only.
+        return false;
+    }
 }
