@@ -57,14 +57,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")
     private volatile boolean timeoutSocket = false;
 
-    /**
-     * Returns the interval between recovery scans, in seconds.
-     * <p>
-     * Default: 120 seconds
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod
-     *
-     * @return the recovery scan period, in seconds.
-     */
     public int getPeriodicRecoveryPeriod() {
         return periodicRecoveryPeriod;
     }
@@ -83,14 +75,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         }
     }
 
-    /**
-     * Returns the interval between recovery phases within a recovery scan, in seconds.
-     * <p>
-     * Default: 10 seconds
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod
-     *
-     * @return the interval between recovery phases, in seconds.
-     */
     public int getRecoveryBackoffPeriod() {
         return recoveryBackoffPeriod;
     }
@@ -129,14 +113,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         return null;
     }
 
-    /**
-     * Returns true if the recovery system should listen on a network socket.
-     * <p>
-     * Default: true
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.recoveryListener
-     *
-     * @return true for network recovery, false for local JVM only use.
-     */
     public boolean isRecoveryListener() {
         return recoveryListener;
     }
@@ -150,14 +126,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.recoveryListener = recoveryListener;
     }
 
-    /**
-     * Returns the network port number on which the recovery listener should bind.
-     * <p>
-     * Default: 0
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.recoveryPort
-     *
-     * @return the port number for recovery listener.
-     */
     public int getRecoveryPort() {
         return recoveryPort;
     }
@@ -172,14 +140,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.recoveryPort = recoveryPort;
     }
 
-    /**
-     * Returns the hostname on which the recovery listener should bind.
-     * <p>
-     * Default: "localhost"
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.recoveryAddress
-     *
-     * @return the hostname on which the recovery system will listen.
-     */
     public String getRecoveryAddress() {
         return recoveryAddress;
     }
@@ -204,14 +164,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         setRecoveryAddress(inetAddress.getHostAddress());
     }
 
-    /**
-     * Returns the network port number on which the transaction status manager should bind.
-     * <p>
-     * Default: 0
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort
-     *
-     * @return the port number for the transaction status manager listener.
-     */
     public int getTransactionStatusManagerPort() {
         return transactionStatusManagerPort;
     }
@@ -226,14 +178,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.transactionStatusManagerPort = transactionStatusManagerPort;
     }
 
-    /**
-     * Returns the hostname on which the transaction status manager should bind.
-     * <p>
-     * Default: "localhost"
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress
-     *
-     * @return the hostname on which the transaction status manager will listen.
-     */
     public String getTransactionStatusManagerAddress() {
         return transactionStatusManagerAddress;
     }
@@ -258,14 +202,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         setTransactionStatusManagerAddress(inetAddress.getHostAddress());
     }
 
-    /**
-     * Returns the interval on which the ObjectStore will be scanned for expired items, in hours.
-     * <p>
-     * Default: 12 hours
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.expiryScanInterval
-     *
-     * @return the interval between ObjectStore expiry checks, in hours.
-     */
     public int getExpiryScanInterval() {
         return expiryScanInterval;
     }
@@ -279,14 +215,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.expiryScanInterval = expiryScanInterval;
     }
 
-    /**
-     * Returns the time period after which items will be considered to have expired, in hours.
-     * <p>
-     * Default: 12 hours
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime
-     *
-     * @return the expiry timeout, in hours.
-     */
     public int getTransactionStatusManagerExpiryTime() {
         return transactionStatusManagerExpiryTime;
     }
@@ -300,15 +228,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.transactionStatusManagerExpiryTime = transactionStatusManagerExpiryTime;
     }
 
-    /**
-     * Returns a list of names of classes that implement ExpiryScanner.
-     * The returned list is a copy. May return an empty list, will not return null.
-     * <p>
-     * Default: empty list.
-     * Equivalent deprecated property prefix: com.arjuna.ats.arjuna.recovery.expiryScanner
-     *
-     * @return a list of ExpiryScanner implementation class names.
-     */
     public List<String> getExpiryScannerClassNames() {
         synchronized (this) {
             return new ArrayList<String>(expiryScannerClassNames);
@@ -373,15 +292,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         }
     }
 
-    /**
-     * Returns a list of names of classes that implement RecoveryModule.
-     * The returned list is a copy. May return an empty list, will not return null.
-     * <p>
-     * Default: empty list.
-     * Equivalent deprecated property prefix:
-     *
-     * @return a list of RecoveryModule implementation class names.
-     */
     public List<String> getRecoveryModuleClassNames() {
         synchronized (this) {
             return new ArrayList<String>(recoveryModuleClassNames);
@@ -447,15 +357,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
     }
 
 
-    /**
-     * Returns a list of names of classes that implement RecoveryActivator.
-     * The returned list is a copy. May return an empty list, will not return null.
-     * <p>
-     * Default: empty list.
-     * Equivalent deprecated property prefix:
-     *
-     * @return a list of RecoveryActivator implementation class names.
-     */
     public List<String> getRecoveryActivatorClassNames() {
         synchronized (this) {
             return new ArrayList<String>(recoveryActivatorClassNames);
@@ -520,14 +421,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         }
     }
 
-    /**
-     * Returns true if SO_TIMEOUT should be set on Listener socket instances.
-     * <p>
-     * Default: false
-     * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket
-     *
-     * @return true if SO_TIMEOUT should be used, false if not.
-     */
     public boolean isTimeoutSocket() {
         return timeoutSocket;
     }
@@ -541,18 +434,6 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean {
         this.timeoutSocket = timeoutSocket;
     }
 
-    /**
-     * <p>This method gives information about the behaviour of
-     * {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} when suspending.
-     * <p>The current list of Narayana-provided RecoveryModules that support this feature is:
-     * <ul>
-     *    <li>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</li>
-     * </ul>
-     *
-     * @return true if {@link com.arjuna.ats.arjuna.recovery.RecoveryManager} should wait that all
-     * {@link RecoveryModule} overriding {@link RecoveryModule#hasWorkLeftToDo()} recover all their
-     * transactions before shutting down; false otherwise.
-     */
     @Deprecated(forRemoval = true)
     public boolean isWaitForWorkLeftToDo() {
         return waitForWorkLeftToDo;

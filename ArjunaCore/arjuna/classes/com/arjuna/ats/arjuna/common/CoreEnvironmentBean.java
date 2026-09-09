@@ -50,14 +50,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 
     private boolean logAndRethrow = true;
 
-    /**
-     * Returns the 'var' directory path.
-     *
-     * Default: {user.dir}/var/tmp
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.common.varDir
-     *
-     * @return the 'var' directory name.
-     */
     public String getVarDir()
     {
         return varDir;
@@ -73,14 +65,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.varDir = varDir;
     }
 
-    /**
-     * Returns the Node Identifier.
-     *
-     * Default: null
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.nodeIdentifier
-     *
-     * @return the Node Identifier.
-     */
     public String getNodeIdentifier()
     {
         return nodeIdentifier;
@@ -109,14 +93,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     	this.nodeIdentifier = nodeIdentifier;
     }
 
-    /**
-     * Returns the port number for the Socket based process id implementation.
-     *
-     * Default: 0 (use any free port)
-     * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort
-     *
-     * @return the port number.
-     */
     public int getSocketProcessIdPort()
     {
         return socketProcessIdPort;
@@ -145,14 +121,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.timeoutFactor = timeoutFactor;
     }
 
-    /**
-     * Returns the maximum number of ports to search when looking for one that is free.
-     *
-     * Default: 1
-     * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts
-     *
-     * @return the maximum number of ports to try.
-     */
     public int getSocketProcessIdMaxPorts()
     {
         return socketProcessIdMaxPorts;
@@ -168,14 +136,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.socketProcessIdMaxPorts = socketProcessIdMaxPorts;
     }
 
-    /**
-     * Returns the class name of the Process implementation to use.
-     *
-     * Default: "com.arjuna.ats.internal.arjuna.utils.SocketProcessId"
-     * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.utils.processImplementation
-     *
-     * @return the name of a class implementing Process.
-     */
     public String getProcessImplementationClassName()
     {
         return processImplementationClassName;
@@ -247,14 +207,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         }
     }
 
-    /**
-     * Returns the process id to use if ManualProcessId is selected. Should be uniq across all instances on the same host.
-     *
-     * Default: -1 (invalid, must be changed if used)
-     * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.utils.pid
-     *
-     * @return the process id to use.
-     */
     public int getPid()
     {
         return pid;
@@ -271,14 +223,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.pid = pid;
     }
 
-    /**
-     * Returns if multiple last (i.e. one-phase) resources are allowed in the same transaction or not.
-     *
-     * Default: false
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.allowMultipleLastResources
-     *
-     * @return true if multiple last resources are permitted, false otherwise.
-     */
     public boolean isAllowMultipleLastResources()
     {
         return allowMultipleLastResources;
@@ -295,14 +239,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.allowMultipleLastResources = allowMultipleLastResources;
     }
 
-    /**
-     * Returns if the per-transaction warning on enlistment of multiple last resources is disabled or not.
-     *
-     * Default: false.
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.disableMultipleLastResourcesWarning
-     *
-     * @return true if warning is disabled, false otherwise.
-     */
     public boolean isDisableMultipleLastResourcesWarning()
     {
         return disableMultipleLastResourcesWarning;
@@ -318,17 +254,11 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         this.disableMultipleLastResourcesWarning = disableMultipleLastResourcesWarning;
     }
 
-    /**
-     * @return the version control tag of the source used, or "unknown"
-     */
     public String getBuildVersion()
     {
         return ConfigurationInfo.getVersion();
     }
 
-    /**
-     *  @return the build identification line indicating the os name and version and build date
-     */
     public String getBuildId()
     {
         return ConfigurationInfo.getBuildId();
