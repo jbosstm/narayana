@@ -12,9 +12,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>org.jboss.narayana.experimental</groupId>
-  <artifactId>arjuna-objectstore-distributed</artifactId>
+  <artifactId>infinispan-store</artifactId>
   <packaging>jar</packaging>
-  <name>Narayana: Experimental Distributed ObjectStore</name>
+  <name>Narayana: Infinispan backed ObjectStore</name>
   <description>EXPERIMENTAL: Distributed object store implementations for Narayana.
     Not recommended for production use. API and behaviour may change without notice.</description>
 
