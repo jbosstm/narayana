@@ -243,7 +243,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 									connection.close();
 								} catch (SQLException e) {
 									tsLogger.logger
-											.warn("Could not close the preparedConnection",
+											.warn("Could not close the db connection used for xid cleanup",
 													e);
 								}
 							}
@@ -491,9 +491,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 					connectableResource.toString(), "-", e);
 				return TwoPhaseOutcome.FINISH_ERROR;
 			} finally {
-				if (!isPerformImmediateCleanupOfBranches) {
-					removeConnection();
-				}
+				removeConnection();
 			}
 		} else {
 			// This is a recovery scenario
