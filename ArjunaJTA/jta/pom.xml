@@ -17,13 +17,18 @@
   <description>Narayana: ArjunaJTA jta</description>
 
   <properties>
-    <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
+    <!-- Load byteman into the WildFly server JVM at startup via -javaagent (listener on port 9091) instead
+         of a dynamic self-attach; see arquillian.xml (autoInstallAgent=false). ${org.jboss.byteman:byteman:jar}
+         is resolved by the maven-dependency-plugin:properties goal (see <build> below). -->
+    <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true -javaagent:${org.jboss.byteman:byteman:jar}=listener:true,port:9091,prop:org.jboss.byteman.verbose=true,prop:org.jboss.byteman.debug=true</byteman.agent.support>
     <checkstyle.skip>true</checkstyle.skip>
     <!-- java.net.preferIPv6Addresses=false is a workaround to (not) solve the bug in arquillian-extension-byteman -->
     <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
       -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=false</ipv6.server.jvm.args>
-    <!-- required for VM attach under JDK 11-->
-    <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
+    <!-- Load byteman into the client/test (surefire) JVM at startup via -javaagent (listener on port 9092)
+         instead of a dynamic self-attach. No verbose/debug here: writing to the native stream corrupts
+         surefire's fork channel ("Corrupted channel by directly writing to native stream"). -->
+    <surefire.argline>-Djdk.attach.allowAttachSelf=true -javaagent:${org.jboss.byteman:byteman:jar}=listener:true,port:9092</surefire.argline>
   </properties>
 
   <dependencyManagement>
@@ -154,6 +159,24 @@
         <directory>etc</directory>
       </resource>
     </resources>
+    <plugins>
+      <!-- Resolves ${org.jboss.byteman:byteman:jar} to the byteman jar's local path so it can be
+           passed to -javaagent (surefire.argline and byteman.agent.support) without hardcoding a
+           version or path. Version is inherited from the managed plugin definition. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>byteman-jar-property</id>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests/classes</testSourceDirectory>
   </build>

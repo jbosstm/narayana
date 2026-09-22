@@ -21,8 +21,14 @@
    </container>
 
     <extension qualifier="byteman">
-        <property name="autoInstallAgent">true</property>
-        <property name="agentProperties">org.jboss.byteman.verbose=true,prop:org.jboss.byteman.debug=true</property>
+        <!-- Byteman is loaded via -javaagent at JVM startup (surefire argLine for the client/test JVM,
+             and byteman.agent.support for the WildFly server JVM in pom.xml) instead of a dynamic
+             self-attach. This avoids the intermittent JDK libinstrument assertion during attach
+             ("java.lang.instrument ASSERTION FAILED / createInstrumentationImpl failed"). The
+             RuleInstallers just submit rules over TCP to the ports below. -->
+        <property name="autoInstallAgent">false</property>
+        <property name="clientAgentPort">9092</property>
+        <property name="containerAgentPort">9091</property>
     </extension>
 
 </arquillian>
