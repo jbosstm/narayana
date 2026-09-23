@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ -->
+<definitions
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://fabrikam123.com"
+        targetNamespace="http://fabrikam123.com"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+         <s:schema elementFormDefault="qualified" targetNamespace="http://fabrikam123.com">
+             <s:complexType name="TestMessageType">
+                 <s:sequence />
+             </s:complexType>
+             <s:element name="Response" type="tns:TestMessageType" />
+             <s:element name="CompletionCommit" type="s:string" />
+             <s:element name="CompletionRollback" type="s:string" />
+             <s:element name="Commit" type="tns:TestMessageType" />
+             <s:element name="Rollback" type="tns:TestMessageType" />
+             <s:element name="Phase2Rollback" type="tns:TestMessageType" />
+             <s:element name="Readonly" type="tns:TestMessageType" />
+             <s:element name="VolatileAndDurable" type="tns:TestMessageType" />
+             <s:element name="EarlyReadonly" type="tns:TestMessageType" />
+             <s:element name="EarlyAborted" type="tns:TestMessageType" />
+             <s:element name="ReplayCommit" type="tns:TestMessageType" />
+             <s:element name="RetryPreparedCommit" type="tns:TestMessageType" />
+             <s:element name="RetryPreparedAbort" type="tns:TestMessageType" />
+             <s:element name="RetryCommit" type="tns:TestMessageType" />
+             <s:element name="PreparedAfterTimeout" type="tns:TestMessageType" />
+             <s:element name="LostCommitted" type="tns:TestMessageType" />
+         </s:schema>
+    </types>
+    <message name="CompletionCommit">
+         <part name="parameters" element="tns:CompletionCommit" />
+    </message>
+    <message name="CompletionRollback">
+         <part name="parameters" element="tns:CompletionRollback" />
+    </message>
+    <message name="Commit">
+         <part name="parameters" element="tns:Commit" />
+    </message>
+    <message name="Rollback">
+         <part name="parameters" element="tns:Rollback" />
+    </message>
+    <message name="Phase2Rollback">
+         <part name="parameters" element="tns:Phase2Rollback" />
+    </message>
+    <message name="Readonly">
+         <part name="parameters" element="tns:Readonly" />
+    </message>
+    <message name="VolatileAndDurable">
+         <part name="parameters" element="tns:VolatileAndDurable" />
+    </message>
+    <message name="EarlyReadonly">
+         <part name="parameters" element="tns:EarlyReadonly" />
+    </message>
+    <message name="EarlyAborted">
+         <part name="parameters" element="tns:EarlyAborted" />
+    </message>
+    <message name="ReplayCommit">
+         <part name="parameters" element="tns:ReplayCommit" />
+    </message>
+    <message name="RetryPreparedCommit">
+         <part name="parameters" element="tns:RetryPreparedCommit" />
+    </message>
+    <message name="RetryPreparedAbort">
+         <part name="parameters" element="tns:RetryPreparedAbort" />
+    </message>
+    <message name="RetryCommit">
+         <part name="parameters" element="tns:RetryCommit" />
+    </message>
+    <message name="PreparedAfterTimeout">
+         <part name="parameters" element="tns:PreparedAfterTimeout" />
+    </message>
+    <message name="LostCommitted">
+        <part name="parameters" element="tns:LostCommitted" />
+    </message>
+    <message name="Response">
+        <part name="parameters" element="tns:Response" />
+    </message>
+    <portType name="InitiatorPortType">
+        <operation name="Response">
+            <input name="Response" message="tns:Response" />
+        </operation>
+    </portType>
+    <portType name="ParticipantPortType">
+        <operation name="CompletionCommit"><!-- Scenario 1.1 -->
+            <input name="CompletionCommit" message="tns:CompletionCommit" />
+        </operation>
+        <operation name="CompletionRollback"><!-- Scenario 1.2 -->
+            <input name="CompletionRollback" message="tns:CompletionRollback" />
+        </operation>
+        <operation name="Commit"><!-- Scenario 2.1 -->
+            <input name="Commit" message="tns:Commit" />
+        </operation>
+        <operation name="Rollback"><!-- Scenario 2.2 -->
+            <input name="Rollback" message="tns:Rollback" />
+        </operation>
+        <operation name="Phase2Rollback"><!-- Scenario 3.1 -->
+            <input name="Phase2Rollback" message="tns:Phase2Rollback" />
+        </operation>
+        <operation name="Readonly"><!-- Scenario 3.2 -->
+            <input name="Readonly" message="tns:Readonly" />
+        </operation>
+        <operation name="VolatileAndDurable"><!-- Scenario 3.3 -->
+            <input name="VolatileAndDurable" message="tns:VolatileAndDurable" />
+        </operation>
+        <operation name="EarlyReadonly"><!-- Scenario 4.1 -->
+            <input name="EarlyReadonly" message="tns:EarlyReadonly" />
+        </operation>
+        <operation name="EarlyAborted"><!-- Scenario 4.2 -->
+            <input name="EarlyAborted" message="tns:EarlyAborted" />
+        </operation>
+        <operation name="ReplayCommit"><!-- Scenario 5.1 -->
+            <input name="ReplayCommit" message="tns:ReplayCommit" />
+        </operation>
+        <operation name="RetryPreparedCommit"><!-- Scenario 5.2 -->
+            <input name="RetryPreparedCommit" message="tns:RetryPreparedCommit" />
+        </operation>
+        <operation name="RetryPreparedAbort"><!-- Scenario 5.3 -->
+            <input name="RetryPreparedAbort" message="tns:RetryPreparedAbort" />
+        </operation>
+        <operation name="RetryCommit"><!-- Scenario 5.4 -->
+            <input name="RetryCommit" message="tns:RetryCommit" />
+        </operation>
+        <operation name="PreparedAfterTimeout"><!-- Scenario 5.5 -->
+            <input name="PreparedAfterTimeout" message="tns:PreparedAfterTimeout" />
+        </operation>
+        <operation name="LostCommitted"><!-- Scenario 5.6 -->
+            <input name="LostCommitted" message="tns:LostCommitted" />
+        </operation>
+    </portType>
+</definitions>

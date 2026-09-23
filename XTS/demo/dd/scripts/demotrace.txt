@@ -1,0 +1,31 @@
+# extra trace rules for debugging
+#
+# track write shadow state
+# just for debug
+RULE trace write shadow state
+CLASS ServiceStateManager
+METHOD writeShadowState
+IF TRUE
+DO traceln("log", "*** tx : " + $1 + " writing shadow state " + $2),
+   traceStack(null, "log", 5)
+ENDRULE
+
+# track commit shadow state
+# just for debug
+RULE trace write commit shadow state
+CLASS ServiceStateManager
+METHOD commitShadowState
+IF TRUE
+DO traceln("log", "*** tx : " + $1 + " commit shadow state "),
+   traceStack(null, "log", 5)
+ENDRULE
+
+# track clear shadow state
+# just for debug
+RULE trace clear commit shadow state
+CLASS ServiceStateManager
+METHOD clearShadowState
+IF TRUE
+DO traceln("log", "*** tx : " + $1 + " clear shadow state "),
+   traceStack(null, "log", 5)
+ENDRULE
