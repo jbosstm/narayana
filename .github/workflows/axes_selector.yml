@@ -55,6 +55,10 @@ on:
         description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
+      EXPERIMENTAL:
+        description: 'EXPERIMENTAL testing axis'
+        required: true
+        type: boolean
       postgres:
         description: 'PostgreSQL will be used for the DB_TESTS testing axis.'
         required: false
@@ -147,6 +151,10 @@ on:
         description: 'PERFORMANCE testing axis'
         required: true
         type: boolean
+      EXPERIMENTAL:
+        description: 'EXPERIMENTAL testing axis'
+        required: true
+        type: boolean
       enabled_databases:
         description: 'The collection of databases to test against'
         required: false
@@ -178,6 +186,7 @@ jobs:
       JACOCO: ${{ steps.parse.outputs.JACOCO || steps.set-axes-inputs.outputs.JACOCO || inputs.JACOCO }}
       DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || inputs.DB_TESTS }}
       PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || inputs.PERFORMANCE }}
+      EXPERIMENTAL: ${{ steps.parse.outputs.EXPERIMENTAL || steps.set-axes-inputs.outputs.EXPERIMENTAL || inputs.EXPERIMENTAL }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || inputs.enabled_databases }}
       jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || inputs.jdk_versions }}
       environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || inputs.environment_variables }}
@@ -211,7 +220,8 @@ jobs:
               'QA_JTS_OPENJDKORB',
               'JACOCO',
               'DB_TESTS',
-              'PERFORMANCE'
+              'PERFORMANCE',
+              'EXPERIMENTAL'
             ];
             
             // Convert '! AXIS' to '!AXIS'
@@ -323,6 +333,7 @@ jobs:
             core.setOutput('JACOCO', '${{ inputs.JACOCO }}');
             core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
             core.setOutput('PERFORMANCE', '${{ inputs.PERFORMANCE }}');
+            core.setOutput('EXPERIMENTAL', '${{ inputs.EXPERIMENTAL }}');
             if (${{ inputs.DB_TESTS }}) {
               // Creates enabled_databases
               const selected_databases = [
@@ -433,3 +444,15 @@ jobs:
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
+
+  EXPERIMENTAL:
+    needs: axes_selector
+    if: ${{ needs.axes_selector.outputs.EXPERIMENTAL == 'true' }}
+    uses: ./.github/workflows/experimental.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}

@@ -1,0 +1,102 @@
+name: experimental
+
+on:
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Repository to check out'
+        required: true
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Branch or commit to test'
+        required: true
+        type: string
+
+# Only run the latest job
+concurrency:
+  group: 'experimental @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }} @ jdk${{ inputs.jdk_version }}'
+  cancel-in-progress: true
+
+jobs:
+  experimental-tests:
+    name: EXPERIMENTAL axis with JDK ${{ inputs.jdk_version }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log run context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository: ${{ inputs.pull_request_repo || github.repository }}"
+          echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
+          echo "JDK Version: ${{ inputs.jdk_version }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+          cache: 'maven'
+
+      - name: Remove Narayana from Maven cache
+        run: |
+          rm -rf ~/.m2/repository/org/jboss/narayana
+
+      - name: Build Narayana core (without experimental)
+        id: core_build
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          mvn clean install -DskipTests -Dcheckstyle.skip=true -Denforcer.skip=true
+
+      - name: Build experimental modules
+        id: experimental_build
+        run: |
+          mvn clean install -Pexperimental -Dcheckstyle.skip=true -Denforcer.skip=true
+
+      - name: Scan build output for errors and warnings
+        if: always()
+        run: |
+          echo "=== Scanning for ERROR and WARN messages ==="
+          if grep -ri "ERROR\|Exception" experimental/*/target/surefire-reports/*.txt 2>/dev/null; then
+            echo "::warning::Found ERROR or Exception messages in test output"
+          fi
+          if grep -ri "WARN" experimental/*/target/surefire-reports/*.txt 2>/dev/null | grep -v "EXPERIMENTAL"; then
+            echo "::warning::Found WARN messages in test output (excluding expected EXPERIMENTAL warnings)"
+          fi
+
+      - name: Upload test artifacts on failure
+        uses: actions/upload-artifact@v7
+        if: ${{ failure() && (steps.core_build.conclusion == 'failure' || steps.experimental_build.conclusion == 'failure') || cancelled() }}
+        with:
+          retention-days: 30
+          name: experimental-logs-jdk${{ inputs.jdk_version }}
+          path: |
+            **/*.*log*
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: warn
+
+      - name: Upload experimental test results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          retention-days: 7
+          name: experimental-test-results-jdk${{ inputs.jdk_version }}
+          path: |
+            experimental/**/target/surefire-reports/**
+            experimental/**/target/failsafe-reports/**
+          if-no-files-found: warn
