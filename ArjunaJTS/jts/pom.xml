@@ -229,11 +229,10 @@
                     <exclude>**/resources/**</exclude>
                     <exclude>**/utils/ResourceTrace.java</exclude>
                     <exclude>**/utils/Util.java</exclude>
-                    <exclude>**/TransactionTest2.java</exclude>
-                    <exclude>**/CheckedTransactions.java</exclude>
-                    <exclude>**/GridTest.java</exclude>
-                    <exclude>**/remote/**</exclude>
-                    <exclude>**/DefaultTimeout.java</exclude>
+                    <exclude>**/remote/grid/GridClient.java</exclude>
+                    <exclude>**/remote/servers/TranGridServer.java</exclude>
+                    <exclude>**/remote/transactionserver/TMClient.java</exclude>
+                    <exclude>**/remote/transactionserver/TMTest.java</exclude>
                   </excludes>
                   <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.boot.args}</argLine>
                   <reportsDirectory>${project.build.directory}/idlj-openjdk-surefire-reports</reportsDirectory>
@@ -245,6 +244,27 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!--
+        Stress tests are excluded from the default build because they can run until
+        OutOfMemoryError (TransactionTest2). Activate this profile to include them:
+        mvn test -Pstress-tests
+      -->
+      <id>stress-tests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/TransactionTest2.java</include>
+              </includes>
+            </configuration>
           </plugin>
         </plugins>
       </build>

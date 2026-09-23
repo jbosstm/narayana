@@ -9,6 +9,7 @@ package com.hp.mwtests.ts.jts.remote.servers;
 import static org.junit.Assert.fail;
 
 import com.hp.mwtests.ts.jts.utils.ServerORB;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arjuna.orbportability.ORB;
@@ -19,6 +20,7 @@ import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 public class TranGridServer
 {
+    @Ignore("Server-side component of a remote multi-JVM test. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {

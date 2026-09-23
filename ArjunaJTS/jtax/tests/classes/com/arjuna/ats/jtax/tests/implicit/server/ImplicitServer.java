@@ -10,6 +10,7 @@ package com.arjuna.ats.jtax.tests.implicit.server;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -19,6 +20,7 @@ import com.arjuna.orbportability.ORB;
 
 public class ImplicitServer
 {
+    @Ignore("Server-side component of a client/server test requiring a separate JVM. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {
