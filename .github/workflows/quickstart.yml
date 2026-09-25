@@ -1,0 +1,109 @@
+name: quickstart
+
+permissions: {}
+
+on:
+  workflow_call:
+    inputs:
+      jdk_version:
+        description: 'JDK version'
+        required: true
+        type: string
+      pull_request_repo:
+        description: 'Narayana repository to build (e.g. <gituser>/narayana)'
+        required: false
+        type: string
+        default: 'jbosstm/narayana'
+      pull_request_ref:
+        description: 'Narayana branch or commit to test'
+        required: true
+        type: string
+      environment_variables:
+        description: 'Environment variables (JSON object)'
+        required: false
+        type: string
+        default: '{}'
+
+# Only run the latest job
+concurrency:
+  group: 'quickstart @ ${{ github.workflow }} @ ${{ github.head_ref || github.ref }} @ jdk${{ inputs.jdk_version }}'
+  cancel-in-progress: true
+
+jobs:
+  quickstart-test:
+    name: Quickstart Tests (JDK ${{ inputs.jdk_version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Load Dynamic Environment Variables
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
+        env:
+          ENV_JSON: ${{ inputs.environment_variables }}
+        with:
+          script: |
+            const envs = JSON.parse(process.env.ENV_JSON);
+            for (const [key, value] of Object.entries(envs)) {
+              core.exportVariable(key, value);
+              core.info(`Set ${key}=${value}`);
+            }
+
+      - name: Log run context
+        env:
+          NARAYANA_REPO: ${{ inputs.pull_request_repo || 'jbosstm/narayana' }}
+          NARAYANA_BRANCH: ${{ inputs.pull_request_ref || 'main' }}
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Narayana repository: $NARAYANA_REPO"
+          echo "Narayana branch/ref: $NARAYANA_BRANCH"
+          echo "QUICKSTART_PR_NUMBER: ${QUICKSTART_PR_NUMBER:-not set}"
+
+      - name: Clone quickstart repository
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git clone https://github.com/jbosstm/quickstart.git quickstart
+          if [ -n "$QUICKSTART_PR_NUMBER" ]; then
+            if ! [[ "$QUICKSTART_PR_NUMBER" =~ ^[0-9]+$ ]]; then
+              echo "::error::QUICKSTART_PR_NUMBER must be numeric, got: '$QUICKSTART_PR_NUMBER'"
+              exit 1
+            fi
+            cd quickstart
+            git fetch origin "+refs/pull/$QUICKSTART_PR_NUMBER/head:refs/remotes/origin/pull/$QUICKSTART_PR_NUMBER/head"
+            git checkout "remotes/origin/pull/$QUICKSTART_PR_NUMBER/head"
+            git pull --rebase --ff-only origin main
+            cd ..
+          fi
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.jdk_version }}
+          cache: 'maven'
+          cache-dependency-path: quickstart/**/pom.xml
+
+      - name: Run quickstart tests
+        env:
+          NARAYANA_REPO: ${{ inputs.pull_request_repo || 'jbosstm/narayana' }}
+          NARAYANA_BRANCH: ${{ inputs.pull_request_ref || 'main' }}
+        run: |
+          # quickstart.sh expects NARAYANA_REPO as the GitHub org/user name only
+          # (it builds the clone URL as https://github.com/${NARAYANA_REPO}/narayana.git)
+          export NARAYANA_REPO="${NARAYANA_REPO%%/*}"
+          echo "Building narayana from: https://github.com/${NARAYANA_REPO}/narayana.git -b ${NARAYANA_BRANCH}"
+          cd quickstart
+          WORKSPACE=$(pwd) ./.github/scripts/quickstart.sh
+
+      - name: Upload logs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() || cancelled() }}
+        with:
+          retention-days: 30
+          name: quickstart-logs-jdk${{ inputs.jdk_version }}
+          path: |
+            quickstart/**/*.*log*
+            quickstart/**/target/*surefire-reports*/**
+            quickstart/**/target/*failsafe-reports*/**
+          if-no-files-found: warn
