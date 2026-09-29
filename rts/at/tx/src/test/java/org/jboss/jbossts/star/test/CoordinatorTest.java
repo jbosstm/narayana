@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
@@ -293,7 +292,7 @@ public class CoordinatorTest extends BaseTest {
 
     @Test
     public void testClientAPI() throws Exception {
-        Client client = ClientBuilder.newClient();
+        Client client = newClient();
 
         WebTarget resource = client.target(TXN_MGR_URL);
         Response response = resource.request(MediaType.APPLICATION_FORM_URLENCODED).post(Entity.entity(new Form(), MediaType.APPLICATION_FORM_URLENCODED_TYPE));
