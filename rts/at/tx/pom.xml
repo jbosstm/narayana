@@ -20,10 +20,10 @@
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- ssl debug: -Djavax.net.debug=ssl:handshake  http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Debug
-     -->
-    <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
-    <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
+    <!-- To exercise the tests over TLS run with -Drts.usessl=true (see run-tests.sh); the
+         server certificate is generated at runtime by TestSSLContext, so no keystore or
+         truststore system properties are needed. ssl handshake debugging:
+         -Djavax.net.debug=ssl:handshake -->
   </properties>
 
   <dependencyManagement>
@@ -142,6 +142,18 @@
       <artifactId>jakarta.transaction-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- Quarkus (quarkus-undertow test server, see BaseTest#startQuarkusApplication) -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Generates the self-signed certificate for the SSL tests at runtime (TestSSLContext) -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk18on</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -209,46 +221,6 @@
             </executions>
           </plugin>
         </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>ssl</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <!--
-                <argLine>${ssl.args} ${surefireArgLine}</argLine>
-                -->
-              <argLine>${ssl.args}</argLine>
-            </configuration>
-          </plugin>
-        </plugins>
-
-      </build>
-    </profile>
-    <profile>
-      <id>spdy</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <!--
-                <argLine>${spdy.args} ${surefireArgLine}</argLine>
-                -->
-              <argLine>${spdy.args}</argLine>
-            </configuration>
-          </plugin>
-        </plugins>
-
       </build>
     </profile>
   </profiles>

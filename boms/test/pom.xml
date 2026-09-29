@@ -402,6 +402,26 @@
         <version>${version.org.wildfly.core}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-resteasy</artifactId>
+        <version>${version.quarkus}</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.threads</groupId>
+            <artifactId>jboss-threads</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- Generates the self-signed certificate used by the REST-AT SSL tests at runtime
+           (see BaseTest / TestSSLContext) so no keystore needs to be committed to git. -->
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>${version.bouncycastle}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>

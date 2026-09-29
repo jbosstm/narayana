@@ -23,7 +23,7 @@ public class PerformanceTest extends BaseTest {
     // 2PC commit
     @Test
     public void measureThroughput() throws Exception {
-        String info = USE_SPDY ? "SPDY" : USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
+        String info = USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
         String metricName = getClass().getName() + "_measureThroughput_" + info;
 
         int callCount = 1000;
