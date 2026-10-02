@@ -21,6 +21,11 @@ on:
         required: false
         type: string
         default: '{}'
+      benchmarks:
+        description: 'JSON array of benchmark groups to run (default: all)'
+        required: false
+        type: string
+        default: '["stores", "comparisons", "rts", "transports", "journal"]'
 
 # Only run the latest job
 concurrency:
@@ -114,7 +119,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        benchmark: [stores, comparisons, rts, transports, journal]
+        benchmark: ${{ fromJSON(inputs.benchmarks) }}
 
     steps:
       - name: Load Dynamic Environment Variables
@@ -181,6 +186,21 @@ jobs:
         env:
           OVERRIDE_NARAYANA_VERSION: ${{ needs.build-narayana.outputs.narayana-version }}
         run: |
+          validate_numeric() {
+            local name="$1" value="$2"
+            if [ -n "$value" ] && ! [[ "$value" =~ ^[0-9]+$ ]]; then
+              echo "::error::$name='$value' is not a valid positive integer"
+              exit 1
+            fi
+          }
+          validate_numeric JMH_MEASUREMENT_TIME "$JMH_MEASUREMENT_TIME"
+          validate_numeric JMH_FORKS "$JMH_FORKS"
+          validate_numeric JMH_WARMUP_ITERATIONS "$JMH_WARMUP_ITERATIONS"
+          validate_numeric JMH_MEASUREMENT_ITERATIONS "$JMH_MEASUREMENT_ITERATIONS"
+          if [ -n "$JMH_MEASUREMENT_TIME" ] || [ -n "$JMH_FORKS" ] || [ -n "$JMH_WARMUP_ITERATIONS" ] || [ -n "$JMH_MEASUREMENT_ITERATIONS" ]; then
+            export JMHARGS="-r ${JMH_MEASUREMENT_TIME:-30} -f ${JMH_FORKS:-3} -wi ${JMH_WARMUP_ITERATIONS:-5} -i ${JMH_MEASUREMENT_ITERATIONS:-5} -foe true"
+            echo "Using custom JMHARGS: $JMHARGS"
+          fi
           cd performance
           WORKSPACE=$(pwd) ./.github/scripts/run-benchmark.sh "${{ matrix.benchmark }}"
 

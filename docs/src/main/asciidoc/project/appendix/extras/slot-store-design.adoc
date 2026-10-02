@@ -1,0 +1,390 @@
+= SlotStore Design
+
+== Layered Architecture
+
+[source]
+----
+ObjectStoreAPI (Uid, typeName)
+    |
+    v
+SlotStoreAdaptor -- creates SlotStoreKey(uid, typeName, OS_COMMITTED)
+    |
+    v
+SlotStore -- slotIdIndex: SlotStoreKey -> int slotIndex
+          -- freeList: available slot indices
+          -- packs SlotStoreKey + payload into each slot's byte[]
+    |
+    v
+BackingSlots -- write/read/clear by integer slot index
+    |
+    +-- JGroupsSlots:        cache.put(slots[slotIndex] -> ByteArrayKey, data)
+    +-- JGroupsRaftSlots:    cache.put(slotIndex -> Integer, data)
+----
+
+== SlotStore
+
+The SlotStore is a fixed-capacity store optimised for transaction logs where the
+maximum concurrent transaction count is bounded.
+
+=== Data Structures
+
+* `slotIdIndex` (ConcurrentHashMap<SlotStoreKey, Integer>): maps logical keys to
+  slot indices. This is the primary index that enables lookups.
+* `freeList` (ConcurrentLinkedDeque<Integer>): tracks which slot indices are
+  currently unoccupied and available for allocation.
+* `BackingSlots`: the pluggable backend - a simple fixed-size array of byte arrays
+  addressed by integer index.
+
+=== SlotStoreKey
+
+An immutable triple of (Uid, typeName, stateStatus). The typeName is normalised
+to start with "/". hashCode is based solely on the Uid (pre-computed). Equality
+checks all three fields.
+
+The SlotStoreAdaptor always creates keys with stateStatus = OS_COMMITTED - this
+store only supports committed state.
+
+=== Key Embedded in Data
+
+The SlotStoreKey is serialized into the slot data itself, prepended to the actual
+payload via packInto/unpackFrom. This eliminates the need for a separate index
+file - the index is always fully reconstructable from the slot contents alone.
+
+=== Startup Recovery
+
+The constructor scans all slots 0..numberOfSlots-1:
+
+* Empty slots (null or zero-length data) go on the freeList.
+* Occupied slots are validated by unpacking the complete record (SlotStoreKey +
+  payload). If both unpack successfully, the key is added to slotIdIndex. If
+  either unpack throws (corrupt header or truncated/malformed payload), the slot
+  is added to freeList and a warning is logged. A record that was never a valid
+  SlotStore record cannot be recovered, so freeing the slot avoids a permanent
+  capacity leak.
+
+Without full-record validation, getMatchingKeys() could expose entries that
+read() subsequently rejects, causing spurious failures in recovery scans.
+
+No separate index file is needed. refreshIndex() applies the same validation
+when rebuilding the index from a stale backing store.
+
+=== Index Refresh (Staleness Protocol)
+
+When the backing store is modified externally (e.g. via Raft replication), the
+in-memory index can become stale. The protocol:
+
+. The BackingSlots implementation sets a staleness flag (isIndexStale() returns
+  true) when it detects external changes - e.g. on Raft role change or
+  snapshot install.
+. SlotStore checks isIndexStale() before index-dependent operations:
+** read(): checks on cache miss (slotId == null) - avoids the refresh cost on
+   every read when the index is current.
+** getMatchingKeys(): checks unconditionally via refreshIndexIfStale().
+** getKnownTypes(): checks unconditionally via refreshIndexIfStale().
+. refreshIndex() re-scans all slots, rebuilds slotIdIndex and freeList, then
+  calls clearIndexStale() to acknowledge the refresh.
+
+This is a pull-based design: SlotStore polls the staleness flag lazily rather
+than receiving callbacks itself. The backing store implementation may use
+internal listeners (e.g. JGroupsRaftSlots registers a
+`ReplicatedStateMachine.Notification` listener) to detect external mutations
+and set its flag, but SlotStore is decoupled from that mechanism.
+
+=== Write-to-New-Slot Protocol
+
+Writes never overwrite in-place. Instead:
+
+. Poll a free slot from freeList (if none available, write fails).
+. Pack the SlotStoreKey + OutputObjectState into a single byte[].
+. Write data to the new slot via BackingSlots.write().
+. Update slotIdIndex - put() returns the old slot index if this key was
+  previously stored.
+. If there was an old slot: clear it in the backend, return it to freeList.
+
+This ensures atomicity: a crash mid-write leaves the old slot intact. The cost
+is that workloads with many concurrent transactions may need up to 2x the minimum
+number of slots (one for the old record, one for the new, until the old is freed).
+
+=== Remove
+
+. Remove from slotIdIndex first (so no concurrent reader can find it).
+. Clear the slot data in the backend.
+. Return the slot index to freeList.
+
+=== Failed Slot Recycling
+
+When a write or clear throws IOException and recycleFailedSlots is disabled, the
+slot is quarantined (lost until restart). With recycleFailedSlots enabled
+(default true), the slot is returned to freeList immediately instead. This
+prevents slot exhaustion under high-contention workloads (e.g. Raft timeout
+retries).
+
+The trade-off is that on restart, a recycled slot may still contain data from a
+failed write or from a previous record whose clear failed. The constructor
+validates the complete record (key + payload); if either part is malformed the
+slot is freed (with a warning) since a record that was never valid cannot be
+recovered. A valid leftover record may be a stale completed record or a
+partially accepted write. Recovery must re-evaluate its transaction status and
+idempotency before processing it.
+
+=== Constraints
+
+* Fixed capacity: numberOfSlots (default 256).
+* Fixed record size: bytesPerSlot (default 4096). Writes exceeding this throw
+  IOException.
+* No support for uncommitted state, hide/reveal, or two-phase commit at the
+  adaptor level (those methods throw "not implemented").
+
+== SlotStoreAdaptor
+
+Bridges the ObjectStoreAPI interface (Uid + typeName) to SlotStore:
+
+* allObjUids: uses getMatchingKeys with OS_UNKNOWN as a wildcard for state.
+* allTypes: reconstructs the full type hierarchy by stripping the leading "/",
+  splitting on "/" to skip empty segments, and progressively rejoining the
+  segments to produce each ancestor type.
+* fullCommitNeeded() returns false.
+* Uncommitted operations (read_uncommitted, write_uncommitted, commit_state,
+  hide_state, reveal_state) all throw "not implemented".
+
+== BackingSlots Interface
+
+Core methods plus optional lifecycle and staleness hooks:
+
+* init(config): one-time initialization.
+* write(slot, data, sync): store bytes at an integer index.
+* read(slot): retrieve bytes at an index (null if empty/cleared).
+* clear(slot, sync): remove data at an index.
+* stop(): release resources (default no-op).
+* isIndexStale(): returns true when the backing store may contain changes not
+  yet reflected in SlotStore's in-memory index. The default returns false, which
+  is correct for backends where all mutations go through SlotStore. Distributed
+  backends (e.g. JGroupsRaftSlots) override this to signal when externally
+  replicated data has arrived.
+* clearIndexStale(): called by SlotStore.refreshIndex() after the index has been
+  rebuilt. Implementations that set a staleness flag clear it here.
+
+The interface is deliberately minimal: a fixed-size array of byte arrays with
+optional sync semantics. All key-to-index mapping logic lives in the SlotStore
+layer above.
+
+== JGroupsSlots: Two Levels of Keys
+
+*Experimental feature*: init() requires
+JGroupsStoreEnvironmentBean.experimentalEnabled = true (default false) or it
+throws IOException. This is a code guard per the feature definition guide -
+callers must explicitly opt in.
+
+JGroupsSlots introduces a second level of keys because ReplCache needs
+serializable cache keys with proper equals/hashCode, but the SlotStore operates
+on integer indices.
+
+=== The Two Key Types
+
+[cols="1,2,2", options="header"]
+|===
+| Key
+| Purpose
+| Lives in
+
+| SlotStoreKey
+| Logical identity (Uid + typeName + status)
+| slotIdIndex map + embedded in data
+
+| ByteArrayKey
+| Physical cache key in ReplCache
+| ByteArrayKey[] slots array
+|===
+
+The `slots[]` array bridges them: `slotIdIndex` maps a SlotStoreKey to an
+integer slot index, and `slots[index]` maps that index to the ByteArrayKey used
+as the ReplCache lookup key:
+
+[source]
+----
+SlotStoreKey  --[slotIdIndex]-->  int index  --[slots[index]]-->  ByteArrayKey  --[cache]-->  byte[] data
+----
+
+=== ByteArrayKey
+
+A Serializable wrapper around byte[] providing proper equals/hashCode via
+Arrays.equals/Arrays.hashCode. Defensive copies in constructor and getter
+prevent mutation.
+
+=== Key Generation and Initialization
+
+During init():
+
+. Create the `slots` array with size = numberOfSlots.
+. Load existing keys from the cache's L2 local store
+  (cache.getL2Cache().getInternalMap().keySet()).
+. Assign each existing key to a slot position in iteration order (0, 1, 2, ...).
+. For remaining empty positions, generate new keys via
+  JGroupsSlotKeyGenerator.generateUniqueKey(index).
+  The default generator uses new Uid().getBytes() wrapped in a ByteArrayKey,
+  producing globally unique identifiers.
+. If WAL (write-ahead log) is enabled, loadFromWAL() restores data into the cache
+  for slots where the cache does not already have data (avoiding overwriting newer
+  replicated data with stale WAL entries). JGroups ReplCache is purely in-memory
+  - it replicates data across cluster members but has no built-in persistence.
+  The WAL provides crash recovery for JGroupsSlots by logging writes to disk via
+  the Artemis journal.
+
+If there are more existing keys in the cache than configured slots, init() throws
+an IOException ("too few slots").
+
+=== Limitation: Per-Node Key Divergence
+
+When two nodes both initialize with empty caches, each generates independent
+ByteArrayKey values via `new Uid()`. A write on node A replicates to node B's
+cache under node A's key, but node B's `slots[]` holds a different key for that
+index, so `read(slotIndex)` returns null. JGroupsSlots does not override
+`isIndexStale()`, so there is no trigger for SlotStore to re-scan.
+
+*Impact*: a running node cannot recover transactions that originated on another
+node unless it restarts first. If node A crashes while holding in-doubt
+transactions, node B cannot perform cross-node recovery until its JGroupsSlots is
+re-initialized. Crash recovery itself is unaffected: on restart, `cache.start()`
+synchronizes replicated state before `load()` runs, so the restarted node's
+`slots[]` picks up the surviving keys correctly.
+
+*Mitigation*: supply a deterministic `JGroupsSlotKeyGenerator` that produces the
+same ByteArrayKey sequence on every node (e.g. derived from the slot index), or
+use `JGroupsRaftSlots` instead, which eliminates the problem by using
+`ReplicatedStateMachine<Integer, byte[]>` where the slot index is the cache key
+directly.
+
+=== Key Persistence Across Restarts
+
+ByteArrayKeys are NOT persisted separately. On restart they are recovered from:
+
+* the cache's own replicated state (other cluster members).
+* the WAL (if enabled), which stores each record's original ByteArrayKey
+  alongside its data. On recovery, loadFromWAL() uses putIfAbsent with the
+  persisted key to restore data only where the cache does not already have it.
+  The slot index in the WAL is the original position, but after restart the
+  same key may occupy a different slot because cache iteration order is
+  non-deterministic. loadFromWAL() rebases the WAL index to match the new
+  slot assignment so that the WAL's slot-to-data mapping stays consistent with
+  the current slots[] layout.
+
+=== Read/Write/Clear
+
+* write(slot, data, sync): WAL first (if enabled), because it's write-ahead,
+  then cache.put(slots[slot], data, replicationCount, 0).
+* read(slot): cache.get(slots[slot]), falls back to WAL if cache returns null.
+* clear(slot, sync): delete from WAL, then remove from both cache and L2 cache.
+
+=== Write-Ahead Log (SlotJournal)
+
+The WAL uses Apache Artemis Journal (append-only log) for crash recovery.
+
+Record format:
+
+[source]
+----
+[FORMAT_MARKER (4 bytes)] [slotId (4 bytes)] [keyLen (4 bytes)] [key (K bytes)] [data length (4 bytes)] [data (N bytes)]
+----
+
+* FORMAT_MARKER: a fixed negative integer (-1) that distinguishes the current
+  format from legacy records. On replay, records with an unrecognised marker are
+  skipped.
+* key: the raw bytes of the ByteArrayKey used as the ReplCache cache key at
+  write time. Persisting the key alongside the data allows loadFromWAL() to
+  restore the original cache entry with the correct key, even when slots[] has
+  been reassigned after a restart.
+
+In-memory state:
+
+* slotToRecordId (Map<Integer, Long>): slot index to journal record ID.
+* slotData (Map<Integer, byte[]>): in-memory cache of slot contents.
+* slotKeys (Map<Integer, ByteArrayKey>): the original cache key persisted with
+  each slot's WAL entry, used by loadFromWAL() for putIfAbsent lookups.
+
+On startup, all committed records are replayed to populate all three maps. Uses
+journal.replaceableRecord() so updates replace records in-place rather than
+appending new + deleting old.
+
+The design of the WAL is inspired by the existing HornetqJournalStore.
+
+== JGroupsRaftSlots: Simplified Key Model
+
+*Experimental feature*: init() requires
+JGroupsRaftStoreEnvironmentBean.experimentalEnabled = true (default false)
+otherwise it throws IOException.
+
+Uses org.jgroups.raft.blocks.ReplicatedStateMachine<Integer, byte[]> - where
+the slot index _is_ the cache key. This eliminates:
+
+* The ByteArrayKey[] slots array that JGroupsSlots requires.
+* The JGroupsSlotKeyGenerator abstraction.
+* The indirection layer between integer index and cache key.
+
+=== How It Works
+
+* write(slot, data, sync): cache.put(slotId, data). Blocks until a majority of
+  Raft nodes commit the write. The sync parameter is ignored because the Raft
+  protocol inherently ensures consistency.
+* read(slot): cache.get(slotId). When allowDirtyReads is true (not the default),
+  reads are served from the local state machine copy. When false, reads are
+  forwarded to the Raft leader for a consistent view.
+* clear(slot, sync): cache.remove(slotId). Goes through Raft consensus.
+
+=== Startup and Recovery
+
+Raft's own persistent log (FileBasedLog) handles all persistence. On
+channel.connect(), the Raft log is replayed into the state machine, restoring all
+slot data automatically. The SlotStore constructor then reads each slot and
+rebuilds slotIdIndex from the embedded SlotStoreKeys as usual.
+
+=== Leader Election
+
+waitForLeaderElection() blocks during init() because the SlotStore constructor
+will immediately read all slots. Reads require a functioning cluster with an
+elected leader. Polls every 50ms up to raftElectionMaxInterval (default 500ms).
+
+=== Index Staleness
+
+JGroupsRaftSlots overrides isIndexStale() and clearIndexStale() to signal when
+Raft-replicated data may have arrived without going through SlotStore.write().
+
+A `volatile boolean indexStale` flag is set to true in three places:
+
+. *Notification listener*: registered via
+  `cache.addNotificationListener(...)`. The put and remove callbacks set
+  `indexStale = true` for mutations not in `pendingLocalWrites` — a
+  `ConcurrentHashMap`-backed set of slot IDs currently being written or
+  cleared by this node's `SlotStore`. Local writes are excluded because
+  `SlotStore.write()` and `remove()` update `slotIdIndex` and `freeList`
+  themselves; an unnecessary `indexStale = true` would let a concurrent read
+  trigger `refreshIndex()` mid-write. Writes originating from other nodes
+  (replicated via Raft or forwarded via REDIRECT) are not in the set, so
+  their notifications correctly mark the index stale.
+. *Role change listener*: `raft.addRoleListener(role -> indexStale = true)`.
+  Registered in both the standard and pre-configured init paths. When a
+  follower is promoted to leader, the new leader's SlotStore index may be
+  missing entries that were written by the old leader and replicated via Raft.
+. *Snapshot install*: The ReplicatedStateMachine subclass overrides
+  `readContentFrom()` to set `indexStale = true` after
+  `super.readContentFrom()`. A snapshot replaces the entire state machine
+  contents, so the index must be rebuilt.
+
+The flag is cleared by `clearIndexStale()` after SlotStore.refreshIndex() runs.
+
+*Race window*: if a replicated mutation sets `indexStale = true` while
+`refreshIndex()` is already scanning, `clearIndexStale()` at the end of the
+scan clears the flag even though the mutation may have arrived after its slot
+was read. The index remains stale until the next notification, role change, or
+snapshot install re-sets the flag. In practice this is self-correcting: the
+next replicated mutation triggers another refresh. The only scenario where the
+stale index persists is if the missed mutation is the last one before the
+cluster goes idle — and even then, a role change (e.g. leader crash) re-sets
+the flag, triggering a full refresh before any subsequent `read()`,
+`getMatchingKeys()`, or `getKnownTypes()` call on the promoted node.
+
+=== Pre-configured Channel
+
+JGroupsRaftStoreEnvironmentBean allows injecting a pre-built JChannel and
+ReplicatedStateMachine. This is needed for testing multi-node scenarios where
+all nodes must form a cluster (and elect a leader) before any individual node's
+RecoveryStore singleton can be created.

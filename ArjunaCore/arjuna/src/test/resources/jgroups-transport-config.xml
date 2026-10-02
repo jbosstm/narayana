@@ -1,0 +1,36 @@
+
+<!--
+  Default stack using IP multicasting. It is similar to the "udp"
+  stack in stacks.xml, but doesn't use streaming state transfer and flushing
+  author: Bela Ban
+-->
+<config xmlns="urn:org:jgroups"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
+    <!--
+      pull in a complete JGroups protocol stack from a bundled XML file.
+      ${transport-config:udp-default.xml} means "resolve the system property transport-config; if unset, fall back to
+      udp-default.xml" (which is located the JGroups JAR) and defines the standard UDP multicast transport
+      (UDP protocol with default bind address, ports, thread pools, etc.).
+    -->
+    <include file="${transport-config:udp-default.xml}" />
+    <RED/>
+    <PING />
+    <MERGE3 max_interval="30s"
+            min_interval="10s"/>
+    <FD_SOCK2/>
+    <FD_ALL3/>
+    <VERIFY_SUSPECT2 timeout="1.5s"  />
+    <BARRIER />
+    <pbcast.NAKACK2 xmit_interval="0.5s"/>
+    <UNICAST3 xmit_interval="0.5s" />
+    <pbcast.STABLE desired_avg_gossip="50s"
+                   max_bytes="4M"/>
+    <pbcast.GMS print_local_addr="true" join_timeout="1s"/>
+    <MFC max_credits="4M"
+         min_threshold="0.4"/>
+    <UFC max_credits="4M"
+             min_threshold="0.4"/>
+    <FRAG2 frag_size="60K"  />
+    <pbcast.STATE_TRANSFER />
+</config>
