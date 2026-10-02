@@ -290,6 +290,10 @@ function jta_as_tests {
 }
 
 function rts_tests {
+  echo "#0. REST-AT Unit Test (Undertow and Quarkus servers)"
+  ./rts/at/tx/run-tests.sh -fae $CODE_COVERAGE_ARGS "$@"
+  [ $? -eq 0 ] || fatal "REST-AT Unit Test failed"
+
   echo "#0. REST-AT Integration Test"
   ./build.sh -f rts/at/integration/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "REST-AT Integration Test failed"

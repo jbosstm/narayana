@@ -184,6 +184,7 @@
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
+    <version.bouncycastle>1.81</version.bouncycastle>
     <version.com.github.spotbugs.spotbugs-maven-plugin>4.10.4.1</version.com.github.spotbugs.spotbugs-maven-plugin>
 
     <version.doxia>1.11.1</version.doxia>
@@ -202,8 +203,7 @@
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.9.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.resteasy>6.2.19.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nxrm3.plugin>1.0.13</version.org.sonatype.plugins.nxrm3.plugin>
-    <version.quarkus-bom>3.0.1.Final</version.quarkus-bom>
-    <version.quarkus-maven-plugin>3.0.1.Final</version.quarkus-maven-plugin>
+    <version.quarkus>3.20.1</version.quarkus>
     <version.sortpom>4.0.0</version.sortpom>
     <version.wildfly-maven-plugin>4.1.0.Final</version.wildfly-maven-plugin>
 

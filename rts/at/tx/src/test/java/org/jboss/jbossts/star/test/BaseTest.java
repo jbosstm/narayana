@@ -18,10 +18,6 @@ import java.util.concurrent.Future;
 import javax.net.ssl.SSLContext;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.provider.HttpResponseMapper;
-import org.jboss.jbossts.star.provider.NotFoundMapper;
-import org.jboss.jbossts.star.provider.TMUnavailableMapper;
-import org.jboss.jbossts.star.provider.TransactionStatusMapper;
 import org.jboss.jbossts.star.service.Coordinator;
 import org.jboss.jbossts.star.service.TMApplication;
 import org.jboss.jbossts.star.util.HttpConnectionCreator;
@@ -33,8 +29,6 @@ import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
-import org.jboss.resteasy.spi.Registry;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +41,11 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 
+import io.quarkus.runtime.QuarkusApplication;
 import io.undertow.Undertow;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HEAD;
@@ -56,6 +53,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.SeBootstrap;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
@@ -67,13 +65,15 @@ public class BaseTest {
     protected static final Logger log = Logger.getLogger(BaseTest.class);
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
-    protected static boolean USE_NETTY = false;
-    protected static boolean USE_UNDERTOW = true;
-// jarkarta TODO jersey    private static HttpServer grizzlyServer;
-    protected static final String USE_SPDY_PROP = "rts.usespdy";
+    // select the embedded server used by the tests: "undertow" (default), "quarkus" or "netty"
+    protected static final String SERVER_PROP = "rts.server";
+    protected static final String SERVER = System.getProperty(SERVER_PROP, "undertow");
+    protected static boolean USE_NETTY = "netty".equals(SERVER);
+    protected static boolean USE_UNDERTOW = "undertow".equals(SERVER);
+    protected static boolean USE_QUARKUS = "quarkus".equals(SERVER);
+    // run the tests over TLS with -Drts.usessl=true; the certificate is generated at runtime
     protected static final String USE_SSL_PROP = "rts.usessl";
-    protected static final boolean USE_SPDY = Boolean.getBoolean(USE_SPDY_PROP);
-    protected static final boolean USE_SSL = Boolean.getBoolean(USE_SSL_PROP) || USE_SPDY;
+    protected static final boolean USE_SSL = Boolean.getBoolean(USE_SSL_PROP);
     protected static String SCHEME = USE_SSL ? "https" : "http";
 
     protected static final int PORT = 58081;
@@ -84,8 +84,10 @@ public class BaseTest {
     protected static final String PURL_NO_RESPONSE = PURL + "/" + NO_RESPONSE_SEGMENT;
     protected static String TXN_MGR_URL = SURL + "tx/transaction-manager";
     private static NettyJaxrsServer netty = null;
-// jakarta TODO    private static SelectorThread threadSelector = null;
     private static UndertowJaxrsServer undertow;
+    private static UndertowJaxrsServer quarkusServer;
+    // certificate + SSLContexts generated once per JVM when the tests run over TLS
+    private static TestSSLContext testSSLContext;
     protected static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
     }
@@ -93,29 +95,62 @@ public class BaseTest {
     protected static void startUndertow(Class<?> ... classes) throws Exception {
         undertow = new UndertowJaxrsServer();
 
-        undertow.start(Undertow.builder().addHttpListener(PORT, "localhost"));
+        undertow.start(undertowBuilder());
 
         undertow.deploy(new TMApplication(classes));//, SURL + "tx/");
 
-        System.out.printf("server is ready:");
+        log.info("Undertow server is ready");
 
+    }
+
+    protected static void startQuarkusApplication(Class<?> ... classes) throws Exception {
+        QuarkusApplication quarkusApplication = new QuarkusApplication() {
+            @Override
+            public int run(String... args) {
+                quarkusServer = new UndertowJaxrsServer();
+                // create a deployment object and add our REST endpoint class to it
+                quarkusServer.start(undertowBuilder());
+                quarkusServer.deploy(new TMApplication(classes));//, SURL + "tx/");
+                log.info("Quarkus (undertow) server is ready");
+                return 0;
+            }
+        };
+        quarkusApplication.run();
+    }
+
+    // an Undertow listener on PORT, HTTPS with the generated certificate when USE_SSL, else plain HTTP
+    private static Undertow.Builder undertowBuilder() {
+        Undertow.Builder builder = Undertow.builder();
+
+        if (USE_SSL)
+            builder.addHttpsListener(PORT, "localhost", testSSLContext.serverContext());
+        else
+            builder.addHttpListener(PORT, "localhost");
+
+        return builder;
     }
 
     protected static void startRestEasy(Class<?> ... classes) throws Exception {
         netty = new NettyJaxrsServer();
         netty.setPort(PORT);
-        netty.start();
-        Registry registry = netty.getDeployment().getRegistry();
-        ResteasyProviderFactory factory = netty.getDeployment().getDispatcher().getProviderFactory();
+        // deploy through TMApplication so the coordinator, the JAX-RS providers and the
+        // RESTAT_RECORD record type get registered the same way as the other servers
+        netty.getDeployment().setApplication(new TMApplication(classes));
 
-        if (classes != null)
-            for (Class<?> clazz : classes)
-                registry.addPerRequestResource(clazz);
+        if (USE_SSL) {
+            // NettyJaxrsServer only wires up TLS when it is started from a configuration whose
+            // protocol is HTTPS and that carries the SSLContext (see createChannelInitializer)
+            netty.start(SeBootstrap.Configuration.builder()
+                    .protocol("HTTPS")
+                    .host("localhost")
+                    .port(PORT)
+                    .sslContext(testSSLContext.serverContext())
+                    .build());
+        } else {
+            netty.start();
+        }
 
-        factory.registerProvider(TMUnavailableMapper.class);
-        factory.registerProvider(TransactionStatusMapper.class);
-        factory.registerProvider(HttpResponseMapper.class);
-        factory.registerProvider(NotFoundMapper.class);
+        log.info("Netty server is ready");
     }
 
     public static Future<String> submitJob(Callable<String> job) {
@@ -126,65 +161,43 @@ public class BaseTest {
         executor.submit(job);
     }
 
-/* TODO do we want to support grizzly with jakarta
-    protected static void startJersey(String packages) throws Exception {
-        final Map<String, String> initParams = new HashMap<String, String>();
+    /**
+     * Create a JAX-RS client that can talk to the embedded server. Over TLS the client is
+     * configured to trust the certificate generated by {@link TestSSLContext}.
+     */
+    protected static Client newClient() {
+        if (USE_SSL)
+            return ClientBuilder.newBuilder().sslContext(testSSLContext.clientContext()).build();
 
-        initParams.put("com.sun.jersey.config.property.packages", packages);
-        initParams.put(ServerProperties.PROVIDER_PACKAGES, packages);
-//        initParams.put(ServerProperties.PROVIDER_PACKAGES, Coordinator.class.getPackage().getName());
-
-        try {
-            if (USE_SSL) {
-                URI baseUri = UriBuilder.fromUri(SURL).build();
-                String trustStoreFile = System.getProperty("javax.net.ssl.trustStore");
-                String trustStorePswd = System.getProperty("javax.net.ssl.trustStorePassword");
-
-                if (trustStoreFile == null || trustStorePswd == null)
-                    throw new IllegalArgumentException("Please set SSL javax.net.ssl.trustStore and javax.net.ssl.trustStorePassword to use SPDY suppport");
-                grizzlyServer = SpdyEnabledHttpServer.create(baseUri, initParams, trustStoreFile, trustStorePswd, 50, USE_SPDY);
-            } else {
-               URI baseUri = UriBuilder.fromUri(SURL).build();
-//                threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
-
-                final ResourceConfig resourceConfig = new ResourceConfig();//Coordinator.class);
-                resourceConfig.packages("org.jboss.jbossts.star.service", "org.jboss.jbossts.star.provider", "org.jboss.jbossts.star.test");
-                grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(baseUri, resourceConfig);
-
-            }
-        } catch (IOException e) {
-            log.infof(e, "Error starting Grizzly");
-        }
+        return ClientBuilder.newClient();
     }
-*/
 
     public static void startContainer(String txnMgrUrl, String packages, Class<?> ... classes) throws Exception {
         TxSupport.setTxnMgrUrl(txnMgrUrl);
 
-        if (USE_SPDY)
-            TxSupport.setHttpConnectionCreator(new SpdyConnection());
+        if (USE_SSL) {
+            testSSLContext = TestSSLContext.create();
+            // route the test client through an SSLContext that trusts the generated certificate
+            TxSupport.setHttpConnectionCreator(new SslConnection(testSSLContext.clientContext()));
+        }
 
         if (USE_NETTY)
             startRestEasy(classes);
-        if (USE_UNDERTOW)
+        else if (USE_UNDERTOW)
             startUndertow(classes);
+        else if (USE_QUARKUS)
+            startQuarkusApplication(classes);
         else
-            throw new RuntimeException("Grizzly app server not supported with jakarta");
-//            startJersey(packages);
+            throw new RuntimeException("unknown server '" + SERVER + "'; use one of undertow, netty or quarkus");
     }
 
-    private static class SpdyConnection implements HttpConnectionCreator {
+    // HttpConnectionCreator that makes the test client trust the server's generated certificate
+    private static class SslConnection implements HttpConnectionCreator {
 
-        private javax.net.ssl.SSLSocketFactory sslSocketFactory;
+        private final javax.net.ssl.SSLSocketFactory sslSocketFactory;
 
-        SpdyConnection() {
-            try {
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(null, null, null);
-                sslSocketFactory = sslContext.getSocketFactory();
-            } catch (Exception e) {
-                throw new AssertionError(); // The system has no TLS. Just give up.
-            }
+        SslConnection(SSLContext sslContext) {
+            this.sslSocketFactory = sslContext.getSocketFactory();
         }
 
         @Override
@@ -269,18 +282,17 @@ public class BaseTest {
             undertow = null;
         }
 
+        if (quarkusServer != null) {
+            quarkusServer.stop();
+            quarkusServer = null;
+        }
+
         if (netty != null) {
             netty.stop();
             netty = null;
         }
-/* jakarta TODO do we want to support jersey
-        if (threadSelector != null) {
-            threadSelector.stopEndpoint();
-            threadSelector = null;
-        } else if (grizzlyServer != null) {
-            grizzlyServer.shutdownNow();
-        }
- */
+
+        testSSLContext = null;
     }
 
     @Before
