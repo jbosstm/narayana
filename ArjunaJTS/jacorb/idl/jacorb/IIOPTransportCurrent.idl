@@ -1,0 +1,24 @@
+#pragma prefix "jacorb.org"
+
+#include "TransportCurrent.idl"
+
+module org
+{
+  module jacorb
+  {
+    module transport
+    {
+      module iiop
+      {
+        local interface Current: transport::Current
+        {
+          long   remote_port () raises (NoContext);
+          string remote_host () raises (NoContext);
+          long   local_port () raises (NoContext);
+          string local_host () raises (NoContext);
+        };
+      };
+    };
+  };
+};
+

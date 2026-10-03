@@ -1,0 +1,505 @@
+
+147 There is a new media type to represent the status of a coordinator and its participants:
+148 application/txstatus, which supports a return type based on the scheme maintained at www.rest-
+149 star.org/... For example:
+    tx-status=TransactionActive
+=>txstatus=
+150
+    2.3.3 Client and transaction interactions
+151
+152 The transaction coordinator is represented by a URI. In the rest of this specification we shall
+153 assume it is http://www.fabrikam.com/transaciton-manager, but it could be any URI and its role
+154 need not be explicitly apparent within the structure of the URI.
+    2.3.3.1 Creating a transaction
+155
+156 Performing a POST on /transaction-manager with content as shown below will start a new
+157 transaction with a default timeout. A successful invocation will return 201 and the Location header
+158 MUST contain the URI of the newly created transaction resource, which we will refer to as
+159 transaction-coordinator in the rest of this specification. Two related URLs MUST also be returned,
+160 one for the terminator of the transaction to use (typically referred to as the client) and one used
+161 for registering durable participation in the transaction (typically referred to as the server).
+162 Although uniform URL structures are used in the examples, these linked URLs can be of arbitrary
+163 format.
+164
+    POST /transaction-manager HTTP/1.1
+165
+    From: foo@bar.com
+166
+    Content-Type: application/x-www-form-urlencoded
+167
+    Content-Length: 32
+168
+169
+170 The corresponding response would be:
+171
+    HTTP 1.1 201 Created
+172
+    Location: /transaction-coordinator/1234
+173
+    Link: /transaction-coordinator/1234/terminator;
+174
+    rel=”terminator”
+175
+    Link: /transaction-coordinator/1234/participant;
+176
+    rel=”durable participant”
+=> The link header rfc does not allow spaces in the rel attribute:
+=>    reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+=> I've gone for durableparticipant
+177
+178
+179 Performing a HEAD on /transaction-coordinator/1234 MUST return the same link information.
+180
+    HEAD /transaction-coordinator/1234 HTTP/1.1
+181
+    From: foo@bar.com
+182
+183
+    HTTP/1.1 200 OK
+184
+    Link: /transaction-coordinator/1234/terminator;
+185
+    rel=”terminator”
+186
+    Link: /transaction-coordinator/1234/participant;
+187
+    rel=”durable participant”
+188
+189
+190 Performing a POST on transaction-manager as shown below will start a new transaction with the
+191 specified timeout in milliseconds.
+192
+    POST /transaction-manager HTTP/1.1
+193
+    From: foo@bar.com
+194
+    Content-Type: application/x-www-form-urlencoded
+195
+    Content-Length: --
+196
+197
+    timeout=1000
+198
+199
+200 If the transaction is terminated because of a timeout, the resources representing the created
+201 transaction are deleted. All further invocations on the transaction-coordinator or any of its related
+202 URIs MAY return 410 if the implementation records information about transactions that have
+203 rolled back, (not necessary for presumed rollback semantics) but at a minimum MUST return 401.
+204 The invoker can assume this was a rollback.
+205
+206 Performing a GET on that /transaction-manager returns a list of all transaction coordinator URIs
+207 known to the coordinator (active and in recovery).
+=> (each URI is separated by a semi-colon character)
+=> I have assumed that the content type consumed is text/plain
+    2.3.3.2 Obtaining the transaction status
+208
+209 Performing a GET on /transaction-coordinator/1234 returns the current status of the transaction,
+210 as described later.
+211
+    GET /transaction-coordinator/1234 HTTP/1.1
+212
+    Accept: application/txstatus+xml
+=> there is no content sent with the request so restraining the Accept header is pointless
+213
+214
+215 With an example response:
+216
+    HTTP/1.1 200 OK
+217
+    Content-Length: --
+218
+    Content-Type: application/txstatus
+219
+220
+    tx-status=TransactionActive
+221
+222
+223 Performing a DELETE on any of the /transaction-coordinator URIs will return a 403.
+    2.3.3.3 Terminating a transaction
+224
+225 The client can PUT one of the following to /transaction-coordinator/1234/terminator in order to
+226 control the outcome of the transaction; anything else MUST return a 400. Performing a PUT as
+=> NOTE that JAX-RS does not support HTTP methods TRACE, CONNECT and PATCH and these will therefore return
+=> 404. Perhaps (instead of 400) it would be better to say:
+=> ... anything else MUST return a 404
+227 shown below will trigger the commit of the transaction. Upon termination, the resource and all
+228 associated resources are implicitly deleted. For any subsequent invocation then an
+229 implementation MAY return 410 if the implementation records information about transactions that
+230 have rolled back, (not necessary for presumed rollback semantics) but at a minimum MUST
+=>   "have rolled back" should read " have completed"
+231 return 401. The invoker can assume this was a rollback. In order for an interested party to know
+=> if the implementation does not record information about completed transactions then such a request
+=> MUST return 404 (since by definition it is no longer aware of the resource)
+232 for sure the outcome of a transaction then it MUST be registered as a participant with the
+233 transaction coordinator.
+234
+    PUT /transaction-coordinator/1234/terminator HTTP/1.1
+235
+    From: foo@bar.com
+236
+    Content-Type: application/txstatus
+237
+    Content-Length: --
+238
+239
+    tx-status=TransactionCommit
+=> strictly speaking this is not a status
+=> better would be to set the state to TransactionCommitted
+240
+241
+242 If the transaction no longer exists then an implementation MAY return 410 if the implementation
+243 records information about transactions that have rolled back, (not necessary for presumed
+244 rollback semantics) but at a minimum MUST return 401.
+245
+246 The state of the transaction MUST be Active for this operation to succeed. If the transaction is in
+247 an invalid state for the operation then the implementation MUST 403. Otherwise the
+248 implementation MAY return 200 or 202. In the latter case the Location header SHOULD contain a
+249 URI upon which a GET may be performed to obtain the transaction outcome. It is implementation
+250 dependent as to how long this URI will remain valid. Once removed by an implementation then
+251 410 MUST be returned.
+252
+253 The transaction may be told to rollback with the following PUT request:
+254
+    PUT /transaction-coordinator/1234/terminator HTTP/1.1
+255
+    From: foo@bar.com
+256
+    Content-Type: application/txstatus
+257
+    Content-Length: --
+258
+259
+    tx-status=TransactionRollback
+=> TransactionRollback is not a status - better would be TransactionRolledback
+260
+    2.3.4 Transaction context propagation
+261
+262 When making an invocation on a resource that needs to participate in a transaction, the server
+263 URI (e.g., /transaction-coordinator/1234) needs to be transmitted to the resource. How this
+264 happens is outside the scope of this specification. It may occur as additional payload on the initial
+265 request, or it may be that the client sends the context out-of-band to the resource.
+266
+267 Note, a server SHOULD only use the transaction coordinator URIs it is given directly and not
+268 attempt to infer any others. For example, an implementation MAY decide to give the server
+269 access to only the root transaction coordinator URI and the participant URI, preventing it from
+270 terminating the transaction directly.
+    2.3.5 Coordinator and participant interactions
+271
+272 Once a resource has the transaction URI, it can register participation in the transaction. The
+273 participant is free to use whatever URI structure it desires for uniquely identifying itself; in the rest
+274 of this specification we shall assume it is /participant-resource.
+    2.3.5.1 Enlisting a two-phase aware participant
+275
+276 A participant is registered with /transaction-coordinator using POST on the participant Link URI
+277 obtained when the transaction was created originally:
+278
+    POST /transaction-coordinator/1234/participant HTTP/1.1
+279
+    From: foo@bar.com
+280
+    Content-Type: application/x-www-form-urlencoded
+281
+    Content-Length: --
+282
+283
+    participant=/participant-resource/+
+284
+    terminator=/participant-resource/terminator
+=> use links for participant and terminator
+=> Link: /participant-resource; rel=”participant”
+=> Link: /participant-resource/terminator; rel=”terminator”
+285
+286
+287 Performing a HEAD on a registered participant URI MUST return the terminator reference, as
+288 shown below:
+289
+    HEAD /participant-resource HTTP/1.1
+290
+    From: foo@bar.com
+291
+292
+    HTTP/1.1 200 OK
+293
+    Link: /participant-resource/terminator;
+294
+    rel=”terminator”
+295
+296
+297 If the transaction is not Active then the implementation MUST return 403. If the implementation
+=> I am assuming not Active also includes the case where the committment protocol has started.
+298 has seen this participant URI before then it MUST return 400. Otherwise the operation is
+299 considered a success and the implementation MUST return 201 and MAY use the Location
+300 header to give a participant specific URI that the participant MAY use later during prepare or for
+301 recovery purposes. The lifetime of this URI is the same as /transaction-coordinator. In the rest of
+302 this specification we shall refer to this URI as /participant-recovery (not to be confused with the
+303 /participant-resource URI) although the actual format is implementation dependant.
+304
+    HTTP/1.1 201 Created
+305
+    Location: /participant-recovery/1234
+306
+307
+308 Note, in a subsequent draft we shall discuss how a participant can also register alternative
+309 terminator resources for the various operations used during the commit protocol. In this draft we
+310 assume that a uniform approach is used for all participants.
+    2.3.5.2 Enlisting a two-phase unaware participant
+=> Why bother - the two-phase unaware participant still needs to be aware of prepare and commit i.e. its
+=> not much diffent from the two-phase aware participant
+311
+312 In order for a participant to be enlisted with a transaction it MUST be transaction aware in order
+313 that it can fulfill the requirements placed on it to ensure data consistency in the presence of
+314 failures or concurrent access. However, it is not necessary that a participant be modified such
+315 that it has a terminator resource as outlined previously: it simply needs a way to tell the
+316 coordinator which resource(s) with which to communicate when driving the two-phase protocol.
+317 This type of participant will be referred to as Two-Phase Unaware, though strictly speaking such
+318 a participant or service does need to understand the protocol as mentioned earlier.
+319
+320 During enlistment a service MUST provide URIs for prepare, commit, rollback and OPTIONAL
+=> the MUST only applies if it is not a two-phase aware participant
+321 commit-one-phase:
+322
+    POST /transaction-coordinator/1234/participant HTTP/1.1
+323
+    From: foo@bar.com
+324
+    Content-Type: application/x-www-form-urlencoded
+325
+    Content-Length: --
+326
+327
+    participant=/participant-resource+
+328
+    prepare=/participant-resource/prepare+
+329
+    commit=/participant-resource/commit+
+330
+    rollback=/participant-resource/rollback
+331
+332
+333 Performing a HEAD on a registered participant URI MUST return these references, as shown
+334 below:
+335
+    HEAD /participant-resource HTTP/1.1
+336
+    From: foo@bar.com
+337
+338
+    HTTP/1.1 200 OK
+339
+    Link: /participant-resource/prepare; rel=”prepare”
+340
+    Link: /participant-resource/commit; rel=”commit”
+341
+    Link: /participant-resource/rollback; rel=”rollback”
+342
+343
+344 A service that registers a participant MUST therefore either define a terminator relationship for the
+345 participant or the relationships/resources needed for the two-phase commit protocol.
+    2.3.5.3 Obtaining the status of a participant
+346
+347 Performing a GET on the /participant-resource URL MUST return the current status of the
+348 participant in the same way as for the /transaction-coordinator URI discussed earlier. Determining
+349 the status of a participant whose URI has been removed is similar to that discussed for
+350 /transaction-coordinator.
+    2.3.5.4 Terminating a participant
+351
+352 The coordinator drives the participant through the two-phase commit protocol by sending a PUT
+353 request to the participant terminator URI provided during enlistment, with Prepare, Commit,
+354 Rollback or CommitOnePhase as the message content, i.e., requesting the state of the resource
+355 to be changed accordingly:
+356
+    PUT /participant-resource HTTP/1.1
+=> PUT /participant-resource/terminator HTTP/1.1
+357
+    From: foo@bar.com
+358
+    Content-Type: application/txstatus
+359
+    Content-Length: --
+360
+361
+    tx-status=TransactionPrepare
+=> TransactionPrepare is not a status - better would be TransactionPrepared
+362
+363
+364 If the operation is successful then the implementation MUST return 200. A subsequent GET on
+365 the URI will return the current status of the participant as described previously. It is not always
+366 necessary to enquire as to the status of the participant once the operation has been successful.
+367
+368 If the operation fails then the implementation MUST return 409. It is implementation dependant as
+369 to whether the /participant-resource or related URIs remain valid, i.e., an implementation MAY
+370 delete the resource as a result of a failure. Depending upon the point in the two-phase commit
+371 protocol where such a failure occurs the transaction MUST be rolled back. If the participant is not
+372 in the correct state for the requested operation, e.g., Prepare when it has been already been
+373 prepared, then the implementation MUST return 409.
+374
+375 If the transaction coordinator receives any response other than 200 for Prepare then the
+376 transaction MUST rollback.
+377
+378 Note, read-only MAY be modeled as a DELETE request from the participant to the coordinator
+379 using the URI returned during registration in the Location header, as mentioned previously, i.e.,
+380 /participant-recovery. If GET is used to obtain the status of the participant after a 200 response is
+381 received to the original PUT for Prepare then the implementation MUST return 410 if the
+382 participant was read-only.
+=> the participant only knows it is read-only after prepare is called so DELETE won't work.
+=> the coordinator needs to know whether the participant is read-only at prepare time otherwise
+=> it cannot optimise 2PC processing. Hence the spec needs a status code for the participant
+=> to report that it is read-only: TransactionReadOnly
+=>
+=> But note that performing DELETE (on this recovery URL) prior to prepare makes sense and corresponds to a
+=> participant leaving the transaction. It should Such a delete would also have the consequence of deleting the
+=> participant URL too.
+383
+384 The usual rules of heuristic decisions apply here (i.e., the participant cannot forget the choice until
+385 it is told to by the coordinator).
+386
+387 Performing a PUT on /participant-resource/terminator with Forget will cause the participant to
+388 forget any heuristic decision it made on behalf of the transaction. If the operation succeeds then
+=> why not use DELETE. Then we can completely do away with RPC like instructions to tell resources to
+=> perform actions, ie:
+=>• instead of TransactionPrepare: tell the participant to update its state to TransactionPrepared
+=>• instead of TransactionCommit: tell the recipient to update its state to TransactionCommitted
+=>• instead of TransactionRollback: tell the recipient to update its state to TransactionRolledback
+=>• instead of TransactionForget: DELETE the participant URL
+
+389 200 MUST be returned and the implementation MAY delete the resource. Any other response
+390 means the coordinator MUST retry.
+    2.3.6 Recovery
+391
+392 In general it is assumed that failed actors in this protocol, i.e., coordinator or participants, will
+393 recover on the same URI as they had prior to the failure. If that is not possible them these
+394 endpoints SHOULD return a 301 status code or some other way of indicating that the participant
+395 has moved elsewhere.
+396
+397 However, sometimes it is possible that a participant may crash and recover on a different URI,
+398 e.g., the original machine is unavailable, or that for expediency it is necessary to move recovery
+399 to a different machine. In that case it may be that transaction coordinator is unable to complete
+400 the transaction, even during recovery. As a result this protocol defines a way for a recovering
+401 server to update the information maintained by the coordinator on behalf of these participants.
+402
+403 If the implementation uses the /participant-recovery URI described previously then a GET on
+404 /participant-recovery will return the original participant URI supplied when the participant was
+405 registered.
+=> The reason for doing a GET is usually to get the terminator so this spec should return the same
+=> content as was used during participant enlistment, line 275, (otherwise it would take 2 requests to get the
+=> terminator, a GET followed by a HEAD request on the returned participant URI). The same comment
+=> applies to performing PUT on /participant-recovery
+406
+407 Performing a PUT on /participant-recovery will overwrite the old participant URI with the new one
+408 supplied. This will also trigger off a recovery attempt on the associated transaction using the new
+409 participant URI.
+410
+    PUT /participant-recovery/1234 HTTP/1.1
+411
+    From: foo@bar.com
+412
+    Content-Type: application/x-www-form-urlencoded
+413
+    Content-Length: --
+414
+415
+    new-address=URI
+=> As per the previous comment the returned content should be the same as that returned during
+=> participant enlistment, namely:
+=>    participant=/participant-resource/+
+=>    terminator=/participant-resource/terminator
+416
+    2.3.7 Pre- and post- two-phase commit processing
+417
+418 Most modern transaction processing systems allow the creation of participants that do not take
+419 part in the two-phase commit protocol, but are informed before it begins and after it has
+420 completed. They are called Synchronizations, and are typically employed to flush volatile
+421 (cached) state, which may be being used to improve performance of an application, to a
+422 recoverable object or database prior to the transaction committing.
+423
+424 This additional protocol is accomplished in this specification by supporting an additional two-
+425 phase commit protocol that enclosed the protocol we have already discussed. This will be termed
+426 the Volatile Two Phase Commit protocol, as the participants involved in it are not required to be
+427 durable for the purposes of data consistency, whereas the other protocol will be termed the
+428 Durable Two Phase Commit protocol. The coordinator MUST not record any durable information
+429 on behalf of Volatile participants.
+430
+431 In this case the Volatile prepare phase executes prior to the Durable prepare: only if this prepare
+432 succeeds will the Durable protocol be executed. If the Durable protocol completes then this MAY
+433 be communicated to the Volatile participants through the commit or rollback phases. However,
+434 because the coordinator does not maintain any information about these participants and the
+435 Durable protocol has completed, this SHOULD be a best-effort approach only, i.e., such
+436 participants SHOULD NOT assume they will be informed about the transaction outcome. If that is
+437 a necessity then they should register with the Durable protocol instead.
+438
+439 The Volatile protocol is identical to the Durable protocol described already. The only differences
+440 are as discussed below:
+441
+442      • It is an OPTIONAL protocol. An implementation that supports the protocol MUST show this
+443           when the transaction is created through a Link relationship: it returns an additional Linked
+444           resource whose relationship is defined as “volatile participant”. Services MUST use this
+445           URI when registering volatile participants.
+446      • There is no recovery associated with the Volatile protocol. Therefore the /participant-
+447           recovery URI SHOULD NOT be used by an implementation.
+448      • There can be no heuristic outcomes associated with the Volatile protocol.
+449      • An implementation MAY allow registration in the Volatile protocol after the transaction has
+450           been asked to terminate as long as the Durable protocol has not started.
+451      • There is no one-phase commit optimization for the Volatile protocol.
+
+    2.3.9 Statuses
+475
+476 Participants SHOULD return the following statuses by performing a GET on the appropriate
+477 /transaction-coordinator or participant URI:
+478      • TransactionRollbackOnly: the status of the endpoint is that it will roll back eventually.
+479      • TransactionRollingBack: the endpoint is in the process of rolling back.
+480      • TransactionRolledBack: the endpoint has rolled back.
+481      • TransactionCommitting: the endpoint is in the process of committing. This does not mean
+482          that the final outcome will be Committed.
+483      • TransactionCommitted: the endpoint has committed.
+484      • TransactionHeuristicRollback: all of the participants rolled back when they were asked to
+485          commit.
+486      • TransactionHeuristicCommit: all of the participants committed when they were asked to
+487          rollback.
+488      • TransactionHeuristicHazard: some of the participants rolled back, some committed and the
+489          outcome of others is indeterminate.
+490      • TransactionHeuristicMixed: some of the participants rolled back whereas the remainder
+491          committed.
+492      • TransactionPreparing: the endpoint is preparing.
+493      • TransactionPrepared: the endpoint has prepared.
+494      • TransactionActive: the transaction is active, i.e., has not begun to terminate.
+=> the participant needs to be able to indicate that it is read-only
+=>      • TransactionReadOnly: the transaction is read-only, i.e., the participant did not change any 
+=> transactional resources.
+495
+496 The following status values are sent by the endpoints such as the coordinator to participants in
+497 order to drive them through the two-phase commit state machine:
+498      • TransactionPrepare: the participant should attempt to prepare on behalf of the transaction.
+499      • TransactionCommit: the recipient should attempt to commit. If the recipient is a participant
+500          and there has been no prepare instruction then this is a one-phase commit.
+501      • TransactionRollback: the recipient should attempt to rollback.
+=>      • TransactionForget: the recipient should forget any heuristic.
+
+
+=> Previous comments:
+
+Section 2.3.4 and 2.3.5
+
+The text talks about propagating the transaction URI but should instead talk about propagating the URI for participating
+in the transaction ie the one returned in the link header when the transaction resource was created, namely:
+
+	Link: /transaction-coordinator/1234/participant;
+
+In Section 2.3.5.1 a participant enlists by giving the coordinator two URIs:
+	participant=/participant-resource/+
+	terminator=/participant-resource/terminator
+
+But later in Section 2.3.5.4 on terminating a participant the text is using the participant URI (eg line 357)
+instead of the terminator URI from line 285 (for a two-phase aware participant)
+or the rel=”prepare” link from line 329 (for a two-phase unaware participant).
+
+When enlisting a participant (using POST to create a resource) Line 299 says the implementation "MAY use the Location
+header ..." but the HTTP specification says that the implementation "SHOULD use the Location header ..."
+
+Section 2.3.8 on Checked transactions, though interesting, has no relevance to the specification and is best deleted.
+
+
+===============
+
+The link rel attribute can't contain spaces (replacing space with - is ok though). The grammer is:
+	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+

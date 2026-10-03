@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ -->
+<definitions 
+    xmlns:s="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://fabrikam123.com/wsba" 
+    targetNamespace="http://fabrikam123.com/wsba"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" 
+        targetNamespace="http://fabrikam123.com/wsba">
+      <s:complexType name="TestMessageType">
+        <s:sequence />
+      </s:complexType>
+      <s:element name="Response" type="tns:TestMessageType" />
+      <s:element name="Cancel" type="tns:TestMessageType" /> 
+      <s:element name="Exit" type="tns:TestMessageType" /> 
+      <s:element name="Fail" type="tns:TestMessageType" /> 
+      <s:element name="CannotComplete" type="tns:TestMessageType" /> 
+      <s:element name="ParticipantCompleteClose" type="tns:TestMessageType" /> 
+      <s:element name="CoordinatorCompleteClose" type="tns:TestMessageType" /> 
+      <s:element name="UnsolicitedComplete" type="tns:TestMessageType" /> 
+      <s:element name="Compensate" type="tns:TestMessageType" /> 
+      <s:element name="CompensationFail" type="tns:TestMessageType" /> 
+      <s:element name="ParticipantCancelCompletedRace" type="tns:TestMessageType" /> 
+      <s:element name="MessageLossAndRecovery" type="tns:TestMessageType" /> 
+      <s:element name="MixedOutcome" type="tns:TestMessageType" /> 
+    </s:schema>
+  </types>
+  <message name="Response">
+    <part name="parameters" element="tns:Response" />
+  </message>
+  <message name="Cancel">
+    <part name="parameters" element="tns:Cancel" />
+  </message>
+  <message name="Exit">
+    <part name="parameters" element="tns:Exit" />
+  </message>
+  <message name="Fail">
+    <part name="parameters" element="tns:Fail" />
+  </message>
+  <message name="CannotComplete">
+    <part name="parameters" element="tns:CannotComplete" />
+  </message>
+  <message name="ParticipantCompleteClose">
+    <part name="parameters" element="tns:ParticipantCompleteClose" />
+  </message>
+  <message name="CoordinatorCompleteClose">
+    <part name="parameters" element="tns:CoordinatorCompleteClose" />
+  </message>
+  <message name="UnsolicitedComplete">
+    <part name="parameters" element="tns:UnsolicitedComplete" />
+  </message>
+  <message name="Compensate">
+    <part name="parameters" element="tns:Compensate" />
+  </message>
+  <message name="CompensationFail">
+    <part name="parameters" element="tns:CompensationFail" />
+  </message>
+  <message name="ParticipantCancelCompletedRace">
+    <part name="parameters" element="tns:ParticipantCancelCompletedRace" />
+  </message>
+  <message name="MessageLossAndRecovery">
+    <part name="parameters" element="tns:MessageLossAndRecovery" />
+  </message>
+  <message name="MixedOutcome">
+    <part name="parameters" element="tns:MixedOutcome" />
+  </message>
+  <portType name="InitiatorPortType">
+    <operation name="Response">
+      <input name="Response" message="tns:Response" />
+    </operation>
+  </portType>
+  <portType name="ParticipantPortType">
+    <operation name="Cancel"> <!-- Scenario 1.1 -->
+      <input name="Cancel" message="tns:Cancel" />
+    </operation>
+    <operation name="Exit"> <!-- Scenario 1.2 -->
+      <input name="Exit" message="tns:Exit" />
+    </operation>
+    <operation name="Fail"> <!-- Scenario 1.3 -->
+      <input name="Fail" message="tns:Fail" />
+    </operation>
+    <operation name="CannotComplete"> <!-- Scenario 1.4 -->
+      <input name="CannotComplete" message="tns:CannotComplete" />
+    </operation>
+    <operation name="ParticipantCompleteClose"> <!-- Scenario 1.5 -->
+      <input name="ParticipantCompleteClose"
+             message="tns:ParticipantCompleteClose" />
+    </operation>
+    <operation name="CoordinatorCompleteClose"> <!-- Scenario 1.6 -->
+      <input name="CoordinatorCompleteClose"
+             message="tns:CoordinatorCompleteClose" />
+    </operation>
+    <operation name="UnsolicitedComplete"> <!-- Scenario 1.7 -->
+      <input name="UnsolicitedComplete" message="tns:UnsolicitedComplete" />
+    </operation>
+    <operation name="Compensate"> <!-- Scenario 1.8 -->
+      <input name="Compensate" message="tns:Compensate" />
+    </operation>
+    <operation name="CompensationFail"> <!-- Scenario 1.9 -->
+      <input name="CompensationFail"
+             message="tns:CompensationFail" />
+    </operation>
+    <operation name="ParticipantCancelCompletedRace"> <!-- Scenario 1.10 -->
+      <input name="ParticipantCancelCompletedRace"
+             message="tns:ParticipantCancelCompletedRace" />
+    </operation>
+    <operation name="MessageLossAndRecovery"> <!-- Scenario 1.11 -->
+      <input name="MessageLossAndRecovery" message="tns:MessageLossAndRecovery" />
+    </operation>
+    <operation name="MixedOutcome"> <!-- Scenario 1.12 -->
+      <input name="MixedOutcome" message="tns:MixedOutcome" />
+    </operation>
+  </portType>
+</definitions>
