@@ -1674,6 +1674,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_infinispan_config(@Cause() Throwable cause);
 
+	@Message(id = 12421, value = "Action id {0} still associated with thread ''{1}'' (state={2}) at commit", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_coordinator_BasicAction_74(Uid objectUid, String threadName, String threadState);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
