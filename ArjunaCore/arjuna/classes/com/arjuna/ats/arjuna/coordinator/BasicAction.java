@@ -3623,6 +3623,9 @@ public class BasicAction extends StateManager
 
                 if (isCommit) {
                     tsLogger.i18NLogger.warn_coordinator_BasicAction_57(get_uid());
+                    for (Thread t : _childThreads.values()) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_74(get_uid(), t.getName(), t.getState().toString());
+                    }
                 } else {
                     tsLogger.i18NLogger.warn_coordinator_BasicAction_58(get_uid());
 
