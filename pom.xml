@@ -203,7 +203,7 @@
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.9.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.resteasy>6.2.19.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nxrm3.plugin>1.0.13</version.org.sonatype.plugins.nxrm3.plugin>
-    <version.quarkus>3.20.1</version.quarkus>
+    <version.quarkus>3.40.1</version.quarkus>
     <version.sortpom>4.0.0</version.sortpom>
     <version.wildfly-maven-plugin>4.1.0.Final</version.wildfly-maven-plugin>
 
