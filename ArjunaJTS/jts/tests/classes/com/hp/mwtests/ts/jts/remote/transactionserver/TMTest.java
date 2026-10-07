@@ -9,6 +9,7 @@ package com.hp.mwtests.ts.jts.remote.transactionserver;
 
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.TransactionFactory;
@@ -28,6 +29,7 @@ public class TMTest
         theTest.test();
     }
     
+    @Ignore("Remote multi-JVM test requiring a separate transaction server. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arjuna.ats.jta.TransactionManager;
@@ -21,6 +22,7 @@ import com.arjuna.orbportability.ORB;
 
 public class ImplicitClient
 {
+    @Ignore("Client/server test requiring a separate server JVM. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {
