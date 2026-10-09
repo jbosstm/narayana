@@ -5,6 +5,7 @@
 package com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.logging.experimentalLogger;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.SlotStoreEnvironmentBean;
@@ -70,7 +71,7 @@ public class InfinispanSlots implements BackingSlots {
     public void init(SlotStoreEnvironmentBean slotStoreConfig) throws IOException {
         InfinispanStoreEnvironmentBean config;
 
-        tsLogger.i18NLogger.warn_infinispan_slot_store();
+        experimentalLogger.logger.warnf("Initializing experimental feature %s. Do not use in production.", InfinispanSlots.class.getSimpleName());
 
         if (slotStoreConfig instanceof InfinispanStoreEnvironmentBean) {
             config = (InfinispanStoreEnvironmentBean) slotStoreConfig;
