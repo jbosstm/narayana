@@ -10,6 +10,7 @@ package com.hp.mwtests.ts.jts.remote.transactionserver;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.omg.CORBA.IntHolder;
 import org.omg.CosTransactions.Control;
@@ -26,6 +27,7 @@ import com.hp.mwtests.ts.jts.orbspecific.resources.DistributedHammerWorker1;
 
 public class TMClient
 {
+    @Ignore("Client-side component of a remote multi-JVM test requiring an external transaction server. Belongs in /qa integration test suite.")
     @Test
     public void test() throws Exception
     {
