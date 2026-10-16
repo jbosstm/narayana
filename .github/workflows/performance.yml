@@ -21,6 +21,11 @@ on:
         required: false
         type: string
         default: '{}'
+      benchmarks:
+        description: 'JSON array of benchmark groups to run (default: all)'
+        required: false
+        type: string
+        default: '["stores", "comparisons", "rts", "transports", "journal"]'
 
 # Only run the latest job
 concurrency:
@@ -110,11 +115,12 @@ jobs:
     name: ${{ matrix.benchmark }} (JDK ${{ inputs.jdk_version }})
     needs: build-narayana
     runs-on: ubuntu-latest
+    timeout-minutes: 360
 
     strategy:
       fail-fast: false
       matrix:
-        benchmark: [stores, comparisons, rts, transports, journal]
+        benchmark: ${{ fromJSON(inputs.benchmarks) }}
 
     steps:
       - name: Load Dynamic Environment Variables
@@ -169,10 +175,17 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git clone https://github.com/jbosstm/performance.git performance
           if [ -n "$PERF_PR_NUMBER" ]; then
+            if ! [[ "$PERF_PR_NUMBER" =~ ^[0-9]+$ ]]; then
+              echo "::error::PERF_PR_NUMBER must be numeric, got: '$PERF_PR_NUMBER'"
+              exit 1
+            fi
             cd performance
-            git fetch origin +refs/pull/*/head:refs/remotes/origin/pull/*/head
+            git fetch origin "+refs/pull/$PERF_PR_NUMBER/head:refs/remotes/origin/pull/$PERF_PR_NUMBER/head"
             git checkout "remotes/origin/pull/$PERF_PR_NUMBER/head"
-            git pull --rebase --ff-only origin main
+            # Rebase explicitly: "git pull --rebase --ff-only" aborts once the PR branch and
+            # main have diverged, which is the normal case for a PR that is not up to date
+            git fetch origin main
+            git rebase origin/main
             cd ..
           fi
 
@@ -181,6 +194,31 @@ jobs:
         env:
           OVERRIDE_NARAYANA_VERSION: ${{ needs.build-narayana.outputs.narayana-version }}
         run: |
+          # These come from the PR description, so bound them. This job's timeout-minutes is
+          # the hard backstop; these limits reject settings that would clearly exceed that
+          # timeout, failing before the benchmark starts instead of occupying a runner until
+          # the timeout fires.
+          validate_numeric() {
+            local name="$1" value="$2" max="$3"
+            [ -n "$value" ] || return 0
+            # {1,9} keeps the value inside bash's integer range for the comparison below
+            if ! [[ "$value" =~ ^[0-9]{1,9}$ ]]; then
+              echo "::error::$name='$value' is not a valid positive integer"
+              exit 1
+            fi
+            if [ "$((10#$value))" -gt "$max" ]; then
+              echo "::error::$name='$value' exceeds the maximum allowed value of $max"
+              exit 1
+            fi
+          }
+          validate_numeric JMH_MEASUREMENT_TIME "$JMH_MEASUREMENT_TIME" 120
+          validate_numeric JMH_FORKS "$JMH_FORKS" 5
+          validate_numeric JMH_WARMUP_ITERATIONS "$JMH_WARMUP_ITERATIONS" 10
+          validate_numeric JMH_MEASUREMENT_ITERATIONS "$JMH_MEASUREMENT_ITERATIONS" 10
+          if [ -n "$JMH_MEASUREMENT_TIME" ] || [ -n "$JMH_FORKS" ] || [ -n "$JMH_WARMUP_ITERATIONS" ] || [ -n "$JMH_MEASUREMENT_ITERATIONS" ]; then
+            export JMHARGS="-r ${JMH_MEASUREMENT_TIME:-30} -f ${JMH_FORKS:-3} -wi ${JMH_WARMUP_ITERATIONS:-5} -i ${JMH_MEASUREMENT_ITERATIONS:-5} -foe true"
+            echo "Using custom JMHARGS: $JMHARGS"
+          fi
           cd performance
           WORKSPACE=$(pwd) ./.github/scripts/run-benchmark.sh "${{ matrix.benchmark }}"
 
