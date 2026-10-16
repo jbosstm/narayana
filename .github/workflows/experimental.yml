@@ -53,6 +53,8 @@ jobs:
         run: |
           rm -rf ~/.m2/repository/org/jboss/narayana
 
+      # Experimental modules depend on the main project artifacts, so the whole
+      # project is installed in the local repository first.
       - name: Build Narayana core (without experimental)
         id: core_build
         run: |
@@ -60,10 +62,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           mvn clean install -DskipTests -Dcheckstyle.skip=true -Denforcer.skip=true
 
+      # Builds and tests every module registered in experimental/pom.xml
       - name: Build experimental modules
         id: experimental_build
         run: |
-          mvn clean install -Pexperimental -Dcheckstyle.skip=true -Denforcer.skip=true
+          mvn clean install -f experimental/pom.xml -Dcheckstyle.skip=true -Denforcer.skip=true
 
       - name: Upload test artifacts on failure
         uses: actions/upload-artifact@v7

@@ -504,7 +504,7 @@
         <!-- NOT activated by default - must explicitly use -Pexperimental -->
       </activation>
       <modules>
-        <module>experimental/infinispan-store</module>
+        <module>experimental</module>
       </modules>
     </profile>
     <profile>

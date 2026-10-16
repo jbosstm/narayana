@@ -1,0 +1,46 @@
+name: Daily Job Experimental
+
+on:
+  schedule:
+    # runs daily at 02:00 UTC (offset from the main Daily Job)
+    - cron: "0 2 * * *"
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'jbosstm'
+    outputs:
+      recent_commits: ${{ steps.check.outputs.recent_commits }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check for commits in the last 24 hours
+        id: check
+        run: |
+          COUNT=$(git rev-list --count --since="24 hours ago" HEAD)
+          if [ "$COUNT" -gt 0 ]; then
+            echo "recent_commits=true" >> $GITHUB_OUTPUT
+          else
+            echo "recent_commits=false" >> $GITHUB_OUTPUT
+          fi
+
+  jdk25:
+    needs: check-commits
+    if: github.repository_owner == 'jbosstm' && needs.check-commits.outputs.recent_commits == 'true'
+    uses: ./.github/workflows/axes_selector.yml
+    with:
+      jdk_versions: '["25"]'
+      CORE: false
+      RTS: false
+      XTS: false
+      AS_TESTS: false
+      QA_JTA: false
+      QA_JTS_OPENJDKORB: false
+      JACOCO: false
+      DB_TESTS: false
+      PERFORMANCE: false
+      EXPERIMENTAL: true
