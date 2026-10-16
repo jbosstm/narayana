@@ -329,14 +329,15 @@ jobs:
               
               core.setOutput('environment_variables', JSON.stringify(extractedEnvVars));
 
-              // Parse BENCHMARKS=stores,journal (comma-separated list of benchmark groups)
+              // Parse BENCHMARKS=stores,journal (comma and/or space separated list of benchmark groups)
               const validBenchmarks = ['stores', 'comparisons', 'rts', 'transports', 'journal'];
-              // \S* rather than \S+ so that a bare "BENCHMARKS=" still matches and is rejected
-              // below, instead of falling through to the all-groups default
-              const benchmarkRegex = /\bBENCHMARKS=(\S*)/;
+              // Capture everything after the =, up to end of line or up to another KEY=value
+              // pair on the same line (e.g. "BENCHMARKS=stores,journal JMH_FORKS=1"), so a
+              // variable sharing the line with BENCHMARKS isn't swept into the benchmark list.
+              const benchmarkRegex = /\bBENCHMARKS=([^\r\n]*?)(?=\s+[A-Za-z_][A-Za-z0-9_]*=|[\r\n]|$)/;
               const benchmarkMatch = prBody.match(benchmarkRegex);
               if (benchmarkMatch) {
-                const benchmarkList = benchmarkMatch[1].split(',').map(s => s.trim()).filter(Boolean);
+                const benchmarkList = benchmarkMatch[1].replace(/[\r\n,]/g, ' ').split(/\s+/).filter(Boolean);
                 if (benchmarkList.length === 0) {
                   core.setFailed(`BENCHMARKS= is empty. Valid groups: ${validBenchmarks.join(', ')}`);
                   return;
