@@ -43,4 +43,5 @@ jobs:
       JACOCO: true
       DB_TESTS: true
       PERFORMANCE: true
+      EXPERIMENTAL: false
       enabled_databases: '["postgres","mysql","oracle","db2"]'
