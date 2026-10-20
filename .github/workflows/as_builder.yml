@@ -81,13 +81,13 @@ jobs:
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Set up JDK (${{ inputs.jdk_version }})
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -113,7 +113,7 @@ jobs:
           echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
 
       - name: Save Narayana Maven repository
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           compression-level: '0'
           retention-days: 1
@@ -126,7 +126,7 @@ jobs:
           echo "jboss_as_zip_name=${{ github.run_id }}-jboss-as-zip-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
 
       - name: Save jboss-as
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           retention-days: 1
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}

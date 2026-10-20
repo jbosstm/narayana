@@ -65,13 +65,13 @@ jobs:
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -101,7 +101,7 @@ jobs:
           echo "narayana-version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
 
       - name: Upload Narayana Maven artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: narayana-m2-jdk${{ inputs.jdk_version }}
           retention-days: 1
@@ -137,7 +137,7 @@ jobs:
             }
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -164,7 +164,7 @@ jobs:
           echo "mount:"; mount | grep -E 'ext[234]|xfs|btrfs' || true
 
       - name: Download Narayana Maven artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: narayana-m2-jdk${{ inputs.jdk_version }}
           path: ~/.m2/repository/org/jboss/narayana/
@@ -223,7 +223,7 @@ jobs:
           WORKSPACE=$(pwd) ./.github/scripts/run-benchmark.sh "${{ matrix.benchmark }}"
 
       - name: Upload logs
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.benchmark.conclusion == 'failure' || cancelled() && steps.benchmark.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -238,7 +238,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           retention-days: 30
           name: benchmark-${{ matrix.benchmark }}-results-jdk${{ inputs.jdk_version }}
@@ -261,7 +261,7 @@ jobs:
 
     steps:
       - name: Download all benchmark results
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           pattern: benchmark-*-results-jdk${{ inputs.jdk_version }}
           path: collected-results/
@@ -274,7 +274,7 @@ jobs:
           echo "==================================="
 
       - name: Upload combined results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           retention-days: 30
           name: performance-results-jdk${{ inputs.jdk_version }}
