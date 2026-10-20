@@ -55,13 +55,13 @@ jobs:
           echo "WildFly zip name: ${{ inputs.jboss_as_zip_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -73,13 +73,13 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download Narayana Maven repository
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
 
       - name: Download WildFly zip
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ inputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}
@@ -99,7 +99,7 @@ jobs:
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='-PcodeCoverage -Pfindbugs' JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 ${{ matrix.map.envVars }} ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -113,7 +113,7 @@ jobs:
             **/target/*failsafe-reports*/**
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ steps.jacoco_axis.conclusion == 'success' }}
         with:
           retention-days: 1
@@ -147,7 +147,7 @@ jobs:
           echo "Narayana artifacts: ${{ inputs.narayana_artifact_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
@@ -171,7 +171,7 @@ jobs:
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -183,7 +183,7 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download Narayana Maven repository
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
@@ -196,7 +196,7 @@ jobs:
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='codeCoverage' QA_TARGET=${{ matrix.qa_target }} QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -204,7 +204,7 @@ jobs:
           path: qa/testoutput
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ steps.jacoco_axis.conclusion == 'success' }}
         with:
           retention-days: 1
@@ -225,13 +225,13 @@ jobs:
           echo "Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -243,7 +243,7 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download All Raw Data
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           pattern: coverage-data-jdk${{ inputs.jdk_version }}-*
           merge-multiple: true
@@ -256,7 +256,7 @@ jobs:
 
           CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage" ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.code_coverage_generator.conclusion == 'failure' || cancelled() && steps.code_coverage_generator.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -271,7 +271,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload Final JaCoCo HTML Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: narayana-coverage-report
           path: code-coverage/target/coverage/

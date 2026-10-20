@@ -46,13 +46,13 @@ jobs:
           echo "WildFly zip name: ${{ inputs.jboss_as_zip_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -64,13 +64,13 @@ jobs:
           rm -rf ~/.m2/repository/org/wildfly
 
       - name: Download Narayana Maven repository
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ inputs.narayana_artifact_name }}
           path: ~/.m2/repository/org/jboss/narayana
 
       - name: Download WildFly zip
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ inputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}
@@ -89,7 +89,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=RTS ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.rts_axis.conclusion == 'failure' || cancelled() && steps.rts_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30

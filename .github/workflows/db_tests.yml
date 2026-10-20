@@ -71,7 +71,7 @@ jobs:
           echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
@@ -95,7 +95,7 @@ jobs:
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -121,7 +121,7 @@ jobs:
           cd ${{ github.workspace }}
           OBJECT_STORE_PROFILE=",${{ matrix.database }}-jdbc-store" NARAYANA_BUILD=1 NARAYANA_TESTS=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.narayana_db_tests.conclusion == 'failure' || cancelled() && steps.narayana_db_tests.conclusion == 'cancelled' }}
         with:
           retention-days: 30
@@ -185,7 +185,7 @@ jobs:
           echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
@@ -209,7 +209,7 @@ jobs:
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@v6.1.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: ${{ inputs.jdk_version }}
@@ -235,7 +235,7 @@ jobs:
           cd ${{ github.workspace }}
           QA_PROFILE="-Dprofile=${{ matrix.database }}" QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() && steps.db_tests_axis.conclusion == 'failure' || cancelled() && steps.db_tests_axis.conclusion == 'cancelled' }}
         with:
           retention-days: 30
