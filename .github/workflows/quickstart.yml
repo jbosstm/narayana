@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Load Dynamic Environment Variables
-        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
         env:
           ENV_JSON: ${{ inputs.environment_variables }}
@@ -100,7 +100,7 @@ jobs:
           WORKSPACE=$(pwd) ./.github/scripts/quickstart.sh
 
       - name: Upload logs
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ failure() || cancelled() }}
         with:
           retention-days: 30
