@@ -9,6 +9,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlotsPreferredEntryMergePolicy;
 import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.infinispan.Cache;
@@ -64,7 +65,8 @@ public class InfinispanConfigFromFileTest extends InfinispanTestBase {
         StoreConfiguration storeConfig = stores.get(0);
         ClusteringConfiguration clustering = cacheConfig.clustering();
 
-        assertEquals(MergePolicy.PREFERRED_ALWAYS, clustering.partitionHandling().mergePolicy());
+        Class<InfinispanSlotsPreferredEntryMergePolicy> mergePolicyClass = InfinispanSlotsPreferredEntryMergePolicy.class;
+        assertEquals(clustering.partitionHandling().mergePolicy().getClass().getName(), mergePolicyClass.getName());
         assertEquals(PartitionHandling.DENY_READ_WRITES, clustering.partitionHandling().whenSplit());
         assertEquals(CacheMode.DIST_SYNC, clustering.cacheMode());
         Assertions.assertFalse(storeConfig.shared());

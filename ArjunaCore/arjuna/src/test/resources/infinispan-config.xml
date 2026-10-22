@@ -16,15 +16,34 @@
                    stack="udp-stack"/>
 
         <distributed-cache name="clusteredObjectStore" mode="SYNC" remote-timeout="5000">
-            <!--        <groups enabled="false">
-                        <grouper class="LocationGrouper"/>
-                    </groups>-->
-            <partition-handling when-split="DENY_READ_WRITES" merge-policy="PREFERRED_ALWAYS"/>
+            <!-- With respect to partition tolerance and the CAP theorem, Consistency is preferred to Availability
+                 so block operations rather than risk serving stale or incorrect data.
+                 The merge-policy must not lose any writes and each policy has potential issues so specify a
+                 custom policy which logs the choice and alternatives.
+                 InfinispanSlotsPreferredEntryMergePolicy uses MergePolicy.PREFERRED_ALWAYS
+                 Since the implementation does not share local data, purge the data on startup and apply conflict
+                 resolution using MergePolicy.PREFERRED_ALWAYS (see InfinispanSlotsPreferredEntryMergePolicy).
+                 -->
+            <partition-handling when-split="DENY_READ_WRITES"
+                                merge-policy="com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlotsPreferredEntryMergePolicy"/>
+
+            <!-- Ininfispan uses MVCC to control when concurrent operations or transactions can see modifications made
+             to data entries by other threads. For data consistency the same value should be returned during a
+             transaction.
+            -->
+            <locking isolation="REPEATABLE_READ"/>
+
             <persistence passivation="false">
-                <file-store shared="false">
+                <!-- avoid ISPN000729 Non-shared stores must have purge-on-startup enabled when conflict resolution is
+                     configured. When a network partition happens (split-brain), Infinispan uses conflict resolution to
+                     merge data when the cluster heals. If a node restarts with a non-shared store, it might load old
+                     or stale data into memory from its local disk before it connects to the cluster. This stale data
+                     can break the conflict resolution logic or corrupt the cluster's state. To prevent this,
+                     Infinispan forces you to either wipe the local data on startup or use a shared store.
+                    -->
+                <file-store shared="false" purge="true">
                     <data path="infinispan-caches/data"/>
                     <index path="infinispan-caches/index"/>
-                    <!-- write through caches are the default (as opposed to <write-behind ...>) -->
                 </file-store>
             </persistence>
         </distributed-cache>

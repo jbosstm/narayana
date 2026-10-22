@@ -4,11 +4,11 @@
  */
 package com.hp.mwtests.ts.arjuna.objectstore.infinispan;
 
+import com.arjuna.ats.internal.arjuna.objectstore.slot.infinispan.InfinispanSlotsPreferredEntryMergePolicy;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ClusteringConfiguration;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.StoreConfiguration;
-import org.infinispan.conflict.MergePolicy;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.partitionhandling.PartitionHandling;
 import org.infinispan.persistence.sifs.configuration.SoftIndexFileStoreConfiguration;
@@ -55,8 +55,8 @@ public class InfinispanConfigTest extends InfinispanTestBase {
         assertEquals(1, stores.size());
         StoreConfiguration storeConfig = stores.get(0);
         ClusteringConfiguration clustering = cacheConfig.clustering();
-
-        assertEquals(MergePolicy.PREFERRED_ALWAYS, clustering.partitionHandling().mergePolicy());
+        Class<InfinispanSlotsPreferredEntryMergePolicy> mergePolicyClass = InfinispanSlotsPreferredEntryMergePolicy.class;
+        assertEquals(clustering.partitionHandling().mergePolicy().getClass().getName(), mergePolicyClass.getName());
         assertEquals(PartitionHandling.DENY_READ_WRITES, clustering.partitionHandling().whenSplit());
         assertEquals(CacheMode.DIST_SYNC, clustering.cacheMode());
         Assertions.assertFalse(storeConfig.shared());
