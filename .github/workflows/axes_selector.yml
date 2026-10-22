@@ -59,22 +59,15 @@ on:
         description: 'QUICKSTART testing axis'
         required: true
         type: boolean
-      postgres:
-        description: 'PostgreSQL will be used for the DB_TESTS testing axis.'
-        required: false
+      EXPERIMENTAL:
+        description: 'EXPERIMENTAL testing axis'
+        required: true
         type: boolean
-      mysql:
-        description: 'MySQL will be used for the DB_TESTS testing axis.'
+      enabled_databases:
+        description: 'JSON array of databases to use for the DB_TESTS testing axis (default: all).'
         required: false
-        type: boolean
-      oracle:
-        description: 'Oracle will be used for the DB_TESTS testing axis.'
-        required: false
-        type: boolean
-      db2:
-        description: 'DB2 will be used for the DB_TESTS testing axis.'
-        required: false
-        type: boolean
+        type: string
+        default: '["postgres","mysql","oracle","db2"]'
       pull_request_repo:
         description: 'Repository to check out'
         required: false
@@ -164,6 +157,10 @@ on:
         description: 'QUICKSTART testing axis'
         required: false
         type: boolean
+      EXPERIMENTAL:
+        description: 'EXPERIMENTAL testing axis'
+        required: false
+        type: boolean
       enabled_databases:
         description: 'The collection of databases to test against'
         required: false
@@ -201,6 +198,7 @@ jobs:
       DB_TESTS: ${{ steps.parse.outputs.DB_TESTS || steps.set-axes-inputs.outputs.DB_TESTS || inputs.DB_TESTS }}
       PERFORMANCE: ${{ steps.parse.outputs.PERFORMANCE || steps.set-axes-inputs.outputs.PERFORMANCE || inputs.PERFORMANCE }}
       QUICKSTART: ${{ steps.parse.outputs.QUICKSTART || steps.set-axes-inputs.outputs.QUICKSTART || inputs.QUICKSTART }}
+      EXPERIMENTAL: ${{ steps.parse.outputs.EXPERIMENTAL || steps.set-axes-inputs.outputs.EXPERIMENTAL || inputs.EXPERIMENTAL }}
       enabled_databases: ${{ steps.parse.outputs.enabled_databases || steps.set-axes-inputs.outputs.enabled_databases || inputs.enabled_databases }}
       jdk_versions: ${{ steps.parse.outputs.jdk_versions || steps.set-axes-inputs.outputs.jdk_versions || inputs.jdk_versions }}
       environment_variables: ${{ steps.parse.outputs.environment_variables || steps.set-axes-inputs.outputs.environment_variables || inputs.environment_variables }}
@@ -226,6 +224,20 @@ jobs:
           script: |
             const pr = context.payload.pull_request;
             const prBody = pr.body || '';
+
+            // Everything from the ignore marker onwards (the reference section of the PR
+            // template) is excluded, so the template's own instructions and examples
+            // (axis names, SPI_BRANCH=main, etc.) are never parsed as selections. If the
+            // marker is absent (e.g. a PR created from an older template), parse it all.
+            const IGNORE_MARKER = '<!-- ci-ignore-below -->';
+            const ignoreIdx = prBody.indexOf(IGNORE_MARKER);
+            const selectionText = ignoreIdx !== -1 ? prBody.slice(0, ignoreIdx) : prBody;
+            if (ignoreIdx !== -1) {
+              core.info('Ignoring the PR template reference section below the ci-ignore marker.');
+            } else {
+              core.info('No ci-ignore marker found; parsing the whole PR description.');
+            }
+
             const workflowAxes = [
               'CORE',
               'AS_TESTS',
@@ -236,11 +248,12 @@ jobs:
               'JACOCO',
               'DB_TESTS',
               'PERFORMANCE',
-              'QUICKSTART'
+              'QUICKSTART',
+              'EXPERIMENTAL'
             ];
             
             // Convert '! AXIS' to '!AXIS'
-            const processedBody = prBody.replace(/!\s+/g, '!');
+            const processedBody = selectionText.replace(/!\s+/g, '!');
             // Normalise description: replace newlines and commas with spaces and split the result into a set of tokens
             const tokens = new Set(processedBody.replace(/[\r\n,]/g, ' ').split(/\s+/));
 
@@ -292,7 +305,7 @@ jobs:
               
               // Matches JDK17, JDK21, etc.
               const jdkRegex = /\bJDK(17|21|25)\b/gi;
-              const matches = [...prBody.matchAll(jdkRegex)];
+              const matches = [...selectionText.matchAll(jdkRegex)];
               let jdk_versions = matches.map(m => parseInt(m[1], 10));
               if (jdk_versions.length === 0) {
                 jdk_versions = [25];
@@ -318,7 +331,7 @@ jobs:
               for (const varName of possibleEnvVars) {
                 // Matches "VAR=value" stopping at the first whitespace
                 const regex = new RegExp(`\\b${varName}=([^\\s]+)`);
-                const match = prBody.match(regex);
+                const match = selectionText.match(regex);
               
                 if (match) {
                   const value = match[1];
@@ -335,7 +348,7 @@ jobs:
               // pair on the same line (e.g. "BENCHMARKS=stores,journal JMH_FORKS=1"), so a
               // variable sharing the line with BENCHMARKS isn't swept into the benchmark list.
               const benchmarkRegex = /\bBENCHMARKS=([^\r\n]*?)(?=\s+[A-Za-z_][A-Za-z0-9_]*=|[\r\n]|$)/;
-              const benchmarkMatch = prBody.match(benchmarkRegex);
+              const benchmarkMatch = selectionText.match(benchmarkRegex);
               if (benchmarkMatch) {
                 const benchmarkList = benchmarkMatch[1].replace(/[\r\n,]/g, ' ').split(/\s+/).filter(Boolean);
                 if (benchmarkList.length === 0) {
@@ -362,6 +375,7 @@ jobs:
           SPI_BRANCH: ${{ inputs.SPI_BRANCH }}
           PERF_PR_NUMBER: ${{ inputs.PERF_PR_NUMBER }}
           QUICKSTART_PR_NUMBER: ${{ inputs.QUICKSTART_PR_NUMBER }}
+          ENABLED_DATABASES: ${{ inputs.enabled_databases }}
         with:
           script: |
             // Creates jdk_versions
@@ -382,18 +396,20 @@ jobs:
             core.setOutput('DB_TESTS', '${{ inputs.DB_TESTS }}');
             core.setOutput('PERFORMANCE', '${{ inputs.PERFORMANCE }}');
             core.setOutput('QUICKSTART', '${{ inputs.QUICKSTART }}');
+            core.setOutput('EXPERIMENTAL', '${{ inputs.EXPERIMENTAL }}');
             if (${{ inputs.DB_TESTS }}) {
-              // Creates enabled_databases
-              const selected_databases = [
-                ${{ inputs.postgres }} && 'postgres',
-                ${{ inputs.mysql }} && 'mysql',
-                ${{ inputs.oracle }} && 'oracle',
-                ${{ inputs.db2 }} && 'db2'
-              ].filter(Boolean);
-            
+              // enabled_databases is a JSON array string; validate it and fall back to all DBs if empty/invalid
+              const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
+              let selected_databases = [];
+              try {
+                selected_databases = JSON.parse(process.env.ENABLED_DATABASES || '[]')
+                  .filter(db => possibleDBs.includes(db));
+              } catch (e) {
+                core.info(`enabled_databases is not valid JSON: ${process.env.ENABLED_DATABASES}`);
+              }
+
               if (selected_databases.length === 0) {
-                const possibleDBs = ['postgres', 'mysql', 'oracle', 'db2'];
-                core.info(`No database has been selected. All possible databases will be activated: ${possibleDBs.join(', ')}`);
+                core.info(`No valid database has been selected. All possible databases will be activated: ${possibleDBs.join(', ')}`);
                 core.setOutput('enabled_databases', JSON.stringify(possibleDBs));
               } else {
                 core.setOutput('enabled_databases', JSON.stringify(selected_databases));
@@ -499,6 +515,19 @@ jobs:
     needs: axes_selector
     if: ${{ needs.axes_selector.outputs.QUICKSTART == 'true' }}
     uses: ./.github/workflows/quickstart.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
+
+  EXPERIMENTAL:
+    needs: axes_selector
+    if: ${{ needs.axes_selector.outputs.EXPERIMENTAL == 'true' }}
+    uses: ./.github/workflows/experimental.yml
     strategy:
       matrix:
         jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
