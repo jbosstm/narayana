@@ -497,6 +497,18 @@
     </plugins>
   </build>
   <profiles>
+    <!-- Experimental features profile - NOT activated by default -->
+    <profile>
+      <id>experimental</id>
+      <activation>
+        <property>
+          <name>experimental</name>
+        </property>
+      </activation>
+      <modules>
+        <module>experimental</module>
+      </modules>
+    </profile>
     <profile>
       <id>documentation</id>
       <activation>
