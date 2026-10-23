@@ -692,14 +692,14 @@ Only the `Resources` are automatically propagated to the parent transaction.
 
 [[_subtransaction_commit]]
 .Sub-transaction commit
-image::jts-sub-transaction_commit.png[]
+image::jts-subtransaction_commit.png[]
 
 <<_subtransaction_rollback>> illustrates the impact of a sub-transaction rolling back.
 Any registered resources are discarded, and all `SubtransactionAwareResources` are informed of the transaction outcome.
 
 [[_subtransaction_rollback]]
 .Sub-transaction rollback
-image::jts-sub-transaction_rollback.png[]
+image::jts-subtransaction_rollback.png[]
 
 <<_top_level_commit>> shows the activity diagram for committing a top-level transaction.
 sub-transactions within the top-level transaction which have also successfully committed propagate `SubtransactionAwareResources` to the top-level transaction.

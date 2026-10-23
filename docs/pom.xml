@@ -24,8 +24,8 @@
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <org.asciidoctor.asciidoctor-maven-plugin>3.2.0</org.asciidoctor.asciidoctor-maven-plugin>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.sortpom>3.2.0</version.sortpom>
     <skip.release>true</skip.release>
+    <version.sortpom>3.2.0</version.sortpom>
   </properties>
 
   <build>
@@ -59,7 +59,7 @@
               <attributes>
                 <!-- should double check how should be used -->
                 <source-highlighter>coderay</source-highlighter>
-                <toc>left</toc>
+                <toc>auto</toc>
                 <toclevel>2</toclevel>
                 <icons>font</icons>
                 <!-- should double check how should be used -->
