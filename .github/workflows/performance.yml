@@ -97,7 +97,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          ./build.sh -B -Pcommunity -DskipTests clean install
+          ./build.sh -B -Pcommunity -Dexperimental -DskipTests clean install
           echo "narayana-version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
 
       - name: Upload Narayana Maven artifacts
