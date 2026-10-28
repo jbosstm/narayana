@@ -105,7 +105,7 @@ on:
     inputs:
       jdk_versions:
         description: 'JDK versions'
-        required: true
+        required: false
         type: string
         default: '["25"]'
       pull_request_repo:
@@ -118,7 +118,7 @@ on:
         type: string
       CORE:
         description: 'CORE testing axis'
-        required: true
+        required: false
         type: boolean
         default: true
       RTS:
@@ -211,10 +211,16 @@ jobs:
       - name: Extract PR metadata
         id: set-pr-data
         if: ${{ github.event_name == 'pull_request' }}
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_REF: ${{ github.event.pull_request.head.ref }}
+          PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
-          echo 'pr_number=${{ github.event.pull_request.number }}' >> $GITHUB_OUTPUT
-          echo 'pr_ref=${{ github.event.pull_request.head.ref }}' >> $GITHUB_OUTPUT
-          echo 'pr_repo=${{ github.event.pull_request.head.repo.full_name }}' >> $GITHUB_OUTPUT
+          {
+            echo "pr_number=$PR_NUMBER"
+            echo "pr_ref=$PR_REF"
+            echo "pr_repo=$PR_REPO"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Parse PR description
         id: parse
@@ -435,17 +441,136 @@ jobs:
       needs.axes_selector.outputs.JACOCO == 'true' }}
     uses: ./.github/workflows/as_builder.yml
     strategy:
+      fail-fast: false
       matrix:
         jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      CORE: ${{ needs.axes_selector.outputs.CORE }}
-      RTS: ${{ needs.axes_selector.outputs.RTS }}
-      XTS: ${{ needs.axes_selector.outputs.XTS }}
-      JACOCO: ${{ needs.axes_selector.outputs.JACOCO }}
       jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      skip_staging: ${{ needs.axes_selector.outputs.RTS != 'true' && needs.axes_selector.outputs.XTS != 'true' }}
       environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
+
+  built_jdks:
+    needs: [axes_selector, as_builder]
+    if: ${{ !cancelled() && needs.axes_selector.result == 'success' && needs.as_builder.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      jdk_versions: ${{ steps.check.outputs.jdk_versions }}
+      jdk_versions_with_m2: ${{ steps.check.outputs.jdk_versions_with_m2 }}
+      missing_artifacts: ${{ steps.check.outputs.missing_artifacts }}
+    steps:
+      - name: Find JDKs with complete build artifacts
+        id: check
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          JDKS: ${{ needs.axes_selector.outputs.jdk_versions }}
+          NEED_WILDFLY_M2: ${{ needs.axes_selector.outputs.RTS == 'true' || needs.axes_selector.outputs.XTS == 'true' }}
+        with:
+          script: |
+            const jdks = JSON.parse(process.env.JDKS);
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              ...context.repo,
+              run_id: context.runId,
+              per_page: 100
+            });
+            const names = new Set(artifacts.filter(artifact => !artifact.expired).map(artifact => artifact.name));
+            const prefix = `${context.runId}-`;
+            const jdk_versions = jdks.filter(jdk =>
+              names.has(`${prefix}narayana-artifacts-jdk${jdk}`) &&
+              names.has(`${prefix}jboss-as-zip-jdk${jdk}`));
+            const jdk_versions_with_m2 = jdk_versions.filter(jdk =>
+              names.has(`${prefix}wildfly-m2-jdk${jdk}`));
+            const requiredArtifacts = jdk => {
+              const required = [
+                `${prefix}narayana-artifacts-jdk${jdk}`,
+                `${prefix}jboss-as-zip-jdk${jdk}`
+              ];
+              if (process.env.NEED_WILDFLY_M2 === 'true') {
+                required.push(`${prefix}wildfly-m2-jdk${jdk}`);
+              }
+              return required;
+            };
+            const missing_artifacts = jdks.flatMap(jdk =>
+              requiredArtifacts(jdk).filter(name => !names.has(name)));
+            core.setOutput('jdk_versions', JSON.stringify(jdk_versions));
+            core.setOutput('jdk_versions_with_m2', JSON.stringify(jdk_versions_with_m2));
+            core.setOutput('missing_artifacts', JSON.stringify(missing_artifacts));
+
+  missing_build_artifacts:
+    needs: [axes_selector, built_jdks]
+    if: ${{ !cancelled() && needs.built_jdks.result == 'success' && needs.built_jdks.outputs.missing_artifacts != '[]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report missing build artifacts
+        env:
+          MISSING_ARTIFACTS: ${{ needs.built_jdks.outputs.missing_artifacts }}
+        run: |
+          echo "::error::Missing build artifacts: ${MISSING_ARTIFACTS}"
+          exit 1
+
+  CORE:
+    needs: [axes_selector, built_jdks]
+    if: ${{ !cancelled() && needs.built_jdks.result == 'success' && needs.axes_selector.outputs.CORE == 'true' && needs.built_jdks.outputs.jdk_versions != '[]' }}
+    uses: ./.github/workflows/core.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk_version: ${{ fromJSON(needs.built_jdks.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+
+  RTS:
+    needs: [axes_selector, built_jdks]
+    if: ${{ !cancelled() && needs.built_jdks.result == 'success' && needs.axes_selector.outputs.RTS == 'true' && needs.built_jdks.outputs.jdk_versions_with_m2 != '[]' }}
+    uses: ./.github/workflows/rts.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk_version: ${{ fromJSON(needs.built_jdks.outputs.jdk_versions_with_m2) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+      wildfly_m2_artifact_name: ${{ github.run_id }}-wildfly-m2-jdk${{ matrix.jdk_version }}
+
+  XTS:
+    needs: [axes_selector, built_jdks]
+    if: ${{ !cancelled() && needs.built_jdks.result == 'success' && needs.axes_selector.outputs.XTS == 'true' && needs.built_jdks.outputs.jdk_versions_with_m2 != '[]' }}
+    uses: ./.github/workflows/xts.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk_version: ${{ fromJSON(needs.built_jdks.outputs.jdk_versions_with_m2) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+      wildfly_m2_artifact_name: ${{ github.run_id }}-wildfly-m2-jdk${{ matrix.jdk_version }}
+
+  JACOCO:
+    needs: [axes_selector, built_jdks]
+    if: ${{ !cancelled() && needs.built_jdks.result == 'success' && needs.axes_selector.outputs.JACOCO == 'true' && needs.built_jdks.outputs.jdk_versions != '[]' }}
+    uses: ./.github/workflows/jacoco.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk_version: ${{ fromJSON(needs.built_jdks.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
 
   AS_TESTS:
     needs: axes_selector
