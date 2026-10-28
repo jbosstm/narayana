@@ -23,9 +23,9 @@ jobs:
         run: |
           COUNT=$(git rev-list --count --since="24 hours ago" HEAD)
           if [ "$COUNT" -gt 0 ]; then
-            echo "recent_commits=true" >> $GITHUB_OUTPUT
+            echo "recent_commits=true" >> "$GITHUB_OUTPUT"
           else
-            echo "recent_commits=false" >> $GITHUB_OUTPUT
+            echo "recent_commits=false" >> "$GITHUB_OUTPUT"
           fi
 
   jdk25:

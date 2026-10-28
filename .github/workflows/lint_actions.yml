@@ -1,0 +1,66 @@
+name: Lint GitHub Actions
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+  workflow_dispatch:
+
+jobs:
+  actionlint:
+    name: Run actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: actionlint
+        id: actionlint
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
+        with:
+          matcher: false
+          cache: false
+
+      - name: actionlint Summary
+        if: ${{ failure() && steps.actionlint.outputs.exit-code != '' && steps.actionlint.outputs.exit-code != '0' }}
+        run: |
+          echo "Used actionlint version ${{ steps.actionlint.outputs.version-semver }}"
+          echo "Used actionlint release ${{ steps.actionlint.outputs.version-tag }}"
+          echo "actionlint ended with ${{ steps.actionlint.outputs.exit-code }} exit code"
+          echo "actionlint ended because '${{ steps.actionlint.outputs.exit-message }}'"
+          echo "actionlint found ${{ steps.actionlint.outputs.total-errors }} errors"
+          echo "actionlint checked ${{ steps.actionlint.outputs.total-files }} files"
+          echo "actionlint cache used: ${{ steps.actionlint.outputs.cache-hit }}"
+          exit 1
+
+  pinned-action-guard:
+    name: Check actions are pinned
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check for unpinned actions (report-only)
+        run: |
+          echo "Checking for unpinned actions in .github/**..."
+          echo ""
+
+          # Check action references in uses: statements; allow local actions and 40-hex SHAs.
+
+          UNPINNED_ACTIONS=$(find .github -type f \( -name "*.yml" -o -name "*.yaml" \) -exec grep -HnE "^[[:space:]]*(-[[:space:]]+)?uses:[[:space:]]+" {} \; | \
+            sed -E 's/[[:space:]]+#.*$//' | \
+            grep -Ev "uses:[[:space:]]+['\"]?\\./" | \
+            grep -Ev "uses:[[:space:]]+['\"]?[^@[:space:]#'\"]+@[0-9a-fA-F]{40}['\"]?([[:space:]]|#|$)" || true)
+
+          if [ -n "$UNPINNED_ACTIONS" ]; then
+            echo "⚠️  Found unpinned actions:"
+            echo ""
+            echo "$UNPINNED_ACTIONS"
+            echo ""
+            echo "::error::Found unpinned actions. These should be pinned to commit SHAs."
+            exit 1
+          else
+            echo "✅ All actions are properly pinned to commit SHAs"
+            exit 0
+          fi
+        shell: bash
