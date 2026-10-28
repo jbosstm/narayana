@@ -1,0 +1,65 @@
+name: Lint GitHub Actions
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+  workflow_dispatch:
+
+jobs:
+  actionlint:
+    name: Run actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Download actionlint
+        run: |
+          wget -q https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8 actionlint_1.7.12_linux_amd64.tar.gz" | sha256sum -c
+          tar xzf actionlint_1.7.12_linux_amd64.tar.gz
+          chmod +x actionlint
+          sudo mv actionlint /usr/local/bin/
+        shell: bash
+
+      - name: Run actionlint
+        # No path args: actionlint auto-discovers .github/workflows/*.yml and *.yaml
+        # (globbing an absent *.yaml would otherwise pass a literal pattern and fail).
+        run: actionlint
+        shell: bash
+
+  pinned-action-guard:
+    name: Check actions are pinned
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check for unpinned actions (report-only)
+        run: |
+          echo "Checking for unpinned actions in .github/**..."
+          echo ""
+
+          # Find all uses: statements that are NOT pinned to a SHA and NOT local actions
+          # Floating tags: @v<digit>, @main, @master
+          # Allow: @<40-hex-sha> and uses: ./
+
+          UNPINNED_ACTIONS=$(find .github -type f \( -name "*.yml" -o -name "*.yaml" \) -exec grep -Hn "uses:" {} \; | \
+            grep -v "uses: \\./" | \
+            grep -E "@(v[0-9]|main|master)" || true)
+
+          if [ -n "$UNPINNED_ACTIONS" ]; then
+            echo "⚠️  Found unpinned actions (floating tags):"
+            echo ""
+            echo "$UNPINNED_ACTIONS"
+            echo ""
+            echo "::warning::Found unpinned actions. These should be pinned to commit SHAs."
+            # Report-only mode: exit 0 instead of exit 1
+            # This will be changed to exit 1 in Task 1.2 after experimental.yml is fixed
+            exit 0
+          else
+            echo "✅ All actions are properly pinned to commit SHAs"
+            exit 0
+          fi
+        shell: bash
