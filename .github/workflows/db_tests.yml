@@ -1,4 +1,4 @@
-name: db_tests.yml
+name: db_tests
 
 on:
   workflow_call:

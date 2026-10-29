@@ -54,10 +54,8 @@ jobs:
             echo ""
             echo "$UNPINNED_ACTIONS"
             echo ""
-            echo "::warning::Found unpinned actions. These should be pinned to commit SHAs."
-            # Report-only mode: exit 0 instead of exit 1
-            # This will be changed to exit 1 in Task 1.2 after experimental.yml is fixed
-            exit 0
+            echo "::error::Found unpinned actions. These should be pinned to commit SHAs."
+            exit 1
           else
             echo "✅ All actions are properly pinned to commit SHAs"
             exit 0
