@@ -65,23 +65,14 @@ jobs:
         if: ${{ matrix.database == 'db2' }}
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: QA_JTA testing axis
         id: qa_jta_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           QA_PROFILE="-Dprofile=${{ matrix.database }}" QA_TARGET=${{ matrix.qa_target }} NARAYANA_BUILD=1 NARAYANA_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

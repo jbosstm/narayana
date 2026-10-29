@@ -51,17 +51,10 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Download Narayana Maven repository
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -85,8 +78,6 @@ jobs:
       - name: XTS testing axis
         id: xts_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 NARAYANA_BUILD=0 PROFILE=XTS ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

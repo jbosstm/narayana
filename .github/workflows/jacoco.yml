@@ -60,17 +60,10 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Download Narayana Maven repository
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -94,8 +87,6 @@ jobs:
       - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='-PcodeCoverage -Pfindbugs' JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 ${{ matrix.map.envVars }} ./.github/scripts/narayana.sh
 
@@ -170,17 +161,10 @@ jobs:
         if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Download Narayana Maven repository
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -191,8 +175,6 @@ jobs:
       - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='codeCoverage' QA_TARGET=${{ matrix.qa_target }} QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
@@ -230,17 +212,10 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Download All Raw Data
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -251,9 +226,6 @@ jobs:
       - name: code coverage generator
         id: code_coverage_generator
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
           CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage" ./.github/scripts/narayana.sh
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

@@ -96,24 +96,14 @@ jobs:
         if: ${{ matrix.database == 'db2' }}
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Testing Narayana with ${{ matrix.database }} Object Store
         id: narayana_db_tests
         run: |
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git config --global user.name 'github-actions[bot]'
-
           export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
           cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
           cp dbjbossts-properties.xml dbjbossts-properties.xml.template
@@ -212,24 +202,14 @@ jobs:
         if: ${{ matrix.database == 'db2' }}
         uses: ./.github/actions/db2_setup_ubuntu_runner
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: DB_TESTS testing axis
         id: db_tests_axis
         run: |
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git config --global user.name 'github-actions[bot]'
-
           export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
           cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
           cp dbjbossts-properties.xml dbjbossts-properties.xml.template
