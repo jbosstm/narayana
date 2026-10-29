@@ -47,23 +47,11 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Configure and restart PostgreSQL
-        if: ${{ matrix.database == 'postgres' }}
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
+      - name: Set up database
+        uses: ./.github/actions/setup-database
         with:
+          database: ${{ matrix.database }}
           target_db: ${{ env.TARGET_DB }}
-
-      - name: Starts and configure MySQL
-        if: ${{ matrix.database == 'mysql' }}
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        if: ${{ matrix.database == 'oracle' }}
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        if: ${{ matrix.database == 'db2' }}
-        uses: ./.github/actions/db2_setup_ubuntu_runner
 
       - name: Prepare build environment
         uses: ./.github/actions/prepare-build-env
