@@ -476,6 +476,7 @@ jobs:
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
       jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+      wildfly_m2_artifact_name: ${{ github.run_id }}-wildfly-m2-jdk${{ matrix.jdk_version }}
 
   XTS:
     needs: [axes_selector, as_builder]
@@ -490,6 +491,7 @@ jobs:
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
       jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+      wildfly_m2_artifact_name: ${{ github.run_id }}-wildfly-m2-jdk${{ matrix.jdk_version }}
 
   JACOCO:
     needs: [axes_selector, as_builder]

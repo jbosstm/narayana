@@ -89,3 +89,23 @@ jobs:
           retention-days: 1
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}/jboss-as/dist/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
+
+      - name: Stage WildFly artifacts needed by RTS and XTS
+        run: |
+          ./.github/scripts/stage-wildfly-m2.sh \
+            "${{ runner.temp }}/wildfly-m2" \
+            "${{ steps.builds.outputs.wildfly_version }}" \
+            "${{ steps.builds.outputs.narayana_version }}"
+
+      - name: Export WildFly Maven artifacts name
+        id: export-wildfly-m2-name
+        run: |
+          echo "wildfly_m2_artifact_name=${{ github.run_id }}-wildfly-m2-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
+
+      - name: Save WildFly Maven artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          compression-level: '0'
+          retention-days: 1
+          name: ${{ steps.export-wildfly-m2-name.outputs.wildfly_m2_artifact_name }}
+          path: ${{ runner.temp }}/wildfly-m2
