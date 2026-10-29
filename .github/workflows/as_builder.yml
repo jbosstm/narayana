@@ -7,22 +7,6 @@ on:
         description: 'JDK version'
         required: true
         type: string
-      CORE:
-        description: 'Whether CORE should be run'
-        required: true
-        type: string
-      RTS:
-        description: 'Whether RTS should be run'
-        required: true
-        type: string
-      XTS:
-        description: 'Whether XTS should be run'
-        required: true
-        type: string
-      JACOCO:
-        description: 'Whether JACOCO should be run'
-        required: true
-        type: string
       pull_request_repo:
         description: 'Repository to check out'
         required: false
@@ -48,17 +32,6 @@ jobs:
     name: as_builder with JDK ${{ inputs.jdk_version }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
-
-    outputs:
-      CORE: ${{ inputs.CORE }}
-      RTS: ${{ inputs.RTS }}
-      XTS: ${{ inputs.XTS }}
-      JACOCO: ${{ inputs.JACOCO }}
-      jdk_version: ${{ inputs.jdk_version }}
-      pr_ref: ${{ inputs.pull_request_ref }}
-      pr_repo: ${{ inputs.pull_request_repo }}
-      narayana_artifact_name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
 
     steps:
       - name: Log run context
@@ -95,7 +68,7 @@ jobs:
       - name: Export Narayana artifact name
         id: export-artifacts-names
         run: |
-          echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
+          echo "narayana_artifact_name=${{ github.run_id }}-narayana-artifacts-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
 
       - name: Save Narayana Maven repository
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -116,47 +89,3 @@ jobs:
           retention-days: 1
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}/jboss-as/dist/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
-
-  CORE:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.CORE == 'true' }}
-    uses: ./.github/workflows/core.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
-
-  RTS:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.RTS == 'true' }}
-    uses: ./.github/workflows/rts.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
-
-  XTS:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.XTS == 'true' }}
-    uses: ./.github/workflows/xts.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
-
-  JACOCO:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.JACOCO == 'true' }}
-    uses: ./.github/workflows/jacoco.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}

@@ -444,14 +444,66 @@ jobs:
       matrix:
         jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
     with:
-      CORE: ${{ needs.axes_selector.outputs.CORE }}
-      RTS: ${{ needs.axes_selector.outputs.RTS }}
-      XTS: ${{ needs.axes_selector.outputs.XTS }}
-      JACOCO: ${{ needs.axes_selector.outputs.JACOCO }}
       jdk_version: ${{ matrix.jdk_version }}
       pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
       pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
       environment_variables: ${{ needs.axes_selector.outputs.environment_variables }}
+
+  CORE:
+    needs: [axes_selector, as_builder]
+    if: ${{ needs.axes_selector.outputs.CORE == 'true' }}
+    uses: ./.github/workflows/core.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+
+  RTS:
+    needs: [axes_selector, as_builder]
+    if: ${{ needs.axes_selector.outputs.RTS == 'true' }}
+    uses: ./.github/workflows/rts.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+
+  XTS:
+    needs: [axes_selector, as_builder]
+    if: ${{ needs.axes_selector.outputs.XTS == 'true' }}
+    uses: ./.github/workflows/xts.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
+
+  JACOCO:
+    needs: [axes_selector, as_builder]
+    if: ${{ needs.axes_selector.outputs.JACOCO == 'true' }}
+    uses: ./.github/workflows/jacoco.yml
+    strategy:
+      matrix:
+        jdk_version: ${{ fromJSON(needs.axes_selector.outputs.jdk_versions) }}
+    with:
+      jdk_version: ${{ matrix.jdk_version }}
+      pull_request_ref: ${{ needs.axes_selector.outputs.pr_ref }}
+      pull_request_repo: ${{ needs.axes_selector.outputs.pr_repo }}
+      narayana_artifact_name: ${{ github.run_id }}-narayana-artifacts-jdk${{ matrix.jdk_version }}
+      jboss_as_zip_name: ${{ github.run_id }}-jboss-as-zip-jdk${{ matrix.jdk_version }}
 
   AS_TESTS:
     needs: axes_selector
