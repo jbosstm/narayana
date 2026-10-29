@@ -67,16 +67,7 @@ jobs:
         run: |
           JBOSS_HOME=${{ github.workspace }}/wildfly NARAYANA_BUILD=1 NARAYANA_TESTS=1 JTA_CDI_TESTS=1 ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - uses: ./.github/actions/upload-failure-logs
         if: ${{ failure() && steps.core_axis.conclusion == 'failure' || cancelled() && steps.core_axis.conclusion == 'cancelled' }}
         with:
-          retention-days: 30
           name: core-logs-jdk${{ inputs.jdk_version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
-          if-no-files-found: warn

@@ -60,15 +60,7 @@ jobs:
         run: |
           PROFILE=AS_TESTS ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - uses: ./.github/actions/upload-failure-logs
         if: ${{ failure() && steps.as_tests_axis.conclusion == 'failure' || cancelled() && steps.as_tests_axis.conclusion == 'cancelled' }}
         with:
           name: as_tests-logs-jdk${{ inputs.jdk_version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
-          if-no-files-found: warn
