@@ -36,19 +36,6 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: Load Dynamic Environment Variables
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
-        env:
-          ENV_JSON: ${{ inputs.environment_variables }}
-        with:
-          script: |
-            const envs = JSON.parse(process.env.ENV_JSON);
-            for (const [key, value] of Object.entries(envs)) {
-              core.exportVariable(key, value);
-              core.info(`Set ${key}=${value}`);
-            }
-
       - name: Log run context
         env:
           NARAYANA_REPO: ${{ inputs.pull_request_repo || 'jbosstm/narayana' }}
@@ -58,6 +45,17 @@ jobs:
           echo "Narayana repository: $NARAYANA_REPO"
           echo "Narayana branch/ref: $NARAYANA_BRANCH"
           echo "QUICKSTART_PR_NUMBER: ${QUICKSTART_PR_NUMBER:-not set}"
+
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: '${{ inputs.pull_request_repo || github.repository }}'
+          ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Load Dynamic Environment Variables
+        uses: ./.github/actions/load-env-vars
+        with:
+          environment_variables: ${{ inputs.environment_variables }}
 
       - name: Clone quickstart repository
         run: |

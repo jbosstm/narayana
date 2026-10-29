@@ -1,0 +1,28 @@
+name: Load Dynamic Environment Variables
+description: Parse JSON environment variables and export them to GITHUB_ENV
+
+inputs:
+  environment_variables:
+    description: 'JSON object of environment variables to set'
+    required: false
+    default: '{}'
+
+runs:
+  using: composite
+  steps:
+    - name: Load Dynamic Environment Variables
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+      env:
+        ENV_JSON: ${{ inputs.environment_variables }}
+      with:
+        script: |
+          const envInput = process.env.ENV_JSON || '';
+          if (envInput === '' || envInput === '{}') {
+            core.info('No environment variables to load');
+            return;
+          }
+          const envs = JSON.parse(envInput);
+          for (const [key, value] of Object.entries(envs)) {
+            core.exportVariable(key, value);
+            core.info(`Set ${key}=${value}`);
+          }
