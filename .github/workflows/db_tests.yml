@@ -9,7 +9,7 @@ on:
         type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
@@ -66,9 +66,11 @@ jobs:
             DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
           fi
 
-          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
-          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
-          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
+          {
+            echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE"
+            echo "JDBC_ACCESS=$JDBC_ACCESS"
+            echo "DB_DETAILS=$DB_DETAILS"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -164,7 +166,7 @@ jobs:
           DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess"
           JDBC_ACCESS=""
           DB_DETAILS=""
-          
+
           if [[ "${{ matrix.database }}" == "postgres" ]]; then
             JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource"
             DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=5432;User=dtf11;Password=dtf11"
@@ -180,9 +182,11 @@ jobs:
             DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
           fi
 
-          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
-          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
-          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
+          {
+            echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE"
+            echo "JDBC_ACCESS=$JDBC_ACCESS"
+            echo "DB_DETAILS=$DB_DETAILS"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
