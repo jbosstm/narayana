@@ -4,7 +4,7 @@ description: "Starts and configure Oracle for ubuntu runners"
 runs:
   using: "composite"
   steps:
-    - uses: gvenzl/setup-oracle-free@v1
+    - uses: gvenzl/setup-oracle-free@a8df5179017826f38de252982830cd9caab03bae # v1
       with:
         tag: "full"
         app-user: "jbossts"

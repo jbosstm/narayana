@@ -1,0 +1,47 @@
+name: Restore Narayana Build
+description: Downloads Narayana Maven repository artifact and optionally WildFly zip
+
+inputs:
+  narayana_artifact_name:
+    description: Name of the Narayana Maven repository artifact to download
+    required: true
+  jboss_as_zip_name:
+    description: Name of the WildFly zip artifact to download (optional)
+    required: false
+    default: ''
+  wildfly_m2_artifact_name:
+    description: Name of the WildFly Maven artifacts (org.wildfly SNAPSHOTs) to download (optional)
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Download Narayana Maven repository
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      with:
+        name: ${{ inputs.narayana_artifact_name }}
+        path: ~/.m2/repository/org/jboss/narayana
+
+    - name: Download WildFly Maven artifacts
+      if: ${{ inputs.wildfly_m2_artifact_name != '' }}
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      with:
+        name: ${{ inputs.wildfly_m2_artifact_name }}
+        path: ~/.m2/repository/org/wildfly
+
+    - name: Download WildFly zip
+      if: ${{ inputs.jboss_as_zip_name != '' }}
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      with:
+        name: ${{ inputs.jboss_as_zip_name }}
+        path: ${{ github.workspace }}
+        merge-multiple: true
+
+    - name: Unzip WildFly zip
+      if: ${{ inputs.jboss_as_zip_name != '' }}
+      shell: bash
+      run: |
+        unzip wildfly-*.zip
+        dir=$(unzip -Z -1 wildfly-*.zip | head -n1 | cut -d/ -f1)
+        mv "$dir" wildfly

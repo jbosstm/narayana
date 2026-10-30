@@ -1,0 +1,39 @@
+name: Prepare Build Environment
+description: Set up JDK, purge Maven cache, and configure git identity
+
+inputs:
+  jdk_version:
+    description: 'JDK version to install'
+    required: true
+  purge_m2:
+    description: 'Whether to purge Narayana and WildFly from Maven cache'
+    required: false
+    default: 'true'
+  cache_dependency_path:
+    description: 'Optional cache dependency path for Maven caching'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK ${{ inputs.jdk_version }}
+      uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.jdk_version }}
+        cache: 'maven'
+        cache-dependency-path: ${{ inputs.cache_dependency_path != '' && inputs.cache_dependency_path || null }}
+
+    - name: Remove Narayana and WildFly from the Maven cache
+      if: ${{ inputs.purge_m2 == 'true' }}
+      shell: bash
+      run: |
+        rm -rf ~/.m2/repository/org/jboss/narayana
+        rm -rf ~/.m2/repository/org/wildfly
+
+    - name: Configure git identity
+      shell: bash
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"

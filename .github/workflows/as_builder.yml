@@ -7,25 +7,9 @@ on:
         description: 'JDK version'
         required: true
         type: string
-      CORE:
-        description: 'Whether CORE should be run'
-        required: true
-        type: string
-      RTS:
-        description: 'Whether RTS should be run'
-        required: true
-        type: string
-      XTS:
-        description: 'Whether XTS should be run'
-        required: true
-        type: string
-      JACOCO:
-        description: 'Whether JACOCO should be run'
-        required: true
-        type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
@@ -49,31 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
-    outputs:
-      CORE: ${{ inputs.CORE }}
-      RTS: ${{ inputs.RTS }}
-      XTS: ${{ inputs.XTS }}
-      JACOCO: ${{ inputs.JACOCO }}
-      jdk_version: ${{ inputs.jdk_version }}
-      pr_ref: ${{ inputs.pull_request_ref }}
-      pr_repo: ${{ inputs.pull_request_repo }}
-      narayana_artifact_name: ${{ steps.export-artifacts-names.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
-
     steps:
-      - name: Load Dynamic Environment Variables
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
-        env:
-          ENV_JSON: ${{ inputs.environment_variables }}
-        with:
-          script: |
-            const envs = JSON.parse(process.env.ENV_JSON);
-            for (const [key, value] of Object.entries(envs)) {
-              core.exportVariable(key, value);
-              core.info(`Set ${key}=${value}`);
-            }
-
       - name: Log run context
         run: |
           echo "Triggered by: ${{ github.event_name }}"
@@ -86,31 +46,29 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK (${{ inputs.jdk_version }})
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Load Dynamic Environment Variables
+        uses: ./.github/actions/load-env-vars
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
+          environment_variables: ${{ inputs.environment_variables }}
 
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
+        with:
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Build Narayana and WildFly
         id: builds
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           NARAYANA_BUILD=1 AS_BUILD=1 ./.github/scripts/narayana.sh
-          echo "narayana_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
-          echo "wildfly_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f jboss-as/pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
+          {
+            echo "narayana_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')"
+            echo "wildfly_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f jboss-as/pom.xml | tr -d '%')"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Export Narayana artifact name
         id: export-artifacts-names
         run: |
-          echo "narayana_artifact_name=${{ github.run_id }}-narayana-${{ steps.builds.outputs.narayana_version }}-artifacts-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
+          echo "narayana_artifact_name=${{ github.run_id }}-narayana-artifacts-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
 
       - name: Save Narayana Maven repository
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -123,7 +81,7 @@ jobs:
       - name: Export jboss-as zip name
         id: export-jboss-as-zip-name
         run: |
-          echo "jboss_as_zip_name=${{ github.run_id }}-jboss-as-zip-jdk${{ inputs.jdk_version }}" >> $GITHUB_OUTPUT
+          echo "jboss_as_zip_name=${{ github.run_id }}-jboss-as-zip-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
 
       - name: Save jboss-as
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -132,46 +90,22 @@ jobs:
           name: ${{ steps.export-jboss-as-zip-name.outputs.jboss_as_zip_name }}
           path: ${{ github.workspace }}/jboss-as/dist/target/wildfly-${{ steps.builds.outputs.wildfly_version }}.zip
 
-  CORE:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.CORE == 'true' }}
-    uses: ./.github/workflows/core.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+      - name: Stage WildFly artifacts needed by RTS and XTS
+        run: |
+          ./.github/scripts/stage-wildfly-m2.sh \
+            "${{ runner.temp }}/wildfly-m2" \
+            "${{ steps.builds.outputs.wildfly_version }}" \
+            "${{ steps.builds.outputs.narayana_version }}"
 
-  RTS:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.RTS == 'true' }}
-    uses: ./.github/workflows/rts.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+      - name: Export WildFly Maven artifacts name
+        id: export-wildfly-m2-name
+        run: |
+          echo "wildfly_m2_artifact_name=${{ github.run_id }}-wildfly-m2-jdk${{ inputs.jdk_version }}" >> "$GITHUB_OUTPUT"
 
-  XTS:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.XTS == 'true' }}
-    uses: ./.github/workflows/xts.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
-
-  JACOCO:
-    needs: as_builder
-    if: ${{ needs.as_builder.outputs.JACOCO == 'true' }}
-    uses: ./.github/workflows/jacoco.yml
-    with:
-      jdk_version: ${{ needs.as_builder.outputs.jdk_version }}
-      pull_request_ref: ${{ needs.as_builder.outputs.pr_ref }}
-      pull_request_repo: ${{ needs.as_builder.outputs.pr_repo }}
-      narayana_artifact_name: ${{ needs.as_builder.outputs.narayana_artifact_name }}
-      jboss_as_zip_name: ${{ needs.as_builder.outputs.jboss_as_zip_name }}
+      - name: Save WildFly Maven artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          compression-level: '0'
+          retention-days: 1
+          name: ${{ steps.export-wildfly-m2-name.outputs.wildfly_m2_artifact_name }}
+          path: ${{ runner.temp }}/wildfly-m2

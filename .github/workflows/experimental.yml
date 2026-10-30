@@ -34,19 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Load Dynamic Environment Variables
-        uses: actions/github-script@v9
-        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
-        env:
-          ENV_JSON: ${{ inputs.environment_variables }}
-        with:
-          script: |
-            const envs = JSON.parse(process.env.ENV_JSON);
-            for (const [key, value] of Object.entries(envs)) {
-              core.exportVariable(key, value);
-              core.info(`Set ${key}=${value}`);
-            }
-
       - name: Log run context
         run: |
           echo "Triggered by: ${{ github.event_name }}"
@@ -55,10 +42,15 @@ jobs:
           echo "JDK Version: ${{ inputs.jdk_version }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Load Dynamic Environment Variables
+        uses: ./.github/actions/load-env-vars
+        with:
+          environment_variables: ${{ inputs.environment_variables }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
@@ -87,7 +79,7 @@ jobs:
           mvn clean install -f experimental/pom.xml -Dcheckstyle.skip=true -Denforcer.skip=true
 
       - name: Upload test artifacts on failure
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ (failure() && (steps.core_build.conclusion == 'failure' || steps.experimental_build.conclusion == 'failure')) || cancelled() }}
         with:
           retention-days: 30
@@ -101,7 +93,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload experimental test results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           retention-days: 7

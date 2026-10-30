@@ -9,7 +9,7 @@ on:
         type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
@@ -60,58 +60,27 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
+          jdk_version: ${{ inputs.jdk_version }}
 
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
-
-      - name: Download Narayana Maven repository
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      - name: Restore Narayana build
+        uses: ./.github/actions/restore-narayana-build
         with:
-          name: ${{ inputs.narayana_artifact_name }}
-          path: ~/.m2/repository/org/jboss/narayana
-
-      - name: Download WildFly zip
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          name: ${{ inputs.jboss_as_zip_name }}
-          path: ${{ github.workspace }}
-          merge-multiple: true
-
-      - name: Unzip WildFly zip
-        run: |
-          unzip wildfly-*.zip
-          dir=$(unzip -Z -1 wildfly-*.zip | head -n1 | cut -d/ -f1)
-          mv "$dir" wildfly
+          narayana_artifact_name: ${{ inputs.narayana_artifact_name }}
+          jboss_as_zip_name: ${{ inputs.jboss_as_zip_name }}
 
       - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='-PcodeCoverage -Pfindbugs' JBOSS_HOME=${{ github.workspace }}/wildfly AS_BUILD=0 ${{ matrix.map.envVars }} ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - uses: ./.github/actions/upload-failure-logs
         if: ${{ failure() && steps.jacoco_axis.conclusion == 'failure' || cancelled() && steps.jacoco_axis.conclusion == 'cancelled' }}
         with:
-          retention-days: 30
           name: jacoco-logs-jdk${{ inputs.jdk_version }}-${{ matrix.map.artifact }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
-          if-no-files-found: warn
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ steps.jacoco_axis.conclusion == 'success' }}
@@ -152,47 +121,44 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Configure and restart PostgreSQL
+      - name: Set up PostgreSQL
         if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
+        uses: ./.github/actions/setup-database
         with:
+          database: postgres
           target_db: ${{ env.TARGET_DB }}
 
-      - name: Starts and configure MySQL
+      - name: Set up MySQL
         if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
-        uses: ./.github/actions/db2_setup_ubuntu_runner
-
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        uses: ./.github/actions/setup-database
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
+          database: mysql
 
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
-
-      - name: Download Narayana Maven repository
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      - name: Set up Oracle
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/setup-database
         with:
-          name: ${{ inputs.narayana_artifact_name }}
-          path: ~/.m2/repository/org/jboss/narayana
+          database: oracle
+
+      - name: Set up DB2
+        if: ${{ matrix.qa_target == 'junit-jdbc-testsuite' }}
+        uses: ./.github/actions/setup-database
+        with:
+          database: db2
+
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
+        with:
+          jdk_version: ${{ inputs.jdk_version }}
+
+      - name: Restore Narayana build
+        uses: ./.github/actions/restore-narayana-build
+        with:
+          narayana_artifact_name: ${{ inputs.narayana_artifact_name }}
 
       - name: JaCoCo testing axis
         id: jacoco_axis
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           export MAVEN_OPTS='-Xms2048m -Xmx2048m'
           CODE_COVERAGE_ARGS='codeCoverage' QA_TARGET=${{ matrix.qa_target }} QA_TESTS=1 OPENJDK_ORB=1 ./.github/scripts/narayana.sh
 
@@ -212,6 +178,12 @@ jobs:
           path: qa/testoutput
           if-no-files-found: warn
 
+      - name: Stop and delete DB2
+        if: ${{ always() && matrix.qa_target == 'junit-jdbc-testsuite' }}
+        run: |
+          docker stop db2server
+          docker rm db2server
+
   code-coverage-report:
     needs: [jacoco-test, jacoco-qa-test]
     name: Generating JaCoCo report
@@ -230,17 +202,10 @@ jobs:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Download All Raw Data
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -251,24 +216,12 @@ jobs:
       - name: code coverage generator
         id: code_coverage_generator
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
           CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage" ./.github/scripts/narayana.sh
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - uses: ./.github/actions/upload-failure-logs
         if: ${{ failure() && steps.code_coverage_generator.conclusion == 'failure' || cancelled() && steps.code_coverage_generator.conclusion == 'cancelled' }}
         with:
-          retention-days: 30
           name: jacoco-logs-jdk${{ inputs.jdk_version }}
-          path: |
-            **/*.*log*
-            **/ObjectStore*/**
-            **/tx-object-store/**
-            **/*tx-object-store.zip
-            **/target/*surefire-reports*/**
-            **/target/*failsafe-reports*/**
-          if-no-files-found: warn
 
       - name: Upload Final JaCoCo HTML Report
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

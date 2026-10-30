@@ -9,7 +9,7 @@ on:
         type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
@@ -45,19 +45,6 @@ jobs:
       narayana-version: ${{ steps.build.outputs.narayana-version }}
 
     steps:
-      - name: Load Dynamic Environment Variables
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        if: ${{ inputs.environment_variables != '' && inputs.environment_variables != '{}' }}
-        env:
-          ENV_JSON: ${{ inputs.environment_variables }}
-        with:
-          script: |
-            const envs = JSON.parse(process.env.ENV_JSON);
-            for (const [key, value] of Object.entries(envs)) {
-              core.exportVariable(key, value);
-              core.info(`Set ${key}=${value}`);
-            }
-
       - name: Log run context
         run: |
           echo "Triggered by: ${{ github.event_name }}"
@@ -69,6 +56,11 @@ jobs:
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
+
+      - name: Load Dynamic Environment Variables
+        uses: ./.github/actions/load-env-vars
+        with:
+          environment_variables: ${{ inputs.environment_variables }}
 
       - name: Set up JDK ${{ inputs.jdk_version }}
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
@@ -98,7 +90,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           ./build.sh -B -Pcommunity -Dexperimental -DskipTests clean install
-          echo "narayana-version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> $GITHUB_OUTPUT
+          echo "narayana-version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml | tr -d '%')" >> "$GITHUB_OUTPUT"
 
       - name: Upload Narayana Maven artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

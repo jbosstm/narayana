@@ -1,4 +1,4 @@
-name: db_tests.yml
+name: db_tests
 
 on:
   workflow_call:
@@ -9,7 +9,7 @@ on:
         type: string
       pull_request_repo:
         description: 'Repository to check out'
-        required: true
+        required: false
         type: string
         default: 'jbosstm/narayana'
       pull_request_ref:
@@ -44,75 +44,28 @@ jobs:
           echo 'Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}'
           echo 'Enabled databases: ${{ inputs.enabled_databases }}'
 
-      - name: Setting environment variables
-        id: setting_env_vars
-        run: |
-          DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess"
-          JDBC_ACCESS=""
-          DB_DETAILS=""
-
-          if [[ "${{ matrix.database }}" == "postgres" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource"
-            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=5432;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "mysql" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.mysql.cj.jdbc.MysqlDataSource"
-            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "oracle" ]]; then
-            DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess"
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;NetworkProtocol=tcp"
-            DB_DETAILS="ServiceName=FREEPDB1;ServerName=localhost;PortNumber=1521;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "db2" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.ibm.db2.jcc.DB2DataSource;DriverType=4"
-            DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
-          fi
-
-          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
-          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
-          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
-
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Configure and restart PostgreSQL
-        if: ${{ matrix.database == 'postgres' }}
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
+      - name: Set up database
+        id: setup_db
+        uses: ./.github/actions/setup-database
         with:
+          database: ${{ matrix.database }}
           target_db: ${{ env.TARGET_DB }}
 
-      - name: Starts and configure MySQL
-        if: ${{ matrix.database == 'mysql' }}
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        if: ${{ matrix.database == 'oracle' }}
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        if: ${{ matrix.database == 'db2' }}
-        uses: ./.github/actions/db2_setup_ubuntu_runner
-
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: Testing Narayana with ${{ matrix.database }} Object Store
         id: narayana_db_tests
         run: |
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git config --global user.name 'github-actions[bot]'
-
-          export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
+          export JDBC_ACCESS="${{ steps.setup_db.outputs.jdbc_access }}"
           cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
           cp dbjbossts-properties.xml dbjbossts-properties.xml.template
           envsubst < dbjbossts-properties.xml.template > dbjbossts-properties.xml
@@ -158,75 +111,28 @@ jobs:
           echo 'Branch/Ref: ${{ inputs.pull_request_ref || github.ref }}'
           echo 'Enabled databases: ${{ inputs.enabled_databases }}'
 
-      - name: Setting environment variables
-        id: setting_env_vars
-        run: |
-          DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess"
-          JDBC_ACCESS=""
-          DB_DETAILS=""
-          
-          if [[ "${{ matrix.database }}" == "postgres" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=org.postgresql.ds.PGSimpleDataSource"
-            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=5432;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "mysql" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.mysql.cj.jdbc.MysqlDataSource"
-            DB_DETAILS="DatabaseName=jbossts;ServerName=localhost;PortNumber=3306;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "oracle" ]]; then
-            DYNAMIC_DATASOURCE="com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess"
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;NetworkProtocol=tcp"
-            DB_DETAILS="ServiceName=FREEPDB1;ServerName=localhost;PortNumber=1521;User=dtf11;Password=dtf11"
-          elif [[ "${{ matrix.database }}" == "db2" ]]; then
-            JDBC_ACCESS="$DYNAMIC_DATASOURCE;ClassName=com.ibm.db2.jcc.DB2DataSource;DriverType=4"
-            DB_DETAILS="DatabaseName=BTDB1;ServerName=localhost;PortNumber=50000;User=db2;Password=db2"
-          fi
-
-          echo "DYNAMIC_DATASOURCE=$DYNAMIC_DATASOURCE" >> "$GITHUB_OUTPUT"
-          echo "JDBC_ACCESS=$JDBC_ACCESS" >> "$GITHUB_OUTPUT"
-          echo "DB_DETAILS=$DB_DETAILS" >> "$GITHUB_OUTPUT"
-
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: '${{ inputs.pull_request_repo || github.repository }}'
           ref: ${{ inputs.pull_request_ref || github.ref }}
 
-      - name: Configure and restart PostgreSQL
-        if: ${{ matrix.database == 'postgres' }}
-        uses: ./.github/actions/postgres_setup_ubuntu_runner
+      - name: Set up database
+        id: setup_db
+        uses: ./.github/actions/setup-database
         with:
+          database: ${{ matrix.database }}
           target_db: ${{ env.TARGET_DB }}
 
-      - name: Starts and configure MySQL
-        if: ${{ matrix.database == 'mysql' }}
-        uses: ./.github/actions/mysql_setup_ubuntu_runner
-
-      - name: Starts and configure Oracle
-        if: ${{ matrix.database == 'oracle' }}
-        uses: ./.github/actions/oracle_setup_ubuntu_runner
-
-      - name: Pull, starts and configure DB2
-        if: ${{ matrix.database == 'db2' }}
-        uses: ./.github/actions/db2_setup_ubuntu_runner
-
-      - name: Set up JDK ${{ inputs.jdk_version }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
         with:
-          distribution: temurin
-          java-version: ${{ inputs.jdk_version }}
-          cache: 'maven'
-
-      - name: Remove Narayana and WildFly from the Maven cache
-        run: |
-          rm -rf ~/.m2/repository/org/jboss/narayana
-          rm -rf ~/.m2/repository/org/wildfly
+          jdk_version: ${{ inputs.jdk_version }}
 
       - name: DB_TESTS testing axis
         id: db_tests_axis
         run: |
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git config --global user.name 'github-actions[bot]'
-
-          export JDBC_ACCESS="${{ steps.setting_env_vars.outputs.JDBC_ACCESS }};${{ steps.setting_env_vars.outputs.DB_DETAILS }}"
+          export JDBC_ACCESS="${{ steps.setup_db.outputs.jdbc_access }}"
           cd ${{ github.workspace }}/ArjunaCore/arjuna/src/test/resources
           cp dbjbossts-properties.xml dbjbossts-properties.xml.template
           envsubst < dbjbossts-properties.xml.template > dbjbossts-properties.xml
