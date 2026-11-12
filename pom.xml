@@ -201,7 +201,7 @@
 
     <version.org.jacoco>0.8.16</version.org.jacoco>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.9.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
-    <version.org.jboss.resteasy>6.2.19.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>6.2.20.Final</version.org.jboss.resteasy>
     <version.org.sonatype.plugins.nxrm3.plugin>1.0.13</version.org.sonatype.plugins.nxrm3.plugin>
     <version.quarkus>3.40.1.1</version.quarkus>
     <version.sortpom>4.0.0</version.sortpom>
