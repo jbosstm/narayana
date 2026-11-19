@@ -1,0 +1,3 @@
+<logger category="org.jboss.jbossts.txbridge">
+  <level name="ALL" />
+</logger> 
