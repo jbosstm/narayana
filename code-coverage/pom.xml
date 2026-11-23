@@ -89,6 +89,7 @@
                         <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
 
                         <fileset dir="../txbridge/target/coverage-reports" includes="jacoco-ut.exec"></fileset>
+                        <fileset dir="../qa/testoutput" includes="jacoco-qa.exec"></fileset>
                       </executiondata>
 
                       <structure name="JaCoCo">
