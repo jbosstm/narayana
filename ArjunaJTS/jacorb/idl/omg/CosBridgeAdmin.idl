@@ -1,0 +1,231 @@
+//Notification/JMS Interworking Specification, v1.0 - OMG IDL Summary File
+//Object Management Group, Inc.
+//Copyright (C) 2001, Alcatel
+//Copyright (C) 2001, Fujitsu Limited
+//Copyright (C) 2001, IONA
+//Copyright (C) 2001, Prismtech
+//The companies listed above have granted to the Object Management Group, Inc. 
+//(OMG) a nonexclusive, royalty-free, paid up, worldwide license to copy and 
+//distribute this document and to modify this document and distribute copies of 
+//the modified version. Each of the copyright holders listed above has agreed 
+//that no person shall be deemed to have infringed the copyright in the included 
+//material of any such copyright holder by reason of having used the 
+//specification set forth herein or having conformed any computer software to 
+//the specification. 
+//
+//This file contains OMG IDL from the Naming Service Specification, v1.2.
+//OMG regularly publishes a summary file that contains all the "code" parts of 
+//an OMG formal document. Every formal document line that is IDL, PIDL, or 
+//language code is included in the summary file. The reason for such a listing 
+//is to give readers an electronic version of the "code" so that they can 
+//extract pieces of it. Readers might want to test an example, include it in 
+//their own code, or use it for documentation purposes. Having the code lines 
+//available electronically means there is less likelihood of a transcription 
+//error. 
+
+#ifndef _COS_BRIDGE_ADMIN_
+#define _COS_BRIDGE_ADMIN_
+// #include <orbdefs.idl> TODO does not exist in JacORB
+#include <CosNotifyChannelAdmin.idl>
+#pragma prefix "omg.org"
+
+module CosBridgeAdmin
+{
+   enum ExternalEndpointRole
+   {
+      SOURCE,
+      SINK
+   };
+
+   enum JMSDestinationType
+   {
+      QUEUE,
+      TOPIC
+   };
+
+   enum MessageType
+   {
+      JMS_MESSAGE,
+      STRUCTURED_EVENT,
+      SEQUENCE_EVENT
+   };
+
+   struct JMSDestination
+   {
+      JMSDestinationType destination_type;
+      string destination_name;
+      string factory_name;
+   };
+
+   enum FlowStyle
+   {
+      PUSH,
+      PULL
+   };
+
+   union ExternalEndpointConnector switch (MessageType)
+   {
+      case JMS_MESSAGE: JMSDestination destination;
+      default: CosNotifyChannelAdmin::ChannelID channel_id;
+   };
+
+   struct ExternalEndpoint
+   {
+      ExternalEndpointRole role;
+      ExternalEndpointConnector connector;
+      FlowStyle style;
+      MessageType type;
+   };
+
+   enum ExternalEndpointErrorCode
+   {
+      INVALID_CHANNELID,
+      INVALID_JMSDESTINATION,
+      MISMATCH_ENDPOINTROLE_NOTIFSTYLE
+   }; 
+
+   struct ExternalEndpointError
+   {
+      ExternalEndpointRole role;
+      ExternalEndpointErrorCode code;
+   };
+
+   typedef sequence<ExternalEndpointError> ExternalEndpointErrorSeq;
+
+   exception InvalidExternalEndPoints 
+   {
+      ExternalEndpointErrorSeq error;
+   };
+
+   typedef long BridgeID;
+   typedef sequence<BridgeID> BridgeIDSeq;
+
+   exception BridgeAlreadyStarted {};
+   exception BridgeInactive {};
+   exception BridgeNotFound {};
+
+   interface BridgeFactory;
+
+   interface Bridge
+   {
+      readonly attribute ExternalEndpoint end_point_receiver;
+      readonly attribute ExternalEndpoint end_point_sender;
+
+      void start_bridge() raises (BridgeAlreadyStarted, InvalidExternalEndPoints);
+      void stop_bridge () raises (BridgeInactive);
+    //  status get_status(); TODO seems to be imported from orbdefs.idl
+      void destroy ();
+   };
+
+   interface BridgeFactory
+   {
+      Bridge create_bridge (in ExternalEndpoint source, in ExternalEndpoint sink, out BridgeID id)
+         raises (InvalidExternalEndPoints );
+      Bridge get_bridge_with_id (in BridgeID id)
+         raises (BridgeNotFound);
+      BridgeIDSeq get_all_bridges();
+  };
+};
+
+#endif
+
+
+module BridgeTransactionMgmt
+{
+	   exception UnsupportedTransaction {};
+	   exception TransactionAlreadyActive {};
+	   exception TransactionActive {} ;
+
+	   interface TransactionManagement
+   {
+      void enable_transaction (in unsigned long events, in unsigned long timeout)
+   raises (UnsupportedTransaction, TransactionAlreadyActive);
+      void disable_transaction() raises (TransactionActive);
+   };
+}; // BridgeTransactionMgmt
+
+//File: CosNotifyCommAck.idl
+//Part of the extended Notification Service
+#ifndef _COS_NOTIFY_COMM_ACK_IDL_
+#define _COS_NOTIFY_COMM_ACK_IDL_
+#include <CosNotifyComm.idl>
+#pragma prefix "omg.org"
+
+module CosNotifyCommAck {
+const string SequenceNumber = "SequenceNumber";
+// SequenceNumber takes a value of type long.
+// Structured events must include a SequenceNumber field to be acknowledged 
+
+typedef sequence<long> SequenceNumbers;
+
+const string DeliveryReliability = "DeliveryReliability";
+const short None = 0;
+const short Acknowledgment = 1;
+// DeliveryReliability takes value of None or Acknowledgement as Notification Qos
+
+const string RetryInterval = "RetryInterval";
+// RetryInterval takes on a value of TimeBase::TimeT as Notification Qos
+
+const string Retries = "Retries";
+// Retries takes on a value of type long as Notification Qos Parameter
+
+interface StructuredPushSupplierAck : CosNotifyComm::StructuredPushSupplier {
+	void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface StructuredPullSupplierAck : CosNotifyComm::StructuredPullSupplier {
+void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface SequencePushSupplierAck : CosNotifyComm::SequencePushSupplier {
+         void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface SequencePullSupplierAck : CosNotifyComm::SequencePullSupplier {
+   		void acknowledge(in SequenceNumbers sequence_numbers);
+};
+};
+#endif
+
+//File: CosNotifyChannelAdminAck.idl
+//Part of the extended Notification Service
+#ifndef _COS_NOTIFY_CHANNEL_ADMIN_ACK_IDL_
+#define _COS_NOTIFY_CHANNEL_ADMIN_ACK_IDL_
+#include <CosNotifyChannelAdmin.idl>
+#pragma prefix "omg.org"
+
+module CosNotifyChannelAdminAck {
+
+typedef sequence<long> SequenceNumbers;
+
+interface StructuredProxyPushSupplierAck : 
+       CosNotifyChannelAdmin::StructuredProxyPushSupplier {
+	void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface StructuredProxyPullSupplierAck : 
+       CosNotifyChannelAdmin::StructuredProxyPullSupplier {
+	void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface SequenceProxyPushSupplierAck :    
+		CosNotifyChannelAdmin::SequenceProxyPushSupplier {
+	void acknowledge(in SequenceNumbers sequence_numbers);
+};
+
+interface SequenceProxyPullSupplierAck : 
+		CosNotifyChannelAdmin::SequenceProxyPullSupplier {
+	void acknowledge(in SequenceNumbers sequence_numbers);
+};
+};
+#endif
+
+
+
+
+
+
+
+
+
+

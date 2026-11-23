@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ -->
+<definitions
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl"
+        xmlns:tns="http://fabrikam123.com"
+        targetNamespace="http://fabrikam123.com"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <import
+       namespace="http://fabrikam123.com"
+       location="interopat.wsdl"/>
+
+    <binding name="Initiator_SOAPBinding" type="tns:InitiatorPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="Response">
+        <soap:operation soapAction="http://fabrikam123.com/Response"/>
+        <input message="tns:Response">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+    </binding>
+
+    <binding name="Participant_SOAPBinding" type="tns:ParticipantPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="CompletionCommit">
+        <soap:operation soapAction="http://fabrikam123.com/CompletionCommit"/>
+        <input message="tns:CompletionCommit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="CompletionRollback">
+        <soap:operation soapAction="http://fabrikam123.com/CompletionRollback"/>
+        <input message="tns:CompletionRollback">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Commit">
+        <soap:operation soapAction="http://fabrikam123.com/Commit"/>
+        <input message="tns:Commit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Rollback">
+        <soap:operation soapAction="http://fabrikam123.com/Rollback"/>
+        <input message="tns:Rollback">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Phase2Rollback">
+        <soap:operation soapAction="http://fabrikam123.com/Phase2Rollback"/>
+        <input message="tns:Phase2Rollback">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="Readonly">
+        <soap:operation soapAction="http://fabrikam123.com/Readonly"/>
+        <input message="tns:Readonly">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="VolatileAndDurable">
+        <soap:operation soapAction="http://fabrikam123.com/VolatileAndDurable"/>
+        <input message="tns:VolatileAndDurable">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="EarlyReadonly">
+        <soap:operation soapAction="http://fabrikam123.com/EarlyReadonly"/>
+        <input message="tns:EarlyReadonly">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="EarlyAborted">
+        <soap:operation soapAction="http://fabrikam123.com/EarlyAborted"/>
+        <input message="tns:EarlyAborted">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="ReplayCommit">
+        <soap:operation soapAction="http://fabrikam123.com/ReplayCommit"/>
+        <input message="tns:ReplayCommit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="RetryPreparedCommit">
+        <soap:operation soapAction="http://fabrikam123.com/RetryPreparedCommit"/>
+        <input message="tns:RetryPreparedCommit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="RetryPreparedAbort">
+        <soap:operation soapAction="http://fabrikam123.com/RetryPreparedAbort"/>
+        <input message="tns:RetryPreparedAbort">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="RetryCommit">
+        <soap:operation soapAction="http://fabrikam123.com/RetryCommit"/>
+        <input message="tns:RetryCommit">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="PreparedAfterTimeout">
+        <soap:operation soapAction="http://fabrikam123.com/PreparedAfterTimeout"/>
+        <input message="tns:PreparedAfterTimeout">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+      <operation name="LostCommitted">
+        <soap:operation soapAction="http://fabrikam123.com/LostCommitted"/>
+        <input message="tns:LostCommitted">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+    </binding>
+
+    <service name="InteropService">
+      <port binding="tns:Initiator_SOAPBinding" name="InitiatorPortType">
+	<wsaw:UsingAddressing required="true"/>
+	<soap:address location="http://localhost:9000/interopat/InteropService"/>
+      </port>
+      <port binding="tns:Participant_SOAPBinding" name="ParticipantPortType">
+	<wsaw:UsingAddressing required="true"/>
+	<soap:address location="http://localhost:9000/interopat/ParticipantService"/>
+      </port>
+    </service>
+
+</definitions>

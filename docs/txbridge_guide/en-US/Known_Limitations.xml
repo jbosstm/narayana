@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+]>
+<chapter>
+  <title>Known Limitations</title>
+  <para>The current transaction bridge release has the following limitations:</para>
+  <itemizedlist>
+    <listitem>
+      <para>The bridge operates only on WS-AT 1.2, not 1.0, although XTS includes implementations of
+        both versions of WS-AT. Care must therefore be taken to deploy and configure the system
+        correctly.</para>
+    </listitem>
+    <listitem>
+      <para>The bridge provides JAX-WS handlers only, not JAX-RPC, although it is possible to create
+        such if required.</para>
+    </listitem>
+    <listitem>
+      <para>Long running activities that occur during the transaction termination process may cause
+        timeouts in the transaction system, which can in turn cause inconsistent transaction
+        outcomes or incomplete transaction termination. To minimize this problem, it is advised to
+        manually flush data that would otherwise be flushed by Synchronizations during termination,
+        such as hibernate session state.</para>
+    </listitem>
+    <listitem>
+      <para>A transaction context must always be present on the Thread in order for the context
+        processors to operate correctly, as detailed previously in 'Using the Transaction Bridge'.
+      </para>
+    </listitem>
+    <listitem>
+      <para>A subordinate transaction context will be created and registered into the parent
+        transaction unconditionally, which can cause unnecessary overhead in situations where no
+        transactional activity takes place in the scope of the subordinate. Care should be taken to
+        register the bridge handlers only on methods that do require them. In future releases this
+        may be addressed by the use of WS-Policy or lazy initialization techniques.</para>
+    </listitem>
+    <listitem>
+      <para>Transaction mappings are local to BridgeManagers, which are singletons. This means
+        mappings are classloader scoped and not shared across JVMs. This gives rise to issues where
+        transactional resources are accessed indirectly though multiple bridges or transaction
+        context transports, as described in 'Loops and Diamonds'.</para>
+    </listitem>
+    <listitem>
+      <para>Crash recovery is subject to certain timing issues, due to the interaction between
+        recovery of the JTA/XA and XTS sides of the transaction. It may take more than one crash
+        recovery cycle for a bridged transaction to recover fully. Note that recovery of subordinate
+        transactions is dependent on the recovery of their parent, so care must be taken to ensure
+        the correct recovery of any external transaction manager used in that role. The transaction
+        bridge does not currently provide dedicated tooling for the manual resolution of orphaned
+        subordinates, instead relying on the general purpose objectstore maintenance tooling
+        provided by JbossTS.</para>
+    </listitem>
+    <listitem>
+      <para>Note that crash recovery will not behave correctly for outbound bridged transactions if
+        1PC commit optimization is used in the parent JTA transaction. This is not specific to the
+        bridge, but rather is a generic issue with any transaction in which a single resource is an
+        interposed subordinate coordinator. Inbound bridges transactions are unaffected as XTS
+        (WS-AT) does not utilize a 1PC optimization.</para>
+    </listitem>
+  </itemizedlist>
+</chapter>
